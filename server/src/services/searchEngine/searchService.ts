@@ -8,7 +8,7 @@ export class searchService implements ISearchService {
             const result = await fetch(`${Locals.config().searchEngineUrl}&num=10&start=${index}&q=${encodeURIComponent(keyword)}`);
             return result.items
         } catch (error) {
-
+            console.log(error)
         }
     }
 }
