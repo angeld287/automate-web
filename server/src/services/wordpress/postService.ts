@@ -1,4 +1,5 @@
 import { IPostService } from "../../interfaces/IPostService";
+import { Post } from "../../interfaces/models/Post";
 import Locals from "../../providers/Locals";
 import { fetch } from "../../utils";
 
@@ -10,7 +11,7 @@ export class postService implements IPostService {
         return result;
     }
 
-    async createPost(): Promise<any> {
+    async createPost(post: Post): Promise<any> {
         const result = await fetch(`${Locals.config().wordpressUrl}/posts`, {
             method: 'POST',
             credentials: 'include',
@@ -18,14 +19,7 @@ export class postService implements IPostService {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                slug: "post-prueba-api",
-                status: "draft",
-                title: "Titulo",
-                content: "contentnido",
-                author: '1',
-                categories: 'maiz'
-            })
+            body: JSON.stringify(post)
         });
         return result;
     }
