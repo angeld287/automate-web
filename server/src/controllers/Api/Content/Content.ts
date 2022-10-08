@@ -1,5 +1,7 @@
 import { INewArticle, INewArticles } from "../../../interfaces/Content/Article";
+import { ISearchService } from "../../../interfaces/ISearchService";
 import { ITranslateService } from "../../../interfaces/ITranslateService";
+import { searchService } from "../../../services/searchEngine/searchService";
 import { translateService } from "../../../services/translation/translateService";
 
 class Content {
@@ -11,6 +13,7 @@ class Content {
                 const englishArticleTitles: INewArticle = await this.translateTitles(article);
 
                 //search the content for title and each subtitile
+                const searchContentResults = await this.searchContent(englishArticleTitles);
 
                 //translate the selected content to spanish
 
@@ -26,7 +29,7 @@ class Content {
         }
     }
 
-    static async translateTitles(article: INewArticle) {
+    static async translateTitles(article: INewArticle): Promise<INewArticle> {
         try {
             let translate: ITranslateService = new translateService();
 
@@ -42,6 +45,17 @@ class Content {
 
         }
 
+    }
+
+    static async searchContent(article: INewArticle): Promise<INewArticle> {
+        try {
+            let search: ISearchService = new searchService();
+            const result = await search.perform("1", article.title);
+            console.log(result);
+            return article;
+        } catch (error) {
+
+        }
     }
 }
 
