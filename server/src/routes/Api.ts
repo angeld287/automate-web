@@ -12,6 +12,7 @@ import LogoutController from '../controllers/Api/Auth/Logout';
 import PageSource from '../controllers/Api/Pages/PageSource';
 import Passport from '../providers/Passport';
 import Session from '../controllers/Api/Auth/Session';
+import ContentController from '../controllers/Api/Content/Content';
 
 const router = Router();
 
@@ -65,6 +66,12 @@ router.post(
 router.get(
     '/auth/getsession',
     Session.perform
+);
+
+router.get(
+    '/createContent',
+    Passport.isAuthenticated,
+    ContentController.createContent
 );
 
 export default router;
