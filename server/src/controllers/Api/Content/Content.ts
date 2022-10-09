@@ -26,9 +26,9 @@ class Content {
             articles.forEach(async (article) => {
                 //translate title and subtitiles to english
                 const englishArticleTitles: INewArticle = await Content.translateTitles(article);
-                console.log(englishArticleTitles)
+
                 //search the content for title and each subtitile
-                //const searchContentResults = await Content.searchContent(englishArticleTitles);
+                const searchContentResults = await Content.searchContent(englishArticleTitles);
 
                 //translate the selected content to spanish
 
@@ -57,9 +57,9 @@ class Content {
             let translate: ITranslateService = new translateService();
             article.title = (await translate.perform(article.title, 'en')).body[0]['translations'][0].text;
 
-            article.subtitiles.forEach(async (subtitle, index) => {
+            await Promise.all(article.subtitiles.map(async (subtitle, index) => {
                 article.subtitiles[index].name = (await translate.perform(subtitle.name, 'en')).body[0]['translations'][0].text;
-            });
+            }));
 
             return article;
 
