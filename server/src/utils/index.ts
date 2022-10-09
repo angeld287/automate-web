@@ -1,3 +1,3 @@
-import { fetcher } from "./fetch-utils";
+import { _axios } from "./axios-utils"
 
-export const fetch: any = fetcher;
+export { _axios as axios };

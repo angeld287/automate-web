@@ -68,9 +68,10 @@ router.get(
     Session.perform
 );
 
-router.get(
+router.post(
     '/createContent',
-    Passport.isAuthenticated,
+    body('articles', 'field articles cannot be blank.').notEmpty(),
+    //Passport.isAuthenticated,
     ContentController.createContent
 );
 

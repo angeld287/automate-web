@@ -1,19 +1,21 @@
 import { IPostService } from "../../interfaces/IPostService";
 import { Post } from "../../interfaces/models/Post";
 import Locals from "../../providers/Locals";
-import { fetch } from "../../utils";
+import { axios } from "../../utils";
 
 export class postService implements IPostService {
 
     async getList(): Promise<Array<any>> {
-        const result = await fetch(`${Locals.config().wordpressUrl}/posts`);
-        return result;
+        const response = await axios({ url: `${Locals.config().wordpressUrl}/posts` });
+        //const result = await response.json();
+        console.log(response);
+        return []
     }
 
     async createPost(post: Post): Promise<any> {
-        const result = await fetch(`${Locals.config().wordpressUrl}/posts`, {
+        const result = await axios({
+            url: `${Locals.config().wordpressUrl}/posts`,
             method: 'POST',
-            credentials: 'include',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'

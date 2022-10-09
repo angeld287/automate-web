@@ -1,7 +1,3 @@
-export interface INewArticles {
-    list: Array<INewArticle>;
-}
-
 export interface INewArticle {
     title: string;
     subtitiles: Array<Content>;
@@ -11,5 +7,5 @@ export interface INewArticle {
 
 export interface Content {
     name: string;
-    content: string;
+    content?: string;
 }
