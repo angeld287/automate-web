@@ -73,7 +73,12 @@ class Content {
         try {
             let search: ISearchService = new searchService();
             const result = await search.perform("1", article.title);
-            console.log(result);
+            //await Promise.all(article.subtitiles.map(async (subtitle, index) => {
+            //    //article.subtitiles[index].content
+            //    const result = (await search.perform("1", subtitle.name));
+            //}));
+            //console.log('result');
+            //console.log(result);
             return article;
         } catch (error) {
 
