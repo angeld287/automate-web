@@ -23,12 +23,12 @@ class Content {
 
             const articles = req.body.articles;
 
-            articles.forEach(async (article) => {
+            await Promise.all(articles.map(async (article: INewArticle, index: number) => {
                 //translate title and subtitiles to english
                 const englishArticleTitles: INewArticle = await Content.translateTitles(article);
 
                 //search the content for title and each subtitile
-                const searchContentResults = await Content.searchContent(englishArticleTitles);
+                const articleSearchResult = await Content.searchContent(englishArticleTitles);
 
                 //translate the selected content to spanish
 
@@ -38,10 +38,11 @@ class Content {
 
                 //post the article
 
-            });
+                articles[index] = articleSearchResult;
+            }));
 
             return new SuccessResponse('Success', {
-                session: 'req.session.passport.user',
+                articles
             }).send(res);
 
         } catch (error) {
@@ -72,13 +73,11 @@ class Content {
     static async searchContent(article: INewArticle): Promise<INewArticle> {
         try {
             let search: ISearchService = new searchService();
-            //const result = await search.perform("1", article.title);
+
             await Promise.all(article.subtitiles.map(async (subtitle, index) => {
-                //article.subtitiles[index].content
-                const result = (await search.perform("1", subtitle.name));
+                article.subtitiles[index].content = (await search.perform("1", subtitle.name)).map(paragraphObejct => paragraphObejct.paragraph).join(" ");
             }));
-            //console.log('result');
-            //console.log(result);
+
             return article;
         } catch (error) {
 

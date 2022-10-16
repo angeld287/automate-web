@@ -1,15 +1,14 @@
 import { ISearchService } from "../../interfaces/ISearchService";
 import Locals from "../../providers/Locals";
 import { axios, delay } from "../../utils";
-import Local from "../strategies/Local";
 var request = require('request');
 
 export class searchService implements ISearchService {
     async perform(index: string, keyword: string): Promise<Array<any>> {
         try {
 
-            const response = await axios({ url: `${Locals.config().searchEngineUrl}&num=5&start=${index}&q=${encodeURIComponent(keyword)}` })
-
+            const response = await axios({ url: `${Locals.config().SEARCH_ENGINE_URL}&num=${Locals.config().GOOGLE_RESULTS_QUANTITY}&start=${index}&q=${encodeURIComponent(keyword)}` })
+            const paragraphs = [];
             if (!response.success) {
                 return response;
             }
@@ -17,17 +16,14 @@ export class searchService implements ISearchService {
             await Promise.all(response.body.items.map(async (searchResult, index) => {
 
                 const snippet = searchResult.snippet;
-                const htmlSnippet = searchResult.htmlSnippet;
                 const pageSource = await searchService.requestPageSource(searchResult.link);
-
                 const paragraph = await searchService.getParagraph(snippet, pageSource);
 
-                console.log('resultado ', index)
-                console.log(paragraph)
+                paragraphs.push(paragraph)
             }));
 
 
-            return response;
+            return paragraphs;
         } catch (error) {
             console.log(error)
         }
@@ -106,7 +102,7 @@ export class searchService implements ISearchService {
                                 await delay(50);
                                 let id = new Date().getTime();
                                 const wordCount = paragraph?.split(/\s+/).length;
-                                if (paragraph && paragraph !== "" && wordCount > Locals.config().MIN_WORDS_IN_PARAGRAPH) {
+                                if (paragraph && paragraph !== "" && wordCount > Locals.config().MIN_WORDS_IN_PARAGRAPH && wordCount < Locals.config().MAX_WORDS_IN_PARAGRAPH) {
                                     paragraphs.push({ id, paragraph, wordCount });
                                 }
 
