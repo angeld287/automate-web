@@ -19,6 +19,7 @@ export class searchService implements ISearchService {
                     const pageSource = await searchService.requestPageSource(searchResult.link);
 
 
+
                 }
             }));
 
@@ -31,11 +32,12 @@ export class searchService implements ISearchService {
 
     static async requestPageSource(url: string) {
         try {
-            const result = await request(url);
-            const json = await result.json();
-            console.log(json);
-
-            return json;
+            request(url, function (error, response, body) {
+                if (error) {
+                    return error
+                }
+                return response.body;
+            });
         } catch (error) {
             throw new Error('Error getting the page source')
         }
