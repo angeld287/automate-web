@@ -1,30 +1,29 @@
 import { ISearchService } from "../../interfaces/ISearchService";
 import Locals from "../../providers/Locals";
 import { axios, delay } from "../../utils";
+import Local from "../strategies/Local";
 var request = require('request');
 
 export class searchService implements ISearchService {
     async perform(index: string, keyword: string): Promise<Array<any>> {
         try {
-            const response = await axios({ url: `${Locals.config().searchEngineUrl}&num=1&start=${index}&q=${encodeURIComponent(keyword)}` })
+
+            const response = await axios({ url: `${Locals.config().searchEngineUrl}&num=5&start=${index}&q=${encodeURIComponent(keyword)}` })
+
             if (!response.success) {
                 return response;
             }
 
             await Promise.all(response.body.items.map(async (searchResult, index) => {
 
-                if (index === 0) {
-                    const snippet = searchResult.snippet;
-                    const htmlSnippet = searchResult.htmlSnippet;
-                    const pageSource = await searchService.requestPageSource(searchResult.link);
+                const snippet = searchResult.snippet;
+                const htmlSnippet = searchResult.htmlSnippet;
+                const pageSource = await searchService.requestPageSource(searchResult.link);
 
-                    const paragraph = await searchService.getParagraph(snippet, pageSource);
+                const paragraph = await searchService.getParagraph(snippet, pageSource);
 
-                    console.log(paragraph);
-
-
-
-                }
+                console.log('resultado ', index)
+                console.log(paragraph)
             }));
 
 
@@ -56,40 +55,40 @@ export class searchService implements ISearchService {
 
         getSnippedTextRegexs.forEach(optimalTextRegex => {
             snippetMatchResults = snippet.match(optimalTextRegex);
-
             if (optimalTextRegex != null) {
                 return false;
             }
         });
 
         await Promise.all(snippetMatchResults.map(async (matchResult: string) => {
-            let posibleParagraph = null
-            if (matchResult.length > 14) {
-                let cleanedMatchResult = matchResult.trim();
+            let posibleParagraphs = null
+            if (matchResult.length > Locals.config().MIN_CHARACTERS) {
+                let cleanedSnipped = matchResult.trim();
+
                 let attempts = 0
 
-                while (posibleParagraph === null) {
+                while (posibleParagraphs === null) {
                     try {
-                        regexWithSniped = new RegExp("(<p(.{0,200})>|<p(.{0,200})>\n|<li>|<li>\n).*?(" + cleanedMatchResult + ").*?(<\/p>|\n<\/p>|<\/li>|\n<\/li>)");
+                        regexWithSniped = new RegExp("(<p(.{0,200})>|<p(.{0,200})>\n|<li>|<li>\n).*?(" + cleanedSnipped + ").*?(<\/p>|\n<\/p>|<\/li>|\n<\/li>)");
                     } catch (error) {
                         break;
                     }
 
-                    posibleParagraph = pageSource.match(regexWithSniped);
+                    posibleParagraphs = pageSource.match(regexWithSniped);
 
-                    if (cleanedMatchResult.length > 15 && posibleParagraph === null) {
-                        const snippetLength = cleanedMatchResult.length
+                    if (cleanedSnipped.length > (Locals.config().MIN_CHARACTERS + 1) && posibleParagraphs === null) {
+                        const snippetLength = cleanedSnipped.length
                         switch (attempts) {
                             case 0:
-                                cleanedMatchResult = cleanedMatchResult.substring(1, snippetLength - 1);
+                                cleanedSnipped = cleanedSnipped.substring(1, snippetLength - 1);
                                 break;
 
                             case 1:
-                                cleanedMatchResult = cleanedMatchResult.substring(0, snippetLength - 1);
+                                cleanedSnipped = cleanedSnipped.substring(0, snippetLength - 1);
                                 break;
 
                             case 2:
-                                cleanedMatchResult = cleanedMatchResult.substring(1, snippetLength);
+                                cleanedSnipped = cleanedSnipped.substring(1, snippetLength);
                                 break;
 
                             default:
@@ -98,24 +97,36 @@ export class searchService implements ISearchService {
 
                     } else {
 
-                        if (posibleParagraph != null) {
-                            await Promise.all(posibleParagraph.map(async (paragraph: any) => {
+                        if (posibleParagraphs != null) {
+                            await Promise.all(posibleParagraphs.map(async (paragraph: any) => {
 
                                 removeHtmlTagsRegexs.forEach(removeTagsRegrex => {
                                     paragraph = paragraph?.replaceAll(removeTagsRegrex, "");
                                 });
                                 await delay(50);
-                                let ts = new Date().getTime();
-                                paragraphs.push({ id: ts, text: paragraph });
-                                return
+                                let id = new Date().getTime();
+                                const wordCount = paragraph?.split(/\s+/).length;
+                                if (paragraph && paragraph !== "" && wordCount > Locals.config().MIN_WORDS_IN_PARAGRAPH) {
+                                    paragraphs.push({ id, paragraph, wordCount });
+                                }
+
+                                return;
                             }));
+                        } else {
+                            attempts++;
+                            if (attempts === 1 || attempts === 2) {
+                                cleanedSnipped = matchResult.trim();
+                            } else {
+                                break;
+                            }
                         }
                     }
                 }
 
             }
+
         }));
 
-        return paragraphs
+        return paragraphs.sort((a, b) => b.wordCount - a.wordCount)[0]
     }
 }

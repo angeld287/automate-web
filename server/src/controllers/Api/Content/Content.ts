@@ -72,11 +72,11 @@ class Content {
     static async searchContent(article: INewArticle): Promise<INewArticle> {
         try {
             let search: ISearchService = new searchService();
-            const result = await search.perform("1", article.title);
-            //await Promise.all(article.subtitiles.map(async (subtitle, index) => {
-            //    //article.subtitiles[index].content
-            //    const result = (await search.perform("1", subtitle.name));
-            //}));
+            //const result = await search.perform("1", article.title);
+            await Promise.all(article.subtitiles.map(async (subtitle, index) => {
+                //article.subtitiles[index].content
+                const result = (await search.perform("1", subtitle.name));
+            }));
             //console.log('result');
             //console.log(result);
             return article;
