@@ -17,11 +17,10 @@ export class searchService implements ISearchService {
 
                 const snippet = searchResult.snippet;
                 const pageSource = await searchService.requestPageSource(searchResult.link);
-                const paragraph = await searchService.getParagraph(snippet, pageSource);
+                const paragraph = await searchService.getParagraph(snippet, pageSource, searchResult.link);
 
                 paragraphs.push(paragraph)
             }));
-
 
             return paragraphs;
         } catch (error) {
@@ -42,13 +41,13 @@ export class searchService implements ISearchService {
         });
     }
 
-    static async getParagraph(snippet: string, pageSource: string): Promise<Array<string>> {
+    static async getParagraph(snippet: string, pageSource: string, link: string): Promise<Array<string>> {
 
         const paragraphs = []
         let regexWithSniped = null;
         let snippetMatchResults = [];
         const getSnippedTextRegexs = [/([^\.]+),([^\.]+)/g, /([^\.]+)(.|,)([^\.]+)/g];
-        const removeHtmlTagsRegexs = [/(?:<style.+?>.+?<\/style>|<script.+?>.+?<\/script>|<(?:!|\/?[a-zA-Z]+).*?\/?>)/g, /(?:\s*\S+\s*{[^}]*})+/g];
+        const removeHtmlTagsRegexs = [/(?:<style.+?>.+?<\/style>|<script.+?>.+?<\/script>|<(?:!|\/?[a-zA-Z]+).*?\/?>)/g, /(?:\s*\S+\s*{[^}]*})+/g, /ath.*?<\/svg/g];
 
         getSnippedTextRegexs.forEach(optimalTextRegex => {
             snippetMatchResults = snippet.match(optimalTextRegex);
@@ -97,14 +96,17 @@ export class searchService implements ISearchService {
                         if (posibleParagraphs != null) {
                             await Promise.all(posibleParagraphs.map(async (paragraph: any) => {
 
+                                //This is where the paragraphs are cleaned with the regular expressions of removeHtmlTagsRegexs
                                 removeHtmlTagsRegexs.forEach(removeTagsRegrex => {
                                     paragraph = paragraph?.replaceAll(removeTagsRegrex, "");
                                 });
+
                                 await delay(50);
                                 let id = new Date().getTime();
                                 const wordCount = paragraph?.split(/\s+/).length;
+
                                 if (paragraph && paragraph !== "" && wordCount > Locals.config().MIN_WORDS_IN_PARAGRAPH && wordCount < Locals.config().MAX_WORDS_IN_PARAGRAPH) {
-                                    paragraphs.push({ id, paragraph, wordCount });
+                                    paragraphs.push({ id, paragraph, wordCount, link });
                                 }
 
                                 return;
