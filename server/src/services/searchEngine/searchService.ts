@@ -25,7 +25,8 @@ export class searchService implements ISearchService {
 
             return paragraphs;
         } catch (error) {
-            console.log(error)
+            throw new Error("Error in search service: " + error);
+
         }
     }
 

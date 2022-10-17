@@ -1,5 +1,5 @@
 import { AuthFailureResponse, SuccessResponse } from "../../../core/ApiResponse";
-import { INewArticle } from "../../../interfaces/Content/Article";
+import { INewArticle, SubTitleContent } from "../../../interfaces/Content/Article";
 import { ISearchService } from "../../../interfaces/ISearchService";
 import { ITranslateService } from "../../../interfaces/ITranslateService";
 import { INext, IRequest, IResponse } from "../../../interfaces/vendors";
@@ -30,15 +30,16 @@ class Content {
                 //search the content for title and each subtitile
                 const articleSearchResult = await Content.searchContent(englishArticleTitles);
 
-                //translate the selected content to spanish
 
+                //translate the selected content to spanish
+                const articleWithCompletedTranslation = await Content.translateContent(articleSearchResult);
                 //search and download the image
 
                 //conver images to webp
 
                 //post the article
 
-                articles[index] = articleSearchResult;
+                articles[index] = articleWithCompletedTranslation;
             }));
 
             return new SuccessResponse('Success', {
@@ -56,10 +57,45 @@ class Content {
     static async translateTitles(article: INewArticle): Promise<INewArticle> {
         try {
             let translate: ITranslateService = new translateService();
-            article.title = (await translate.perform(article.title, 'en')).body[0]['translations'][0].text;
+            const titleTranslation = await translate.perform(article.title, 'en');
+            if (titleTranslation.success) {
+                article.translatedTitle = titleTranslation.body[0]['translations'][0].text;
+                article.error = false;
+            } else {
+                article.error = { message: "Error occurred in titles translations." };
+            }
 
-            await Promise.all(article.subtitiles.map(async (subtitle, index) => {
-                article.subtitiles[index].name = (await translate.perform(subtitle.name, 'en')).body[0]['translations'][0].text;
+            await Promise.all(article.subtitiles.map(async (subtitle: SubTitleContent, index) => {
+                const translation = await translate.perform(subtitle.name, 'en');
+                if (translation.success) {
+                    article.subtitiles[index].translatedName = translation.body[0]['translations'][0].text;
+                    article.subtitiles[index].error = false;
+                }
+                else {
+                    article.subtitiles[index].error = { message: "Error occurred in subtitles translations." };
+                }
+            }));
+
+            return article;
+
+        } catch (error) {
+
+        }
+
+    }
+
+    static async translateContent(article: INewArticle): Promise<INewArticle> {
+        try {
+            let translate: ITranslateService = new translateService();
+
+            await Promise.all(article.subtitiles.map(async (subtitle: SubTitleContent, index) => {
+                const translation = await translate.perform(subtitle.content, 'es');
+                if (translation.success) {
+                    article.subtitiles[index].translatedContent = (await translate.perform(subtitle.content, 'es')).body[0]['translations'][0].text;
+                    article.subtitiles[index].error = false;
+                } else {
+                    article.subtitiles[index].error = { message: "Error occurred in subtitle content translations." };
+                }
             }));
 
             return article;
@@ -75,12 +111,12 @@ class Content {
             let search: ISearchService = new searchService();
 
             await Promise.all(article.subtitiles.map(async (subtitle, index) => {
-                article.subtitiles[index].content = (await search.perform("1", subtitle.name)).map(paragraphObejct => paragraphObejct.paragraph).join(" ");
+                article.subtitiles[index].content = (await search.perform("1", subtitle.translatedName)).map(paragraphObejct => paragraphObejct ? paragraphObejct.paragraph : "").join(" ");
             }));
 
             return article;
         } catch (error) {
-
+            console.log(error)
         }
     }
 }
