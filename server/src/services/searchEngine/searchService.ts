@@ -67,7 +67,8 @@ export class searchService implements ISearchService {
             const removeHtmlTagsRegexs = [
                 /(?:<style.+?>.+?<\/style>|<script.+?>.+?<\/script>|<(?:!|\/?[a-zA-Z]+).*?\/?>)/g,
                 /(?:\s*\S+\s*{[^}]*})+/g,
-                /ath.*?<\/svg/g
+                /ath.*?<\/svg/g,
+                /ath.*?\/path/g
             ];
 
             getSnippedTextRegexs.forEach(optimalTextRegex => {
