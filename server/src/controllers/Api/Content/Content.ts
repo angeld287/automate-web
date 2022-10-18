@@ -32,14 +32,16 @@ class Content {
 
 
                 //translate the selected content to spanish
-                const articleWithCompletedTranslation = await Content.translateContent(articleSearchResult);
+                //const articleWithCompletedTranslation = await Content.translateContent(articleSearchResult);
+
+
                 //search and download the image
 
                 //conver images to webp
 
                 //post the article
 
-                articles[index] = articleWithCompletedTranslation;
+                articles[index] = articleSearchResult;
             }));
 
             return new SuccessResponse('Success', {
@@ -91,14 +93,11 @@ class Content {
             await Promise.all(article.subtitiles.map(async (subtitle: SubTitleContent, index) => {
                 const translation = await translate.perform(subtitle.content, 'es');
                 if (translation.success) {
-                    article.subtitiles[index].translatedContent = (await translate.perform(subtitle.content, 'es')).body[0]['translations'][0].text;
+                    article.subtitiles[index].translatedContent = translation.body[0]['translations'][0].text;
                     article.subtitiles[index].error = false;
                 } else {
                     article.subtitiles[index].error = { message: `Error occurred in subtitle content translations: ${translation.body}`, details: translation.errorDetails };
                 }
-                console.log('subtitle.content')
-                console.log(subtitle.content)
-
             }));
 
             return article;
@@ -112,9 +111,19 @@ class Content {
     static async searchContent(article: INewArticle): Promise<INewArticle> {
         try {
             let search: ISearchService = new searchService();
+            let translate: ITranslateService = new translateService();
 
             await Promise.all(article.subtitiles.map(async (subtitle, index) => {
-                article.subtitiles[index].content = (await search.perform("1", subtitle.translatedName)).map(paragraphObejct => paragraphObejct ? paragraphObejct.paragraph : "").join(" ");
+                const subParagraphs = (await search.perform("1", subtitle.translatedName)).map(paragraphObejct => paragraphObejct ? paragraphObejct.paragraph : "").filter(paragraph => paragraph !== "");
+
+                await Promise.all(subParagraphs.map(async (paragraph, paragraphIndex) => {
+                    const translation = await translate.perform(paragraph, 'es');
+                    if (translation.success) {
+                        subParagraphs[paragraphIndex] = translation.body[0]['translations'][0].text;
+                    }
+                }))
+
+                article.subtitiles[index].content = subParagraphs.join(" ");
             }));
 
             return article;

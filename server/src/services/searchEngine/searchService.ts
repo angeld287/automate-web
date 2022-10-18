@@ -38,10 +38,15 @@ export class searchService implements ISearchService {
         try {
             return new Promise(function (resolve, reject) {
                 request(url, function (error, response, body) {
-                    if (error !== null && response.body.length < Locals.config().MIN_PAGE_SOURCE_LENGTH) {
+                    try {
+                        if (error !== null && response.body.length < Locals.config().MIN_PAGE_SOURCE_LENGTH) {
+                            reject({ success: false, error });
+                        } else {
+                            resolve({ success: true, response: response.body });
+                        }
+                    } catch (error) {
+                        console.log('requestPageSource: ', error)
                         reject({ success: false, error });
-                    } else {
-                        resolve({ success: true, response: response.body });
                     }
                 });
             });
