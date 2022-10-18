@@ -96,6 +96,9 @@ class Content {
                 } else {
                     article.subtitiles[index].error = { message: `Error occurred in subtitle content translations: ${translation.body}`, details: translation.errorDetails };
                 }
+                console.log('subtitle.content')
+                console.log(subtitle.content)
+
             }));
 
             return article;

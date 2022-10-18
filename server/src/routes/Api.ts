@@ -13,6 +13,7 @@ import PageSource from '../controllers/Api/Pages/PageSource';
 import Passport from '../providers/Passport';
 import Session from '../controllers/Api/Auth/Session';
 import ContentController from '../controllers/Api/Content/Content';
+import TranslateController from '../controllers/Api/Content/Translate';
 
 const router = Router();
 
@@ -61,6 +62,14 @@ router.post(
     body('url', 'url cannot be blank.').notEmpty(),
     //Passport.isAuthenticated,
     PageSource.getPageSource
+);
+
+router.post(
+    '/translate',
+    body('text', 'text cannot be blank.').notEmpty(),
+    body('language', 'language cannot be blank.').notEmpty(),
+    //Passport.isAuthenticated,
+    TranslateController.perform
 );
 
 router.get(
