@@ -30,7 +30,7 @@ export class searchService implements ISearchService {
 
             return paragraphs;
         } catch (error) {
-            throw new Error("Error in search service: " + error);
+            throw new Error("Error in search service: " + JSON.stringify(error));
         }
     }
 
@@ -39,19 +39,22 @@ export class searchService implements ISearchService {
             return new Promise(function (resolve, reject) {
                 request(url, function (error, response, body) {
                     try {
-                        if (error !== null && response.body.length < Locals.config().MIN_PAGE_SOURCE_LENGTH) {
-                            reject({ success: false, error });
+                        if (error !== null) {
+                            resolve({ success: false, error });
                         } else {
-                            resolve({ success: true, response: response.body });
+                            if (response.body.length < Locals.config().MIN_PAGE_SOURCE_LENGTH) {
+                                resolve({ success: false, error: 'Content does not exceed the MIN_PAGE_SOURCE_LENGTH' });
+                            } else {
+                                resolve({ success: true, response: response.body });
+                            }
                         }
                     } catch (error) {
-                        console.log('requestPageSource: ', error)
                         reject({ success: false, error });
                     }
                 });
             });
         } catch (error) {
-            throw new Error("Error in requestPageSource: " + error);
+            throw new Error("Error in requestPageSource: " + JSON.stringify(error));
         }
     }
 
