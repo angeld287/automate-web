@@ -18,4 +18,5 @@ export interface SubTitleContent {
 
 export interface ProcessError {
     message: string;
+    details?: any
 }

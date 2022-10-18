@@ -59,7 +59,7 @@ router.post(
 router.post(
     '/getPageSource',
     body('url', 'url cannot be blank.').notEmpty(),
-    Passport.isAuthenticated,
+    //Passport.isAuthenticated,
     PageSource.getPageSource
 );
 

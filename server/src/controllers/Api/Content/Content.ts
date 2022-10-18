@@ -94,7 +94,7 @@ class Content {
                     article.subtitiles[index].translatedContent = (await translate.perform(subtitle.content, 'es')).body[0]['translations'][0].text;
                     article.subtitiles[index].error = false;
                 } else {
-                    article.subtitiles[index].error = { message: "Error occurred in subtitle content translations." };
+                    article.subtitiles[index].error = { message: `Error occurred in subtitle content translations: ${translation.body}`, details: translation.errorDetails };
                 }
             }));
 

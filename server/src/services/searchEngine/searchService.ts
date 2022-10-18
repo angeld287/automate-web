@@ -8,6 +8,7 @@ export class searchService implements ISearchService {
         try {
 
             const response = await axios({ url: `${Locals.config().SEARCH_ENGINE_URL}&num=${Locals.config().GOOGLE_RESULTS_QUANTITY}&start=${index}&q=${encodeURIComponent(keyword)}` })
+            let paragraphsQuantity = 0;
             const paragraphs = [];
             if (!response.success) {
                 return response;
@@ -15,117 +16,132 @@ export class searchService implements ISearchService {
 
             await Promise.all(response.body.items.map(async (searchResult, index) => {
 
-                const snippet = searchResult.snippet;
-                const pageSource = await searchService.requestPageSource(searchResult.link);
-                const paragraph = await searchService.getParagraph(snippet, pageSource, searchResult.link);
+                if (paragraphsQuantity <= Locals.config().NUMBER_OF_PARAGRAPHS_ALLOWED) {
+                    const snippet = searchResult.snippet;
+                    const pageSource = await searchService.requestPageSource(searchResult.link);
+                    if (pageSource.success) {
+                        const paragraph = await searchService.getParagraph(snippet, pageSource.response, searchResult.link);
+                        paragraphs.push(paragraph)
+                        paragraphsQuantity++
+                    }
+                }
 
-                paragraphs.push(paragraph)
             }));
 
             return paragraphs;
         } catch (error) {
             throw new Error("Error in search service: " + error);
-
         }
     }
 
     static async requestPageSource(url: string): Promise<any> {
-        return new Promise(function (resolve, reject) {
-            request(url, function (error, response, body) {
-                if (!error && response.statusCode == 200) {
-                    resolve(body);
-                } else {
-                    reject(error);
-                }
+        try {
+            return new Promise(function (resolve, reject) {
+                request(url, function (error, response, body) {
+                    if (error !== null && response.body.length < Locals.config().MIN_PAGE_SOURCE_LENGTH) {
+                        reject({ success: false, error });
+                    } else {
+                        resolve({ success: true, response: response.body });
+                    }
+                });
             });
-        });
+        } catch (error) {
+            throw new Error("Error in requestPageSource: " + error);
+        }
     }
 
     static async getParagraph(snippet: string, pageSource: string, link: string): Promise<Array<string>> {
+        try {
+            const paragraphs = []
+            let regexWithSniped = null;
+            let snippetMatchResults = [];
+            const getSnippedTextRegexs = [/([^\.]+),([^\.]+)/g, /([^\.]+)(.|,)([^\.]+)/g];
+            const removeHtmlTagsRegexs = [
+                /(?:<style.+?>.+?<\/style>|<script.+?>.+?<\/script>|<(?:!|\/?[a-zA-Z]+).*?\/?>)/g,
+                /(?:\s*\S+\s*{[^}]*})+/g,
+                /ath.*?<\/svg/g
+            ];
 
-        const paragraphs = []
-        let regexWithSniped = null;
-        let snippetMatchResults = [];
-        const getSnippedTextRegexs = [/([^\.]+),([^\.]+)/g, /([^\.]+)(.|,)([^\.]+)/g];
-        const removeHtmlTagsRegexs = [/(?:<style.+?>.+?<\/style>|<script.+?>.+?<\/script>|<(?:!|\/?[a-zA-Z]+).*?\/?>)/g, /(?:\s*\S+\s*{[^}]*})+/g, /ath.*?<\/svg/g];
+            getSnippedTextRegexs.forEach(optimalTextRegex => {
+                snippetMatchResults = snippet.match(optimalTextRegex);
+                if (optimalTextRegex != null) {
+                    return false;
+                }
+            });
 
-        getSnippedTextRegexs.forEach(optimalTextRegex => {
-            snippetMatchResults = snippet.match(optimalTextRegex);
-            if (optimalTextRegex != null) {
-                return false;
-            }
-        });
+            await Promise.all(snippetMatchResults.map(async (matchResult: string) => {
+                let posibleParagraphs = null
+                if (matchResult.length > Locals.config().MIN_CHARACTERS) {
+                    let cleanedSnipped = matchResult.trim();
 
-        await Promise.all(snippetMatchResults.map(async (matchResult: string) => {
-            let posibleParagraphs = null
-            if (matchResult.length > Locals.config().MIN_CHARACTERS) {
-                let cleanedSnipped = matchResult.trim();
+                    let attempts = 0
 
-                let attempts = 0
-
-                while (posibleParagraphs === null) {
-                    try {
-                        regexWithSniped = new RegExp("(<p(.{0,200})>|<p(.{0,200})>\n|<li>|<li>\n).*?(" + cleanedSnipped + ").*?(<\/p>|\n<\/p>|<\/li>|\n<\/li>)");
-                    } catch (error) {
-                        break;
-                    }
-
-                    posibleParagraphs = pageSource.match(regexWithSniped);
-
-                    if (cleanedSnipped.length > (Locals.config().MIN_CHARACTERS + 1) && posibleParagraphs === null) {
-                        const snippetLength = cleanedSnipped.length
-                        switch (attempts) {
-                            case 0:
-                                cleanedSnipped = cleanedSnipped.substring(1, snippetLength - 1);
-                                break;
-
-                            case 1:
-                                cleanedSnipped = cleanedSnipped.substring(0, snippetLength - 1);
-                                break;
-
-                            case 2:
-                                cleanedSnipped = cleanedSnipped.substring(1, snippetLength);
-                                break;
-
-                            default:
-                                break;
+                    while (posibleParagraphs === null) {
+                        try {
+                            regexWithSniped = new RegExp("(<p(.{0,200})>|<p(.{0,200})>\n|<li>|<li>\n).*?(" + cleanedSnipped + ").*?(<\/p>|\n<\/p>|<\/li>|\n<\/li>)");
+                        } catch (error) {
+                            break;
                         }
 
-                    } else {
+                        posibleParagraphs = pageSource.match(regexWithSniped);
 
-                        if (posibleParagraphs != null) {
-                            await Promise.all(posibleParagraphs.map(async (paragraph: any) => {
+                        if (cleanedSnipped.length > (Locals.config().MIN_CHARACTERS + 1) && posibleParagraphs === null) {
+                            const snippetLength = cleanedSnipped.length
+                            switch (attempts) {
+                                case 0:
+                                    cleanedSnipped = cleanedSnipped.substring(1, snippetLength - 1);
+                                    break;
 
-                                //This is where the paragraphs are cleaned with the regular expressions of removeHtmlTagsRegexs
-                                removeHtmlTagsRegexs.forEach(removeTagsRegrex => {
-                                    paragraph = paragraph?.replaceAll(removeTagsRegrex, "");
-                                });
+                                case 1:
+                                    cleanedSnipped = cleanedSnipped.substring(0, snippetLength - 1);
+                                    break;
 
-                                await delay(50);
-                                let id = new Date().getTime();
-                                const wordCount = paragraph?.split(/\s+/).length;
+                                case 2:
+                                    cleanedSnipped = cleanedSnipped.substring(1, snippetLength);
+                                    break;
 
-                                if (paragraph && paragraph !== "" && wordCount > Locals.config().MIN_WORDS_IN_PARAGRAPH && wordCount < Locals.config().MAX_WORDS_IN_PARAGRAPH) {
-                                    paragraphs.push({ id, paragraph, wordCount, link });
-                                }
+                                default:
+                                    break;
+                            }
 
-                                return;
-                            }));
                         } else {
-                            attempts++;
-                            if (attempts === 1 || attempts === 2) {
-                                cleanedSnipped = matchResult.trim();
+
+                            if (posibleParagraphs != null) {
+
+                                await Promise.all(posibleParagraphs.map(async (paragraph: any) => {
+                                    //This is where the paragraphs are cleaned with the regular expressions of removeHtmlTagsRegexs
+                                    removeHtmlTagsRegexs.forEach(removeTagsRegrex => {
+                                        paragraph = paragraph?.replaceAll(removeTagsRegrex, "");
+                                    });
+
+                                    await delay(50);
+                                    let id = new Date().getTime();
+                                    const wordCount = paragraph?.split(/\s+/).length;
+
+                                    if (paragraph && paragraph !== "" && wordCount > Locals.config().MIN_WORDS_IN_PARAGRAPH && wordCount < Locals.config().MAX_WORDS_IN_PARAGRAPH) {
+                                        paragraphs.push({ id, paragraph, wordCount, link });
+                                    }
+
+                                    return;
+                                }));
                             } else {
-                                break;
+                                attempts++;
+                                if (attempts === 1 || attempts === 2) {
+                                    cleanedSnipped = matchResult.trim();
+                                } else {
+                                    break;
+                                }
                             }
                         }
                     }
+
                 }
 
-            }
+            }));
 
-        }));
-
-        return paragraphs.sort((a, b) => b.wordCount - a.wordCount)[0]
+            return paragraphs.sort((a, b) => b.wordCount - a.wordCount)[0]
+        } catch (error) {
+            throw new Error("Error in getParagraph: " + error);
+        }
     }
 }
