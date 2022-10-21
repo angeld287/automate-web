@@ -1,4 +1,5 @@
 import { ISearchService } from "../../interfaces/ISearchService";
+import Paragraph, { SeekerScenario } from "../../interfaces/models/Paragraph";
 import Locals from "../../providers/Locals";
 import { axios, delay } from "../../utils";
 var request = require('request');
@@ -15,12 +16,13 @@ export class searchService implements ISearchService {
             }
 
             await Promise.all(response.body.items.map(async (searchResult, index) => {
-
-                if (paragraphsQuantity <= Locals.config().NUMBER_OF_PARAGRAPHS_ALLOWED) {
+                const ca = Locals.config().NUMBER_OF_PARAGRAPHS_ALLOWED;
+                if (paragraphsQuantity <= ca) {
                     const snippet = searchResult.snippet;
                     const pageSource = await searchService.requestPageSource(searchResult.link);
                     if (pageSource.success) {
-                        const paragraph = await searchService.getParagraph(snippet, pageSource.response, searchResult.link);
+                        const paragraph = await searchService.getParagraph(snippet, pageSource.response, searchResult.link, keyword);
+                        console.log(paragraph)
                         paragraphs.push(paragraph)
                         paragraphsQuantity++
                     }
@@ -58,10 +60,30 @@ export class searchService implements ISearchService {
         }
     }
 
-    static async getParagraph(snippet: string, pageSource: string, link: string): Promise<Array<string>> {
+    static async getParagraph(snippet: string, pageSource: string, link: string, keyword: string): Promise<Paragraph> {
         try {
-            const paragraphs = []
+            let paragraph: Paragraph = {
+                link,
+                paragraph: "",
+                wordCount: 0,
+                keyword,
+                scenario: {
+                    foundInCase: 0,
+                    found: false,
+                    regularExpressionUsed: "",
+                    whyNotFound: ""
+                }
+            }
+
             let regexWithSniped = null;
+            let regrexLeft = "(<p(.{0,200})>|<p(.{0,200})>\n|<li>|<li>\n).*?(";
+            let regrexRight = ").*?(<\/p>|\n<\/p>|<\/li>|\n<\/li>)";
+
+            const minCharacters = Locals.config().MIN_CHARACTERS;
+            const minCharactersMessage = `the length of the snipped is less than required - Required: ${minCharacters} - Snipped Length:`;
+
+            let specialCondition: boolean = true;
+
             let snippetMatchResults = [];
             const getSnippedTextRegexs = [/([^\.]+),([^\.]+)/g, /([^\.]+)(.|,)([^\.]+)/g];
             const removeHtmlTagsRegexs = [
@@ -79,34 +101,60 @@ export class searchService implements ISearchService {
             });
 
             await Promise.all(snippetMatchResults.map(async (matchResult: string) => {
-                let posibleParagraphs = null
-                if (matchResult.length > Locals.config().MIN_CHARACTERS) {
+                let paragraphMatchResults = null
+                if (matchResult.length > minCharacters) {
                     let cleanedSnipped = matchResult.trim();
 
                     let attempts = 0
+                    let oneAttempt = 0
 
-                    while (posibleParagraphs === null) {
+                    while (paragraphMatchResults === null) {
                         try {
-                            regexWithSniped = new RegExp("(<p(.{0,200})>|<p(.{0,200})>\n|<li>|<li>\n).*?(" + cleanedSnipped + ").*?(<\/p>|\n<\/p>|<\/li>|\n<\/li>)");
+                            regexWithSniped = new RegExp(`${regrexLeft}${cleanedSnipped}${regrexRight}`);
                         } catch (error) {
+                            paragraph.scenario = { ...paragraph.scenario, regularExpressionUsed: regexWithSniped, found: false, whyNotFound: JSON.stringify(error) } as SeekerScenario
                             break;
                         }
 
-                        posibleParagraphs = pageSource.match(regexWithSniped);
+                        paragraphMatchResults = pageSource.match(regexWithSniped);
 
-                        if (cleanedSnipped.length > (Locals.config().MIN_CHARACTERS + 1) && posibleParagraphs === null) {
+                        if (specialCondition && paragraphMatchResults === null) {
                             const snippetLength = cleanedSnipped.length
+                            paragraph.scenario = { ...paragraph.scenario, foundInCase: attempts, regularExpressionUsed: regexWithSniped } as SeekerScenario
+
                             switch (attempts) {
                                 case 0:
                                     cleanedSnipped = cleanedSnipped.substring(1, snippetLength - 1);
+                                    specialCondition = cleanedSnipped.length > (minCharacters + 1);
+
+                                    if (!specialCondition)
+                                        paragraph.scenario = { ...paragraph.scenario, whyNotFound: `${minCharactersMessage} ${cleanedSnipped.length}` } as SeekerScenario
+
                                     break;
 
                                 case 1:
                                     cleanedSnipped = cleanedSnipped.substring(0, snippetLength - 1);
+                                    specialCondition = cleanedSnipped.length > (minCharacters + 1);
+
+                                    if (!specialCondition)
+                                        paragraph.scenario = { ...paragraph.scenario, whyNotFound: `${minCharactersMessage} ${cleanedSnipped.length}` } as SeekerScenario
+
                                     break;
 
                                 case 2:
                                     cleanedSnipped = cleanedSnipped.substring(1, snippetLength);
+                                    specialCondition = cleanedSnipped.length > (minCharacters + 1);
+
+                                    if (!specialCondition)
+                                        paragraph.scenario = { ...paragraph.scenario, whyNotFound: `${minCharactersMessage} ${cleanedSnipped.length}` } as SeekerScenario
+
+                                    break;
+
+                                case 3:
+                                    regrexLeft = '(<meta).*?(';
+                                    regrexRight = ').*?(")';
+                                    specialCondition = oneAttempt < 1
+                                    oneAttempt++
                                     break;
 
                                 default:
@@ -115,29 +163,56 @@ export class searchService implements ISearchService {
 
                         } else {
 
-                            if (posibleParagraphs != null) {
+                            if (paragraphMatchResults != null) {
+                                //const regresnip = regexWithSniped
+                                //const snipped = matchResult
+                                //const _cleanedSnipped = cleanedSnipped
+                                //const fullSnipped = snippet
+                                //const k = keyword;
+                                //let paragraph = "";
 
-                                await Promise.all(posibleParagraphs.map(async (paragraph: any) => {
-                                    //This is where the paragraphs are cleaned with the regular expressions of removeHtmlTagsRegexs
-                                    removeHtmlTagsRegexs.forEach(removeTagsRegrex => {
-                                        paragraph = paragraph?.replaceAll(removeTagsRegrex, "");
-                                    });
+                                //const ps = paragraph;
 
-                                    await delay(50);
-                                    let id = new Date().getTime();
-                                    const wordCount = paragraph?.split(/\s+/).length;
 
-                                    if (paragraph && paragraph !== "" && wordCount > Locals.config().MIN_WORDS_IN_PARAGRAPH && wordCount < Locals.config().MAX_WORDS_IN_PARAGRAPH) {
-                                        paragraphs.push({ id, paragraph, wordCount, link });
+                                const htmlParagraph: string = paragraphMatchResults[0];
+                                let splitParagraphs: Array<string> = []
+
+                                //htmlParagraph: es el que encontro arriba.
+                                //El cual fue encontrado con la expresion regular "regexWithSniped" la cual contiene el texto "cleanedSnipped"
+
+                                //despues de remover el html del parrafo encontrado y ceparar los textos el snipped no es encontrado en algunos casos
+
+                                splitParagraphs = htmlParagraph.replace(removeHtmlTagsRegexs[0], "|").split("|").filter(text => text !== " " && text !== "").reverse();
+
+                                await Promise.all(splitParagraphs.map(async (paragraphText: any) => {
+                                    const isMatch = paragraphText.match(cleanedSnipped);
+
+                                    if (isMatch !== null) {
+                                        const wordCount = paragraphText?.split(/\s+/).length;
+                                        paragraph = {
+                                            ...paragraph,
+                                            paragraph: paragraphText,
+                                            wordCount,
+                                            scenario: {
+                                                ...paragraph.scenario,
+                                                found: true,
+                                                whyNotFound: ""
+                                            }
+                                        };
                                     }
-
-                                    return;
                                 }));
+
+                                break;
+
                             } else {
                                 attempts++;
-                                if (attempts === 1 || attempts === 2) {
+                                if (attempts === 1 || attempts === 2 || attempts === 3) {
                                     cleanedSnipped = matchResult.trim();
+                                    if (attempts > 2) {
+                                        specialCondition = true;
+                                    }
                                 } else {
+                                    paragraph.scenario = { ...paragraph.scenario, found: false } as SeekerScenario
                                     break;
                                 }
                             }
@@ -148,7 +223,7 @@ export class searchService implements ISearchService {
 
             }));
 
-            return paragraphs.sort((a, b) => b.wordCount - a.wordCount)[0]
+            return paragraph
         } catch (error) {
             throw new Error("Error in getParagraph: " + error);
         }

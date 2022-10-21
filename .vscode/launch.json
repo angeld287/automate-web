@@ -1,0 +1,13 @@
+{
+    "configurations": [
+        {
+            "name": "Node JS Attach",
+            "port": 9229,
+            "request": "attach",
+            "skipFiles": [
+                "node_modules/**"
+            ],
+            "type": "node"
+        }
+    ]
+}
