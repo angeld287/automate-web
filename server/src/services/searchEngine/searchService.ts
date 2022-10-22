@@ -10,7 +10,7 @@ export class searchService implements ISearchService {
 
             const response = await axios({ url: `${Locals.config().SEARCH_ENGINE_URL}&num=${Locals.config().GOOGLE_RESULTS_QUANTITY}&start=${index}&q=${encodeURIComponent(keyword)}` })
             let paragraphsQuantity = 0;
-            const paragraphs = [];
+            const paragraphs: Array<Paragraph> = [];
             if (!response.success) {
                 return response;
             }
@@ -22,13 +22,15 @@ export class searchService implements ISearchService {
                     const pageSource = await searchService.requestPageSource(searchResult.link);
                     if (pageSource.success) {
                         const snippedParagraphs = await searchService.getParagraph(snippet, pageSource.response, searchResult.link, keyword);
-                        console.log(snippedParagraphs)
+                        //console.log(snippedParagraphs)
                         paragraphs.push(...snippedParagraphs)
                         paragraphsQuantity++
                     }
                 }
 
             }));
+
+            console.log(paragraphs.filter(para => para.scenario.foundInCase === 4))
 
             return paragraphs;
         } catch (error) {
@@ -220,9 +222,7 @@ export class searchService implements ISearchService {
                                 attempts++;
                                 if (attempts === 1 || attempts === 2 || attempts === 3 || attempts === 4) {
                                     cleanedSnipped = matchResult.trim();
-                                    if (attempts > 2) {
-                                        specialCondition = true;
-                                    }
+                                    specialCondition = true;
                                 } else {
                                     paragraph.scenario = { ...paragraph.scenario, found: false } as SeekerScenario
                                     break;
