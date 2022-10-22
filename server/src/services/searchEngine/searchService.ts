@@ -21,9 +21,9 @@ export class searchService implements ISearchService {
                     const snippet = searchResult.snippet;
                     const pageSource = await searchService.requestPageSource(searchResult.link);
                     if (pageSource.success) {
-                        const paragraph = await searchService.getParagraph(snippet, pageSource.response, searchResult.link, keyword);
-                        console.log(paragraph)
-                        paragraphs.push(paragraph)
+                        const snippedParagraphs = await searchService.getParagraph(snippet, pageSource.response, searchResult.link, keyword);
+                        console.log(snippedParagraphs)
+                        paragraphs.push(...snippedParagraphs)
                         paragraphsQuantity++
                     }
                 }
@@ -60,27 +60,16 @@ export class searchService implements ISearchService {
         }
     }
 
-    static async getParagraph(snippet: string, pageSource: string, link: string, keyword: string): Promise<Paragraph> {
+    static async getParagraph(snippet: string, pageSource: string, link: string, keyword: string): Promise<Array<Paragraph>> {
         try {
-            let paragraph: Paragraph = {
-                link,
-                paragraph: "",
-                wordCount: 0,
-                keyword,
-                scenario: {
-                    foundInCase: 0,
-                    found: false,
-                    regularExpressionUsed: "",
-                    whyNotFound: ""
-                }
-            }
 
+            const paragraphs: Array<Paragraph> = []
             let regexWithSniped = null;
             let regrexLeft = "(<p(.{0,200})>|<p(.{0,200})>\n|<li>|<li>\n).*?(";
             let regrexRight = ").*?(<\/p>|\n<\/p>|<\/li>|\n<\/li>)";
 
-            const minCharacters = Locals.config().MIN_CHARACTERS;
-            const minCharactersMessage = `the length of the snipped is less than required - Required: ${minCharacters} - Snipped Length:`;
+            const minWordsInSnipped = Locals.config().MIN_WORDS_IN_SNIPPED;
+            const minWordsInSnippedMessage = `The minimum of words in the snipped is less than required - Required: ${minWordsInSnipped + 1} - Snipped words count:`;
 
             let specialCondition: boolean = true;
 
@@ -102,7 +91,21 @@ export class searchService implements ISearchService {
 
             await Promise.all(snippetMatchResults.map(async (matchResult: string) => {
                 let paragraphMatchResults = null
-                if (matchResult.length > minCharacters) {
+
+                let paragraph: Paragraph = {
+                    link,
+                    paragraph: "",
+                    wordCount: 0,
+                    keyword,
+                    scenario: {
+                        foundInCase: 99,
+                        found: false,
+                        regularExpressionUsed: "",
+                        whyNotFound: ""
+                    }
+                }
+
+                if (matchResult.split(/\s+/).length > minWordsInSnipped) {
                     let cleanedSnipped = matchResult.trim();
 
                     let attempts = 0
@@ -111,6 +114,7 @@ export class searchService implements ISearchService {
                     while (paragraphMatchResults === null) {
                         try {
                             regexWithSniped = new RegExp(`${regrexLeft}${cleanedSnipped}${regrexRight}`);
+                            paragraph.scenario = { ...paragraph.scenario, foundInCase: attempts, regularExpressionUsed: regexWithSniped } as SeekerScenario
                         } catch (error) {
                             paragraph.scenario = { ...paragraph.scenario, regularExpressionUsed: regexWithSniped, found: false, whyNotFound: JSON.stringify(error) } as SeekerScenario
                             break;
@@ -120,33 +124,32 @@ export class searchService implements ISearchService {
 
                         if (specialCondition && paragraphMatchResults === null) {
                             const snippetLength = cleanedSnipped.length
-                            paragraph.scenario = { ...paragraph.scenario, foundInCase: attempts, regularExpressionUsed: regexWithSniped } as SeekerScenario
 
                             switch (attempts) {
                                 case 0:
                                     cleanedSnipped = cleanedSnipped.substring(1, snippetLength - 1);
-                                    specialCondition = cleanedSnipped.length > (minCharacters + 1);
+                                    specialCondition = cleanedSnipped.split(/\s+/).length > (minWordsInSnipped + 1);
 
                                     if (!specialCondition)
-                                        paragraph.scenario = { ...paragraph.scenario, whyNotFound: `${minCharactersMessage} ${cleanedSnipped.length}` } as SeekerScenario
+                                        paragraph.scenario = { ...paragraph.scenario, whyNotFound: `${minWordsInSnippedMessage} ${cleanedSnipped.split(/\s+/).length}` } as SeekerScenario
 
                                     break;
 
                                 case 1:
                                     cleanedSnipped = cleanedSnipped.substring(0, snippetLength - 1);
-                                    specialCondition = cleanedSnipped.length > (minCharacters + 1);
+                                    specialCondition = cleanedSnipped.split(/\s+/).length > (minWordsInSnipped + 1);
 
                                     if (!specialCondition)
-                                        paragraph.scenario = { ...paragraph.scenario, whyNotFound: `${minCharactersMessage} ${cleanedSnipped.length}` } as SeekerScenario
+                                        paragraph.scenario = { ...paragraph.scenario, whyNotFound: `${minWordsInSnippedMessage} ${cleanedSnipped.split(/\s+/).length}` } as SeekerScenario
 
                                     break;
 
                                 case 2:
                                     cleanedSnipped = cleanedSnipped.substring(1, snippetLength);
-                                    specialCondition = cleanedSnipped.length > (minCharacters + 1);
+                                    specialCondition = cleanedSnipped.split(/\s+/).length > (minWordsInSnipped + 1);
 
                                     if (!specialCondition)
-                                        paragraph.scenario = { ...paragraph.scenario, whyNotFound: `${minCharactersMessage} ${cleanedSnipped.length}` } as SeekerScenario
+                                        paragraph.scenario = { ...paragraph.scenario, whyNotFound: `${minWordsInSnippedMessage} ${cleanedSnipped.split(/\s+/).length}` } as SeekerScenario
 
                                     break;
 
@@ -155,6 +158,15 @@ export class searchService implements ISearchService {
                                     regrexRight = ').*?(")';
                                     specialCondition = oneAttempt < 1
                                     oneAttempt++
+
+                                    if (oneAttempt > 1)
+                                        paragraph.scenario = { ...paragraph.scenario, whyNotFound: `Was not found in the meta description.` } as SeekerScenario
+
+                                    break;
+
+                                case 4:
+                                    specialCondition = false
+                                    paragraph.scenario = { ...paragraph.scenario, whyNotFound: `Was not found in case 4.` } as SeekerScenario
                                     break;
 
                                 default:
@@ -206,7 +218,7 @@ export class searchService implements ISearchService {
 
                             } else {
                                 attempts++;
-                                if (attempts === 1 || attempts === 2 || attempts === 3) {
+                                if (attempts === 1 || attempts === 2 || attempts === 3 || attempts === 4) {
                                     cleanedSnipped = matchResult.trim();
                                     if (attempts > 2) {
                                         specialCondition = true;
@@ -221,9 +233,12 @@ export class searchService implements ISearchService {
 
                 }
 
+                if (matchResult.split(/\s+/).length > minWordsInSnipped)
+                    paragraphs.push(paragraph);
+
             }));
 
-            return paragraph
+            return paragraphs
         } catch (error) {
             throw new Error("Error in getParagraph: " + error);
         }
