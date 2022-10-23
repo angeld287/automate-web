@@ -1,7 +1,7 @@
 import { ISearchService } from "../../interfaces/ISearchService";
 import Paragraph, { SeekerScenario } from "../../interfaces/models/Paragraph";
 import Locals from "../../providers/Locals";
-import { axios, delay } from "../../utils";
+import { axios } from "../../utils";
 var request = require('request');
 
 export class searchService implements ISearchService {
@@ -22,7 +22,6 @@ export class searchService implements ISearchService {
                     const pageSource = await searchService.requestPageSource(searchResult.link);
                     if (pageSource.success) {
                         const snippedParagraphs = await searchService.getParagraph(snippet, pageSource.response, searchResult.link, keyword);
-                        //console.log(snippedParagraphs)
                         paragraphs.push(...snippedParagraphs)
                         paragraphsQuantity++
                     }
@@ -30,7 +29,8 @@ export class searchService implements ISearchService {
 
             }));
 
-            console.log(paragraphs.filter(para => para.scenario.foundInCase === 4))
+            //console.log(paragraphs.filter(para => para.scenario.foundInCase === 4))
+            //console.log(paragraphs.filter(para => para.scenario.foundInCase !== 4))
 
             return paragraphs;
         } catch (error) {
@@ -81,7 +81,8 @@ export class searchService implements ISearchService {
                 /(?:<style.+?>.+?<\/style>|<script.+?>.+?<\/script>|<(?:!|\/?[a-zA-Z]+).*?\/?>)/g,
                 /(?:\s*\S+\s*{[^}]*})+/g,
                 /ath.*?<\/svg/g,
-                /ath.*?\/path/g
+                /ath.*?\/path/g,
+                /<meta name="description" content="/g
             ];
 
             getSnippedTextRegexs.forEach(optimalTextRegex => {
@@ -178,25 +179,19 @@ export class searchService implements ISearchService {
                         } else {
 
                             if (paragraphMatchResults != null) {
-                                //const regresnip = regexWithSniped
-                                //const snipped = matchResult
-                                //const _cleanedSnipped = cleanedSnipped
-                                //const fullSnipped = snippet
-                                //const k = keyword;
-                                //let paragraph = "";
 
-                                //const ps = paragraph;
-
-
-                                const htmlParagraph: string = paragraphMatchResults[0];
+                                let htmlParagraph: string = paragraphMatchResults[0];
                                 let splitParagraphs: Array<string> = []
 
-                                //htmlParagraph: es el que encontro arriba.
-                                //El cual fue encontrado con la expresion regular "regexWithSniped" la cual contiene el texto "cleanedSnipped"
-
-                                //despues de remover el html del parrafo encontrado y ceparar los textos el snipped no es encontrado en algunos casos
+                                if (htmlParagraph.includes("<meta")) {
+                                    htmlParagraph = htmlParagraph.replace(removeHtmlTagsRegexs[4], "").replace(`"`, "")
+                                }
 
                                 splitParagraphs = htmlParagraph.replace(removeHtmlTagsRegexs[0], "|").split("|").filter(text => text !== " " && text !== "").reverse();
+                                //const match = text.match(`([A-Z][^\.!?].*?(${cleanedSnipped}).*?[\.!?])`);
+
+                                //no se debe hacer split, solamente hay que quitar los tags y sacar la oracion a la que pertenece el snipped.
+
 
                                 await Promise.all(splitParagraphs.map(async (paragraphText: any) => {
                                     const isMatch = paragraphText.match(cleanedSnipped);
