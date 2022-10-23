@@ -16,8 +16,7 @@ export class searchService implements ISearchService {
             }
 
             await Promise.all(response.body.items.map(async (searchResult, index) => {
-                const ca = Locals.config().NUMBER_OF_PARAGRAPHS_ALLOWED;
-                if (paragraphsQuantity <= ca) {
+                if (paragraphsQuantity <= Locals.config().NUMBER_OF_PARAGRAPHS_ALLOWED) {
                     const snippet = searchResult.snippet;
                     const pageSource = await searchService.requestPageSource(searchResult.link);
                     if (pageSource.success) {
@@ -181,26 +180,28 @@ export class searchService implements ISearchService {
                             if (paragraphMatchResults != null) {
 
                                 let htmlParagraph: string = paragraphMatchResults[0];
+                                let cleanedParagraph: string = ""
                                 let splitParagraphs: Array<string> = []
+                                let itsMached: boolean = false
+
+                                const regrexGetParagraph = [
+                                    `((\. [A-Z][^.]+)(${cleanedSnipped}).*\.)`, // match snipped that is inside a paragraph
+                                    `((${cleanedSnipped}).*\.)` // match snipped that is at beginning of paragraph
+                                ];
 
                                 if (htmlParagraph.includes("<meta")) {
                                     htmlParagraph = htmlParagraph.replace(removeHtmlTagsRegexs[4], "").replace(`"`, "")
+                                } else {
+                                    cleanedParagraph = htmlParagraph.replace(removeHtmlTagsRegexs[0], " ")
                                 }
 
-                                splitParagraphs = htmlParagraph.replace(removeHtmlTagsRegexs[0], "|").split("|").filter(text => text !== " " && text !== "").reverse();
-                                //const match = text.match(`([A-Z][^\.!?].*?(${cleanedSnipped}).*?[\.!?])`);
-
-                                //no se debe hacer split, solamente hay que quitar los tags y sacar la oracion a la que pertenece el snipped.
-
-
-                                await Promise.all(splitParagraphs.map(async (paragraphText: any) => {
-                                    const isMatch = paragraphText.match(cleanedSnipped);
-
-                                    if (isMatch !== null) {
-                                        const wordCount = paragraphText?.split(/\s+/).length;
+                                await Promise.all(regrexGetParagraph.map(async (regrex: any) => {
+                                    const isMatch = cleanedParagraph.match(regrex);
+                                    if (isMatch !== null && !itsMached) {
+                                        const wordCount = isMatch[0]?.split(/\s+/).length;
                                         paragraph = {
                                             ...paragraph,
-                                            paragraph: paragraphText,
+                                            paragraph: isMatch[0],
                                             wordCount,
                                             scenario: {
                                                 ...paragraph.scenario,
@@ -208,8 +209,9 @@ export class searchService implements ISearchService {
                                                 whyNotFound: ""
                                             }
                                         };
+                                        itsMached = true
                                     }
-                                }));
+                                }))
 
                                 break;
 
@@ -228,7 +230,7 @@ export class searchService implements ISearchService {
 
                 }
 
-                if (matchResult.split(/\s+/).length > minWordsInSnipped)
+                if (paragraph.paragraph.split(/\s+/).length > Locals.config().MIN_WORDS_IN_PARAGRAPH)
                     paragraphs.push(paragraph);
 
             }));

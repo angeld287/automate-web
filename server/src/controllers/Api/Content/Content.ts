@@ -91,7 +91,7 @@ class Content {
             let translate: ITranslateService = new translateService();
 
             await Promise.all(article.subtitiles.map(async (subtitle: SubTitleContent, index) => {
-                const translation = await translate.perform(subtitle.content, 'es');
+                const translation = await translate.perform(subtitle.content[0], 'es');
                 if (translation.success) {
                     article.subtitiles[index].translatedContent = translation.body[0]['translations'][0].text;
                     article.subtitiles[index].error = false;
@@ -123,7 +123,7 @@ class Content {
                     }
                 }))
 
-                article.subtitiles[index].content = subParagraphs.join(" ");
+                article.subtitiles[index].content = subParagraphs;
             }));
 
             return article;

@@ -11,7 +11,7 @@ export interface INewArticle {
 export interface SubTitleContent {
     name: string;
     translatedName: string;
-    content?: string;
+    content?: Array<string>;
     translatedContent?: string;
     error?: boolean | ProcessError
 }
