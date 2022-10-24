@@ -1,9 +1,9 @@
-import { Post } from "../../interfaces/models/Post";
+import Post from "../../interfaces/models/Post";
 import { IPostService } from "../../interfaces/wordpress/IPostService";
 import Locals from "../../providers/Locals";
 import { axios } from "../../utils";
 
-export class postService implements IPostService {
+export default class postService implements IPostService {
 
     async getList(): Promise<Array<Post>> {
         const response = await axios({ url: `${Locals.config().wordpressUrl}/posts` });

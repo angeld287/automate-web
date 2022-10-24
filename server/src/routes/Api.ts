@@ -14,6 +14,7 @@ import Passport from '../providers/Passport';
 import Session from '../controllers/Api/Auth/Session';
 import ContentController from '../controllers/Api/Content/Content';
 import TranslateController from '../controllers/Api/Content/Translate';
+import PostController from '../controllers/Api/Content/Post';
 
 const router = Router();
 
@@ -82,6 +83,16 @@ router.post(
     body('articles', 'field articles cannot be blank.').notEmpty(),
     //Passport.isAuthenticated,
     ContentController.createContent
+);
+
+router.post(
+    '/createPost',
+    body('status', 'field status cannot be blank.').notEmpty(),
+    body('title', 'field title cannot be blank.').notEmpty(),
+    body('subtitles', 'field subtitles cannot be blank.').notEmpty(),
+    body('content', 'field content cannot be blank.').notEmpty(),
+    //Passport.isAuthenticated,
+    PostController.create
 );
 
 export default router;

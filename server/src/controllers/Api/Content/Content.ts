@@ -30,16 +30,9 @@ class Content {
                 //search the content for title and each subtitile
                 const articleSearchResult = await Content.searchContent(englishArticleTitles);
 
-
-                //translate the selected content to spanish
-                //const articleWithCompletedTranslation = await Content.translateContent(articleSearchResult);
-
-
                 //search and download the image
 
                 //conver images to webp
-
-                //post the article
 
                 articles[index] = articleSearchResult;
             }));

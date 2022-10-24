@@ -3,7 +3,7 @@ import { ICategoryService } from "../../interfaces/wordpress/ICategoryService";
 import Locals from "../../providers/Locals";
 import { axios } from "../../utils";
 
-export class categoryService implements ICategoryService {
+export default class categoryService implements ICategoryService {
 
     async getList(): Promise<Array<Category>> {
         const response = await axios({ url: `${Locals.config().wordpressUrl}/categories` });
