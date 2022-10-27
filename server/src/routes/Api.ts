@@ -80,7 +80,7 @@ router.get(
 
 router.post(
     '/createContent',
-    body('articles', 'field articles cannot be blank.').notEmpty(),
+    body('article', 'field article cannot be blank.').notEmpty(),
     //Passport.isAuthenticated,
     ContentController.createContent
 );

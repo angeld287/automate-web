@@ -21,24 +21,22 @@ class Content {
                 }).send(res);
             }
 
-            const articles = req.body.articles;
+            let article = req.body.article;
 
-            await Promise.all(articles.map(async (article: INewArticle, index: number) => {
-                //translate title and subtitiles to english
-                const englishArticleTitles: INewArticle = await Content.translateTitles(article);
+            //translate title and subtitiles to english
+            const englishArticleTitles: INewArticle = await Content.translateTitles(article);
 
-                //search the content for title and each subtitile
-                const articleSearchResult = await Content.searchContent(englishArticleTitles);
+            //search the content for title and each subtitile
+            const articleSearchResult = await Content.searchContent(englishArticleTitles);
 
-                //search and download the image
+            //search and download the image
 
-                //conver images to webp
+            //conver images to webp
 
-                articles[index] = articleSearchResult;
-            }));
+            article = articleSearchResult;
 
             return new SuccessResponse('Success', {
-                articles
+                article
             }).send(res);
 
         } catch (error) {
