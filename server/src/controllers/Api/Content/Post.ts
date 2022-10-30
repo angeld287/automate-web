@@ -32,8 +32,8 @@ class Post {
             let categoryService: ICategoryService = new CategoryService();
 
             const article: INewArticle = req.body.article as INewArticle;
-            const title: string = req.body.title;
-            const content: string = req.body.content;
+            const title: string = article.title;
+            const content: any = article.content;
             const bodyCategory: string = article.category;
             
             const category: Category = (await categoryService.getList()).find(category => category.name.toLowerCase() === bodyCategory.toLowerCase())
@@ -56,7 +56,7 @@ class Post {
             const created = true//await postService.create(post)
 
             return new SuccessResponse('Success', {
-                post: created,
+                post: content,
                 success: true,
                 error: null
             }).send(res);
