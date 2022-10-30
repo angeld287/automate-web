@@ -1,3 +1,26 @@
+import { INewArticle } from '../../interfaces/Content/Article';
+
+const createContent = (article: INewArticle) => {
+    //\n
+    //Post Principal Image
+    //\n\n\n\n
+    //Space Block
+    //\n\n\n\n
+    //Introduction
+    //\n\n\n\n
+    //Table Content
+    //\n
+    //Subtitle
+    //\n\n\n\n
+    //Subtitle Image (if have)
+    //\n\n\n\n
+    //Paragraph
+    //\n\n\n\n
+    //Conclusion Paragraph
+    //\n\n\n\n
+    //goodbyes and thanks
+}
+
 const createSubtitle = (subtitle: string) => {
     return `<h2><span class=\"ez-toc-section\" id=\"${subtitle.replace(" ", "-")}\"></span>${subtitle}<span class=\"ez-toc-section-end\"></span></h2>`
 }
