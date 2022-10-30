@@ -87,10 +87,7 @@ router.post(
 
 router.post(
     '/createPost',
-    body('status', 'field status cannot be blank.').notEmpty(),
-    body('title', 'field title cannot be blank.').notEmpty(),
-    body('subtitles', 'field subtitles cannot be blank.').notEmpty(),
-    body('content', 'field content cannot be blank.').notEmpty(),
+    body('article', 'field article cannot be blank.').notEmpty(),
     //Passport.isAuthenticated,
     PostController.create
 );

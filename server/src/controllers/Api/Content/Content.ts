@@ -1,4 +1,4 @@
-import { AuthFailureResponse, SuccessResponse } from "../../../core/ApiResponse";
+import { AuthFailureResponse, BadRequestResponse, InternalErrorResponse, SuccessResponse } from "../../../core/ApiResponse";
 import { INewArticle, SubTitleContent } from "../../../interfaces/Content/Article";
 import { ISearchService } from "../../../interfaces/ISearchService";
 import { ITranslateService } from "../../../interfaces/ITranslateService";
@@ -16,7 +16,7 @@ class Content {
             const errors = new ExpressValidator().validator(req);
 
             if (!errors.isEmpty()) {
-                return new SuccessResponse('Success', {
+                return new BadRequestResponse('Error', {
                     errors: errors.array()
                 }).send(res);
             }
@@ -41,7 +41,7 @@ class Content {
 
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new AuthFailureResponse('Validation Error', {
+            return new InternalErrorResponse('Validation Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }

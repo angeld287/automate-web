@@ -4,7 +4,7 @@
  * @author Angel Angeles <aangeles@litystyles.com>
  */
 
-import { InternalErrorResponse, SuccessResponse } from '../../../core/ApiResponse';
+import { BadRequestResponse, InternalErrorResponse, SuccessResponse } from '../../../core/ApiResponse';
 import { ITranslateService } from '../../../interfaces/ITranslateService';
 import { IRequest, IResponse } from '../../../interfaces/vendors';
 import Log from '../../../middlewares/Log';
@@ -17,7 +17,7 @@ class Translate {
             const errors = new ExpressValidator().validator(req);
 
             if (!errors.isEmpty()) {
-                return new SuccessResponse('Success', {
+                return new BadRequestResponse('Error', {
                     errors: errors.array()
                 }).send(res);
             }

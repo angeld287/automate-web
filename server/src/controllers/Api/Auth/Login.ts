@@ -12,7 +12,7 @@ import IUserService from "../../../interfaces/IUserService";
 import userService from '../../../services/userService';
 var passport = require('passport');
 import { IResponse, IRequest, INext } from '../../../interfaces/vendors';
-import { AuthFailureResponse, SuccessResponse } from '../../../core/ApiResponse';
+import { AuthFailureResponse, BadRequestResponse, SuccessResponse } from '../../../core/ApiResponse';
 import ExpressValidator from '../../../providers/ExpressValidation';
 
 
@@ -30,7 +30,7 @@ class Login {
             let user: IUserService = new userService();
 
             if (!errors.isEmpty()) {
-                return new SuccessResponse('Success', {
+                return new BadRequestResponse('Error', {
                     errors: errors.array()
                 }).send(res);
             }
@@ -48,7 +48,7 @@ class Login {
             );
 
             if (userVerifications[0]) {
-                return new SuccessResponse('Success', {
+                return new BadRequestResponse('Error', {
                     error: true,
                     message: 'User exist in the sistem as created from Google. Please login with google.',
                 }).send(res);
@@ -58,7 +58,7 @@ class Login {
 
             if (_user === false) {
 
-                return new SuccessResponse('Success', {
+                return new BadRequestResponse('Error', {
                     error: true,
                     message: 'Invalid Username or Password',
                 }).send(res);

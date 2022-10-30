@@ -10,7 +10,7 @@ import { IRequest, IResponse } from '../../../interfaces/vendors';
 import Log from '../../../middlewares/Log';
 import userService from '../../../services/userService';
 import { IUserExistenceVerificationResponse } from '../../../interfaces/response/UserResponses';
-import { InternalErrorResponse, SuccessResponse } from '../../../core/ApiResponse';
+import { BadRequestResponse, InternalErrorResponse, SuccessResponse } from '../../../core/ApiResponse';
 import ExpressValidator from '../../../providers/ExpressValidation';
 
 class Register {
@@ -26,7 +26,7 @@ class Register {
             let user: IUserService = new userService()
 
             if (!errors.isEmpty()) {
-                return new SuccessResponse('Success', {
+                return new BadRequestResponse('Error', {
                     errors: errors.array()
                 }).send(res);
             }
@@ -47,7 +47,7 @@ class Register {
             );
 
             if (existenceVerifications.filter(_ => _.exist).length > 0) {
-                return new SuccessResponse('Success', {
+                return new BadRequestResponse('Error', {
                     errors: existenceVerifications.filter(_ => _.exist)
                 }).send(res);
             }

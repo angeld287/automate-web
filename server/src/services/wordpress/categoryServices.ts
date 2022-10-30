@@ -6,13 +6,13 @@ import { axios } from "../../utils";
 export default class categoryService implements ICategoryService {
 
     async getList(): Promise<Array<Category>> {
-        const response = await axios({ url: `${Locals.config().wordpressUrl}/categories` });
-        return await response.json()
+        const response = await axios({ url: `${Locals.config().wordpressUrl}categories` });
+        return response.body
     }
 
     async create(category: Category): Promise<any> {
         const result = await axios({
-            url: `${Locals.config().wordpressUrl}/categories`,
+            url: `${Locals.config().wordpressUrl}categories`,
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

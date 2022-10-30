@@ -4,7 +4,7 @@
  * @author Angel Angeles <aangeles@litystyles.com>
  */
 
-import { InternalErrorResponse, SuccessResponse } from '../../../core/ApiResponse';
+import { BadRequestResponse, InternalErrorResponse, SuccessResponse } from '../../../core/ApiResponse';
 import { IRequest, IResponse } from '../../../interfaces/vendors';
 import { IPostService } from '../../../interfaces/wordpress/IPostService';
 import Log from '../../../middlewares/Log';
@@ -14,6 +14,8 @@ import IPost from "../../../interfaces/models/Post"
 import Locals from '../../../providers/Locals';
 import { ICategoryService } from '../../../interfaces/wordpress/ICategoryService';
 import CategoryService from '../../../services/wordpress/categoryServices';
+import { INewArticle } from '../../../interfaces/Content/Article';
+import Category from '../../../interfaces/models/Category';
 
 class Post {
     public static async create(req: IRequest, res: IResponse): Promise<any> {
@@ -21,7 +23,7 @@ class Post {
             const errors = new ExpressValidator().validator(req);
 
             if (!errors.isEmpty()) {
-                return new SuccessResponse('Success', {
+                return new BadRequestResponse('Error', {
                     errors: errors.array()
                 }).send(res);
             }
@@ -29,33 +31,29 @@ class Post {
             let postService: IPostService = new PostService();
             let categoryService: ICategoryService = new CategoryService();
 
+            const article: INewArticle = req.body.article as INewArticle;
             const title: string = req.body.title;
             const content: string = req.body.content;
-            const bodyCategory: string = req.body.category;
+            const bodyCategory: string = article.category;
+            
+            const category: Category = (await categoryService.getList()).find(category => category.name.toLowerCase() === bodyCategory.toLowerCase())
 
-            const categoryId: number = (await categoryService.getList()).find(category => category.name === bodyCategory).id
-
+            if (!category){
+                return new BadRequestResponse('Error', {
+                    error: true,
+                    message: 'The category does not exist.',
+                }).send(res);
+            }
 
             const post: IPost = {
-                slug: title.replace(" ", "_"),
+                slug: article.title.replace(" ", "_"),
                 status: "DRAFT",
-                password: Locals.config().WORDPRESS_USER_PASSWORD,
-                title: title,
+                title: article.title,
                 content: content,
-                author: Locals.config().WORDPRESS_USER,
-                excerpt: "",
-                featured_media: "",
-                comment_status: "",
-                ping_status: "",
-                format: "",
-                meta: "",
-                sticky: "",
-                template: "",
-                categories: categoryId.toString(),
-                tags: "",
+                categories: [category.id],
             };
 
-            const created = await postService.create(post)
+            const created = true//await postService.create(post)
 
             return new SuccessResponse('Success', {
                 post: created,
