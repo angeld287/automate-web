@@ -1,5 +1,5 @@
 import { _axios } from "./axios-utils"
-import { _fs } from "./file-system"
+import { readFileSync, createWriteStream } from "./file-system"
 
 const delay = (delayInms) => {
     return new Promise(resolve => {
@@ -9,4 +9,4 @@ const delay = (delayInms) => {
     });
 }
 
-export { _axios as axios, delay, _fs as fs };
+export { _axios as axios, delay, readFileSync, createWriteStream };

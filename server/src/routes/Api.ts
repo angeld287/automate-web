@@ -15,6 +15,7 @@ import Session from '../controllers/Api/Auth/Session';
 import ContentController from '../controllers/Api/Content/Content';
 import TranslateController from '../controllers/Api/Content/Translate';
 import PostController from '../controllers/Api/Content/Post';
+import MediaController from '../controllers/Api/Content/Media';
 
 const router = Router();
 
@@ -90,6 +91,13 @@ router.post(
     body('article', 'field article cannot be blank.').notEmpty(),
     //Passport.isAuthenticated,
     PostController.create
+);
+
+router.post(
+    '/uploadImage',
+    body('url', 'field url cannot be blank.').notEmpty(),
+    //Passport.isAuthenticated,
+    MediaController.create
 );
 
 export default router;

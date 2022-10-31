@@ -1,7 +1,7 @@
 import Media from "../../interfaces/models/Media";
 import { IMediaService } from "../../interfaces/wordpress/IMediaService";
 import Locals from "../../providers/Locals";
-import { axios, fs } from "../../utils";
+import { axios, readFileSync } from "../../utils";
 
 export default class mediaService implements IMediaService {
 
@@ -11,7 +11,7 @@ export default class mediaService implements IMediaService {
     }
 
     async create(fileName: string, filePath: string, token: string): Promise<any> {
-        const dataFile = await fs(filePath)
+        const dataFile = await readFileSync(filePath)
         const result = await axios({
             url: `${Locals.config().wordpressUrl}media`,
             method: 'POST',
