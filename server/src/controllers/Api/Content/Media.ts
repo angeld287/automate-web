@@ -23,9 +23,11 @@ class Media {
             }
 
             let _mediaService: IMediaService = new mediaService();
-            const url = req.body.url
+            const imageAddress = req.body.imageAddress
             
-            console.log(url);
+            console.log(imageAddress);
+
+            _mediaService.create("test.png", imageAddress, req.headers.authorization)
 
             return new SuccessResponse('Success', {
                 success: true,

@@ -1,7 +1,8 @@
 import Media from "../../interfaces/models/Media";
 import { IMediaService } from "../../interfaces/wordpress/IMediaService";
 import Locals from "../../providers/Locals";
-import { axios, readFileSync } from "../../utils";
+import { axios, createWriteStream, readFileSync } from "../../utils";
+import { downloadImage } from "../../utils";
 
 export default class mediaService implements IMediaService {
 
@@ -10,19 +11,26 @@ export default class mediaService implements IMediaService {
         return response.body
     }
 
-    async create(fileName: string, filePath: string, token: string): Promise<any> {
-        const dataFile = await readFileSync(filePath)
-        const result = await axios({
-            url: `${Locals.config().wordpressUrl}media`,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'image/webp',
-                'Authorization': `Bearer ${token}`,
-                'cache-control': 'no-cache',
-                'content-disposition': `attachment; filename=${fileName}`
-            },
-            data: dataFile
-        });
-        return result;
+    async create(fileName: string, imageAddress: string, token: string): Promise<any> {
+        const file = (await createWriteStream("file.jpg")).response;
+
+        const downloadedImage = await downloadImage(file, imageAddress);
+        console.log(file);
+        
+        //const dataFile = await readFileSync(filePath)
+        //const result = await axios({
+        //    url: `${Locals.config().wordpressUrl}media`,
+        //    method: 'POST',
+        //    headers: {
+        //        'Content-Type': 'image/webp',
+        //        'Authorization': `Bearer ${token}`,
+        //        'cache-control': 'no-cache',
+        //        'content-disposition': `attachment; filename=${fileName}`
+        //    },
+        //    data: dataFile
+        //});
+        return {};
     }
+
+    
 }
