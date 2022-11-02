@@ -1,8 +1,7 @@
 import Media from "../../interfaces/models/Media";
 import { IMediaService } from "../../interfaces/wordpress/IMediaService";
 import Locals from "../../providers/Locals";
-import { axios, compressImage, createWriteStream, readFileSync, sharp } from "../../utils";
-import { downloadImage } from "../../utils";
+import { axios, createWriteStream, sharp, downloadImage } from "../../utils";
 
 export default class mediaService implements IMediaService {
 
@@ -14,10 +13,11 @@ export default class mediaService implements IMediaService {
     async create(fileName: string, imageAddress: string, token: string): Promise<any> {
         const filePath = Locals.config().DOWNLOADED_IMAGES_PATH + fileName;
         const compressedPath = Locals.config().DOWNLOADED_IMAGES_COMPRESSED_PATH + fileName;
-        //const file = (await createWriteStream(filePath)).response;
 
-        //const downloadedImage = await downloadImage(file, imageAddress);
-        const _compressImage = await sharp(filePath, compressedPath); 
+        const file = (await createWriteStream(filePath)).response;
+        const downloadedImage = await downloadImage(file, imageAddress);
+        
+        const compressImage = await sharp(filePath, compressedPath); 
         
         
         //const dataFile = await readFileSync(filePath)

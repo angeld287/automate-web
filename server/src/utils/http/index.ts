@@ -2,21 +2,26 @@ import { createWriteStream } from "../file-system";
 const https = require('https');
 
 
-export const downloadImage = async (file: any, url: string): Promise<any> => {
-    try {
-                
-        https.get(url, function (response) {
+export const downloadImage = (file: any, url: string): Promise<any> => {
+
+    return new Promise<any>((resolve, reject) => {
+        const request = https.get(url, function (response) {
             response.pipe(file);
 
             file.on("finish", () => {
                 file.close();
-                console.log("Download Completed");
+                resolve({ success: true});
+            });
+
+            file.on("error", (err) => {
+                file.close();
+                reject({ success: false, message: 'Error on file pipe process', error: err });
             });
         });
-        
-        return { success: true }
-        
-    } catch (error) {
-        return { success: false, response: '', body: 'Error in downloadImage request', errorDetails: error }
-    }
+
+        request.on('error', (err) => {
+            reject({ success: false, message: 'Error on https.get process', error: err });
+        });
+
+    })
 }
