@@ -1,6 +1,7 @@
 import { _axios } from "./axios-utils"
 import { readFileSync, createWriteStream } from "./file-system"
 import { downloadImage } from "./http"
+import { compressImage  } from "./compress-images"
 
 const delay = (delayInms) => {
     return new Promise(resolve => {
@@ -10,4 +11,4 @@ const delay = (delayInms) => {
     });
 }
 
-export { _axios as axios, delay, readFileSync, createWriteStream, downloadImage };
+export { _axios as axios, delay, readFileSync, createWriteStream, downloadImage, compressImage };
