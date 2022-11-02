@@ -1,8 +1,10 @@
+import { IPromiseBase } from "../../interfaces/Utils";
+
 const https = require('https');
 
-export const downloadImage = (file: any, url: string): Promise<any> => {
+export const downloadImage = (file: any, url: string): Promise<IPromiseBase> => {
 
-    return new Promise<any>((resolve, reject) => {
+    return new Promise<IPromiseBase>((resolve, reject) => {
         https.get(url, function (response) {
 
             response.pipe(file);

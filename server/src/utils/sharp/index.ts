@@ -1,16 +1,18 @@
+import { IImageSharp } from "../../interfaces/Utils";
+import Locals from "../../providers/Locals";
+
 const sharp = require('sharp');
 
-
-export const _sharp = (filePath: any, destinationPath: string): Promise<any> => {
-    return new Promise<any>((resolve, reject) => {
+export const _sharp = (filePath: any, destinationPath: string): Promise<IImageSharp> => {
+    return new Promise<IImageSharp>((resolve, reject) => {
         sharp(filePath)
-            .resize(590, 350)
+            .resize(Locals.config().POST_IMAGE_WIDTH, Locals.config().POST_IMAGE_HEIGHT)
             .toFile(destinationPath)
             .then(data => {
-                resolve({success: true, result: data});
+                resolve({success: true, ...data});
             })
-            .catch(err => { 
-                reject({success: false, result: err}); 
+            .catch(err => {
+                reject({success: false, error: err});
             });
     })
 }

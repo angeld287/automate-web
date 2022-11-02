@@ -1,4 +1,6 @@
 import Media from "../../interfaces/models/Media";
+import { IMediaServiceResponse } from "../../interfaces/response/IServiceResponse";
+import { IImageSharp, IPromiseBase } from "../../interfaces/Utils";
 import { IMediaService } from "../../interfaces/wordpress/IMediaService";
 import Locals from "../../providers/Locals";
 import { axios, createWriteStream, sharp, downloadImage, imagesize } from "../../utils";
@@ -10,16 +12,23 @@ export default class mediaService implements IMediaService {
         return response.body
     }
 
-    async create(fileName: string, imageAddress: string, token: string): Promise<any> {
+    async create(fileName: string, imageAddress: string, token: string): Promise<IMediaServiceResponse> {
         const filePath = Locals.config().DOWNLOADED_IMAGES_PATH + fileName;
-        const compressedPath = Locals.config().DOWNLOADED_IMAGES_COMPRESSED_PATH + fileName;
+        const compressedImagePath = Locals.config().DOWNLOADED_IMAGES_COMPRESSED_PATH + fileName;
 
-        
+        const imageNewFile = (await createWriteStream(filePath)).response;
+        const downloadedImage: IPromiseBase = await downloadImage(imageNewFile, imageAddress);
 
-        const file = (await createWriteStream(filePath)).response;
-        const downloadedImage = await downloadImage(file, imageAddress);
+        if (!downloadedImage.success) {
+            return {success: false, message: "Error in download image process"};
+        }
         
-        const compressImage = await sharp(filePath, compressedPath); 
+        const compressImage: IImageSharp = await sharp(filePath, compressedImagePath); 
+
+        if (!compressImage.success) {
+            return { success: false, message: "Error in compress image process" };
+        }
+        
         
         
         //const dataFile = await readFileSync(filePath)
@@ -34,7 +43,7 @@ export default class mediaService implements IMediaService {
         //    },
         //    data: dataFile
         //});
-        return {};
+        return { success: true, message: "" };
     }
 
     async imageHaveCorrectSize(imageAddress: string): Promise<boolean>{
