@@ -1,6 +1,4 @@
-import { createWriteStream } from "../file-system";
 const https = require('https');
-
 
 export const downloadImage = (file: any, url: string): Promise<any> => {
 
