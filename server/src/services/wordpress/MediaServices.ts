@@ -14,10 +14,10 @@ export default class mediaService implements IMediaService {
     async create(fileName: string, imageAddress: string, token: string): Promise<any> {
         const filePath = Locals.config().DOWNLOADED_IMAGES_PATH + fileName;
         const compressedPath = Locals.config().DOWNLOADED_IMAGES_COMPRESSED_PATH + fileName;
-        const file = (await createWriteStream(filePath)).response;
+        //const file = (await createWriteStream(filePath)).response;
 
-        const downloadedImage = await downloadImage(file, imageAddress);
-        const _compressImage = await sharp(filePath, compressedPath);
+        //const downloadedImage = await downloadImage(file, imageAddress);
+        const _compressImage = await sharp(filePath, compressedPath); 
         
         
         //const dataFile = await readFileSync(filePath)
