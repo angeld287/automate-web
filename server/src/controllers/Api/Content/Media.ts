@@ -26,6 +26,16 @@ class Media {
             const imageAddress = req.body.imageAddress
             const imageName = req.body.imageName
 
+            const imageIsFine = await _mediaService.imageHaveCorrectSize(imageAddress);
+            
+            if (!imageIsFine){
+                return new BadRequestResponse('Error', {
+                    success: false,
+                    response: 'The image must be greater than width: 590 and height: 350.',
+                    error: null
+                }).send(res);
+            }
+
             _mediaService.create(`${imageName}.webp`, imageAddress, req.headers.authorization)
 
             return new SuccessResponse('Success', {
