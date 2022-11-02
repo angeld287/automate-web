@@ -24,10 +24,9 @@ class Media {
 
             let _mediaService: IMediaService = new mediaService();
             const imageAddress = req.body.imageAddress
-            
-            console.log(imageAddress);
+            const imageName = req.body.imageName
 
-            _mediaService.create("test.png", imageAddress, req.headers.authorization)
+            _mediaService.create(`${imageName}.webp`, imageAddress, req.headers.authorization)
 
             return new SuccessResponse('Success', {
                 success: true,

@@ -12,10 +12,10 @@ export default class mediaService implements IMediaService {
     }
 
     async create(fileName: string, imageAddress: string, token: string): Promise<any> {
-        const file = (await createWriteStream("file.jpg")).response;
+        const file = (await createWriteStream(Locals.config().DOWNLOADED_IMAGES_PATH+fileName)).response;
 
         const downloadedImage = await downloadImage(file, imageAddress);
-        console.log(file);
+        
         
         //const dataFile = await readFileSync(filePath)
         //const result = await axios({
