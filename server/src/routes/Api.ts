@@ -101,4 +101,12 @@ router.post(
     MediaController.create
 );
 
+router.post(
+    '/updateImageProps',
+    body('id', 'field id cannot be blank.').notEmpty(),
+    body('title', 'field title cannot be blank.').notEmpty(),
+    //Passport.isAuthenticated,
+    MediaController.updateMediaTitles
+);
+
 export default router;

@@ -5,6 +5,8 @@ export interface IMediaService {
     getList(): Promise<Array<Media>>
 
     create(title: string, imageAddress: string, token: string): Promise<IMediaServiceResponse>;
+    
+    update(id: number, fieldsToUpdate: any, token: string): Promise<IMediaServiceResponse>;
 
     imageHaveCorrectSize(imageAddress: string): Promise<boolean>;
 }

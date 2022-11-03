@@ -51,6 +51,36 @@ class Media {
             }).send(res);
         }
     }
+
+    public static async updateMediaTitles(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            const errors = new ExpressValidator().validator(req);
+
+            if (!errors.isEmpty()) {
+                return new BadRequestResponse('Error', {
+                    errors: errors.array()
+                }).send(res);
+            }
+
+            let _mediaService: IMediaService = new mediaService();
+            const id = req.body.id
+            const title = req.body.title
+
+            const media: Media = (await _mediaService.update(id, { title: title }, req.headers.authorization)).media
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: media,
+                error: null
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Page Source Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
 }
 
 export default Media;

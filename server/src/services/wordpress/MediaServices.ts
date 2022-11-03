@@ -49,21 +49,40 @@ export default class mediaService implements IMediaService {
             return { success: false, message: "Error uploading media. ", media: result };
         }
 
-        const createdMedia: Media = { ...result.body, alt_text: title, title: title, caption: title, description: title}
-
+        const mediaTitleProperties: any = { alt_text: title, title: title, caption: title, description: title}
+        
         const updateResult = await axios({
-            url: `${Locals.config().wordpressUrl}media/${createdMedia.id}`,
+            url: `${Locals.config().wordpressUrl}media/${result.body.id}`,
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'Authorization': token
             },
-            body: JSON.stringify(createdMedia)
+            body: JSON.stringify(mediaTitleProperties)
         });
 
         if(!updateResult.success) {
             return { success: false, message: "Error updating media.", media: result.body };
+        }
+
+        return { success: true, message: "success", media: updateResult.body };
+    }
+
+    async update(id: number, fieldsToUpdate: any, token: string): Promise<IMediaServiceResponse> {
+        const updateResult = await axios({
+            url: `${Locals.config().wordpressUrl}media/${id}`,
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            body: JSON.stringify(fieldsToUpdate)
+        });
+
+        if (!updateResult.success) {
+            return { success: false, message: "Error updating media.", media: updateResult.body };
         }
 
         return { success: true, message: "success", media: updateResult.body };
