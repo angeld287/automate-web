@@ -36,11 +36,11 @@ class Media {
                 }).send(res);
             }
 
-            _mediaService.create(`${imageName}.webp`, imageAddress, req.headers.authorization)
+            const media: Media = (await _mediaService.create(`${imageName}.webp`, imageAddress, req.headers.authorization)).media
 
             return new SuccessResponse('Success', {
                 success: true,
-                response: [],
+                response: media,
                 error: null
             }).send(res);
 

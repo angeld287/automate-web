@@ -3,7 +3,7 @@ import { IMediaServiceResponse } from "../../interfaces/response/IServiceRespons
 import { IImageSharp, IPromiseBase } from "../../interfaces/Utils";
 import { IMediaService } from "../../interfaces/wordpress/IMediaService";
 import Locals from "../../providers/Locals";
-import { axios, createWriteStream, sharp, downloadImage, imagesize } from "../../utils";
+import { axios, createWriteStream, sharp, downloadImage, imagesize, readFileSync } from "../../utils";
 
 export default class mediaService implements IMediaService {
 
@@ -29,21 +29,21 @@ export default class mediaService implements IMediaService {
             return { success: false, message: "Error in compress image process" };
         }
         
-        
-        
-        //const dataFile = await readFileSync(filePath)
-        //const result = await axios({
-        //    url: `${Locals.config().wordpressUrl}media`,
-        //    method: 'POST',
-        //    headers: {
-        //        'Content-Type': 'image/webp',
-        //        'Authorization': `Bearer ${token}`,
-        //        'cache-control': 'no-cache',
-        //        'content-disposition': `attachment; filename=${fileName}`
-        //    },
-        //    data: dataFile
-        //});
-        return { success: true, message: "" };
+        const dataFile = await readFileSync(compressedImagePath)
+
+        const result = await axios({
+            url: `${Locals.config().wordpressUrl}media`,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'image/webp',
+                'Authorization': token,
+                'cache-control': 'no-cache',
+                'content-disposition': `attachment; filename=${fileName}`
+            },
+            data: dataFile.response
+        });
+
+        return { success: true, message: "success", media: result };
     }
 
     async imageHaveCorrectSize(imageAddress: string): Promise<boolean>{
