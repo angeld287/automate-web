@@ -24,7 +24,7 @@ class Media {
 
             let _mediaService: IMediaService = new mediaService();
             const imageAddress = req.body.imageAddress
-            const imageName = req.body.imageName
+            const title = req.body.title
 
             const imageIsFine = await _mediaService.imageHaveCorrectSize(imageAddress);
             
@@ -36,7 +36,7 @@ class Media {
                 }).send(res);
             }
 
-            const media: Media = (await _mediaService.create(`${imageName}.webp`, imageAddress, req.headers.authorization)).media
+            const media: Media = (await _mediaService.create(title, imageAddress, req.headers.authorization)).media
 
             return new SuccessResponse('Success', {
                 success: true,

@@ -12,7 +12,9 @@ export default class mediaService implements IMediaService {
         return response.body
     }
 
-    async create(fileName: string, imageAddress: string, token: string): Promise<IMediaServiceResponse> {
+    async create(title: string, imageAddress: string, token: string): Promise<IMediaServiceResponse> {
+        const fileName = `${title.replace(' ', '-').toLowerCase() }.webp`;
+
         const filePath = Locals.config().DOWNLOADED_IMAGES_PATH + fileName;
         const compressedImagePath = Locals.config().DOWNLOADED_IMAGES_COMPRESSED_PATH + fileName;
 
@@ -43,7 +45,28 @@ export default class mediaService implements IMediaService {
             data: dataFile.response
         });
 
-        return { success: true, message: "success", media: result };
+        if(!result.success){
+            return { success: false, message: "Error uploading media. ", media: result };
+        }
+
+        const createdMedia: Media = { ...result.body, alt_text: title, title: title, caption: title, description: title}
+
+        const updateResult = await axios({
+            url: `${Locals.config().wordpressUrl}media/${createdMedia.id}`,
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            body: JSON.stringify(createdMedia)
+        });
+
+        if(!updateResult.success) {
+            return { success: false, message: "Error updating media.", media: result.body };
+        }
+
+        return { success: true, message: "success", media: updateResult.body };
     }
 
     async imageHaveCorrectSize(imageAddress: string): Promise<boolean>{

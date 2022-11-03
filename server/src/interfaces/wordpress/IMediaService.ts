@@ -4,7 +4,7 @@ import { IMediaServiceResponse } from "../response/IServiceResponse";
 export interface IMediaService {
     getList(): Promise<Array<Media>>
 
-    create(fileName: string, imageAddress: string, token: string): Promise<IMediaServiceResponse>;
+    create(title: string, imageAddress: string, token: string): Promise<IMediaServiceResponse>;
 
     imageHaveCorrectSize(imageAddress: string): Promise<boolean>;
 }
