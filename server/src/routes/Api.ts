@@ -16,6 +16,7 @@ import ContentController from '../controllers/Api/Content/Content';
 import TranslateController from '../controllers/Api/Content/Translate';
 import PostController from '../controllers/Api/Content/Post';
 import MediaController from '../controllers/Api/Content/Media';
+import Categoryontroller from '../controllers/Api/Content/Category';
 
 const router = Router();
 
@@ -107,6 +108,23 @@ router.post(
     body('title', 'field title cannot be blank.').notEmpty(),
     //Passport.isAuthenticated,
     MediaController.updateMediaTitles
+);
+
+router.post(
+    '/addCategory',
+    body('name', 'field name cannot be blank.').notEmpty(),
+    body('description', 'field description cannot be blank.').notEmpty(),
+    //Passport.isAuthenticated,
+    Categoryontroller.create
+);
+
+router.post(
+    '/updateCategory',
+    body('id', 'field id cannot be blank.').notEmpty(),
+    body('name', 'field name cannot be blank.').notEmpty(),
+    body('description', 'field description cannot be blank.').notEmpty(),
+    //Passport.isAuthenticated,
+    Categoryontroller.update
 );
 
 export default router;

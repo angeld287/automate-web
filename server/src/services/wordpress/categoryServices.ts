@@ -10,13 +10,28 @@ export default class categoryService implements ICategoryService {
         return response.body
     }
 
-    async create(category: Category): Promise<any> {
+    async create(category: Category, token: string): Promise<any> {
         const result = await axios({
             url: `${Locals.config().wordpressUrl}categories`,
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            body: JSON.stringify(category)
+        });
+        return result;
+    }
+
+    async update(category: Category, token: string): Promise<any> {
+        const result = await axios({
+            url: `${Locals.config().wordpressUrl}categories/${category.id}`,
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': token
             },
             body: JSON.stringify(category)
         });

@@ -1,7 +1,9 @@
 import Category from "../models/Category";
 
 export interface ICategoryService {
-    getList(): Promise<Array<Category>>
+    getList(): Promise<Array<Category>>;
 
-    create(category: Category): Promise<Category>;
+    create(category: Category, token: string): Promise<Category>;
+
+    update(category: Category, token: string): Promise<Category>;
 }

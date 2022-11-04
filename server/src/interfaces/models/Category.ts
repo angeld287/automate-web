@@ -1,11 +1,11 @@
 export default interface Category {
     id?: number;
     count?: number;
-    description: string;
+    description?: string;
     link?: string;
     name: string;
-    slug: string;
+    slug?: string;
     taxonomy?: string;
-    parent: number;
-    meta: any
+    parent?: number;
+    meta?: any
 }
