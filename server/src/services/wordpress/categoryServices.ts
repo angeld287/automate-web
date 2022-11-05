@@ -11,11 +11,12 @@ export default class categoryService implements ICategoryService {
     }
 
     async create(category: Category, token: string): Promise<any> {
+        category.meta = []
+        category.parent = 0
         const result = await axios({
             url: `${Locals.config().wordpressUrl}categories`,
             method: 'POST',
             headers: {
-                'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'Authorization': token
             },
