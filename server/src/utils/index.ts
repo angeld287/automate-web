@@ -3,6 +3,7 @@ import { readFileSync, createWriteStream } from "./file-system"
 import { downloadImage } from "./http"
 import { _sharp } from "./sharp"
 import { _imagesize  } from "./imagesize"
+import { addMedia  } from "./wpapi"
 
 const delay = (delayInms) => {
     return new Promise(resolve => {
@@ -12,4 +13,4 @@ const delay = (delayInms) => {
     });
 }
 
-export { _axios as axios, delay, readFileSync, createWriteStream, downloadImage, _sharp as sharp, _imagesize as imagesize };
+export { _axios as axios, delay, readFileSync, createWriteStream, downloadImage, _sharp as sharp, _imagesize as imagesize, addMedia };

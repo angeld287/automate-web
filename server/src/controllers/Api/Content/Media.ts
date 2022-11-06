@@ -46,7 +46,7 @@ class Media {
 
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('Page Source Error', {
+            return new InternalErrorResponse('Create Media Controller Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }
@@ -76,7 +76,7 @@ class Media {
 
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('Page Source Error', {
+            return new InternalErrorResponse('Update Media Controller Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }

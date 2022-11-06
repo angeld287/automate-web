@@ -63,7 +63,7 @@ class Post {
 
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('Page Source Error', {
+            return new InternalErrorResponse('Post Controller Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }

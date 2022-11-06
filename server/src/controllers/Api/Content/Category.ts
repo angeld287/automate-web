@@ -42,7 +42,7 @@ class Category {
 
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('Page Source Error', {
+            return new InternalErrorResponse('Create Category Controller Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }
@@ -79,7 +79,7 @@ class Category {
 
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('Page Source Error', {
+            return new InternalErrorResponse('Update Category Controller Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }

@@ -3,7 +3,7 @@ import { IMediaServiceResponse } from "../../interfaces/response/IServiceRespons
 import { IImageSharp, IPromiseBase } from "../../interfaces/Utils";
 import { IMediaService } from "../../interfaces/wordpress/IMediaService";
 import Locals from "../../providers/Locals";
-import { axios, createWriteStream, sharp, downloadImage, imagesize, readFileSync } from "../../utils";
+import { axios, createWriteStream, sharp, downloadImage, imagesize, readFileSync, addMedia } from "../../utils";
 
 export default class mediaService implements IMediaService {
 
@@ -13,7 +13,7 @@ export default class mediaService implements IMediaService {
     }
 
     async create(title: string, imageAddress: string, token: string): Promise<IMediaServiceResponse> {
-        const fileName = `${title.replace(' ', '-').toLowerCase() }.webp`;
+        const fileName = `${title.replace(new RegExp(" ", 'g'), '-').toLowerCase() }.webp`;
 
         const filePath = Locals.config().DOWNLOADED_IMAGES_PATH + fileName;
         const compressedImagePath = Locals.config().DOWNLOADED_IMAGES_COMPRESSED_PATH + fileName;
@@ -31,42 +31,15 @@ export default class mediaService implements IMediaService {
             return { success: false, message: "Error in compress image process" };
         }
         
-        const dataFile = await readFileSync(compressedImagePath)
+        const mediaProperties: any = { alt_text: title, title: title, caption: title, description: title }
 
-        const result = await axios({
-            url: `${Locals.config().wordpressUrl}media`,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'image/webp',
-                'Authorization': token,
-                'cache-control': 'no-cache',
-                'content-disposition': `attachment; filename=${fileName}`
-            },
-            data: dataFile.response
-        });
-
-        if(!result.success){
-            return { success: false, message: "Error uploading media. ", media: result };
-        }
-
-        const mediaTitleProperties: any = { alt_text: title, title: title, caption: title, description: title}
+        const result = await addMedia(compressedImagePath, mediaProperties, 0)
         
-        const updateResult = await axios({
-            url: `${Locals.config().wordpressUrl}media/${result.body.id}`,
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': token
-            },
-            body: JSON.stringify(mediaTitleProperties)
-        });
-
-        if(!updateResult.success) {
-            return { success: false, message: "Error updating media.", media: result.body };
+        if (!result.success) {
+            return { success: false, message: "Error updating media." };
         }
 
-        return { success: true, message: "success", media: updateResult.body };
+        return { success: true, message: "success", media: result.data };
     }
 
     async update(id: number, fieldsToUpdate: any, token: string): Promise<IMediaServiceResponse> {
