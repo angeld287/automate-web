@@ -18,7 +18,9 @@ const initialState: MediaState = {
 export const createMedia = createAsyncThunk(
   'media/create',
   async (media: Media) => {
-    const response = await addMediaToWordpress(media, "");
+    const response = await addMediaToWordpress(media, "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2VsYWNlaXRlLmRlIiwiaWF0IjoxNjY3OTE2MDYxLCJuYmYiOjE2Njc5MTYwNjEsImV4cCI6MTY2ODUyMDg2MSwiZGF0YSI6eyJ1c2VyIjp7ImlkIjoiMyJ9fX0.dCKFexqKuCyykNcTQlG7PVz-SP_qy6J8uJ5tE4tB2AI");
+    console.log(response.body);
+    
     return response;
   }
 );
