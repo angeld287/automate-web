@@ -13,7 +13,7 @@ export default class mediaService implements IMediaService {
     }
 
     async create(title: string, imageAddress: string, token: string): Promise<IMediaServiceResponse> {
-        const fileName = `${title.replace(' ', '-').toLowerCase()}.webp`;
+        const fileName = `${title.replace(new RegExp(" ", 'g'), '-').toLowerCase()}.webp`;
 
         const filePath = Locals.config().DOWNLOADED_IMAGES_PATH + fileName;
         const compressedImagePath = Locals.config().DOWNLOADED_IMAGES_COMPRESSED_PATH + fileName;
