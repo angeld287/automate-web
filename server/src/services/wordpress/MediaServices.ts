@@ -33,7 +33,7 @@ export default class mediaService implements IMediaService {
         
         const mediaProperties: any = { alt_text: title, title: title, caption: title, description: title }
 
-        const result = await addMedia(compressedImagePath, mediaProperties, 0)
+        const result = await addMedia(compressedImagePath, mediaProperties, 0, token)
         
         if (!result.success) {
             return { success: false, message: "Error updating media." };

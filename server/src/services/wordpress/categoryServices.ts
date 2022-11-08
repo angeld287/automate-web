@@ -18,7 +18,8 @@ export default class categoryService implements ICategoryService {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': token
+                'Authorization': token,
+                'cache-control': 'no-cache',
             },
             body: JSON.stringify(category)
         });
@@ -32,7 +33,8 @@ export default class categoryService implements ICategoryService {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': token
+                'Authorization': token,
+                'cache-control': 'no-cache',
             },
             body: JSON.stringify(category)
         });
