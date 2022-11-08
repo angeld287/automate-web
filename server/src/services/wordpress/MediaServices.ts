@@ -13,7 +13,7 @@ export default class mediaService implements IMediaService {
     }
 
     async create(title: string, imageAddress: string, token: string): Promise<IMediaServiceResponse> {
-        const fileName = `${title.replace(new RegExp(" ", 'g'), '-').toLowerCase() }.webp`;
+        const fileName = `${title.replace(' ', '-').toLowerCase()}.webp`;
 
         const filePath = Locals.config().DOWNLOADED_IMAGES_PATH + fileName;
         const compressedImagePath = Locals.config().DOWNLOADED_IMAGES_COMPRESSED_PATH + fileName;
@@ -22,24 +22,34 @@ export default class mediaService implements IMediaService {
         const downloadedImage: IPromiseBase = await downloadImage(imageNewFile, imageAddress);
 
         if (!downloadedImage.success) {
-            return {success: false, message: "Error in download image process"};
+            return { success: false, message: "Error in download image process" };
         }
-        
-        const compressImage: IImageSharp = await sharp(filePath, compressedImagePath); 
+
+        const compressImage: IImageSharp = await sharp(filePath, compressedImagePath);
 
         if (!compressImage.success) {
             return { success: false, message: "Error in compress image process" };
         }
-        
-        const mediaProperties: any = { alt_text: title, title: title, caption: title, description: title }
 
-        const result = await addMedia(compressedImagePath, mediaProperties, 0, token)
-        
+        const dataFile = await readFileSync(compressedImagePath)
+
+        const result = await axios({
+            url: `${Locals.config().wordpressUrl}media`,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'image/webp',
+                'Authorization': token,
+                'cache-control': 'no-cache',
+                'content-disposition': `attachment; filename=${fileName}`
+            },
+            data: dataFile.response
+        });
+
         if (!result.success) {
-            return { success: false, message: "Error updating media." };
+            return { success: false, message: "Error uploading media. ", media: result };
         }
-
-        return { success: true, message: "success", media: result.data };
+        
+        return { success: true, message: "success", media: result.body };
     }
 
     async update(id: number, fieldsToUpdate: any, token: string): Promise<IMediaServiceResponse> {
