@@ -115,6 +115,9 @@ TABLESPACE pg_default;
 ALTER TABLE IF EXISTS public.user_roles
     OWNER to admin;
 
+INSERT INTO public.roles(role_name)	VALUES ("customer");
+INSERT INTO public.roles(role_name)	VALUES ("veterinary");
+
 
 -- Table: public.user_pictures
 
