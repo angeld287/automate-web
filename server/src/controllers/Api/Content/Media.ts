@@ -46,6 +46,7 @@ class Media {
 
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
+            console.log(error);
             return new InternalErrorResponse('Create Media Controller Error', {
                 error: 'Internal Server Error',
             }).send(res);

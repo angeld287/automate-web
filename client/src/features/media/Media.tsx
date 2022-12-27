@@ -20,7 +20,8 @@ export function Media() {
             alt_text: "Aceite es muy espeso",
             title: "Aceite es muy espeso",
             caption: "Aceite es muy espeso",
-            description: "Aceite es muy espeso"
+            description: "Aceite es muy espeso",
+            id: "498"
           }))}
         >
           Update Media
