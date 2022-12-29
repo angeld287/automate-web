@@ -8,6 +8,8 @@ import CustomButton from "../../Components/CustomButton";
 import { addSubtitles } from "../../features/article/articleSlice";
 import { useAppDispatch } from "../../app/hooks";
 import { SubTitleContent } from "../../interfaces/models/Article";
+import { useNavigate } from 'react-router-dom';
+
 
 const Keywords = () => {
 
@@ -16,6 +18,7 @@ const Keywords = () => {
         { label: "Keyword number 1", text: "", id: getHashCode()}
     ]);
 
+    const navigate = useNavigate()
     const dispatch = useAppDispatch();
 
     const onChangeKeywords = (id: number, value: string) => {
@@ -39,12 +42,14 @@ const Keywords = () => {
 
         const subTitles: Array<SubTitleContent> = keywords.map( keyword =>
             ({
+                id: keyword.id,
                 name: keyword.text,
                 translatedName: "",
             })
         )
 
         dispatch(addSubtitles(subTitles))
+        navigate('/content-editor');
     }
 
 

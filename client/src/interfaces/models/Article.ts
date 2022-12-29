@@ -9,6 +9,7 @@ export interface IArticle {
 }
 
 export interface SubTitleContent {
+    id: number,
     name: string;
     translatedName: string;
     content?: Array<string>;
