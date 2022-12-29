@@ -1,15 +1,17 @@
 import { LikeOutlined, MessageOutlined, StarOutlined } from "@ant-design/icons";
 import { Avatar, Card, Skeleton, Row, List, Space } from "antd";
 import { createElement, useEffect, useState } from "react";
-import { useAppSelector } from "../../app/hooks";
-import { selectArticle } from "../../features/article/articleSlice"
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { getKeywordsContent, selectArticle } from "../../features/article/articleSlice"
 
 const ContentEditor = () => {
     const [loading, setLoading ] = useState(true);
+
     const article = useAppSelector(selectArticle);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
-        console.log(article)
+        dispatch(getKeywordsContent(article))
     }, []);
 
     const data = article.subtitiles.map((subtitle) => ({

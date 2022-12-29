@@ -1,15 +1,14 @@
 import Locals from "../../config/Locals";
-import Media from "../../interfaces/models/Media";
+import {IArticle} from "../../interfaces/models/Article";
 
-// A mock function to mimic making an async request for data
-export async function addMediaToWordpress(media: Media, token: string) {
-  const result = fetch(`${Locals.config().WP_API_BASE_URL}media/${media.id}`, {
+export async function searchKeywordsContent(article: IArticle) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}createContent`, {
     method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': token
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(media)
+    body: JSON.stringify({article: article})
   })
-  return result
+
+  return await fetchData.json();
 }
