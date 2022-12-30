@@ -87,6 +87,35 @@ router.post(
     ContentController.createContent
 );
 
+//routes for process
+router.post(
+    '/translateKeywords',
+    body('article', 'field article cannot be blank.').notEmpty(),
+    //Passport.isAuthenticated,
+    ContentController.translateKeywords
+);
+
+router.post(
+    '/searchKeywords',
+    body('article', 'field article cannot be blank.').notEmpty(),
+    //Passport.isAuthenticated,
+    ContentController.searchKeywords
+);
+
+router.post(
+    '/searchKeyword',
+    body('subtitle', 'field subtitle cannot be blank.').notEmpty(),
+    //Passport.isAuthenticated,
+    ContentController.searchKeyword
+);
+
+router.post(
+    '/translateParagraphs',
+    body('article', 'field article cannot be blank.').notEmpty(),
+    //Passport.isAuthenticated,
+    ContentController.translateParagraphs
+);
+
 router.post(
     '/createPost',
     body('article', 'field article cannot be blank.').notEmpty(),

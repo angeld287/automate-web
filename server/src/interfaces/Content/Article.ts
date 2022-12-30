@@ -1,7 +1,7 @@
 export interface INewArticle {
     title: string;
     translatedTitle: string;
-    subtitiles: Array<SubTitleContent>;
+    subtitles: Array<SubTitleContent>;
     category: string;
     content?: string;
     translatedContent?: string;
@@ -12,6 +12,7 @@ export interface SubTitleContent {
     name: string;
     translatedName: string;
     content?: Array<string>;
+    enContent?: Array<string>;
     translatedContent?: string;
     error?: boolean | ProcessError
 }
