@@ -14,7 +14,7 @@ export interface SubTitleContent {
     translatedName?: string;
     content?: Array<string>;
     translatedContent?: string;
-    error?: boolean | ProcessError
+    error?: boolean | ProcessError;
 }
 
 export interface ProcessError {
