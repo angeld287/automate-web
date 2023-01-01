@@ -9,3 +9,15 @@
 .footer-actions {
     margin: 20px;
 }
+
+.keywords-translation {
+    margin-left: 10px;
+}
+
+.action-btns {
+    margin-left: 10px;
+}
+
+.actions-col {
+    align-content: flex-end;
+}

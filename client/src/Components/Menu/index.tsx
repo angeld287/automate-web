@@ -8,8 +8,8 @@ const Menu: React.FC = () => {
 
   const items: MenuProps['items'] = useMemo(() => [
     {
-      label: (<Link to="/">Keywords</Link>),
-      key: 'keywords',
+      label: (<Link to="/">Home</Link>),
+      key: 'home',
     },
     {
       label: (<Link to="/posts">Posts</Link>),
