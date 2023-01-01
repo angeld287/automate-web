@@ -11,10 +11,10 @@ const ContentEditor = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch(getKeywordsContent(article))
+        dispatch(getKeywordsContent(article.article))
     }, []);
 
-    const data = article.subtitiles.map((subtitle) => ({
+    const data = article.article.subtitles.map((subtitle) => ({
         href: '',
         title: subtitle.name,
         avatar: 'https://joeschmoe.io/api/v1/random',
@@ -32,7 +32,7 @@ const ContentEditor = () => {
 
     return <>
         {loading && <Row className="">
-            {article.subtitiles.map((subtitle, index) => <Card
+            {article.article.subtitles.map((subtitle, index) => <Card
                 key={subtitle.id}
                 style={{ width: '100%', marginTop: 16 }}
             >

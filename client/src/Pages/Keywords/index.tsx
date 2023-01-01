@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getHashCode } from '../../utils/functions';
 import IKeyword from "../../interfaces/IKeyword"
 import CustomTextArea from "../../Components/CustomTextArea";
 import { Col, Row, Alert } from 'antd';
 import "./keyword.css"
-import { addSubtitles } from "../../features/article/articleSlice";
-import { useAppDispatch } from "../../app/hooks";
-import { SubTitleContent } from "../../interfaces/models/Article";
+import { addSubtitles, selectArticle, translateKeywords } from "../../features/article/articleSlice";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { IArticle, SubTitleContent } from "../../interfaces/models/Article";
 import { useNavigate } from 'react-router-dom';
 import CustomInput from "../../Components/CustomInput";
 import CustomButton from "../../Components/CustomButton"
@@ -22,6 +22,20 @@ const Keywords = () => {
 
     const navigate = useNavigate()
     const dispatch = useAppDispatch();
+    const article = useAppSelector(selectArticle);
+
+    useEffect(() => {
+        setKeyWords([...keywords.map(keyword => ({...keyword, enText: article.article.subtitles.find(subtitle => subtitle.id === keyword.id)?.translatedName}))])
+        setTranslated(article.kewordsTranslated)
+    }, [article]);
+
+    const subTitles: Array<SubTitleContent> = useMemo(() => keywords.map( keyword =>
+        ({
+            id: keyword.id,
+            name: keyword.text,
+            translatedName: keyword.enText,
+        })
+    ), [keywords]);
 
     const onChangeKeywords = (id: number, value: string) => {
         setError(undefined)
@@ -38,33 +52,31 @@ const Keywords = () => {
     }
 
     const startSearchProcess = () => {
+        navigate('/content-editor');
+    }
+
+    const translateKeywordsAction = () => {
+
         if(keywords.length < 4){
             return setError("Pleace add more than 3 keywords.")
         }
 
-        const subTitles: Array<SubTitleContent> = keywords.map( keyword =>
-            ({
-                id: keyword.id,
-                name: keyword.text,
-                translatedName: "",
-            })
-        )
-
         dispatch(addSubtitles(subTitles))
-        navigate('/content-editor');
-    }
-
-    const translateKeywords = () => {
         
-        setTranslated(true);
+        const _article: IArticle = {
+            title: "",
+            subtitles: subTitles
+        }
+        
+        dispatch(translateKeywords(_article))
     }
 
 
     return <>
         {keywords.sort((keyword_a, keyword_b) => (keyword_a.id < keyword_b.id ? -1 : 1)).map(keyword => {
             return <Row key={`key-id-${keyword.id}`} className="keyword-input-group">
-                <Col span={3} className="keyword-label">
-                    <label>{keyword.label}</label>        
+                <Col span={4} className="keyword-label">
+                    <label>{keyword.label}</label>
                 </Col>
                 <Col span={9}>
                     <CustomTextArea 
@@ -79,7 +91,7 @@ const Keywords = () => {
                 </Col>
                 <Col span={9} className="keywords-translation">
                     <CustomInput
-                        style={{fontSize: 10}}
+                        style={{fontSize: 11}}
                         dataTestId={`test-id-${keyword.id}`}
                         type="text"
                         onChange={() => {}}
@@ -95,7 +107,7 @@ const Keywords = () => {
                 {error && <Alert message={error} type="error" showIcon />}
             </Col>
             <Col className="actions-col" span={12}>
-                <CustomButton _key="translate-btn" className="action-btns" disabled={translated} onClick={translateKeywords}>Translate</CustomButton>
+                <CustomButton _key="translate-btn" className="action-btns" loading={article.statusTk === "loading"} disabled={translated} onClick={translateKeywordsAction}>Translate</CustomButton>
                 <CustomButton _key="start-btn" className="action-btns" disabled={!translated} onClick={startSearchProcess}>Start</CustomButton>
             </Col>
         </Row>

@@ -1,8 +1,8 @@
 export interface IArticle {
     title: string;
-    translatedTitle: string;
-    subtitiles: Array<SubTitleContent>;
-    category: string;
+    translatedTitle?: string;
+    subtitles: Array<SubTitleContent>;
+    category?: string;
     content?: string;
     translatedContent?: string;
     error?: boolean | ProcessError
@@ -11,7 +11,7 @@ export interface IArticle {
 export interface SubTitleContent {
     id: number,
     name: string;
-    translatedName: string;
+    translatedName?: string;
     content?: Array<string>;
     translatedContent?: string;
     error?: boolean | ProcessError
