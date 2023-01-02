@@ -15,7 +15,10 @@ export class searchService implements ISearchService {
                 return response;
             }
 
-            await Promise.all(response.body.items.map(async (searchResult, index) => {
+            const resultsList = response.body.items;
+
+            for (let index = 0; index < resultsList.length; index++) {
+                const searchResult = resultsList[index];
                 if (paragraphsQuantity <= Locals.config().NUMBER_OF_PARAGRAPHS_ALLOWED) {
                     const snippet = searchResult.snippet;
                     const pageSource = await searchService.requestPageSource(searchResult.link);
@@ -25,9 +28,9 @@ export class searchService implements ISearchService {
                         paragraphsQuantity++
                     }
                 }
+            }
 
-            }));
-
+            //await Promise.all(response.body.items.map(async (searchResult, index) => {}));
             //console.log(paragraphs.filter(para => para.scenario.foundInCase === 4))
             //console.log(paragraphs.filter(para => para.scenario.foundInCase !== 4))
 
