@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { IArticle, SubTitleContent } from '../../interfaces/models/Article';
+import { searchKeywordContent } from '../keyword/keywordAPI';
 import { getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
 
 export interface ArticleState {
@@ -43,6 +44,18 @@ export const translateKeywords = createAsyncThunk(
       return result.data.article.subtitles;
     } catch (error) {
       console.log(error)
+    }
+  }
+);
+
+export const getKeywordContent = createAsyncThunk(
+  'article/keywordSearch',
+  async (subtitle: SubTitleContent) => {
+    try {    
+      const result = await searchKeywordContent(subtitle);
+      return result;
+    } catch (error) {
+      console.log(error) 
     }
   }
 );

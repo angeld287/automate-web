@@ -13,6 +13,7 @@ export interface SubTitleContent {
     name: string;
     translatedName?: string;
     content?: Array<string>;
+    enContent?: Array<string>;
     translatedContent?: string;
     error?: boolean | ProcessError;
 }

@@ -5,7 +5,7 @@ import {
   Route,
 } from "react-router-dom";
 import Menu from "../Components/Menu";
-import ContentEditor from "../Pages/ContentEditor";
+import ContentEditor from "../Pages/ContentEditor/Article";
 import Home from "../Pages/Home";
 import Keywords from "../Pages/Keywords";
 import Posts from "../Pages/Posts";
