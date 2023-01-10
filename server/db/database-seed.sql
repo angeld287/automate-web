@@ -150,3 +150,78 @@ ALTER TABLE IF EXISTS public.user_pictures
 --		'78ca89fb969778e1044c06659fb077bdb4b77d1d6b0c0466e53233d73361a280                                    ', 
 --		'User Admin For Tests', 
 --		'M');
+
+
+-- Table: public.articles
+
+-- DROP TABLE IF EXISTS public.articles;
+
+CREATE TABLE IF NOT EXISTS public.articles
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    title character(100) COLLATE pg_catalog."default",
+    translatedTitle character(100) COLLATE pg_catalog."default",
+    category character(50) COLLATE pg_catalog."default",
+
+    CONSTRAINT articles_pkey PRIMARY KEY (id),
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.articles
+    OWNER to admin;
+
+
+-- Table: public.subtitles
+
+-- DROP TABLE IF EXISTS public.subtitles;
+
+CREATE TABLE IF NOT EXISTS public.subtitles
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    subtitles_name character(100) COLLATE pg_catalog."default",
+    translated_name character(100) COLLATE pg_catalog."default",
+    articles_id integer NOT NULL,
+    CONSTRAINT subtitles_pkey PRIMARY KEY (id),
+    CONSTRAINT subtitles_articles_fkey FOREIGN KEY (articles_id)
+        REFERENCES public.articles (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID,
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.subtitles
+    OWNER to admin;
+
+
+-- Table: public.contents
+
+-- DROP TABLE IF EXISTS public.contents;
+
+CREATE TABLE IF NOT EXISTS public.contents
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    content character(100) COLLATE pg_catalog."default",
+    selected boolean,
+    content_language char COLLATE pg_catalog."default",
+    subtitles_id integer NOT NULL,
+    articles_id integer NOT NULL,
+    CONSTRAINT contents_pkey PRIMARY KEY (id),
+    CONSTRAINT contents_subtitles_fkey FOREIGN KEY (subtitles_id)
+        REFERENCES public.subtitles (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+    CONSTRAINT contents_articles_fkey FOREIGN KEY (articles_id)
+        REFERENCES public.articles (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.contents
+    OWNER to admin;
