@@ -17,6 +17,7 @@ import TranslateController from '../controllers/Api/Content/Translate';
 import PostController from '../controllers/Api/Content/Post';
 import MediaController from '../controllers/Api/Content/Media';
 import Categoryontroller from '../controllers/Api/Content/Category';
+import ArticleController from '../controllers/Api/Article/Article';
 
 const router = Router();
 
@@ -154,6 +155,18 @@ router.post(
     body('description', 'field description cannot be blank.').notEmpty(),
     //Passport.isAuthenticated,
     Categoryontroller.update
+);
+
+
+
+//Articles DB Endpoints
+router.post(
+    '/createArticleContent',
+    body('content', 'field content cannot be blank.').notEmpty(),
+    body('selected', 'field description cannot be blank.').notEmpty(),
+    body('contentLanguage', 'field description cannot be blank.').notEmpty(),
+    //Passport.isAuthenticated,
+    ArticleController.createContent
 );
 
 export default router;

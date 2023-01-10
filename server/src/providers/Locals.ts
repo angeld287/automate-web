@@ -20,7 +20,7 @@ class Locals {
         const apiPrefix = process.env.API_PREFIX || 'api';
 
         //allow origin cors
-        const url = process.env.APP_URL || `http://aallitypitbulls.com:${port}`;
+        const url = process.env.APP_URL || `http://localhost:3003`;
 
         const clientId = process.env.GOOGLE_ID || "a.apps.googleusercontent.com";
         const clientSecret = process.env.GOOGLE_SECRET || "ks";

@@ -203,11 +203,11 @@ ALTER TABLE IF EXISTS public.subtitles
 CREATE TABLE IF NOT EXISTS public.contents
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
-    content character(100) COLLATE pg_catalog."default",
+    content character(2000) COLLATE pg_catalog."default",
     selected boolean,
-    content_language char COLLATE pg_catalog."default",
-    subtitles_id integer NOT NULL,
-    articles_id integer NOT NULL,
+    content_language character(3) COLLATE pg_catalog."default",
+    subtitles_id integer,
+    articles_id integer,
     CONSTRAINT contents_pkey PRIMARY KEY (id),
     CONSTRAINT contents_subtitles_fkey FOREIGN KEY (subtitles_id)
         REFERENCES public.subtitles (id) MATCH SIMPLE
