@@ -6,24 +6,73 @@ import Database from "../../providers/Database";
 
 export class articleService implements IArticleService {
 
-    async createContextForArticle(content: Content): Promise<Content> {
-        const createContent = {
-            name: 'create-new-content-for-article',
-            text: 'INSERT INTO public.contents(content, selected, content_language, articles_id) VALUES ($1, $2, $3, $4) RETURNING id, content, selected, content_language, articles_id, subtitles_id',
-            values: [content.content, content.selected, content.contentLanguage, content.articleId],
-        }
+    async createSubtitle(subtitle: SubTitleContent): Promise<SubTitleContent> {
+        try {
+            const createSubtitle = {
+                name: 'create-new-subtitle',
+                text: 'INSERT INTO public.subtitles(subtitles_name, translated_name, articles_id)VALUES ($1, $2, $3) RETURNING id, subtitles_name, translated_name, articles_id',
+                values: [subtitle.name, subtitle.translatedName, subtitle.articleId],
+            }
 
-        return await this.createContent(createContent);
+            let result = null, client = null;
+
+            client = await Database.getTransaction();
+
+            try {
+                result = await Database.sqlExecSingleRow(client, createSubtitle);
+                await Database.commit(client);
+            } catch (error) {
+                await Database.rollback(client);
+                throw new Error(error);
+            }
+
+            let _subtitle: SubTitleContent = {
+                id: result.rows[0].id,
+                name: result.rows[0].subtitles_name,
+                translatedName: result.rows[0].translated_name,
+                articleId: result.rows[0].articles_id,
+            }
+            
+            return _subtitle;
+            
+        } catch (error) {
+            throw new Error(error.message);
+        }
     }
 
-    async createContextForSubtitle(content: Content): Promise<Content> {
-        const createContent = {
-            name: 'create-new-content-for-subtitle',
-            text: 'INSERT INTO public.contents(content, selected, content_language, subtitles_id) VALUES ($1, $2, $3, $4) RETURNING id, content, selected, content_language, articles_id, subtitles_id',
-            values: [content.content, content.selected, content.contentLanguage, content.subtitleId],
-        }
+    async createArticle(article: INewArticle): Promise<INewArticle> {
+        try {
+            const createArticle = {
+                name: 'create-new-subtitle',
+                text: 'INSERT INTO public.articles(title, translatedtitle, category) VALUES ($1, $2, $3) RETURNING id, title, translatedtitle, category',
+                values: [article.title, article.translatedTitle, article.category],
+            }
 
-        return await this.createContent(createContent);
+            let result = null, client = null;
+
+            client = await Database.getTransaction();
+
+            try {
+                result = await Database.sqlExecSingleRow(client, createArticle);
+                await Database.commit(client);
+            } catch (error) {
+                await Database.rollback(client);
+                throw new Error(error);
+            }
+
+            let _article: INewArticle = {
+                id: result.rows[0].id,
+                category: result.rows[0].category,
+                subtitles: [],
+                title: result.rows[0].title,
+                translatedTitle: result.rows[0].translatedTitle,
+            }
+            
+            return _article;
+            
+        } catch (error) {
+            throw new Error(error.message);
+        }
     }
 
     async getArticleById(articleId: number): Promise<INewArticle | boolean> {
@@ -79,8 +128,27 @@ export class articleService implements IArticleService {
             throw new Error(error.message);
         }
     }
-    
 
+    async createContextForArticle(content: Content): Promise<Content> {
+        const createContent = {
+            name: 'create-new-content-for-article',
+            text: 'INSERT INTO public.contents(content, selected, content_language, articles_id) VALUES ($1, $2, $3, $4) RETURNING id, content, selected, content_language, articles_id, subtitles_id',
+            values: [content.content, content.selected, content.contentLanguage, content.articleId],
+        }
+
+        return await this.createContent(createContent);
+    }
+
+    async createContextForSubtitle(content: Content): Promise<Content> {
+        const createContent = {
+            name: 'create-new-content-for-subtitle',
+            text: 'INSERT INTO public.contents(content, selected, content_language, subtitles_id) VALUES ($1, $2, $3, $4) RETURNING id, content, selected, content_language, articles_id, subtitles_id',
+            values: [content.content, content.selected, content.contentLanguage, content.subtitleId],
+        }
+
+        return await this.createContent(createContent);
+    }
+    
     async createContent(createContent: Query): Promise<Content> {
         try {
             let result = null, client = null;

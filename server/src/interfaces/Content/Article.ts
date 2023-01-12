@@ -13,6 +13,7 @@ export interface SubTitleContent {
     id?: number;
     name: string;
     translatedName: string;
+    articleId?: number;
     content?: Array<string>;
     enContent?: Array<string>;
     translatedContent?: string;

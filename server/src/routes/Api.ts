@@ -161,6 +161,24 @@ router.post(
 
 //Articles DB Endpoints
 router.post(
+    '/createSubtitle',
+    body('name', 'field name cannot be blank.').notEmpty(),
+    body('translatedName', 'field translatedName cannot be blank.').notEmpty(),
+    body('articleId', 'field articleId cannot be blank.').notEmpty(),
+    //Passport.isAuthenticated,
+    ArticleController.createSubtitle
+);
+
+router.post(
+    '/createArticle',
+    body('title', 'field content cannot be blank.').notEmpty(),
+    body('category', 'field selected cannot be blank.').notEmpty(),
+    body('translatedTitle', 'field contentLanguage cannot be blank.').notEmpty(),
+    //Passport.isAuthenticated,
+    ArticleController.createArticle
+);
+
+router.post(
     '/createArticleContent',
     body('content', 'field content cannot be blank.').notEmpty(),
     body('selected', 'field selected cannot be blank.').notEmpty(),

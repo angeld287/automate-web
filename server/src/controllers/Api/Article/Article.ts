@@ -16,6 +16,92 @@ import { articleService } from '../../../services/articleServices/articleService
 
 
 class Article {
+
+    public static async createSubtitle(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            const errors = new ExpressValidator().validator(req);
+
+            if (!errors.isEmpty()) {
+                return new BadRequestResponse('Error', {
+                    errors: errors.array()
+                }).send(res);
+            }
+
+            let _articleService: IArticleService = new articleService();
+            
+            const name = req.body.name;
+            const translatedName = req.body.translatedName;
+            const articleId = req.body.articleId;            
+
+            let subtitle: SubTitleContent = {
+                name,
+                translatedName,
+                articleId
+            }
+
+            const article: INewArticle | boolean = await _articleService.getArticleById(articleId)
+
+            if(!article){
+                return new BadRequestResponse('Error', {
+                    error: "The article does not exist."
+                }).send(res);
+            }
+            
+            subtitle = await _articleService.createSubtitle(subtitle);
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: subtitle,
+                error: null
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Create Article - Article Controller Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
+    public static async createArticle(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            const errors = new ExpressValidator().validator(req);
+
+            if (!errors.isEmpty()) {
+                return new BadRequestResponse('Error', {
+                    errors: errors.array()
+                }).send(res);
+            }
+
+            let _articleService: IArticleService = new articleService();
+            
+            const title = req.body.title;
+            const category = req.body.category;
+            const translatedTitle = req.body.translatedTitle;            
+
+            let article: INewArticle = {
+                title,
+                category,
+                subtitles: [],
+                translatedTitle
+            }
+            
+            article = await _articleService.createArticle(article);
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: article,
+                error: null
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Create Article - Article Controller Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
     public static async createContentForArticle(req: IRequest, res: IResponse): Promise<any> {
         try {
             const errors = new ExpressValidator().validator(req);
