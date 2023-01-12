@@ -11,7 +11,7 @@ import IContent from '../../../interfaces/models/Content';
 import { IRequest, IResponse } from '../../../interfaces/vendors';
 
 import Log from '../../../middlewares/Log';
-import ExpressValidator from '../../../providers/ExpressValidation';
+import ExpressValidator, { ValidateErrors } from '../../../providers/ExpressValidation';
 import { articleService } from '../../../services/articleServices/articleServices';
 
 
@@ -19,13 +19,7 @@ class Article {
 
     public static async createSubtitle(req: IRequest, res: IResponse): Promise<any> {
         try {
-            const errors = new ExpressValidator().validator(req);
-
-            if (!errors.isEmpty()) {
-                return new BadRequestResponse('Error', {
-                    errors: errors.array()
-                }).send(res);
-            }
+            if(ValidateErrors.validate(req, res) !== true) return
 
             let _articleService: IArticleService = new articleService();
             
@@ -65,13 +59,7 @@ class Article {
 
     public static async createArticle(req: IRequest, res: IResponse): Promise<any> {
         try {
-            const errors = new ExpressValidator().validator(req);
-
-            if (!errors.isEmpty()) {
-                return new BadRequestResponse('Error', {
-                    errors: errors.array()
-                }).send(res);
-            }
+            if(ValidateErrors.validate(req, res) !== true) return
 
             let _articleService: IArticleService = new articleService();
             
@@ -104,13 +92,7 @@ class Article {
 
     public static async createContentForArticle(req: IRequest, res: IResponse): Promise<any> {
         try {
-            const errors = new ExpressValidator().validator(req);
-
-            if (!errors.isEmpty()) {
-                return new BadRequestResponse('Error', {
-                    errors: errors.array()
-                }).send(res);
-            }
+            if(ValidateErrors.validate(req, res) !== true) return
 
             let _articleService: IArticleService = new articleService();
             
@@ -153,13 +135,7 @@ class Article {
 
      public static async createContentForSubtitle(req: IRequest, res: IResponse): Promise<any> {
         try {
-            const errors = new ExpressValidator().validator(req);
-
-            if (!errors.isEmpty()) {
-                return new BadRequestResponse('Error', {
-                    errors: errors.array()
-                }).send(res);
-            }
+            if(ValidateErrors.validate(req, res) !== true) return
 
             let _articleService: IArticleService = new articleService();
             
