@@ -1,4 +1,5 @@
 export interface INewArticle {
+    id?: number;
     title: string;
     translatedTitle: string;
     subtitles: Array<SubTitleContent>;
@@ -9,6 +10,7 @@ export interface INewArticle {
 }
 
 export interface SubTitleContent {
+    id?: number;
     name: string;
     translatedName: string;
     content?: Array<string>;

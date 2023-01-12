@@ -3,4 +3,6 @@ export default interface Content {
     content: string;
     selected: boolean;
     contentLanguage: string;
+    subtitleId?: number;
+    articleId?: number;
 }

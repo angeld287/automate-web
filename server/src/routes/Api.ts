@@ -163,10 +163,21 @@ router.post(
 router.post(
     '/createArticleContent',
     body('content', 'field content cannot be blank.').notEmpty(),
-    body('selected', 'field description cannot be blank.').notEmpty(),
-    body('contentLanguage', 'field description cannot be blank.').notEmpty(),
+    body('selected', 'field selected cannot be blank.').notEmpty(),
+    body('contentLanguage', 'field contentLanguage cannot be blank.').notEmpty(),
+    body('articleId', 'field articleId cannot be blank.').notEmpty(),
     //Passport.isAuthenticated,
-    ArticleController.createContent
+    ArticleController.createContentForArticle
+);
+
+router.post(
+    '/createSubtitleContent',
+    body('content', 'field content cannot be blank.').notEmpty(),
+    body('selected', 'field selected cannot be blank.').notEmpty(),
+    body('contentLanguage', 'field contentLanguage cannot be blank.').notEmpty(),
+    body('subtitleId', 'field subtitleId cannot be blank.').notEmpty(),
+    //Passport.isAuthenticated,
+    ArticleController.createContentForSubtitle
 );
 
 export default router;
