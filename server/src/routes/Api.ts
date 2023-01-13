@@ -169,6 +169,7 @@ router.post(
     ArticleController.createSubtitle
 );
 
+
 router.post(
     '/createArticle',
     body('title', 'field content cannot be blank.').notEmpty(),
@@ -176,6 +177,12 @@ router.post(
     body('translatedTitle', 'field contentLanguage cannot be blank.').notEmpty(),
     //Passport.isAuthenticated,
     ArticleController.createArticle
+);
+
+router.get(
+    '/getArticles',
+    //Passport.isAuthenticated,
+    ArticleController.getArticles
 );
 
 router.post(

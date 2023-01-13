@@ -13,7 +13,7 @@ class Locals {
      * throughout the app's runtime
      */
     public static config(): any {
-        const port = process.env.PORT || 3001;
+        const port = process.env.PORT || 3002;
         const DATABASE_URL = process.env.DATABASE_URL || 'postgres://admin:admin@localhost:35432/db';
 
         const appSecret = process.env.APP_SECRET || 'secret_key';

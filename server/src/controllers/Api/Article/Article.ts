@@ -51,7 +51,7 @@ class Article {
 
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('Create Article - Article Controller Error', {
+            return new InternalErrorResponse('Create Subtitle - Article Controller Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }
@@ -85,6 +85,35 @@ class Article {
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
             return new InternalErrorResponse('Create Article - Article Controller Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
+    public static async getArticles(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            if(!req.query.page || !req.query.size){
+                return new BadRequestResponse('Error', {
+                    error: "Fields page and size are required."
+                }).send(res);
+            }
+            
+            let _articleService: IArticleService = new articleService();
+
+            const size = req.query.size
+            const page = req.query.page
+
+            const articles: Array<INewArticle> | boolean = await _articleService.getArticles(parseInt(page.toString()), parseInt(size.toString()))
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: articles,
+                error: null
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Get Articles - Article Controller Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }

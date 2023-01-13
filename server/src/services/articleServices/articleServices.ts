@@ -103,6 +103,38 @@ export class articleService implements IArticleService {
         }
     }
 
+    async getArticles(page: number, size: number): Promise<Array<INewArticle> | boolean> {
+        const getQuery = {
+            name: 'get-article-by-id',
+            text: `SELECT * FROM public.articles ORDER BY title LIMIT $2 OFFSET $1;`,
+            values: [page, size],
+        }
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            if (result.rows.length === 0)
+                return false
+            
+            const articles: Array<INewArticle> = []
+            
+            result.rows.forEach(row => {
+               articles.push({
+                   id: row.id,
+                   title: row.title,
+                   translatedTitle: row.translatedtitle,
+                   category: row.category,
+                   subtitles: []
+                })
+            });
+
+            return articles;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
     async getSubtitleById(subtitleId: number): Promise<SubTitleContent | boolean> {
         const getQuery = {
             name: 'get-subtitle-by-id',

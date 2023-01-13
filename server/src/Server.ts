@@ -3,7 +3,7 @@ import App from './providers/App'
 import * as os from 'os';
 const cluster = require('cluster');
 
-if (cluster.isMaster) {
+if (!cluster.isMaster) {
     /**
 	 * Catches the process events
 	 */
