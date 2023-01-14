@@ -115,7 +115,7 @@ TABLESPACE pg_default;
 ALTER TABLE IF EXISTS public.user_roles
     OWNER to admin;
 
-INSERT INTO public.roles(role_name)	VALUES ("customer");
+INSERT INTO public.roles(role_name)	VALUES ("admin");
 INSERT INTO public.roles(role_name)	VALUES ("veterinary");
 
 
@@ -160,16 +160,48 @@ CREATE TABLE IF NOT EXISTS public.articles
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
     title character(100) COLLATE pg_catalog."default",
-    translatedTitle character(100) COLLATE pg_catalog."default",
+    translatedtitle character(100) COLLATE pg_catalog."default",
     category character(50) COLLATE pg_catalog."default",
-
+    internal_id integer NOT NULL DEFAULT nextval('articles_internal_id_seq'::regclass),
+    created_by integer NOT NULL,
+    created_at character(100) COLLATE pg_catalog."default" NOT NULL,
+    deleted boolean,
+    deleted_by integer,
+    deleted_at character(100) COLLATE pg_catalog."default",
     CONSTRAINT articles_pkey PRIMARY KEY (id),
+    CONSTRAINT articles_created_by_fkey FOREIGN KEY (created_by)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT articles_deleted_by_fkey FOREIGN KEY (deleted_by)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
 )
-
+WITH (
+    OIDS = FALSE
+)
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.articles
     OWNER to admin;
+-- Index: fki_articles_created_by_fkey
+
+-- DROP INDEX IF EXISTS public.fki_articles_created_by_fkey;
+
+CREATE INDEX IF NOT EXISTS fki_articles_created_by_fkey
+    ON public.articles USING btree
+    (created_by ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: fki_articles_deleted_by_fkey
+
+-- DROP INDEX IF EXISTS public.fki_articles_deleted_by_fkey;
+
+CREATE INDEX IF NOT EXISTS fki_articles_deleted_by_fkey
+    ON public.articles USING btree
+    (deleted_by ASC NULLS LAST)
+    TABLESPACE pg_default;
+    
 
 
 -- Table: public.subtitles
@@ -187,13 +219,24 @@ CREATE TABLE IF NOT EXISTS public.subtitles
         REFERENCES public.articles (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-        NOT VALID,
 )
-
+WITH (
+    OIDS = FALSE
+)
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.subtitles
     OWNER to admin;
+-- Index: fki_subtitles_articles_fkey
+
+-- DROP INDEX IF EXISTS public.fki_subtitles_articles_fkey;
+
+CREATE INDEX IF NOT EXISTS fki_subtitles_articles_fkey
+    ON public.subtitles USING btree
+    (articles_id ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+
 
 
 -- Table: public.contents
@@ -209,19 +252,35 @@ CREATE TABLE IF NOT EXISTS public.contents
     subtitles_id integer,
     articles_id integer,
     CONSTRAINT contents_pkey PRIMARY KEY (id),
+    CONSTRAINT contents_articles_fkey FOREIGN KEY (articles_id)
+        REFERENCES public.articles (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
     CONSTRAINT contents_subtitles_fkey FOREIGN KEY (subtitles_id)
         REFERENCES public.subtitles (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-        NOT VALID
-    CONSTRAINT contents_articles_fkey FOREIGN KEY (articles_id)
-        REFERENCES public.articles (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-        NOT VALID
 )
-
+WITH (
+    OIDS = FALSE
+)
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.contents
     OWNER to admin;
+-- Index: fki_contents_articles_fkey
+
+-- DROP INDEX IF EXISTS public.fki_contents_articles_fkey;
+
+CREATE INDEX IF NOT EXISTS fki_contents_articles_fkey
+    ON public.contents USING btree
+    (articles_id ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: fki_contents_subtitles_fkey
+
+-- DROP INDEX IF EXISTS public.fki_contents_subtitles_fkey;
+
+CREATE INDEX IF NOT EXISTS fki_contents_subtitles_fkey
+    ON public.contents USING btree
+    (subtitles_id ASC NULLS LAST)
+    TABLESPACE pg_default;
