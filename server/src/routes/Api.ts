@@ -64,7 +64,7 @@ router.post(
 router.post(
     '/getPageSource',
     body('url', 'url cannot be blank.').notEmpty(),
-    //Passport.isAuthenticated,
+    Passport.isAuthenticated,
     PageSource.getPageSource
 );
 
@@ -72,7 +72,7 @@ router.post(
     '/translate',
     body('text', 'text cannot be blank.').notEmpty(),
     body('language', 'language cannot be blank.').notEmpty(),
-    //Passport.isAuthenticated,
+    Passport.isAuthenticated,
     TranslateController.perform
 );
 
@@ -84,7 +84,7 @@ router.get(
 router.post(
     '/createContent',
     body('article', 'field article cannot be blank.').notEmpty(),
-    //Passport.isAuthenticated,
+    Passport.isAuthenticated,
     ContentController.createContent
 );
 
@@ -92,35 +92,35 @@ router.post(
 router.post(
     '/translateKeywords',
     body('article', 'field article cannot be blank.').notEmpty(),
-    //Passport.isAuthenticated,
+    Passport.isAuthenticated,
     ContentController.translateKeywords
 );
 
 router.post(
     '/searchKeywords',
     body('article', 'field article cannot be blank.').notEmpty(),
-    //Passport.isAuthenticated,
+    Passport.isAuthenticated,
     ContentController.searchKeywords
 );
 
 router.post(
     '/searchKeyword',
     body('subtitle', 'field subtitle cannot be blank.').notEmpty(),
-    //Passport.isAuthenticated,
+    Passport.isAuthenticated,
     ContentController.searchKeyword
 );
 
 router.post(
     '/translateParagraphs',
     body('article', 'field article cannot be blank.').notEmpty(),
-    //Passport.isAuthenticated,
+    Passport.isAuthenticated,
     ContentController.translateParagraphs
 );
 
 router.post(
     '/createPost',
     body('article', 'field article cannot be blank.').notEmpty(),
-    //Passport.isAuthenticated,
+    Passport.isAuthenticated,
     PostController.create
 );
 
@@ -128,7 +128,7 @@ router.post(
     '/uploadImage',
     body('imageAddress', 'field imageAddress cannot be blank.').notEmpty(),
     body('title', 'field title cannot be blank.').notEmpty(),
-    //Passport.isAuthenticated,
+    Passport.isAuthenticated,
     MediaController.create
 );
 
@@ -136,7 +136,7 @@ router.post(
     '/updateImageProps',
     body('id', 'field id cannot be blank.').notEmpty(),
     body('title', 'field title cannot be blank.').notEmpty(),
-    //Passport.isAuthenticated,
+    Passport.isAuthenticated,
     MediaController.updateMediaTitles
 );
 
@@ -144,7 +144,7 @@ router.post(
     '/addCategory',
     body('name', 'field name cannot be blank.').notEmpty(),
     body('description', 'field description cannot be blank.').notEmpty(),
-    //Passport.isAuthenticated,
+    Passport.isAuthenticated,
     Categoryontroller.create
 );
 
@@ -153,7 +153,7 @@ router.post(
     body('id', 'field id cannot be blank.').notEmpty(),
     body('name', 'field name cannot be blank.').notEmpty(),
     body('description', 'field description cannot be blank.').notEmpty(),
-    //Passport.isAuthenticated,
+    Passport.isAuthenticated,
     Categoryontroller.update
 );
 
@@ -165,7 +165,7 @@ router.post(
     body('name', 'field name cannot be blank.').notEmpty(),
     body('translatedName', 'field translatedName cannot be blank.').notEmpty(),
     body('articleId', 'field articleId cannot be blank.').notEmpty(),
-    //Passport.isAuthenticated,
+    Passport.isAuthenticated,
     ArticleController.createSubtitle
 );
 
@@ -175,13 +175,13 @@ router.post(
     body('title', 'field content cannot be blank.').notEmpty(),
     body('category', 'field selected cannot be blank.').notEmpty(),
     body('translatedTitle', 'field contentLanguage cannot be blank.').notEmpty(),
-    //Passport.isAuthenticated,
+    Passport.isAuthenticated,
     ArticleController.createArticle
 );
 
 router.get(
     '/getArticles',
-    //Passport.isAuthenticated,
+    Passport.isAuthenticated,
     ArticleController.getArticles
 );
 
@@ -191,7 +191,7 @@ router.post(
     body('selected', 'field selected cannot be blank.').notEmpty(),
     body('contentLanguage', 'field contentLanguage cannot be blank.').notEmpty(),
     body('articleId', 'field articleId cannot be blank.').notEmpty(),
-    //Passport.isAuthenticated,
+    Passport.isAuthenticated,
     ArticleController.createContentForArticle
 );
 
@@ -201,7 +201,7 @@ router.post(
     body('selected', 'field selected cannot be blank.').notEmpty(),
     body('contentLanguage', 'field contentLanguage cannot be blank.').notEmpty(),
     body('subtitleId', 'field subtitleId cannot be blank.').notEmpty(),
-    //Passport.isAuthenticated,
+    Passport.isAuthenticated,
     ArticleController.createContentForSubtitle
 );
 

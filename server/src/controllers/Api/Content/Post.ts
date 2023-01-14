@@ -33,7 +33,7 @@ class Post {
 
             const article: INewArticle = req.body.article as INewArticle;
             const title: string = article.title;
-            const content: any = article.content;
+            const content: any = 'post content in wordpress';
             const bodyCategory: string = article.category;
             
             const category: Category = (await categoryService.getList()).find(category => category.name.toLowerCase() === bodyCategory.toLowerCase())

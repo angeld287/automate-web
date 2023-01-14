@@ -1,12 +1,18 @@
 export interface INewArticle {
     id?: number;
+    internalId?: number;
     title: string;
     translatedTitle: string;
     subtitles: Array<SubTitleContent>;
     category: string;
-    content?: string;
+    introduction?: string;
     translatedContent?: string;
-    error?: boolean | ProcessError
+    error?: boolean | ProcessError;
+    createdBy: number;
+    createdAt: string;
+    deleted?: boolean;
+    deletedBy?: number;
+    deletedAt?: string;
 }
 
 export interface SubTitleContent {

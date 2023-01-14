@@ -66,6 +66,8 @@ export class articleService implements IArticleService {
                 subtitles: [],
                 title: result.rows[0].title,
                 translatedTitle: result.rows[0].translated_title,
+                createdBy: result.rows[0].created_by,
+                createdAt: result.rows[0].created_at,
             }
             
             return _article;
@@ -94,7 +96,9 @@ export class articleService implements IArticleService {
                 title: result.rows[0].title,
                 translatedTitle: result.rows[0].translated_title,
                 category: result.rows[0].category,
-                subtitles: []
+                subtitles: [],
+                createdBy: result.rows[0].created_by,
+                createdAt: result.rows[0].created_at,
             }
 
             return article;
@@ -121,11 +125,13 @@ export class articleService implements IArticleService {
             
             result.rows.forEach(row => {
                articles.push({
-                   id: row.id,
-                   title: row.title,
-                   translatedTitle: row.translated_title,
-                   category: row.category,
-                   subtitles: []
+                    id: row.id,
+                    title: row.title,
+                    translatedTitle: row.translated_title,
+                    category: row.category,
+                    subtitles: [],
+                    createdBy: result.rows[0].created_by,
+                    createdAt: result.rows[0].created_at,
                 })
             });
 

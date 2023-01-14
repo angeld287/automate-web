@@ -11,7 +11,7 @@ import IContent from '../../../interfaces/models/Content';
 import { IRequest, IResponse } from '../../../interfaces/vendors';
 
 import Log from '../../../middlewares/Log';
-import ExpressValidator, { ValidateErrors } from '../../../providers/ExpressValidation';
+import { ValidateErrors } from '../../../providers/ExpressValidation';
 import { articleService } from '../../../services/articleServices/articleServices';
 
 
@@ -65,13 +65,16 @@ class Article {
             
             const title = req.body.title;
             const category = req.body.category;
-            const translatedTitle = req.body.translatedTitle;            
+            const translatedTitle = req.body.translatedTitle;  
+            const userId = req.session.passport.user.id;     
 
             let article: INewArticle = {
                 title,
                 category,
                 subtitles: [],
-                translatedTitle
+                translatedTitle,
+                createdBy: parseInt(userId),
+                createdAt: (new Date()).toString()
             }
             
             article = await _articleService.createArticle(article);
