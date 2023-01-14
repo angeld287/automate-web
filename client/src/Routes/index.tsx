@@ -3,29 +3,40 @@ import {
   BrowserRouter as Router,
   Routes as Switch,
   Route,
+  Navigate,
 } from "react-router-dom";
 import Menu from "../Components/Menu";
 import ContentEditor from "../Pages/ContentEditor/Article";
 import Home from "../Pages/Home";
 import Keywords from "../Pages/Keywords";
+import Login from "../Pages/Login";
 import Posts from "../Pages/Posts";
 import ResultReview from "../Pages/ResultReview";
 
-const Routes = () => {
+const Routes = ({activeSession}: IRoutes) => {
   return (
     <Router>
       <div>
         <Menu/>
         <Switch>
-          <Route path="/posts" element={<Posts/>}/>
-          <Route path="/result-review" element={<ResultReview/>}/>
-          <Route path="/content-editor" element={<ContentEditor/>}/>
-          <Route path="/keywords" element={<Keywords/>}/>
-          <Route path="/" element={<Home/>}/>
+          <Route path="/posts" element={<Protected><Posts/></Protected>}/>
+          <Route path="/result-review" element={<Protected><ResultReview/></Protected>}/>
+          <Route path="/content-editor" element={<Protected><ContentEditor/></Protected>}/>
+          <Route path="/keywords" element={<Protected><Keywords/></Protected>}/>
+          <Route path="/" element={<Protected {...{activeSession}}><Home/></Protected>}/>
+          <Route path="/login" element={<Login />} />
         </Switch>
       </div>
     </Router>
   );
 }
+
+interface IRoutes {
+  activeSession: boolean;
+}
+
+const Protected = ({ activeSession, children }: any) => {
+  return activeSession ? children : <Navigate to={{ pathname: '/login' }} />
+};
 
 export default Routes;

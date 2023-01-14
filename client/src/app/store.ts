@@ -4,6 +4,8 @@ import mediaReducer from '../features/media/mediaSlice';
 import articleReducer from '../features/article/articleSlice';
 import articlesReducer from '../features/articles/articlesSlice';
 import keywordReducer from '../features/keyword/keywordSlice';
+import userSessionReducer from '../features/userSession/userSessionSlice';
+import userRegisterReducer from '../features/userRegister/userRegisterSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,7 +14,14 @@ export const store = configureStore({
     article: articleReducer,
     articles: articlesReducer,
     keyword: keywordReducer,
+    userSession: userSessionReducer,
+    userRegister: userRegisterReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+  getDefaultMiddleware({
+    serializableCheck: false,
+  }),
+
 });
 
 export type AppDispatch = typeof store.dispatch;
