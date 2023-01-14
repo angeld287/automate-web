@@ -1,5 +1,6 @@
 import { Content } from 'antd/lib/layout/layout';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { ICustomButton } from '../../Components/CustomButton/ICustomButton';
 import CustomForm from '../../Components/CustomForm';
@@ -14,9 +15,13 @@ import styles from './styles';
 const Login: React.FC = () => {
 
     const session = useAppSelector(selectUserSession);
+
     const dispatch = useAppDispatch()
+    const navigate = useNavigate()
+
     const [message, setMessage] = useState<any>()
     const [error, setError] = useState<IValidationError>()
+    
 
     useEffect(() => {
         const login = () => {
@@ -50,6 +55,7 @@ const Login: React.FC = () => {
             }
 
             message.success('Login Successfully!')
+            navigate('/');
         }
 
         if (session.loginStatus === 'idle' && message) {
