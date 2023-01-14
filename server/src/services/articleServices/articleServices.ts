@@ -44,7 +44,7 @@ export class articleService implements IArticleService {
         try {
             const createArticle = {
                 name: 'create-new-subtitle',
-                text: 'INSERT INTO public.articles(title, translatedtitle, category) VALUES ($1, $2, $3) RETURNING id, title, translatedtitle, category',
+                text: 'INSERT INTO public.articles(title, translated_title, category) VALUES ($1, $2, $3) RETURNING id, title, translated_title, category',
                 values: [article.title, article.translatedTitle, article.category],
             }
 
@@ -65,7 +65,7 @@ export class articleService implements IArticleService {
                 category: result.rows[0].category,
                 subtitles: [],
                 title: result.rows[0].title,
-                translatedTitle: result.rows[0].translatedTitle,
+                translatedTitle: result.rows[0].translated_title,
             }
             
             return _article;
@@ -78,7 +78,7 @@ export class articleService implements IArticleService {
     async getArticleById(articleId: number): Promise<INewArticle | boolean> {
         const getQuery = {
             name: 'get-article-by-id',
-            text: `SELECT id, title, translatedtitle, category FROM public.articles where id = $1`,
+            text: `SELECT id, title, translated_title, category FROM public.articles where id = $1`,
             values: [articleId],
         }
 
@@ -92,7 +92,7 @@ export class articleService implements IArticleService {
             const article: INewArticle = {
                 id: result.rows[0].id,
                 title: result.rows[0].title,
-                translatedTitle: result.rows[0].translatedtitle,
+                translatedTitle: result.rows[0].translated_title,
                 category: result.rows[0].category,
                 subtitles: []
             }
@@ -123,7 +123,7 @@ export class articleService implements IArticleService {
                articles.push({
                    id: row.id,
                    title: row.title,
-                   translatedTitle: row.translatedtitle,
+                   translatedTitle: row.translated_title,
                    category: row.category,
                    subtitles: []
                 })

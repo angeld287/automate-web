@@ -160,7 +160,7 @@ CREATE TABLE IF NOT EXISTS public.articles
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
     title character(100) COLLATE pg_catalog."default",
-    translatedtitle character(100) COLLATE pg_catalog."default",
+    translated_title character(100) COLLATE pg_catalog."default",
     category character(50) COLLATE pg_catalog."default",
     internal_id integer NOT NULL DEFAULT nextval('articles_internal_id_seq'::regclass),
     created_by integer NOT NULL,
