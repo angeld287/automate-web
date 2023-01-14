@@ -107,7 +107,11 @@ class Article {
 
             return new SuccessResponse('Success', {
                 success: true,
-                response: articles,
+                response: {
+                    page,
+                    size,
+                    articles
+                },
                 error: null
             }).send(res);
 

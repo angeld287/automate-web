@@ -2,6 +2,7 @@ import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import counterReducer from '../features/counter/counterSlice';
 import mediaReducer from '../features/media/mediaSlice';
 import articleReducer from '../features/article/articleSlice';
+import articlesReducer from '../features/articles/articlesSlice';
 import keywordReducer from '../features/keyword/keywordSlice';
 
 export const store = configureStore({
@@ -9,6 +10,7 @@ export const store = configureStore({
     counter: counterReducer,
     media: mediaReducer,
     article: articleReducer,
+    articles: articlesReducer,
     keyword: keywordReducer,
   },
 });

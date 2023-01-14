@@ -1,6 +1,7 @@
 import { PlusCircleOutlined } from "@ant-design/icons";
-import { Avatar, Button, Col, List, Row, Skeleton } from "antd";
+import { Button, Col, Row } from "antd";
 import { useNavigate } from "react-router-dom";
+import DraftArticles from "../../Components/DraftArticles";
 import "./home.css"
 
 const Home = () => {
@@ -36,25 +37,7 @@ const Home = () => {
             </Row>
             <Row className="rows">
                 <Col span={15} className="home-draft-list">
-                    <List
-                        className="demo-loadmore-list"
-                        itemLayout="horizontal"
-                        dataSource={list}
-                        renderItem={(item) => (
-                            <List.Item
-                            actions={[<a key="list-loadmore-edit">edit</a>, <a key="list-loadmore-more">more</a>]}
-                            >
-                            <Skeleton avatar title={false} loading={item.loading} active>
-                                <List.Item.Meta
-                                avatar={<Avatar src={item.avatar} />}
-                                title={<a href="https://ant.design">{item.title}</a>}
-                                description="Ant Design, a design language for background applications, is refined by Ant UED Team"
-                                />
-                                <div>content</div>
-                            </Skeleton>
-                            </List.Item>
-                        )}
-                        />
+                    <DraftArticles />
                 </Col>
                 <Col span={9} className="home-draft-list"><h2>Home</h2></Col>
             </Row>
