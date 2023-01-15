@@ -15,7 +15,8 @@ import Log from './Log';
 import Locals from '../providers/Locals';
 import Passport from '../providers/Passport';
 import CORS from './CORS';
-//import Passport from '../providers/Passport';
+import * as connectRedis from "connect-redis";
+import { createClient } from "redis";
 
 class Http {
 	public static mount(_express: express.Application): express.Application {
@@ -39,13 +40,28 @@ class Http {
 		 * Note: You can also add redis-store
 		 * into the options object.
 		 */
-		const options = {
+
+		//Configuring redis store for session 172.18.0.2
+		let RedisStore = connectRedis(session)
+		let redisClient = createClient({
+			socket: {
+				host: Locals.config().REDIS_HTTPHOST,
+				port: Locals.config().REDIS_HTTPPORT
+			},
+			legacyMode: true,
+		})
+		redisClient.connect().catch(console.error)
+
+		const options: session.SessionOptions  = {
 			resave: true,
-			saveUninitialized: true,
+    		saveUninitialized: true,
 			secret: Locals.config().appSecret,
 			cookie: {
-				maxAge: 1209600000 // two weeks (in ms)
-			}
+				maxAge: 6300000, // two weeks (in ms)
+				sameSite: 'none',
+				secure: true
+			},
+			store: new RedisStore({ client: redisClient })
 		};
 
 		_express.use(session(options));
