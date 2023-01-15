@@ -58,8 +58,11 @@ class Http {
 			secret: Locals.config().appSecret,
 			cookie: {
 				maxAge: 6300000, // two weeks (in ms)
-				sameSite: 'none',
-				secure: true
+				//The session error occurs because we need to disable the "Back-forward cache" chrome flag "chrome://flags/"
+				//In addition we need to comment the sameSite option and set secure to true.
+				//Before of the aplication deployment we need to research the way to solve this for producction build.
+				//sameSite: 'none',
+				secure: false
 			},
 			store: new RedisStore({ client: redisClient })
 		};
