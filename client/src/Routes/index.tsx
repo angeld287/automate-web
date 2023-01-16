@@ -24,7 +24,7 @@ const Routes = ({activeSession}: IRoutes) => {
           <Route path="/content-editor" element={<Protected {...{activeSession}}><ContentEditor/></Protected>}/>
           <Route path="/keywords" element={<Protected {...{activeSession}}><Keywords/></Protected>}/>
           <Route path="/" element={<Protected {...{activeSession}}><Home/></Protected>}/>
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<UnProtected {...{activeSession}}><Login /></UnProtected>} />
         </Switch>
       </div>
     </Router>
@@ -37,6 +37,10 @@ interface IRoutes {
 
 const Protected = ({ activeSession, children }: any) => {
   return activeSession ? children : <Navigate to={{ pathname: '/login' }} />
+};
+
+const UnProtected = ({ activeSession, children }: any) => {
+  return activeSession ? <Navigate to={{ pathname: '/' }} /> : children
 };
 
 export default Routes;
