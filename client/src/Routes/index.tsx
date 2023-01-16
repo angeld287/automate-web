@@ -19,10 +19,10 @@ const Routes = ({activeSession}: IRoutes) => {
       <div>
         <Menu/>
         <Switch>
-          <Route path="/posts" element={<Protected><Posts/></Protected>}/>
-          <Route path="/result-review" element={<Protected><ResultReview/></Protected>}/>
-          <Route path="/content-editor" element={<Protected><ContentEditor/></Protected>}/>
-          <Route path="/keywords" element={<Protected><Keywords/></Protected>}/>
+          <Route path="/posts" element={<Protected {...{activeSession}}><Posts/></Protected>}/>
+          <Route path="/result-review" element={<Protected {...{activeSession}}><ResultReview/></Protected>}/>
+          <Route path="/content-editor" element={<Protected {...{activeSession}}><ContentEditor/></Protected>}/>
+          <Route path="/keywords" element={<Protected {...{activeSession}}><Keywords/></Protected>}/>
           <Route path="/" element={<Protected {...{activeSession}}><Home/></Protected>}/>
           <Route path="/login" element={<Login />} />
         </Switch>

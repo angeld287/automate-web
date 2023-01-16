@@ -35,7 +35,11 @@ export const getArticles = createAsyncThunk(
 export const articlesSlice = createSlice({
   name: 'articles',
   initialState,
-  reducers: {},
+  reducers: {
+    resetArticlesList: (state) => {
+      state.articles = []
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getArticles.pending, (state) => {
@@ -57,7 +61,7 @@ export const articlesSlice = createSlice({
   },
 });
 
-export const { } = articlesSlice.actions;
+export const { resetArticlesList } = articlesSlice.actions;
 
 export const selectArticles = (state: RootState) => state.articles;
 

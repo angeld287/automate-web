@@ -6,6 +6,7 @@ import { useAppDispatch } from '../../app/hooks';
 import { logoutAsync } from '../../features/userSession/asyncThunks';
 import './menu.css'
 import { LogoutOutlined } from '@ant-design/icons';
+import { resetArticlesList } from '../../features/articles/articlesSlice';
 
 const Menu: React.FC = () => {
   const [current, setCurrent] = useState('keywords');
@@ -13,6 +14,7 @@ const Menu: React.FC = () => {
   const dispatch = useAppDispatch()
 
   const logOut = () => {
+      dispatch(resetArticlesList())
       dispatch(logoutAsync())
   }
 

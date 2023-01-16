@@ -1,3 +1,43 @@
+-- FUNCTION: public.trigger_set_timestamp()
+
+-- DROP FUNCTION IF EXISTS public.trigger_set_timestamp();
+
+CREATE OR REPLACE FUNCTION public.trigger_set_timestamp()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+BEGIN
+  NEW.created_at = NOW();
+  RETURN NEW;
+END;
+$BODY$;
+
+ALTER FUNCTION public.trigger_set_timestamp()
+    OWNER TO admin;
+
+-- FUNCTION: public.trigger_set_timestamp_deleted_at()
+
+-- DROP FUNCTION IF EXISTS public.trigger_set_timestamp_deleted_at();
+
+CREATE OR REPLACE FUNCTION public.trigger_set_timestamp_deleted_at()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+BEGIN
+  NEW.deleted_at = NOW();
+  RETURN NEW;
+END;
+$BODY$;
+
+ALTER FUNCTION public.trigger_set_timestamp_deleted_at()
+    OWNER TO admin;
+
+
+
 -- Table: public.federated_auth_profiles
 
 -- DROP TABLE IF EXISTS public.federated_auth_profiles;
@@ -164,10 +204,10 @@ CREATE TABLE IF NOT EXISTS public.articles
     category character(50) COLLATE pg_catalog."default",
     internal_id integer NOT NULL DEFAULT nextval('articles_internal_id_seq'::regclass),
     created_by integer NOT NULL,
-    created_at character(100) COLLATE pg_catalog."default" NOT NULL,
     deleted boolean,
     deleted_by integer,
-    deleted_at character(100) COLLATE pg_catalog."default",
+    created_at timestamp with time zone NOT NULL,
+    deleted_at timestamp with time zone,
     CONSTRAINT articles_pkey PRIMARY KEY (id),
     CONSTRAINT articles_created_by_fkey FOREIGN KEY (created_by)
         REFERENCES public.users (id) MATCH SIMPLE
@@ -201,6 +241,26 @@ CREATE INDEX IF NOT EXISTS fki_articles_deleted_by_fkey
     ON public.articles USING btree
     (deleted_by ASC NULLS LAST)
     TABLESPACE pg_default;
+
+-- Trigger: set_timestamp_to_created_at
+
+-- DROP TRIGGER IF EXISTS set_timestamp_to_created_at ON public.articles;
+
+CREATE TRIGGER set_timestamp_to_created_at
+    BEFORE INSERT
+    ON public.articles
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.trigger_set_timestamp();
+
+-- Trigger: set_timestamp_to_deleted_at
+
+-- DROP TRIGGER IF EXISTS set_timestamp_to_deleted_at ON public.articles;
+
+CREATE TRIGGER set_timestamp_to_deleted_at
+    BEFORE UPDATE OF deleted
+    ON public.articles
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.trigger_set_timestamp_deleted_at();
     
 
 

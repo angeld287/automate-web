@@ -103,10 +103,10 @@ class Article {
             
             let _articleService: IArticleService = new articleService();
 
-            const size = req.query.size
-            const page = req.query.page
+            const size = req.query.size;
+            const page = req.query.page;
 
-            const articles: Array<INewArticle> | boolean = await _articleService.getArticles(parseInt(page.toString()), parseInt(size.toString()))
+            const articles: Array<INewArticle> | boolean = await _articleService.getArticles(parseInt(page.toString()), parseInt(size.toString()), parseInt(req.session.passport.user.id))
 
             return new SuccessResponse('Success', {
                 success: true,
