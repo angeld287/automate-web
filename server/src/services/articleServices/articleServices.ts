@@ -44,8 +44,8 @@ export class articleService implements IArticleService {
         try {
             const createArticle = {
                 name: 'create-new-subtitle',
-                text: 'INSERT INTO public.articles(title, translated_title, category) VALUES ($1, $2, $3) RETURNING id, title, translated_title, category',
-                values: [article.title, article.translatedTitle, article.category],
+                text: 'INSERT INTO public.articles(title, translated_title, category, created_by) VALUES ($1, $2, $3, $4) RETURNING id, title, translated_title, category, created_by, created_at',
+                values: [article.title, article.translatedTitle, article.category, article.createdBy],
             }
 
             let result = null, client = null;
