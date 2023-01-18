@@ -80,7 +80,7 @@ export class articleService implements IArticleService {
     async getArticleById(articleId: number): Promise<INewArticle | boolean> {
         const getQuery = {
             name: 'get-article-by-id',
-            text: `SELECT id, title, translated_title, category FROM public.articles where id = $1`,
+            text: `SELECT id, title, translated_title, category, created_by, created_at FROM public.articles where id = $1`,
             values: [articleId],
         }
 
