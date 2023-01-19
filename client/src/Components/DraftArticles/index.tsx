@@ -3,8 +3,9 @@ import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { getArticles, selectArticles } from "../../features/articles/articlesSlice";
 import InfiniteScroll from 'react-infinite-scroll-component';
+import IDraftArticles from "./IDraftArticles";
 
-const DraftArticles: React.FC = () => {
+const DraftArticles: React.FC<IDraftArticles> = ({onClickEdit}) => {
 
     const dispatch = useAppDispatch();
     const {articles, page, size, status, hasMore} = useAppSelector(selectArticles);
@@ -31,7 +32,7 @@ const DraftArticles: React.FC = () => {
             dataSource={articles}
             renderItem={(item) => (
                 <List.Item
-                    actions={[<a key="draft-article-edit">edit</a>, <a key="draft-article-more">more</a>]}
+                    actions={[<a onClick={() => onClickEdit(item)} key="draft-article-edit">edit</a>, <a key="draft-article-more">more</a>]}
                 >
                     <Skeleton avatar title={false} loading={false} active>
                         <List.Item.Meta

@@ -187,6 +187,12 @@ router.post(
 );
 
 router.get(
+    '/getArticle',
+    Passport.isAuthenticated,
+    ArticleController.getArticle
+);
+
+router.get(
     '/getArticles',
     Passport.isAuthenticated,
     ArticleController.getArticles

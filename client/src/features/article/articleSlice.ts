@@ -13,10 +13,14 @@ export interface ArticleState {
 
 const initialState: ArticleState = {
   article: {
+    id: 0,
+    internalId: 0,
     title: "",
     translatedTitle: "",
     subtitles: [],
     category: "",
+    createdAt: "",
+    createdBy: 0,
   },
   statusKc: 'idle',
   statusTk: 'idle',

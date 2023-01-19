@@ -1,4 +1,6 @@
 export interface IArticle {
+    id: number;
+    internalId: number;
     title: string;
     translatedTitle?: string;
     subtitles: Array<SubTitleContent>;
@@ -6,6 +8,11 @@ export interface IArticle {
     content?: string;
     translatedContent?: string;
     error?: boolean | ProcessError
+    createdAt: string;
+    createdBy: number;
+    deleted?: boolean;
+    deletedAt?: string;
+    deletedBy?: number;
 }
 
 export interface SubTitleContent {

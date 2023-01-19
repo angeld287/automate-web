@@ -64,8 +64,14 @@ const Keywords = () => {
         dispatch(addSubtitles(subTitles))
         
         const _article: IArticle = {
+            id: 0,
+            internalId: 0,
             title: "",
-            subtitles: subTitles
+            translatedTitle: "",
+            subtitles: subTitles,
+            category: "",
+            createdAt: "",
+            createdBy: 0,
         }
         
         dispatch(translateKeywords(_article))

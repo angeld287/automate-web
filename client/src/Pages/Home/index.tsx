@@ -2,6 +2,7 @@ import { PlusCircleOutlined } from "@ant-design/icons";
 import { Button, Col, Row } from "antd";
 import { useNavigate } from "react-router-dom";
 import DraftArticles from "../../Components/DraftArticles";
+import { IArticle } from "../../interfaces/models/Article";
 import "./home.css"
 
 const Home = () => {
@@ -23,6 +24,15 @@ const Home = () => {
         navigate('/keywords');
     }
 
+    const onClickEdit = (article: IArticle) => {
+        console.log(article.subtitles.length)
+        if(article.subtitles.length <= 3 ){
+            navigate(`/keywords/${article.id}`);
+        }else{
+            //navigate(`/keywords/${article.id}`); && article.subtitles.find(subtitle => subtitle)
+        }
+    }
+
       
     return (
         <>
@@ -37,7 +47,7 @@ const Home = () => {
             </Row>
             <Row className="rows">
                 <Col span={15} className="home-draft-list">
-                    <DraftArticles />
+                    <DraftArticles {...{onClickEdit}}/>
                 </Col>
                 <Col span={9} className="home-draft-list"><h2>Home</h2></Col>
             </Row>

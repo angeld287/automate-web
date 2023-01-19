@@ -308,12 +308,19 @@ CREATE TABLE IF NOT EXISTS public.contents
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
     content character(2000) COLLATE pg_catalog."default",
     selected boolean,
-    content_language character(3) COLLATE pg_catalog."default",
+    content_language character(2) COLLATE pg_catalog."default",
     subtitles_id integer,
     articles_id integer,
+    deleted boolean,
+    deleted_by integer,
+    deleted_at timestamp with time zone,
     CONSTRAINT contents_pkey PRIMARY KEY (id),
     CONSTRAINT contents_articles_fkey FOREIGN KEY (articles_id)
         REFERENCES public.articles (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT contents_deleted_by_user_fkey FOREIGN KEY (deleted_by)
+        REFERENCES public.users (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
     CONSTRAINT contents_subtitles_fkey FOREIGN KEY (subtitles_id)
@@ -336,6 +343,14 @@ CREATE INDEX IF NOT EXISTS fki_contents_articles_fkey
     ON public.contents USING btree
     (articles_id ASC NULLS LAST)
     TABLESPACE pg_default;
+-- Index: fki_contents_deleted_by_user_fkey
+
+-- DROP INDEX IF EXISTS public.fki_contents_deleted_by_user_fkey;
+
+CREATE INDEX IF NOT EXISTS fki_contents_deleted_by_user_fkey
+    ON public.contents USING btree
+    (deleted_by ASC NULLS LAST)
+    TABLESPACE pg_default;
 -- Index: fki_contents_subtitles_fkey
 
 -- DROP INDEX IF EXISTS public.fki_contents_subtitles_fkey;
@@ -344,3 +359,13 @@ CREATE INDEX IF NOT EXISTS fki_contents_subtitles_fkey
     ON public.contents USING btree
     (subtitles_id ASC NULLS LAST)
     TABLESPACE pg_default;
+
+-- Trigger: set_timestamp_to_deleted_at
+
+-- DROP TRIGGER IF EXISTS set_timestamp_to_deleted_at ON public.contents;
+
+CREATE TRIGGER set_timestamp_to_deleted_at
+    BEFORE UPDATE OF deleted
+    ON public.contents
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.trigger_set_timestamp_deleted_at();

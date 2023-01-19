@@ -93,11 +93,41 @@ class Article {
         }
     }
 
+    public static async getArticle(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            if(!req.query.id){
+                return new BadRequestResponse('Error', {
+                    error: "Param id are required."
+                }).send(res);
+            }
+            
+            let _articleService: IArticleService = new articleService();
+
+            const id = req.query.id;
+
+            const article: INewArticle | boolean = await _articleService.getArticleById(parseInt(id.toString()))
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: {
+                    article
+                },
+                error: null
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Get Articles - Article Controller Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
     public static async getArticles(req: IRequest, res: IResponse): Promise<any> {
         try {
             if(!req.query.page || !req.query.size){
                 return new BadRequestResponse('Error', {
-                    error: "Fields page and size are required."
+                    error: "Params page and size are required."
                 }).send(res);
             }
             
