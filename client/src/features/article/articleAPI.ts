@@ -4,6 +4,7 @@ import {IArticle} from "../../interfaces/models/Article";
 export async function searchKeywordsContent(article: IArticle) {
   const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}createContent`, {
     method: "POST",
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -16,6 +17,7 @@ export async function searchKeywordsContent(article: IArticle) {
 export async function getTranslatedKeywords(article: IArticle) {
   const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}translateKeywords`, {
     method: "POST",
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json'
     },

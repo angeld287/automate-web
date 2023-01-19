@@ -97,6 +97,13 @@ router.post(
 );
 
 router.post(
+    '/translateKeyword',
+    body('keyword', 'field keyword cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    ContentController.translateKeyword
+);
+
+router.post(
     '/searchKeywords',
     body('article', 'field article cannot be blank.').notEmpty(),
     Passport.isAuthenticated,

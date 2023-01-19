@@ -28,7 +28,6 @@ if (!cluster.isMaster) {
 	 * Fork the process, the number of times we have CPUs available
 	 */
 	CPUS.forEach(() => {
-        console.log('cuantos')
         return cluster.fork()
     });
 
@@ -54,6 +53,8 @@ if (!cluster.isMaster) {
 	 * Run the Database pool
 	 */
 	App.loadDatabase();
+
+	App.loadConfiguration();
 
 	/**
 	 * Run the Server on Clusters

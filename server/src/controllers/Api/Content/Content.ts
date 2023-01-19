@@ -47,6 +47,34 @@ class Content {
         }
     }
 
+    static async translateKeyword(req: IRequest, res: IResponse, next: INext): Promise<any> {
+        try {
+            const errors = new ExpressValidator().validator(req);
+
+            if (!errors.isEmpty()) {
+                return new BadRequestResponse('Error', {
+                    errors: errors.array()
+                }).send(res);
+            }
+
+            let keyword = req.body.keyword;
+
+            let translate: ITranslateService = new translateService();
+            const translatedKeyword = await translate.perform(keyword, 'en');
+
+            return new SuccessResponse('Success', {
+                keyword, translatedKeyword
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Validation Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+
+    }
+
     static async translateKeywords(req: IRequest, res: IResponse, next: INext): Promise<any> {
         try {
             const errors = new ExpressValidator().validator(req);

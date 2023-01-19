@@ -1,4 +1,5 @@
 import { _axios } from "./axios-utils"
+import { _fetch } from "./fetch-utils"
 import { readFileSync, createWriteStream } from "./file-system"
 import { downloadImage } from "./http"
 import { _sharp } from "./sharp"
@@ -13,4 +14,4 @@ const delay = (delayInms) => {
     });
 }
 
-export { _axios as axios, delay, readFileSync, createWriteStream, downloadImage, _sharp as sharp, _imagesize as imagesize, addMedia };
+export { _fetch as fetch, _axios as axios, delay, readFileSync, createWriteStream, downloadImage, _sharp as sharp, _imagesize as imagesize, addMedia };

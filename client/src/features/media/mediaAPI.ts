@@ -5,6 +5,7 @@ import Media from "../../interfaces/models/Media";
 export async function addMediaToWordpress(media: Media, token: string) {
   const result = fetch(`${Locals.config().WP_API_BASE_URL}media/${media.id}`, {
     method: "POST",
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': token
