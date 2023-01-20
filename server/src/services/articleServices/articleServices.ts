@@ -116,7 +116,7 @@ export class articleService implements IArticleService {
     async getArticleById(articleId: number): Promise<INewArticle | boolean> {
         const getQuery = {
             name: 'get-article-by-id',
-            text: `SELECT id, title, translated_title, category, created_by, created_at FROM public.articles where id = $1`,
+            text: `SELECT id, internal_id, title, translated_title, category, created_by, created_at FROM public.articles where internal_id = $1`,
             values: [articleId],
         }
 
@@ -131,6 +131,7 @@ export class articleService implements IArticleService {
             
             const article: INewArticle = {
                 id: result.rows[0].id,
+                internalId: result.rows[0].internal_id,
                 title: result.rows[0].title,
                 translatedTitle: result.rows[0].translated_title,
                 category: result.rows[0].category,
