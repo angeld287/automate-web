@@ -4,10 +4,10 @@ import IKeyword from "../../interfaces/IKeyword"
 import CustomTextArea from "../../Components/CustomTextArea";
 import { Col, Row, Alert } from 'antd';
 import "./keyword.css"
-import { addSubtitles, selectArticle, translateKeywords } from "../../features/article/articleSlice";
+import { addSubtitles, getArticleByInternalId, selectArticle, translateKeywords } from "../../features/article/articleSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { IArticle, SubTitleContent } from "../../interfaces/models/Article";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import CustomInput from "../../Components/CustomInput";
 import CustomButton from "../../Components/CustomButton"
 
@@ -24,10 +24,24 @@ const Keywords = () => {
     const dispatch = useAppDispatch();
     const article = useAppSelector(selectArticle);
 
+    let { id } = useParams();
+
     useEffect(() => {
+        if(id) dispatch(getArticleByInternalId(parseInt(id)))
+        return () => {}
+    }, []);
+
+    useEffect(() => {
+        checkArticleStatus(article.article)
         setKeyWords([...keywords.map(keyword => ({...keyword, enText: article.article.subtitles.find(subtitle => subtitle.id === keyword.id)?.translatedName}))])
         setTranslated(article.kewordsTranslated)
     }, [article]);
+
+    const checkArticleStatus = (article: IArticle) => {
+        if(article.subtitles.length > 3 && !article.subtitles.find(subtitle => subtitle.translatedName === '')){
+            navigate(`/content-editor/${article.internalId}`)
+        }
+    }
 
     const subTitles: Array<SubTitleContent> = useMemo(() => keywords.map( keyword =>
         ({

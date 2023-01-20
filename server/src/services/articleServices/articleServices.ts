@@ -148,7 +148,7 @@ export class articleService implements IArticleService {
 
     async getArticles(page: number, size: number, userId: number): Promise<Array<INewArticle> | boolean> {
         const getQuery = {
-            name: 'get-article-by-id',
+            name: 'get-articles-by-id',
             text: `SELECT * FROM public.articles WHERE created_by = $3 ORDER BY created_at LIMIT $2 OFFSET $1;`,
             values: [page, size, userId],
         }

@@ -25,12 +25,7 @@ const Home = () => {
     }
 
     const onClickEdit = (article: IArticle) => {
-        console.log(article.subtitles.length)
-        if(article.subtitles.length <= 3 ){
-            navigate(`/keywords/${article.id}`);
-        }else{
-            //navigate(`/keywords/${article.id}`); && article.subtitles.find(subtitle => subtitle)
-        }
+        navigate(`/keywords/${article.internalId}`);
     }
 
       

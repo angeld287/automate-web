@@ -22,7 +22,9 @@ const Routes = ({activeSession}: IRoutes) => {
           <Route path="/posts" element={<Protected {...{activeSession}}><Posts/></Protected>}/>
           <Route path="/result-review" element={<Protected {...{activeSession}}><ResultReview/></Protected>}/>
           <Route path="/content-editor" element={<Protected {...{activeSession}}><ContentEditor/></Protected>}/>
+          <Route path="/content-editor/:id" element={<Protected {...{activeSession}}><ContentEditor/></Protected>}/>
           <Route path="/keywords" element={<Protected {...{activeSession}}><Keywords/></Protected>}/>
+          <Route path="/keywords/:id" element={<Protected {...{activeSession}}><Keywords/></Protected>}/>
           <Route path="/" element={<Protected {...{activeSession}}><Home/></Protected>}/>
           <Route path="/login" element={<UnProtected {...{activeSession}}><Login /></UnProtected>} />
         </Switch>

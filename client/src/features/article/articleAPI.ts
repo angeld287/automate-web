@@ -1,6 +1,18 @@
 import Locals from "../../config/Locals";
 import {IArticle} from "../../interfaces/models/Article";
 
+export async function getArticleById(internalId: number) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}getArticle?id=${internalId}`, {
+    method: "GET",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+
+  return await fetchData.json();
+}
+
 export async function searchKeywordsContent(article: IArticle) {
   const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}createContent`, {
     method: "POST",

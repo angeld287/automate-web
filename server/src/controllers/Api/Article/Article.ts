@@ -117,7 +117,7 @@ class Article {
 
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('Get Articles - Article Controller Error', {
+            return new InternalErrorResponse('Get Article - Article Controller Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }

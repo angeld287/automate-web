@@ -2,10 +2,11 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { IArticle, SubTitleContent } from '../../interfaces/models/Article';
 import { searchKeywordContent } from '../keyword/keywordAPI';
-import { getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
+import { getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
 
 export interface ArticleState {
   article: IArticle;
+  status: 'idle' | 'loading' | 'failed';
   statusKc: 'idle' | 'loading' | 'failed';
   statusTk: 'idle' | 'loading' | 'failed';
   kewordsTranslated: boolean;
@@ -22,6 +23,7 @@ const initialState: ArticleState = {
     createdAt: "",
     createdBy: 0,
   },
+  status: 'idle',
   statusKc: 'idle',
   statusTk: 'idle',
   kewordsTranslated: false,
@@ -64,6 +66,18 @@ export const getKeywordContent = createAsyncThunk(
   }
 );
 
+export const getArticleByInternalId = createAsyncThunk(
+  'article/getArticleById',
+  async (internalId: number) => {
+    try {    
+      const result = await getArticleById(internalId);
+      return result.data.response;
+    } catch (error) {
+      console.log(error) 
+    }
+  }
+);
+
 export const articleSlice = createSlice({
   name: 'article',
   initialState,
@@ -82,6 +96,16 @@ export const articleSlice = createSlice({
       })
       .addCase(getKeywordsContent.rejected, (state) => {
         state.statusKc = 'failed';
+      })
+      .addCase(getArticleByInternalId.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(getArticleByInternalId.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.article = action.payload.article;
+      })
+      .addCase(getArticleByInternalId.rejected, (state) => {
+        state.status = 'failed';
       })
       .addCase(translateKeywords.pending, (state) => {
         state.statusTk = 'loading';
