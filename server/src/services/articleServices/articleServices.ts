@@ -79,7 +79,7 @@ export class articleService implements IArticleService {
     async createArticle(article: INewArticle): Promise<INewArticle> {
         try {
             const createArticle = {
-                name: 'create-new-subtitle',
+                name: 'create-new-article',
                 text: 'INSERT INTO public.articles(title, translated_title, category, created_by) VALUES ($1, $2, $3, $4) RETURNING id, title, translated_title, category, created_by, created_at',
                 values: [article.title, article.translatedTitle, article.category, article.createdBy],
             }
@@ -289,6 +289,23 @@ export class articleService implements IArticleService {
                 })
             });
             return contents;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async saveArticle(article: INewArticle): Promise<INewArticle> {
+        try {
+            let savedArticle = null
+            if(article.id === 0 && article.internalId === 0)
+                savedArticle = await this.createArticle(article);
+
+            
+            let getById = await this.getArticleById(article.internalId);
+
+            article = getById === false ? getById : savedArticle
+            
+            return article
         } catch (error) {
             throw new Error(error.message);
         }

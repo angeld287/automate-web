@@ -3,10 +3,12 @@ import { INewArticle, SubTitleContent } from "../../../interfaces/Content/Articl
 import { ISearchService } from "../../../interfaces/ISearchService";
 import { ITranslateService } from "../../../interfaces/ITranslateService";
 import { INext, IRequest, IResponse } from "../../../interfaces/vendors";
+import { ICategoryService } from "../../../interfaces/wordpress/ICategoryService";
 import Log from "../../../middlewares/Log";
 import ExpressValidator from "../../../providers/ExpressValidation";
 import { searchService } from "../../../services/searchEngine/searchService";
 import { translateService } from "../../../services/translation/translateService";
+import categoryService from "../../../services/wordpress/categoryServices";
 
 class Content {
 
@@ -85,7 +87,22 @@ class Content {
                 }).send(res);
             }
 
-            let article = req.body.article;
+            let article: INewArticle = req.body.article;
+
+            if(!article.category || article.category === ""){
+                return new BadRequestResponse('Error', {
+                    error: "Must provide a category in the article objetct."
+                }).send(res);
+            }
+
+            let wpCategory: ICategoryService = new categoryService();
+            const categories = await wpCategory.getList();
+            console.log(categories)
+            if(!categories.find(category => category.name === article.category)){
+                return new BadRequestResponse('Error', {
+                    error: "This category does not exist on the wordpress site cateogies."
+                }).send(res);
+            }
 
             let translate: ITranslateService = new translateService();
             const titleTranslation = await translate.perform(article.title, 'en');
@@ -106,6 +123,9 @@ class Content {
                     article.subtitles[index].error = { message: "Error occurred in subtitles translations." };
                 }
             }));
+
+            //save article
+            
 
             return new SuccessResponse('Success', {
                 article

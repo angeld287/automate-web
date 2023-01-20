@@ -4,7 +4,7 @@ import IKeyword from "../../interfaces/IKeyword"
 import CustomTextArea from "../../Components/CustomTextArea";
 import { Col, Row, Alert } from 'antd';
 import "./keyword.css"
-import { addSubtitles, getArticleByInternalId, selectArticle, translateKeywords } from "../../features/article/articleSlice";
+import { addSubtitles, getArticleByInternalId, selectArticle, setInititalState, translateKeywords } from "../../features/article/articleSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { IArticle, SubTitleContent } from "../../interfaces/models/Article";
 import { useNavigate, useParams } from 'react-router-dom';
@@ -28,19 +28,26 @@ const Keywords = () => {
 
     useEffect(() => {
         if(id) dispatch(getArticleByInternalId(parseInt(id)))
-        return () => {}
+        return () => {
+            dispatch(setInititalState())
+        }
     }, []);
 
     useEffect(() => {
-        checkArticleStatus(article.article)
-        setKeyWords([...keywords.map(keyword => ({...keyword, enText: article.article.subtitles.find(subtitle => subtitle.id === keyword.id)?.translatedName}))])
-        setTranslated(article.kewordsTranslated)
+        if(!statusIsNext(article.article)){
+            setKeyWords([...keywords.map(keyword => ({...keyword, enText: article.article.subtitles.find(subtitle => subtitle.id === keyword.id)?.translatedName}))])
+            setTranslated(article.kewordsTranslated)
+        }
     }, [article]);
 
-    const checkArticleStatus = (article: IArticle) => {
-        if(article.subtitles.length > 3 && !article.subtitles.find(subtitle => subtitle.translatedName === '')){
-            navigate(`/content-editor/${article.internalId}`)
+    const statusIsNext = (article: IArticle) : boolean => {
+        if(article.subtitles.length > 3 && !article.subtitles.find(subtitle => subtitle.translatedName === '' || !subtitle.translatedName)){
+            console.log('navega a content editor')
+            //navigate(`/content-editor/${article.internalId}`)
+            return true;
         }
+
+        return false;
     }
 
     const subTitles: Array<SubTitleContent> = useMemo(() => keywords.map( keyword =>
@@ -50,6 +57,10 @@ const Keywords = () => {
             translatedName: keyword.enText,
         })
     ), [keywords]);
+
+    useEffect(() => {
+        if(subTitles.length > 3) dispatch(addSubtitles(subTitles))
+    },[subTitles]);
 
     const onChangeKeywords = (id: number, value: string) => {
         setError(undefined)
@@ -70,25 +81,10 @@ const Keywords = () => {
     }
 
     const translateKeywordsAction = () => {
-
-        if(keywords.length < 4){
+        if(article.article.subtitles.length < 4){
             return setError("Pleace add more than 3 keywords.")
         }
-
-        dispatch(addSubtitles(subTitles))
-        
-        const _article: IArticle = {
-            id: 0,
-            internalId: 0,
-            title: "",
-            translatedTitle: "",
-            subtitles: subTitles,
-            category: "",
-            createdAt: "",
-            createdBy: 0,
-        }
-        
-        dispatch(translateKeywords(_article))
+        dispatch(translateKeywords(article.article))
     }
 
 

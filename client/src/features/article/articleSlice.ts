@@ -82,6 +82,9 @@ export const articleSlice = createSlice({
   name: 'article',
   initialState,
   reducers: {
+    setInititalState: (state) => {
+      state.article = initialState.article
+    },
     addSubtitles: (state, action: PayloadAction<Array<SubTitleContent>>) => {
       state.article.subtitles = action.payload
     },
@@ -121,7 +124,7 @@ export const articleSlice = createSlice({
   },
 });
 
-export const { addSubtitles } = articleSlice.actions;
+export const { addSubtitles, setInititalState } = articleSlice.actions;
 
 export const selectArticle = (state: RootState) => state.article;
 
