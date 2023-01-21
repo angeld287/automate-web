@@ -1,8 +1,13 @@
+.keyword-rows {
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
 .keyword-label{
     margin-top: 5px;
 }
 
-.keyword-input-group {
+.rows-input-group {
     margin: 5px;
 }
 

@@ -84,6 +84,33 @@ class Category {
             }).send(res);
         }
     }
+
+    public static async getCategoryList(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            const errors = new ExpressValidator().validator(req);
+
+            if (!errors.isEmpty()) {
+                return new BadRequestResponse('Error', {
+                    errors: errors.array()
+                }).send(res);
+            }
+
+            let _categoryService: ICategoryService = new categoryService();
+            const categories = await _categoryService.getList();
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: categories,
+                error: null
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('get Category List Controller Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
 }
 
 export default Category

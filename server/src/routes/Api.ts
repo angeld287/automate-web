@@ -147,6 +147,13 @@ router.post(
     MediaController.updateMediaTitles
 );
 
+
+router.get(
+    '/categoryList',
+    Passport.isAuthenticated,
+    Categoryontroller.getCategoryList
+);
+
 router.post(
     '/addCategory',
     body('name', 'field name cannot be blank.').notEmpty(),

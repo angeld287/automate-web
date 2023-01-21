@@ -3,7 +3,7 @@ import { SelectProps } from "antd";
 export interface ICustomSelect extends SelectProps {
     dataTestId?: string;
     items: Array<ISelectOptions>;
-    getItemsNextToken: Function;
+    getItemsNextToken?: Function;
     name: string;
 }
 

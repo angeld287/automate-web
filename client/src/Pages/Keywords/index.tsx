@@ -1,21 +1,28 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { getHashCode } from '../../utils/functions';
 import IKeyword from "../../interfaces/IKeyword"
 import CustomTextArea from "../../Components/CustomTextArea";
 import { Col, Row, Alert } from 'antd';
 import "./keyword.css"
-import { addSubtitles, getArticleByInternalId, selectArticle, setInititalState, translateKeywords } from "../../features/article/articleSlice";
+import { addCategory, addSubtitles, addTitle, getArticleByInternalId, selectArticle, setArticleInititalState, translateKeywords } from "../../features/article/articleSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { IArticle, SubTitleContent } from "../../interfaces/models/Article";
 import { useNavigate, useParams } from 'react-router-dom';
 import CustomInput from "../../Components/CustomInput";
 import CustomButton from "../../Components/CustomButton"
+import CustomInputGroup from "../../Components/CustomInputGroup";
+import CustomSelect from "../../Components/CustomSelect"
+import CustomSelectGroup from "../../Components/CustomSelectGroup";
+import { getCategoryList, selectWputils } from "../../features/WPUtils/wputilsSlice";
+import { ISelectOptions } from "../../Components/CustomSelect/ICustomSelect";
+import CustomLoader from "../../Components/CustomLoader";
 
 
 const Keywords = () => {
 
     const [error, setError] = useState<undefined|string>(undefined)
     const [translated, setTranslated] = useState(false)
+    const [title , setTitle] = useState('')
     const [keywords, setKeyWords] = useState<Array<IKeyword>>([
         { label: "Keyword number 1", text: "", id: getHashCode()}
     ]);
@@ -23,13 +30,15 @@ const Keywords = () => {
     const navigate = useNavigate()
     const dispatch = useAppDispatch();
     const article = useAppSelector(selectArticle);
+    const { categories, statusc } = useAppSelector(selectWputils);
 
     let { id } = useParams();
 
     useEffect(() => {
         if(id) dispatch(getArticleByInternalId(parseInt(id)))
+        dispatch(getCategoryList())
         return () => {
-            dispatch(setInititalState())
+            dispatch(setArticleInititalState())
         }
     }, []);
 
@@ -58,9 +67,18 @@ const Keywords = () => {
         })
     ), [keywords]);
 
+    const categoryList: Array<ISelectOptions> = useMemo(() => {
+        if(statusc === "loading") return []
+        return categories.map(category => ({id: category.slug, name: category.name }))
+    }, [categories])
+
     useEffect(() => {
         if(subTitles.length > 3) dispatch(addSubtitles(subTitles))
     },[subTitles]);
+
+    useEffect(() => {
+        dispatch(addTitle(title))
+    },[title]);
 
     const onChangeKeywords = (id: number, value: string) => {
         setError(undefined)
@@ -81,43 +99,69 @@ const Keywords = () => {
     }
 
     const translateKeywordsAction = () => {
-        if(article.article.subtitles.length < 4){
+        const { subtitles, title, category } = article.article;
+        if(subtitles.length < 4)
             return setError("Pleace add more than 3 keywords.")
-        }
-        dispatch(translateKeywords(article.article))
+
+        if(!title || title === "")
+            return setError("Pleace add an article title.")
+
+        if(!category || category === "")
+            return setError("Pleace add an article category.")
+        
+        console.log(article)
+       // dispatch(translateKeywords(article.article))
     }
 
+    const setCategoryToArticle = useCallback((category: string) => {
+        dispatch(addCategory(category))
+    }, [])
+
+
+    if (statusc === 'loading') return <CustomLoader />
 
     return <>
-        {keywords.sort((keyword_a, keyword_b) => (keyword_a.id < keyword_b.id ? -1 : 1)).map(keyword => {
-            return <Row key={`key-id-${keyword.id}`} className="keyword-input-group">
-                <Col span={4} className="keyword-label">
-                    <label>{keyword.label}</label>
-                </Col>
-                <Col span={9}>
-                    <CustomTextArea 
-                        dataTestId={`test-id-${keyword.id}`}
-                        onChange={(e) => onChangeKeywords(keyword.id, e.target.value)}
-                        value={keyword.text}
-                        label={keyword.label}
-                        readOnly={false}
-                        size="large"
-                        rows={1}
-                    />
-                </Col>
-                <Col span={9} className="keywords-translation">
-                    <CustomInput
-                        style={{fontSize: 11}}
-                        dataTestId={`test-id-${keyword.id}`}
-                        type="text"
-                        onChange={() => {}}
-                        value={keyword.enText}
-                        label={`translation: ${keyword.label}`}
-                        readOnly={!translated}
-                    />
-                </Col>
-            </Row>
-        })}
+        <Row gutter={16} className="keyword-rows">
+            <Col span={13} className="gutter-row">
+                <CustomInputGroup onChange={(e) => {setTitle(e.target.value)}} name="article_title" label="Article Title"/>
+            </Col>
+            <Col span={8} className="gutter-row">
+                <CustomSelectGroup label="Category" onChange={(e) => {setCategoryToArticle(e)}} items={categoryList} name="category_select" />
+            </Col>
+        </Row>
+        <Row>
+            <Col span={24}>
+                {keywords.sort((keyword_a, keyword_b) => (keyword_a.id < keyword_b.id ? -1 : 1)).map(keyword => {
+                    return <Row key={`key-id-${keyword.id}`} className="keyword-input-group">
+                        <Col span={4} className="keyword-label">
+                            <label>{keyword.label}</label>
+                        </Col>
+                        <Col span={9}>
+                            <CustomTextArea 
+                                dataTestId={`test-id-${keyword.id}`}
+                                onChange={(e) => onChangeKeywords(keyword.id, e.target.value)}
+                                value={keyword.text}
+                                label={keyword.label}
+                                readOnly={false}
+                                size="large"
+                                rows={1}
+                            />
+                        </Col>
+                        <Col span={9} className="keywords-translation">
+                            <CustomInput
+                                style={{fontSize: 11}}
+                                dataTestId={`test-id-${keyword.id}`}
+                                type="text"
+                                onChange={() => {}}
+                                value={keyword.enText}
+                                label={`translation: ${keyword.label}`}
+                                readOnly={!translated}
+                            />
+                        </Col>
+                    </Row>
+                })}
+            </Col>
+        </Row>
         <Row className="footer-actions">
             <Col span={12} className="keyword-label">
                 {error && <Alert message={error} type="error" showIcon />}

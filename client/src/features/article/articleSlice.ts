@@ -37,7 +37,7 @@ export const getKeywordsContent = createAsyncThunk(
       console.log(result)  
       return result;
     } catch (error) {
-      console.log(error) 
+      throw new Error('Error in ArticleState at getKeywordsContent')
     }
   }
 );
@@ -47,9 +47,9 @@ export const translateKeywords = createAsyncThunk(
   async (article: IArticle) => {
     try {
       const result = await getTranslatedKeywords(article);
-      return result.data.article.subtitles;
+      return result.data.article;
     } catch (error) {
-      console.log(error)
+      throw new Error('Error in ArticleState at translateKeywords')
     }
   }
 );
@@ -61,7 +61,7 @@ export const getKeywordContent = createAsyncThunk(
       const result = await searchKeywordContent(subtitle);
       return result;
     } catch (error) {
-      console.log(error) 
+      throw new Error('Error in ArticleState at getKeywordContent')
     }
   }
 );
@@ -73,7 +73,7 @@ export const getArticleByInternalId = createAsyncThunk(
       const result = await getArticleById(internalId);
       return result.data.response;
     } catch (error) {
-      console.log(error) 
+      throw new Error('Error in ArticleState at getArticleByInternalId')
     }
   }
 );
@@ -82,11 +82,17 @@ export const articleSlice = createSlice({
   name: 'article',
   initialState,
   reducers: {
-    setInititalState: (state) => {
+    setArticleInititalState: (state) => {
       state.article = initialState.article
     },
     addSubtitles: (state, action: PayloadAction<Array<SubTitleContent>>) => {
       state.article.subtitles = action.payload
+    },
+    addTitle: (state, action: PayloadAction<string>) => {
+      state.article.title = action.payload
+    },
+    addCategory: (state, action: PayloadAction<string>) => {
+      state.article.category = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -113,9 +119,9 @@ export const articleSlice = createSlice({
       .addCase(translateKeywords.pending, (state) => {
         state.statusTk = 'loading';
       })
-      .addCase(translateKeywords.fulfilled, (state, action: PayloadAction<Array<SubTitleContent>>) => {
+      .addCase(translateKeywords.fulfilled, (state, action: PayloadAction<IArticle>) => {
         state.statusTk = 'idle';
-        state.article.subtitles = action.payload
+        state.article = action.payload
         state.kewordsTranslated = true;
       })
       .addCase(translateKeywords.rejected, (state) => {
@@ -124,7 +130,7 @@ export const articleSlice = createSlice({
   },
 });
 
-export const { addSubtitles, setInititalState } = articleSlice.actions;
+export const { addCategory, addTitle, addSubtitles, setArticleInititalState } = articleSlice.actions;
 
 export const selectArticle = (state: RootState) => state.article;
 

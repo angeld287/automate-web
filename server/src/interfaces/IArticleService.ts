@@ -17,4 +17,6 @@ export interface IArticleService {
 
     createContextForSubtitle(content: IContent): Promise<IContent>;
 
+    saveArticle(article: INewArticle): Promise<INewArticle>;
+
 }

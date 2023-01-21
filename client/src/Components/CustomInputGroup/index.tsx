@@ -1,10 +1,18 @@
 import React, { memo } from 'react';
 
-import { Input, Form } from 'antd';
+import { Input, Form, Col, Row } from 'antd';
 import { ICustomInputGroup } from './ICustomInputGroup';
+import './CustomInputGroup.css'
 
-const CustomInputGroup: React.FC<ICustomInputGroup> = ({ name, label, defaultValue, disabled, type }) => {
-    return <Form.Item name={name} label={label} initialValue={defaultValue} ><Input type={type} placeholder={"Type your " + label} disabled={disabled} /></Form.Item>;
+const CustomInputGroup: React.FC<ICustomInputGroup> = ({ label, defaultValue, disabled, type, onChange }) => {
+    return <Row>
+        <Col span={4} className="label">
+            <label>{label}</label>
+        </Col>
+        <Col span={20}>
+            <Input type={type} placeholder={"Type your " + label} {...{onChange, defaultValue, disabled}}/>
+        </Col>
+    </Row>
 }
 
 export default memo(CustomInputGroup);

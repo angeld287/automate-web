@@ -44,6 +44,7 @@ class Locals {
         const wordpressUrl = `${WP_JSON_URL}/wp/v2/`
         const WORDPRESS_USER = process.env.WORDPRESS_USER || "admin"
         const WORDPRESS_USER_PASSWORD = process.env.WORDPRESS_USER_PASSWORD || "admin"
+        const TOCKEN_URL = `${WP_JSON_URL}/jwt-auth/v1/token`
 
         //paragraph extraction configurations
         const NUMBER_OF_PARAGRAPHS_ALLOWED = 3
@@ -87,6 +88,7 @@ class Locals {
             wordpressUrl,
             WORDPRESS_USER,
             WORDPRESS_USER_PASSWORD,
+            TOCKEN_URL,
 
             MIN_CHARACTERS_IN_SNIPPED,
             MIN_WORDS_IN_SNIPPED,

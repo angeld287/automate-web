@@ -6,6 +6,7 @@ import articlesReducer from '../features/articles/articlesSlice';
 import keywordReducer from '../features/keyword/keywordSlice';
 import userSessionReducer from '../features/userSession/userSessionSlice';
 import userRegisterReducer from '../features/userRegister/userRegisterSlice';
+import wpUtilsReducer from '../features/WPUtils/wputilsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     keyword: keywordReducer,
     userSession: userSessionReducer,
     userRegister: userRegisterReducer,
+    wputils: wpUtilsReducer,
   },
   middleware: (getDefaultMiddleware) =>
   getDefaultMiddleware({

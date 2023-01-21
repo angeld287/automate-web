@@ -296,14 +296,15 @@ export class articleService implements IArticleService {
 
     async saveArticle(article: INewArticle): Promise<INewArticle> {
         try {
+            console.log(article)
             let savedArticle = null
-            if(article.id === 0 && article.internalId === 0)
-                savedArticle = await this.createArticle(article);
+            //if(article.id === 0 && article.internalId === 0)
+                //savedArticle = await this.createArticle(article);
 
             
-            let getById = await this.getArticleById(article.internalId);
+            //let getById = await this.getArticleById(article.internalId);
 
-            article = getById === false ? getById : savedArticle
+            //article = getById === false ? getById : savedArticle
             
             return article
         } catch (error) {

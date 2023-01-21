@@ -1,11 +1,13 @@
 import { AuthFailureResponse, BadRequestResponse, InternalErrorResponse, SuccessResponse } from "../../../core/ApiResponse";
 import { INewArticle, SubTitleContent } from "../../../interfaces/Content/Article";
+import { IArticleService } from "../../../interfaces/IArticleService";
 import { ISearchService } from "../../../interfaces/ISearchService";
 import { ITranslateService } from "../../../interfaces/ITranslateService";
 import { INext, IRequest, IResponse } from "../../../interfaces/vendors";
 import { ICategoryService } from "../../../interfaces/wordpress/ICategoryService";
 import Log from "../../../middlewares/Log";
 import ExpressValidator from "../../../providers/ExpressValidation";
+import { articleService } from "../../../services/articleServices/articleServices";
 import { searchService } from "../../../services/searchEngine/searchService";
 import { translateService } from "../../../services/translation/translateService";
 import categoryService from "../../../services/wordpress/categoryServices";
@@ -89,6 +91,12 @@ class Content {
 
             let article: INewArticle = req.body.article;
 
+            if(!article.title){
+                return new BadRequestResponse('Error', {
+                    error: "Must provide a title in the article objetct."
+                }).send(res);
+            }
+
             if(!article.category || article.category === ""){
                 return new BadRequestResponse('Error', {
                     error: "Must provide a category in the article objetct."
@@ -97,14 +105,15 @@ class Content {
 
             let wpCategory: ICategoryService = new categoryService();
             const categories = await wpCategory.getList();
-            console.log(categories)
-            if(!categories.find(category => category.name === article.category)){
+            if(!categories.find(category => category.slug === article.category)){
                 return new BadRequestResponse('Error', {
                     error: "This category does not exist on the wordpress site cateogies."
                 }).send(res);
             }
 
             let translate: ITranslateService = new translateService();
+            let _articleService: IArticleService = new articleService();
+
             const titleTranslation = await translate.perform(article.title, 'en');
             if (titleTranslation.success) {
                 article.translatedTitle = titleTranslation.body[0]['translations'][0].text;
@@ -125,6 +134,7 @@ class Content {
             }));
 
             //save article
+            article = await _articleService.saveArticle(article)
             
 
             return new SuccessResponse('Success', {

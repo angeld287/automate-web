@@ -7,7 +7,6 @@ export default class categoryService implements ICategoryService {
 
     async getList(): Promise<Array<Category>> {
         const response = await fetch(`${Locals.config().wordpressUrl}categories`);
-        console.log(response)
         return response.body
     }
 
