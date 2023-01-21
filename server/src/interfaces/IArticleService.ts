@@ -19,4 +19,6 @@ export interface IArticleService {
 
     saveArticleAfterTranslateKeywords(article: INewArticle): Promise<INewArticle>;
 
+    saveArticleAfterContentSearched(article: INewArticle): Promise<INewArticle>;
+
 }

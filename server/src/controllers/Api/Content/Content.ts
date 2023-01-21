@@ -166,6 +166,7 @@ class Content {
 
             let search: ISearchService = new searchService();
             let translate: ITranslateService = new translateService();
+            let _articleService: IArticleService = new articleService();
 
             await Promise.all(article.subtitles.map(async (subtitle, index) => {
                 const subParagraphs = (await search.perform("1", subtitle.translatedName)).map(paragraphObejct => paragraphObejct ? paragraphObejct.paragraph : "").filter(paragraph => paragraph !== "");
@@ -180,6 +181,10 @@ class Content {
 
                 article.subtitles[index].content = subParagraphs;
             }));
+
+            article.createdBy = parseInt(req.session.passport.user.id); 
+
+            article = await _articleService.saveArticleAfterContentSearched(article)
 
             return new SuccessResponse('Success', {
                 article

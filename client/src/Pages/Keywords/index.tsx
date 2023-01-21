@@ -20,7 +20,6 @@ import CustomLoader from "../../Components/CustomLoader";
 const Keywords = () => {
 
     const [error, setError] = useState<undefined|string>(undefined)
-    const [translated, setTranslated] = useState(false)
     const [title , setTitle] = useState('')
     const [keywords, setKeyWords] = useState<Array<IKeyword>>([
         { label: "Keyword number 1", text: "", id: getHashCode()}
@@ -41,16 +40,9 @@ const Keywords = () => {
     }, []);
 
     useEffect(() => {
-        setTranslated(kewordsTranslated)
-    }, [kewordsTranslated]);
-
-    useEffect(() => {
         const { subtitles } = article;
         if(subtitles.length > 0){
-            //dispatch(setKewordsTranslated(!(subtitles.find(subtitle => {
-            //    console.log(subtitle.translatedName)
-            //    return false
-            //}))))
+            dispatch(setKewordsTranslated(!(subtitles.find(subtitle => !subtitle.translatedName || subtitle.translatedName === ''))))
             setKeyWords(subtitles.map(
                 (subtitle, index) => ({
                     id: subtitle.id,
@@ -60,6 +52,7 @@ const Keywords = () => {
                 })
             ))
         }else{
+            dispatch(setKewordsTranslated(false))
             setKeyWords([
                 { label: "Keyword number 1", text: "", id: getHashCode()}
             ])
@@ -176,7 +169,7 @@ const Keywords = () => {
                                 onChange={() => {}}
                                 value={keyword.enText}
                                 label={`translation: ${keyword.label}`}
-                                readOnly={!translated}
+                                readOnly={!kewordsTranslated}
                             />
                         </Col>
                     </Row>
@@ -188,8 +181,8 @@ const Keywords = () => {
                 {error && <Alert message={error} type="error" showIcon />}
             </Col>
             <Col className="actions-col" span={12}>
-                <CustomButton _key="translate-btn" className="action-btns" loading={statusTk === "loading"} disabled={translated} onClick={translateKeywordsAction}>Translate</CustomButton>
-                <CustomButton _key="start-btn" className="action-btns" disabled={!translated} onClick={startSearchProcess}>Start</CustomButton>
+                <CustomButton _key="translate-btn" className="action-btns" loading={statusTk === "loading"} disabled={kewordsTranslated} onClick={translateKeywordsAction}>Translate</CustomButton>
+                <CustomButton _key="start-btn" className="action-btns" disabled={!kewordsTranslated} onClick={startSearchProcess}>Search Content</CustomButton>
             </Col>
         </Row>
     </>;

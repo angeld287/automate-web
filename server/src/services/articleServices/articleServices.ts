@@ -1,4 +1,5 @@
 import { INewArticle, SubTitleContent } from "../../interfaces/Content/Article";
+import { Lagunages } from "../../interfaces/Enums/Laguages";
 import { IArticleService } from "../../interfaces/IArticleService";
 import IContent from "../../interfaces/models/Content";
 import { Query } from "../../interfaces/Query";
@@ -318,6 +319,53 @@ export class articleService implements IArticleService {
             }));
 
             savedArticle.subtitles = savedSubtitles
+            article = getById === false ? savedArticle : getById
+            
+            return article
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+
+    async saveArticleAfterContentSearched(article: INewArticle): Promise<INewArticle> {
+        try {
+            const {id, internalId, subtitles} = article;
+            let getById = await this.getArticleById(internalId);
+
+            let savedArticle: INewArticle = null
+            
+            let savedContents: Array<IContent> = []
+            await Promise.all(subtitles.map(async (subtitle: SubTitleContent, index) => {
+                await Promise.all(subtitle.enContent.map(async (enContent: string) => {
+                    const content: IContent = {
+                        subtitleId: subtitle.id,
+                        contentLanguage: Lagunages.ENGLISH,
+                        selected: false,
+                        content: enContent
+                    }
+                    savedContents.push(await this.createContextForSubtitle(content));
+                }));
+
+                await Promise.all(subtitle.content.map(async (_content: string) => {
+                    const content: IContent = {
+                        subtitleId: subtitle.id,
+                        contentLanguage: Lagunages.SPANISH,
+                        selected: false,
+                        content: _content
+                    }
+                    savedContents.push(await this.createContextForSubtitle(content));
+                }));
+                
+            }));
+
+            savedArticle.subtitles.map(subtitle => ({
+                ...subtitle, 
+                content: savedContents.filter(content => content.subtitleId === subtitle.id && content.contentLanguage === Lagunages.SPANISH),
+                contentEn: savedContents.filter(content => content.subtitleId === subtitle.id && content.contentLanguage === Lagunages.ENGLISH)
+            }));
+            
+            // = savedSubtitles
             article = getById === false ? savedArticle : getById
             
             return article
