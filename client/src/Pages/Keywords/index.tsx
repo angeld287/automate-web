@@ -4,14 +4,13 @@ import IKeyword from "../../interfaces/IKeyword"
 import CustomTextArea from "../../Components/CustomTextArea";
 import { Col, Row, Alert } from 'antd';
 import "./keyword.css"
-import { addCategory, addSubtitles, addTitle, getArticleByInternalId, selectArticle, setArticleInititalState, translateKeywords } from "../../features/article/articleSlice";
+import { addCategory, addSubtitles, addTitle, getArticleByInternalId, selectArticle, setKewordsTranslated, translateKeywords } from "../../features/article/articleSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { IArticle, SubTitleContent } from "../../interfaces/models/Article";
+import { SubTitleContent } from "../../interfaces/models/Article";
 import { useNavigate, useParams } from 'react-router-dom';
 import CustomInput from "../../Components/CustomInput";
 import CustomButton from "../../Components/CustomButton"
 import CustomInputGroup from "../../Components/CustomInputGroup";
-import CustomSelect from "../../Components/CustomSelect"
 import CustomSelectGroup from "../../Components/CustomSelectGroup";
 import { getCategoryList, selectWputils } from "../../features/WPUtils/wputilsSlice";
 import { ISelectOptions } from "../../Components/CustomSelect/ICustomSelect";
@@ -37,9 +36,8 @@ const Keywords = () => {
     useEffect(() => {
         if(id) dispatch(getArticleByInternalId(parseInt(id)))
         dispatch(getCategoryList())
-        return () => {
-            dispatch(setArticleInititalState())
-        }
+        
+        return () => {}
     }, []);
 
     useEffect(() => {
@@ -47,8 +45,13 @@ const Keywords = () => {
     }, [kewordsTranslated]);
 
     useEffect(() => {
-        if(article.subtitles.length > 0){
-            setKeyWords(article.subtitles.map(
+        const { subtitles } = article;
+        if(subtitles.length > 0){
+            //dispatch(setKewordsTranslated(!(subtitles.find(subtitle => {
+            //    console.log(subtitle.translatedName)
+            //    return false
+            //}))))
+            setKeyWords(subtitles.map(
                 (subtitle, index) => ({
                     id: subtitle.id,
                     label: `Keyword number ${index}`, 
@@ -61,17 +64,9 @@ const Keywords = () => {
                 { label: "Keyword number 1", text: "", id: getHashCode()}
             ])
         }
+
         setTitle(article.title)
     }, [article])
-
-    //const statusIsNext = (article: IArticle) : boolean => {
-    //    if(article.subtitles.length > 3 && !article.subtitles.find(subtitle => subtitle.translatedName === '' || !subtitle.translatedName)){
-    //        console.log('navega a content editor')
-    //        //navigate(`/content-editor/${article.internalId}`)
-    //        return true;
-    //    }
-    //    return false;
-    //}
 
     const subTitles: Array<SubTitleContent> = useMemo(() => keywords.map( keyword =>
         ({
@@ -87,10 +82,6 @@ const Keywords = () => {
     }, [categories])
 
     useEffect(() => {
-        if(subTitles.length > 3) dispatch(addSubtitles(subTitles))
-    },[subTitles]);
-
-    useEffect(() => {
         dispatch(addTitle(title))
     },[title]);
 
@@ -100,23 +91,37 @@ const Keywords = () => {
         const currentKeyword = keywords.find(keyword => keyword.id === id)
         if(!currentKeyword) return null;
 
-        var hasLineBreak = /\r|\n/.exec(value);
+        let hasLineBreak = /\r|\n/.exec(value);
+        let _keywords = null;
         if (hasLineBreak) {
-            const _keywords = value.split(/\r|\n/).map((keyword, index) => ({ label: `Keyword number ${index+1}`, text: keyword, id: index+1}));
-            setKeyWords([..._keywords.map(keyword => ({...keyword, enText: subtitles.find(subtitle => subtitle.id === keyword.id)?.translatedName}))])
+            _keywords = value.split(/\r|\n/).map((keyword, index) => ({ label: `Keyword number ${index+1}`, text: keyword, id: index+1}));
         }else{
             currentKeyword.text = value;
-            const _keywords = [...keywords.filter(keyword => keyword.id !== id), currentKeyword]
-            setKeyWords([..._keywords.map(keyword => ({...keyword, enText: subtitles.find(subtitle => subtitle.id === keyword.id)?.translatedName}))]);
+            _keywords = [...keywords.filter(keyword => keyword.id !== id), currentKeyword]
         }
+
+        setKeyWords([..._keywords.map(keyword => ({...keyword, enText: subtitles.find(subtitle => subtitle.id === keyword.id)?.translatedName}))])
+        
+        if(_keywords.length > 3) dispatch(addSubtitles(_keywords.map( keyword =>
+            ({
+                id: keyword.id,
+                name: keyword.text,
+                translatedName: subtitles.find(subtitle => subtitle.id === keyword.id)?.translatedName,
+            })
+        )))
     }
 
-    const startSearchProcess = () => {
-        navigate('/content-editor');
-    }
+    const startSearchProcess = useCallback(() => {
+        const { internalId } = article;
+        if(!internalId || internalId === 0)
+            return setError("the article must be created in db to start process.")
+
+        navigate(`/content-editor/${article.internalId}`);
+    }, [article]);
 
     const translateKeywordsAction = () => {
         const { subtitles, title, category } = article;
+
         if(subtitles.length < 4)
             return setError("Pleace add more than 3 keywords.")
 
@@ -139,10 +144,10 @@ const Keywords = () => {
     return <>
         <Row gutter={16} className="keyword-rows">
             <Col span={13} className="gutter-row">
-                <CustomInputGroup defaultValue={title} onChange={(e) => {setTitle(e.target.value)}} name="article_title" label="Article Title"/>
+                <CustomInputGroup defaultValue={title} onChange={(e) => {setTitle(e.target.value); setError(undefined);}} name="article_title" label="Article Title"/>
             </Col>
             <Col span={8} className="gutter-row">
-                <CustomSelectGroup label="Category" defaultValue={article.category} onChange={(e) => {setCategoryToArticle(e)}} items={categoryList} name="category_select" />
+                <CustomSelectGroup label="Category" defaultValue={article.category} onChange={(e) => {setCategoryToArticle(e); setError(undefined);}} items={categoryList} name="category_select" />
             </Col>
         </Row>
         <Row>

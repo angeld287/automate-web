@@ -1,15 +1,19 @@
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Button, Col, Row } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../app/hooks";
 import DraftArticles from "../../Components/DraftArticles";
+import { setArticleInititalState } from "../../features/article/articleSlice";
 import { IArticle } from "../../interfaces/models/Article";
 import "./home.css"
 
 const Home = () => {
 
     const navigate = useNavigate()
+    const dispatch = useAppDispatch();
 
     const goToKeyWords = () => {
+        dispatch(setArticleInititalState())
         navigate('/keywords');
     }
 

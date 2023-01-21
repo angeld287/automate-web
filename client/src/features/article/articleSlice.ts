@@ -94,6 +94,9 @@ export const articleSlice = createSlice({
     addCategory: (state, action: PayloadAction<string>) => {
       state.article.category = action.payload
     },
+    setKewordsTranslated: (state, action: PayloadAction<boolean>) => {
+      state.kewordsTranslated = action.payload
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -130,7 +133,7 @@ export const articleSlice = createSlice({
   },
 });
 
-export const { addCategory, addTitle, addSubtitles, setArticleInititalState } = articleSlice.actions;
+export const { setKewordsTranslated, addCategory, addTitle, addSubtitles, setArticleInititalState } = articleSlice.actions;
 
 export const selectArticle = (state: RootState) => state.article;
 
