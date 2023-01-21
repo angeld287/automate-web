@@ -80,7 +80,7 @@ export class articleService implements IArticleService {
         try {
             const createArticle = {
                 name: 'create-new-article',
-                text: 'INSERT INTO public.articles(title, translated_title, category, created_by) VALUES ($1, $2, $3, $4) RETURNING id, title, translated_title, category, created_by, created_at',
+                text: 'INSERT INTO public.articles(title, translated_title, category, created_by) VALUES ($1, $2, $3, $4) RETURNING internal_id, id, title, translated_title, category, created_by, created_at',
                 values: [article.title, article.translatedTitle, article.category, article.createdBy],
             }
 
@@ -98,6 +98,7 @@ export class articleService implements IArticleService {
 
             let _article: INewArticle = {
                 id: result.rows[0].id,
+                internalId: result.rows[0].internal_id,
                 category: result.rows[0].category,
                 subtitles: [],
                 title: result.rows[0].title,
@@ -113,7 +114,11 @@ export class articleService implements IArticleService {
         }
     }
 
-    async getArticleById(articleId: number): Promise<INewArticle | boolean> {
+    async getArticleById(articleId: number): Promise<INewArticle | false> {
+
+        if (!articleId)
+                return false
+
         const getQuery = {
             name: 'get-article-by-id',
             text: `SELECT id, internal_id, title, translated_title, category, created_by, created_at FROM public.articles where internal_id = $1`,
@@ -149,7 +154,7 @@ export class articleService implements IArticleService {
     async getArticles(page: number, size: number, userId: number): Promise<Array<INewArticle> | boolean> {
         const getQuery = {
             name: 'get-articles-by-id',
-            text: `SELECT * FROM public.articles WHERE created_by = $3 ORDER BY created_at LIMIT $2 OFFSET $1;`,
+            text: `SELECT * FROM public.articles WHERE created_by = $3 ORDER BY created_at DESC LIMIT $2 OFFSET $1;`,
             values: [page, size, userId],
         }
 
@@ -294,17 +299,26 @@ export class articleService implements IArticleService {
         }
     }
 
-    async saveArticle(article: INewArticle): Promise<INewArticle> {
+    async saveArticleAfterTranslateKeywords(article: INewArticle): Promise<INewArticle> {
         try {
-            console.log(article)
-            let savedArticle = null
-            //if(article.id === 0 && article.internalId === 0)
-                //savedArticle = await this.createArticle(article);
+            const {id, internalId, subtitles} = article;
+            let getById = await this.getArticleById(internalId);
 
-            
-            //let getById = await this.getArticleById(article.internalId);
+            let savedArticle: INewArticle = null
+            if(getById ===  false) {
+                savedArticle = await this.createArticle(article);
+                getById = await this.getArticleById(internalId);
+            }
+                
+            //createSubtitle
+            let savedSubtitles: Array<SubTitleContent> = []
+            await Promise.all(subtitles.map(async (subtitle: SubTitleContent, index) => {
+                subtitle.articleId = savedArticle.id
+                savedSubtitles.push(await this.createSubtitle(subtitle));
+            }));
 
-            //article = getById === false ? getById : savedArticle
+            savedArticle.subtitles = savedSubtitles
+            article = getById === false ? savedArticle : getById
             
             return article
         } catch (error) {

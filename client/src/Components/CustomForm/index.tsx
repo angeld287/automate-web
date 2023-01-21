@@ -1,7 +1,7 @@
 import { Alert, Form, message } from 'antd';
 import React, { useCallback, useMemo } from 'react'
 import CustomButton from '../CustomButton';
-import CustomInputGroup from '../CustomInputGroup';
+import CustomInputForm from '../CustomInputForm';
 import CustomSelectForm from '../CustomSelectForm';
 import { ICustomForm } from './ICustomForm';
 
@@ -28,7 +28,7 @@ const CustomForm: React.FC<ICustomForm> = ({ onSubmit, fields, buttons, error })
                 _ => {
                     return <div key={'form_' + _.name} >
                         {_.input &&
-                            <CustomInputGroup type={_.input.type} disabled={_.input.disabled} defaultValue={_.input.defaultValue} name={_.input.name} label={_.input.label} />
+                            <CustomInputForm type={_.input.type} disabled={_.input.disabled} defaultValue={_.input.defaultValue} name={_.input.name} label={_.input.label} />
                         }
                         {_.select &&
                             <CustomSelectForm 

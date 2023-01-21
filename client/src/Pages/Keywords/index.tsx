@@ -29,7 +29,7 @@ const Keywords = () => {
 
     const navigate = useNavigate()
     const dispatch = useAppDispatch();
-    const article = useAppSelector(selectArticle);
+    const { article, kewordsTranslated, statusTk} = useAppSelector(selectArticle);
     const { categories, statusc } = useAppSelector(selectWputils);
 
     let { id } = useParams();
@@ -43,21 +43,35 @@ const Keywords = () => {
     }, []);
 
     useEffect(() => {
-        if(!statusIsNext(article.article)){
-            setKeyWords([...keywords.map(keyword => ({...keyword, enText: article.article.subtitles.find(subtitle => subtitle.id === keyword.id)?.translatedName}))])
-            setTranslated(article.kewordsTranslated)
-        }
-    }, [article]);
+        setTranslated(kewordsTranslated)
+    }, [kewordsTranslated]);
 
-    const statusIsNext = (article: IArticle) : boolean => {
-        if(article.subtitles.length > 3 && !article.subtitles.find(subtitle => subtitle.translatedName === '' || !subtitle.translatedName)){
-            console.log('navega a content editor')
-            //navigate(`/content-editor/${article.internalId}`)
-            return true;
+    useEffect(() => {
+        if(article.subtitles.length > 0){
+            setKeyWords(article.subtitles.map(
+                (subtitle, index) => ({
+                    id: subtitle.id,
+                    label: `Keyword number ${index}`, 
+                    text: subtitle.name,
+                    enText: subtitle.translatedName
+                })
+            ))
+        }else{
+            setKeyWords([
+                { label: "Keyword number 1", text: "", id: getHashCode()}
+            ])
         }
+        setTitle(article.title)
+    }, [article])
 
-        return false;
-    }
+    //const statusIsNext = (article: IArticle) : boolean => {
+    //    if(article.subtitles.length > 3 && !article.subtitles.find(subtitle => subtitle.translatedName === '' || !subtitle.translatedName)){
+    //        console.log('navega a content editor')
+    //        //navigate(`/content-editor/${article.internalId}`)
+    //        return true;
+    //    }
+    //    return false;
+    //}
 
     const subTitles: Array<SubTitleContent> = useMemo(() => keywords.map( keyword =>
         ({
@@ -81,16 +95,19 @@ const Keywords = () => {
     },[title]);
 
     const onChangeKeywords = (id: number, value: string) => {
+        const { subtitles, title, category } = article;
         setError(undefined)
         const currentKeyword = keywords.find(keyword => keyword.id === id)
         if(!currentKeyword) return null;
 
         var hasLineBreak = /\r|\n/.exec(value);
         if (hasLineBreak) {
-            setKeyWords(value.split(/\r|\n/).map((keyword, index) => ({ label: `Keyword number ${index+1}`, text: keyword, id: index+1})))
+            const _keywords = value.split(/\r|\n/).map((keyword, index) => ({ label: `Keyword number ${index+1}`, text: keyword, id: index+1}));
+            setKeyWords([..._keywords.map(keyword => ({...keyword, enText: subtitles.find(subtitle => subtitle.id === keyword.id)?.translatedName}))])
         }else{
             currentKeyword.text = value;
-            setKeyWords([...keywords.filter(keyword => keyword.id !== id), currentKeyword]);
+            const _keywords = [...keywords.filter(keyword => keyword.id !== id), currentKeyword]
+            setKeyWords([..._keywords.map(keyword => ({...keyword, enText: subtitles.find(subtitle => subtitle.id === keyword.id)?.translatedName}))]);
         }
     }
 
@@ -99,7 +116,7 @@ const Keywords = () => {
     }
 
     const translateKeywordsAction = () => {
-        const { subtitles, title, category } = article.article;
+        const { subtitles, title, category } = article;
         if(subtitles.length < 4)
             return setError("Pleace add more than 3 keywords.")
 
@@ -109,8 +126,7 @@ const Keywords = () => {
         if(!category || category === "")
             return setError("Pleace add an article category.")
         
-        console.log(article)
-       // dispatch(translateKeywords(article.article))
+        dispatch(translateKeywords(article))
     }
 
     const setCategoryToArticle = useCallback((category: string) => {
@@ -123,10 +139,10 @@ const Keywords = () => {
     return <>
         <Row gutter={16} className="keyword-rows">
             <Col span={13} className="gutter-row">
-                <CustomInputGroup onChange={(e) => {setTitle(e.target.value)}} name="article_title" label="Article Title"/>
+                <CustomInputGroup defaultValue={title} onChange={(e) => {setTitle(e.target.value)}} name="article_title" label="Article Title"/>
             </Col>
             <Col span={8} className="gutter-row">
-                <CustomSelectGroup label="Category" onChange={(e) => {setCategoryToArticle(e)}} items={categoryList} name="category_select" />
+                <CustomSelectGroup label="Category" defaultValue={article.category} onChange={(e) => {setCategoryToArticle(e)}} items={categoryList} name="category_select" />
             </Col>
         </Row>
         <Row>
@@ -167,7 +183,7 @@ const Keywords = () => {
                 {error && <Alert message={error} type="error" showIcon />}
             </Col>
             <Col className="actions-col" span={12}>
-                <CustomButton _key="translate-btn" className="action-btns" loading={article.statusTk === "loading"} disabled={translated} onClick={translateKeywordsAction}>Translate</CustomButton>
+                <CustomButton _key="translate-btn" className="action-btns" loading={statusTk === "loading"} disabled={translated} onClick={translateKeywordsAction}>Translate</CustomButton>
                 <CustomButton _key="start-btn" className="action-btns" disabled={!translated} onClick={startSearchProcess}>Start</CustomButton>
             </Col>
         </Row>

@@ -1,9 +1,10 @@
-import { Avatar, Divider, List, Skeleton } from "antd";
+import { Avatar, Divider, List, Skeleton, Typography } from "antd";
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { getArticles, selectArticles } from "../../features/articles/articlesSlice";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import IDraftArticles from "./IDraftArticles";
+import moment from 'moment'
 
 const DraftArticles: React.FC<IDraftArticles> = ({onClickEdit}) => {
 
@@ -40,7 +41,7 @@ const DraftArticles: React.FC<IDraftArticles> = ({onClickEdit}) => {
                         title={<a href="https://ant.design">{item.title}</a>}
                         description="Ant Design, a design language for background applications, is refined by Ant UED Team"
                         />
-                        <div>content</div>
+                        <Typography.Text italic>{moment(item.createdAt).fromNow()}</Typography.Text>
                     </Skeleton>
                 </List.Item>
             )}

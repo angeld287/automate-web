@@ -50,7 +50,7 @@ export const articlesSlice = createSlice({
         if(action.payload.articles !== false){
           state.page = parseInt(action.payload.page)
           state.size = parseInt(action.payload.size)
-          state.articles = [...state.articles, ...action.payload.articles]
+          state.articles = [...state.articles, ...action.payload.articles];//.sort((a, b) => (Number(new Date(a.createAt)) - Number(new Date(b.createAt))))
         }else{
           state.hasMore = false;
         }

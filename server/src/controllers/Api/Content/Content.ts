@@ -133,8 +133,9 @@ class Content {
                 }
             }));
 
-            //save article
-            article = await _articleService.saveArticle(article)
+            article.createdBy = parseInt(req.session.passport.user.id); 
+
+            article = await _articleService.saveArticleAfterTranslateKeywords(article)
             
 
             return new SuccessResponse('Success', {

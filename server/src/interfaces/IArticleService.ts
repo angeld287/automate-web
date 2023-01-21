@@ -9,7 +9,7 @@ export interface IArticleService {
 
     getArticles(page: number, size: number, userId: number): Promise<Array<INewArticle> | boolean>
 
-    getArticleById(articleId: number): Promise<INewArticle | boolean>
+    getArticleById(articleId: number): Promise<INewArticle | false>
 
     getSubtitleById(subtitleId: number): Promise<SubTitleContent | boolean>
 
@@ -17,6 +17,6 @@ export interface IArticleService {
 
     createContextForSubtitle(content: IContent): Promise<IContent>;
 
-    saveArticle(article: INewArticle): Promise<INewArticle>;
+    saveArticleAfterTranslateKeywords(article: INewArticle): Promise<INewArticle>;
 
 }

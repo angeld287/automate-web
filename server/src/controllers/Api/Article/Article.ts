@@ -33,7 +33,7 @@ class Article {
                 articleId
             }
 
-            const article: INewArticle | boolean = await _articleService.getArticleById(articleId)
+            const article: INewArticle | false = await _articleService.getArticleById(articleId)
 
             if(!article){
                 return new BadRequestResponse('Error', {
@@ -105,7 +105,7 @@ class Article {
 
             const id = req.query.id;
 
-            const article: INewArticle | boolean = await _articleService.getArticleById(parseInt(id.toString()))
+            const article: INewArticle | false = await _articleService.getArticleById(parseInt(id.toString()))
 
             return new SuccessResponse('Success', {
                 success: true,
@@ -175,7 +175,7 @@ class Article {
                 articleId
             };
 
-            const article: INewArticle | boolean = await _articleService.getArticleById(articleId)
+            const article: INewArticle | false = await _articleService.getArticleById(articleId)
 
             if(!article){
                 return new BadRequestResponse('Error', {
