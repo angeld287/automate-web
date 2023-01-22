@@ -1,3 +1,5 @@
+import IContent from '../models/Content'
+
 export interface INewArticle {
     id?: number;
     internalId?: number;
@@ -20,8 +22,8 @@ export interface SubTitleContent {
     name: string;
     translatedName: string;
     articleId?: number;
-    content?: Array<string>;
-    enContent?: Array<string>;
+    content?: Array<string> | Array<IContent>;
+    enContent?: Array<IContent>;
     translatedContent?: string;
     error?: boolean | ProcessError
 }

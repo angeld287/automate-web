@@ -65,8 +65,8 @@ export class articleService implements IArticleService {
                     name: row.subtitles_name,
                     translatedName: row.translated_name,
                     articleId: row.articles_id,
-                    content: contents.filter(content => content.contentLanguage === 'es').map(content => content.content),
-                    enContent: contents.filter(content => content.contentLanguage === 'en').map(content => content.content),
+                    content: contents.filter(content => content.contentLanguage === Lagunages.SPANISH),
+                    enContent: contents.filter(content => content.contentLanguage === Lagunages.ENGLISH),
                 })
             }));
 
@@ -219,7 +219,7 @@ export class articleService implements IArticleService {
     async createContextForArticle(content: IContent): Promise<IContent> {
         const createContent = {
             name: 'create-new-content-for-article',
-            text: 'INSERT INTO public.contents(content, selected, content_language, articles_id) VALUES ($1, $2, $3, $4) RETURNING id, content, selected, content_language, articles_id, subtitles_id',
+            text: 'INSERT INTO public.contents(content, selected, content_language, articles_id) VALUES ($1, $2, $3, $4) RETURNING id, TRIM(content) as content, selected, content_language, articles_id, subtitles_id',
             values: [content.content, content.selected, content.contentLanguage, content.articleId],
         }
 
@@ -229,7 +229,7 @@ export class articleService implements IArticleService {
     async createContextForSubtitle(content: IContent): Promise<IContent> {
         const createContent = {
             name: 'create-new-content-for-subtitle',
-            text: 'INSERT INTO public.contents(content, selected, content_language, subtitles_id) VALUES ($1, $2, $3, $4) RETURNING id, content, selected, content_language, articles_id, subtitles_id',
+            text: 'INSERT INTO public.contents(content, selected, content_language, subtitles_id) VALUES ($1, $2, $3, $4) RETURNING id, TRIM(content) as content, selected, content_language, articles_id, subtitles_id',
             values: [content.content, content.selected, content.contentLanguage, content.subtitleId],
         }
 
@@ -337,22 +337,22 @@ export class articleService implements IArticleService {
             
             let savedContents: Array<IContent> = []
             await Promise.all(subtitles.map(async (subtitle: SubTitleContent, index) => {
-                await Promise.all(subtitle.enContent.map(async (enContent: string) => {
+                await Promise.all(subtitle.enContent.map(async (enContent: IContent) => {
                     const content: IContent = {
                         subtitleId: subtitle.id,
                         contentLanguage: Lagunages.ENGLISH,
                         selected: false,
-                        content: enContent
+                        content: enContent.content
                     }
                     savedContents.push(await this.createContextForSubtitle(content));
                 }));
 
-                await Promise.all(subtitle.content.map(async (_content: string) => {
+                await Promise.all(subtitle.content.map(async (_content: string | IContent) => {
                     const content: IContent = {
                         subtitleId: subtitle.id,
                         contentLanguage: Lagunages.SPANISH,
                         selected: false,
-                        content: _content
+                        content: typeof _content === "string" ? _content : _content.content
                     }
                     savedContents.push(await this.createContextForSubtitle(content));
                 }));
@@ -369,6 +369,43 @@ export class articleService implements IArticleService {
             article = getById === false ? savedArticle : getById
             
             return article
+        } catch (error) {
+            throw new Error(error.message);
+        } 
+    }
+
+    async saveSubtitleAfterContentSearched(subtitle: SubTitleContent): Promise<SubTitleContent> {
+        try {
+            const {id, content, enContent} = subtitle;
+
+            let savedSubtitle: INewArticle = null
+            
+            let savedContents: Array<IContent> = []
+            await Promise.all(enContent.map(async (enContent: string | IContent) => {
+                const content: IContent = {
+                    subtitleId: subtitle.id,
+                    contentLanguage: Lagunages.ENGLISH,
+                    selected: false,
+                    content: typeof enContent === "string" ? enContent : enContent.content
+                }
+                savedContents.push(await this.createContextForSubtitle(content));
+            }));
+
+            await Promise.all(content.map(async (_content: string | IContent) => {
+                const content: IContent = {
+                    subtitleId: subtitle.id,
+                    contentLanguage: Lagunages.SPANISH,
+                    selected: false,
+                    content: typeof _content === "string" ? _content : _content.content
+                }
+                savedContents.push(await this.createContextForSubtitle(content));
+            }));
+                
+            return {
+                ...subtitle, 
+                content: savedContents.filter(content => content.subtitleId === subtitle.id && content.contentLanguage === Lagunages.SPANISH),
+                enContent: savedContents.filter(content => content.subtitleId === subtitle.id && content.contentLanguage === Lagunages.ENGLISH)
+            }
         } catch (error) {
             throw new Error(error.message);
         }

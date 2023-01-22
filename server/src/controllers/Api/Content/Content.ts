@@ -212,6 +212,7 @@ class Content {
 
             let search: ISearchService = new searchService();
             let translate: ITranslateService = new translateService();
+            let _articleService: IArticleService = new articleService();
 
             const subParagraphs = (await search.perform("1", subtitle.translatedName)).map(paragraphObejct => paragraphObejct ? paragraphObejct.paragraph : "").filter(paragraph => paragraph !== "");
             subtitle.enContent = [...subParagraphs];
@@ -224,6 +225,8 @@ class Content {
             }))
 
             subtitle.content = subParagraphs;
+
+            subtitle = await _articleService.saveSubtitleAfterContentSearched(subtitle)
 
             return new SuccessResponse('Success', {
                 subtitle
@@ -252,7 +255,7 @@ class Content {
             let translate: ITranslateService = new translateService();
 
             await Promise.all(article.subtitles.map(async (subtitle: SubTitleContent, index) => {
-                const translation = await translate.perform(subtitle.content[0], 'es');
+                const translation = await translate.perform(subtitle.content[0].toString(), 'es');
                 if (translation.success) {
                     article.subtitles[index].translatedContent = translation.body[0]['translations'][0].text;
                     article.subtitles[index].error = false;
@@ -309,7 +312,7 @@ class Content {
             let translate: ITranslateService = new translateService();
 
             await Promise.all(article.subtitles.map(async (subtitle: SubTitleContent, index) => {
-                const translation = await translate.perform(subtitle.content[0], 'es');
+                const translation = await translate.perform(subtitle.content[0].toString(), 'es');
                 if (translation.success) {
                     article.subtitles[index].translatedContent = translation.body[0]['translations'][0].text;
                     article.subtitles[index].error = false;

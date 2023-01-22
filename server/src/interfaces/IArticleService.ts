@@ -21,4 +21,6 @@ export interface IArticleService {
 
     saveArticleAfterContentSearched(article: INewArticle): Promise<INewArticle>;
 
+    saveSubtitleAfterContentSearched(subtitle: SubTitleContent): Promise<SubTitleContent>;
+
 }
