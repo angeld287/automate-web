@@ -2,6 +2,8 @@ import { Card, Skeleton } from "antd";
 import Meta from "antd/es/card/Meta";
 
 import React, { useEffect, useMemo, useState } from "react";
+import { useAppDispatch } from "../../../app/hooks";
+import { updateSubtitle } from "../../../features/article/articleSlice";
 import { searchKeywordContent } from "../../../features/keyword/keywordAPI";
 import { SubTitleContent } from "../../../interfaces/models/Article";
 import { IParagraph } from "./IParagraph";
@@ -10,29 +12,39 @@ const Paragraph: React.FC<IParagraph> = ({ content, index }) => {
     const [ paragraphContent, setParagraphContent ] = useState<SubTitleContent>();
     const [ loading, setLoading ] = useState(true);
     const [ contentText, setContentText ] = useState("")
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         let didCancel = false;
         let result: any = null;
 
-        const fetch = async () => {
+        const fetch = async (_subtitle: SubTitleContent) => {
             try {
-                result = await searchKeywordContent(content)
+                result = await searchKeywordContent(content)    
             } catch (error) {
+                didCancel = true;
                 setLoading(false)
             }
 
             if (!didCancel) {
                 setParagraphContent(result.data.subtitle)
+                dispatch(updateSubtitle(result.data.subtitle))
                 setLoading(false)
             }
         }
 
-        if(content.content === undefined && paragraphContent === undefined)
-            fetch();
+        console.log(content.content, paragraphContent)
+
+        if((content.content === undefined || content.content.length === 0) && !paragraphContent){
+            fetch(content);
+        }else{
+            setParagraphContent(content)
+            dispatch(updateSubtitle(content))
+        }
+            
 
         return () => {
-
+            didCancel = false;
         }
 
     }, [content]);

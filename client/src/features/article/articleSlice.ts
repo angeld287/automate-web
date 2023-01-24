@@ -88,6 +88,11 @@ export const articleSlice = createSlice({
     addSubtitles: (state, action: PayloadAction<Array<SubTitleContent>>) => {
       state.article.subtitles = action.payload
     },
+    updateSubtitle: (state, action: PayloadAction<SubTitleContent>) => {
+      const _subtitles = [...state.article.subtitles];
+      _subtitles[_subtitles.findIndex(subtitle => action.payload.id === subtitle.id)] = action.payload
+      state.article.subtitles = _subtitles
+    },
     addTitle: (state, action: PayloadAction<string>) => {
       state.article.title = action.payload
     },
@@ -133,7 +138,7 @@ export const articleSlice = createSlice({
   },
 });
 
-export const { setKewordsTranslated, addCategory, addTitle, addSubtitles, setArticleInititalState } = articleSlice.actions;
+export const { updateSubtitle, setKewordsTranslated, addCategory, addTitle, addSubtitles, setArticleInititalState } = articleSlice.actions;
 
 export const selectArticle = (state: RootState) => state.article;
 
