@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 
-import { Input, Form, Col, Row } from 'antd';
+import { Input, Col, Row } from 'antd';
 import { ICustomInputGroup } from './ICustomInputGroup';
 import './CustomInputGroup.css'
 

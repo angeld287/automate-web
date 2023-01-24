@@ -5,6 +5,8 @@ import { getArticles, selectArticles } from "../../features/articles/articlesSli
 import InfiniteScroll from 'react-infinite-scroll-component';
 import IDraftArticles from "./IDraftArticles";
 import moment from 'moment'
+import CustomButton from "../CustomButton";
+import { EditOutlined } from "@ant-design/icons";
 
 const DraftArticles: React.FC<IDraftArticles> = ({onClickEdit}) => {
 
@@ -33,7 +35,7 @@ const DraftArticles: React.FC<IDraftArticles> = ({onClickEdit}) => {
             dataSource={articles}
             renderItem={(item) => (
                 <List.Item
-                    actions={[<a onClick={() => onClickEdit(item)} key="draft-article-edit">edit</a>, <a key="draft-article-more">more</a>]}
+                    actions={[<CustomButton onClick={() => onClickEdit(item)} _key="draft_edit_btn"><EditOutlined /></CustomButton>]}
                 >
                     <Skeleton avatar title={false} loading={false} active>
                         <List.Item.Meta

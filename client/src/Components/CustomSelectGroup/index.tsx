@@ -1,7 +1,7 @@
 
 import React, { memo } from 'react';
 
-import { Col, Form, Row } from 'antd';
+import { Col, Row } from 'antd';
 import { ICustomSelectGroup } from './ICustomSelectGroup';
 import CustomSelect from '../CustomSelect';
 

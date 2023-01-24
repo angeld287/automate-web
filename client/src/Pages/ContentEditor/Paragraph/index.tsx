@@ -33,10 +33,10 @@ const Paragraph: React.FC<IParagraph> = ({ content, index }) => {
             }
         }
 
-        console.log(content.content, paragraphContent)
+        //console.log(content.content, paragraphContent)
 
         if((content.content === undefined || content.content.length === 0) && !paragraphContent){
-            fetch(content);
+            //fetch(content);
         }else{
             setParagraphContent(content)
             dispatch(updateSubtitle(content))
