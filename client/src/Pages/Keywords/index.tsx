@@ -181,8 +181,8 @@ const Keywords = () => {
                 {error && <Alert message={error} type="error" showIcon />}
             </Col>
             <Col className="actions-col" span={12}>
-                <CustomButton _key="translate-btn" className="action-btns" loading={statusTk === "loading"} disabled={kewordsTranslated} onClick={translateKeywordsAction}>Translate</CustomButton>
-                <CustomButton _key="start-btn" className="action-btns" disabled={!kewordsTranslated} onClick={startSearchProcess}>Search Content</CustomButton>
+                <CustomButton key="translate-btn" className="action-btns" loading={statusTk === "loading"} disabled={kewordsTranslated} onClick={translateKeywordsAction}>Translate</CustomButton>
+                <CustomButton key="start-btn" className="action-btns" disabled={!kewordsTranslated} onClick={startSearchProcess}>Search Content</CustomButton>
             </Col>
         </Row>
     </>;

@@ -1,11 +1,11 @@
 import { Avatar, Divider, List, Skeleton, Typography } from "antd";
 import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { getArticles, selectArticles } from "../../features/articles/articlesSlice";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { getArticles, selectArticles } from "../../../features/articles/articlesSlice";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import IDraftArticles from "./IDraftArticles";
 import moment from 'moment'
-import CustomButton from "../CustomButton";
+import CustomButton from "../../CustomButton";
 import { EditOutlined } from "@ant-design/icons";
 
 const DraftArticles: React.FC<IDraftArticles> = ({onClickEdit}) => {
@@ -35,7 +35,7 @@ const DraftArticles: React.FC<IDraftArticles> = ({onClickEdit}) => {
             dataSource={articles}
             renderItem={(item) => (
                 <List.Item
-                    actions={[<CustomButton onClick={() => onClickEdit(item)} _key="draft_edit_btn"><EditOutlined /></CustomButton>]}
+                    actions={[<CustomButton onClick={() => onClickEdit(item)} key="draft_edit_btn"><EditOutlined /></CustomButton>]}
                 >
                     <Skeleton avatar title={false} loading={false} active>
                         <List.Item.Meta

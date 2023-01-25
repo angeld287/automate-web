@@ -2,7 +2,7 @@ import { PlusCircleOutlined } from "@ant-design/icons";
 import { Button, Col, Row } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../app/hooks";
-import DraftArticles from "../../Components/DraftArticles";
+import DraftArticles from "../../Components/App/DraftArticles";
 import { setArticleInititalState } from "../../features/article/articleSlice";
 import { IArticle } from "../../interfaces/models/Article";
 import "./home.css"
