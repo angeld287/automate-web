@@ -190,7 +190,7 @@ export class articleService implements IArticleService {
         }
     }
 
-    async getSubtitleById(subtitleId: number): Promise<SubTitleContent | boolean> {
+    async getSubtitleById(subtitleId: number): Promise<SubTitleContent | false> {
         const getQuery = {
             name: 'get-subtitle-by-id',
             text: `SELECT id, subtitles_name, translated_name, articles_id FROM public.subtitles where id = $1`,

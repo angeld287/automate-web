@@ -13,9 +13,11 @@
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
     "antd": "^5.1.1",
+    "draft-js": "^0.11.7",
     "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-draft-wysiwyg": "^1.15.0",
     "react-infinite-scroll-component": "^6.1.0",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.6.1",
@@ -46,5 +48,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-draft-wysiwyg": "^1.13.4"
   }
 }

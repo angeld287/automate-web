@@ -1,11 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { SubTitleContent } from '../../interfaces/models/Article';
-import { searchKeywordContent } from './keywordAPI';
+import { searchKeywordContent, searchSubtitle } from './keywordAPI';
 
 export interface KeywordState {
   subtitle: SubTitleContent;
   status: 'idle' | 'loading' | 'failed';
+  getStatus: 'idle' | 'loading' | 'failed';
 }
 
 const initialState: KeywordState = {
@@ -14,6 +15,7 @@ const initialState: KeywordState = {
     name: ""
   },
   status: 'idle',
+  getStatus: 'loading',
 };
 
 export const getKeywordContent = createAsyncThunk(
@@ -22,6 +24,18 @@ export const getKeywordContent = createAsyncThunk(
     try {    
       const result = await searchKeywordContent(subtitle);
       return result;
+    } catch (error) {
+      console.log(error) 
+    }
+  }
+);
+
+export const getKeywordById = createAsyncThunk(
+  'keyword/get',
+  async (subtitle: SubTitleContent) => {
+    try {    
+      const result = await searchSubtitle(subtitle);
+      return result.data.response;
     } catch (error) {
       console.log(error) 
     }
@@ -43,6 +57,16 @@ export const keywordSlice = createSlice({
       })
       .addCase(getKeywordContent.rejected, (state) => {
         state.status = 'failed';
+      })
+      .addCase(getKeywordById.pending, (state) => {
+        state.getStatus = 'loading';
+      })
+      .addCase(getKeywordById.fulfilled, (state, action: PayloadAction<SubTitleContent>) => {
+        state.getStatus = 'idle';
+        state.subtitle = action.payload
+      })
+      .addCase(getKeywordById.rejected, (state) => {
+        state.getStatus = 'failed';
       });
   },
 });

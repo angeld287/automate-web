@@ -57,6 +57,36 @@ class Article {
         }
     }
 
+    public static async getSubtitleById(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            if(!req.query.id){
+                return new BadRequestResponse('Error', {
+                    error: "Param id are required."
+                }).send(res);
+            }
+            
+            let _articleService: IArticleService = new articleService();
+
+            const id = req.query.id;
+
+            const subtitle: SubTitleContent | false = await _articleService.getSubtitleById(parseInt(id.toString()))
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: {
+                    subtitle
+                },
+                error: null
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Get Article - Article Controller Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
     public static async createArticle(req: IRequest, res: IResponse): Promise<any> {
         try {
             if(ValidateErrors.validate(req, res) !== true) return

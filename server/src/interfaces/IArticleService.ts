@@ -11,7 +11,7 @@ export interface IArticleService {
 
     getArticleById(articleId: number): Promise<INewArticle | false>
 
-    getSubtitleById(subtitleId: number): Promise<SubTitleContent | boolean>
+    getSubtitleById(subtitleId: number): Promise<SubTitleContent | false>
 
     createContextForArticle(content: IContent): Promise<IContent>;
 

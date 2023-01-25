@@ -110,6 +110,12 @@ router.post(
     ContentController.searchKeywords
 );
 
+router.get(
+    '/getSubtitleFromDb',
+    Passport.isAuthenticated,
+    ArticleController.getSubtitleById
+);
+
 router.post(
     '/searchKeyword',
     body('subtitle', 'field subtitle cannot be blank.').notEmpty(),

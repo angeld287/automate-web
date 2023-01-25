@@ -1,38 +1,48 @@
 import React, { useEffect, useState } from "react";
-import { searchKeywordContent } from "../../../features/keyword/keywordAPI";
-import { SubTitleContent } from "../../../interfaces/models/Article";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { getKeywordById, getKeywordContent, selectKeyword } from "../../../features/keyword/keywordSlice";
+import CustomLoader from "../../CustomLoader";
 import ISearchKeyword from "./ISearchKeyword";
+import { Editor, EditorState } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
-    const [ loading, setLoading ] = useState(true);
+    const dispatch = useAppDispatch();
+    const keyword = useAppSelector(selectKeyword);
+    const [text, setText] = useState<EditorState>()
 
     useEffect(() => {
-        let didCancel = false;
-        let result: any = null;
+        if(subtitle) dispatch(getKeywordById(subtitle));
 
-        const fetch = async (_subtitle: SubTitleContent) => {
-            try {
-                result = await searchKeywordContent(_subtitle)
-            } catch (error) {
-                didCancel = true;
-                setLoading(false)
-            }
-
-            if (!didCancel) {
-                setLoading(false)
-            }
-        }
-
-        //fetch(subtitle);
-
-        return () => {
-            didCancel = false;
-        }
-
+        return () => {}
     }, []);
 
+    useEffect(() => {
+        console.log('subtitle: ', subtitle)
+    }, [subtitle])
+
+    useEffect(() => {
+        if(keyword.subtitle.content) dispatch(getKeywordContent(keyword.subtitle));
+    }, [keyword.subtitle]);
+
+    const onEditorStateChange = (e: any) => {
+        console.log(e)
+    } 
+
+    if (keyword.status === 'loading' || keyword.getStatus === 'loading') return <CustomLoader />
+
     return (
-        <h1>{subtitle?.name}</h1>
+        <>
+            <h1>{subtitle?.name}</h1>
+
+            <Editor
+                editorState={text}
+                toolbarClassName="toolbarClassName"
+                wrapperClassName="wrapperClassName"
+                editorClassName="editorClassName"
+                onEditorStateChange={onEditorStateChange}
+            />
+        </>
     )
 }
 

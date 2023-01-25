@@ -13,3 +13,15 @@ export async function searchKeywordContent(subtitle: SubTitleContent) {
 
   return await fetchData.json();
 }
+
+export async function searchSubtitle(subtitle: SubTitleContent) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}getSubtitleFromDb?id=${subtitle.id}`, {
+    method: "GET",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+
+  return await fetchData.json();
+}
