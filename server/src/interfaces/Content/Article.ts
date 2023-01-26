@@ -22,7 +22,7 @@ export interface SubTitleContent {
     name: string;
     translatedName: string;
     articleId?: number;
-    content?: Array<string> | Array<IContent>;
+    content?: Array<IContent>;
     enContent?: Array<IContent>;
     translatedContent?: string;
     error?: boolean | ProcessError

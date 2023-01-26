@@ -204,10 +204,14 @@ export class articleService implements IArticleService {
             if (result.rows.length === 0)
                 return false
             
+            const contents: Array<IContent> = await this.getContentBySubtitleId(result.rows[0].id);
+            
             const subtitle: SubTitleContent = {
                 id: result.rows[0].id,
                 name: result.rows[0].subtitles_name,
                 translatedName: result.rows[0].translated_name,
+                content: contents.filter(content => content.contentLanguage === Lagunages.SPANISH),
+                enContent: contents.filter(content => content.contentLanguage === Lagunages.ENGLISH),
             }
 
             return subtitle;
@@ -377,28 +381,32 @@ export class articleService implements IArticleService {
     async saveSubtitleAfterContentSearched(subtitle: SubTitleContent): Promise<SubTitleContent> {
         try {
             const {id, content, enContent} = subtitle;
-
-            let savedSubtitle: INewArticle = null
             
             let savedContents: Array<IContent> = []
-            await Promise.all(enContent.map(async (enContent: string | IContent) => {
-                const content: IContent = {
-                    subtitleId: subtitle.id,
-                    contentLanguage: Lagunages.ENGLISH,
-                    selected: false,
-                    content: typeof enContent === "string" ? enContent : enContent.content
+            await Promise.all(enContent.map(async (enContent: IContent) => {
+                console.log(enContent.content)
+                if(enContent.content.length < 1900){
+                    const content: IContent = {
+                        subtitleId: subtitle.id,
+                        contentLanguage: Lagunages.ENGLISH,
+                        selected: false,
+                        content: enContent.content
+                    }
+                    savedContents.push(await this.createContextForSubtitle(content));    
                 }
-                savedContents.push(await this.createContextForSubtitle(content));
             }));
 
-            await Promise.all(content.map(async (_content: string | IContent) => {
-                const content: IContent = {
-                    subtitleId: subtitle.id,
-                    contentLanguage: Lagunages.SPANISH,
-                    selected: false,
-                    content: typeof _content === "string" ? _content : _content.content
+            await Promise.all(content.map(async (_content: IContent) => {
+                console.log(_content)
+                if(_content.content.length < 1900){
+                    const content: IContent = {
+                        subtitleId: subtitle.id,
+                        contentLanguage: Lagunages.SPANISH,
+                        selected: false,
+                        content: _content.content
+                    }
+                    savedContents.push(await this.createContextForSubtitle(content));
                 }
-                savedContents.push(await this.createContextForSubtitle(content));
             }));
                 
             return {

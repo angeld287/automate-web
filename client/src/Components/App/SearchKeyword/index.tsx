@@ -11,18 +11,13 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
     const keyword = useAppSelector(selectKeyword);
     const [text, setText] = useState<EditorState>()
 
+
     useEffect(() => {
         if(subtitle) dispatch(getKeywordById(subtitle));
-
-        return () => {}
-    }, []);
-
-    useEffect(() => {
-        console.log('subtitle: ', subtitle)
     }, [subtitle])
 
     useEffect(() => {
-        if(keyword.subtitle.content) dispatch(getKeywordContent(keyword.subtitle));
+        if(keyword.subtitle.content && keyword.subtitle.content.length === 0) dispatch(getKeywordContent(keyword.subtitle));
     }, [keyword.subtitle]);
 
     const onEditorStateChange = (e: any) => {

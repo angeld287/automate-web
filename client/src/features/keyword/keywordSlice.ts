@@ -23,7 +23,7 @@ export const getKeywordContent = createAsyncThunk(
   async (subtitle: SubTitleContent) => {
     try {    
       const result = await searchKeywordContent(subtitle);
-      return result;
+      return result.data.subtitle;
     } catch (error) {
       console.log(error) 
     }
@@ -35,7 +35,7 @@ export const getKeywordById = createAsyncThunk(
   async (subtitle: SubTitleContent) => {
     try {    
       const result = await searchSubtitle(subtitle);
-      return result.data.response;
+      return result.data.response.subtitle;
     } catch (error) {
       console.log(error) 
     }
@@ -53,7 +53,7 @@ export const keywordSlice = createSlice({
       })
       .addCase(getKeywordContent.fulfilled, (state, action: PayloadAction<SubTitleContent>) => {
         state.status = 'idle';
-        state.subtitle = action.payload
+        state.subtitle = action.payload;
       })
       .addCase(getKeywordContent.rejected, (state) => {
         state.status = 'failed';
@@ -63,7 +63,7 @@ export const keywordSlice = createSlice({
       })
       .addCase(getKeywordById.fulfilled, (state, action: PayloadAction<SubTitleContent>) => {
         state.getStatus = 'idle';
-        state.subtitle = action.payload
+        state.subtitle = action.payload;
       })
       .addCase(getKeywordById.rejected, (state) => {
         state.getStatus = 'failed';
