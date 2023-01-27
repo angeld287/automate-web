@@ -384,7 +384,6 @@ export class articleService implements IArticleService {
             
             let savedContents: Array<IContent> = []
             await Promise.all(enContent.map(async (enContent: IContent) => {
-                console.log(enContent.content)
                 if(enContent.content.length < 1900){
                     const content: IContent = {
                         subtitleId: subtitle.id,
@@ -397,7 +396,6 @@ export class articleService implements IArticleService {
             }));
 
             await Promise.all(content.map(async (_content: IContent) => {
-                console.log(_content)
                 if(_content.content.length < 1900){
                     const content: IContent = {
                         subtitleId: subtitle.id,

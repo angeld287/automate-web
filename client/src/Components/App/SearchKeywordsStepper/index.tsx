@@ -27,14 +27,14 @@ const SearchKeywordsStepper: React.FC<ISearchKeywordsStepper> = ({subtitles, onN
     const currentStep = useMemo(() => stepsItems[current] ? stepsItems[current].content : <h1>step not defined</h1>, [stepsItems, current]);
 
     return (
-      <CustomModal {...{open, setOpen}} width="80%" footer={footerOptions}>
+      <CustomModal {...{open, setOpen}} style={{marginBottom: 20, marginTop: 20}} width="80%" footer={footerOptions}>
         <Steps
           current={current}
           onChange={onChange}
           items={stepsItems}
         />
         <Divider />
-        <div style={{height: '600px'}}>
+        <div style={{minHeight: '600px'}}>
           {currentStep}
         </div>
       </CustomModal>

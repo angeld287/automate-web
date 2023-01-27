@@ -11,6 +11,7 @@ import { articleService } from "../../../services/articleServices/articleService
 import { searchService } from "../../../services/searchEngine/searchService";
 import { translateService } from "../../../services/translation/translateService";
 import categoryService from "../../../services/wordpress/categoryServices";
+import IContent from "../../../interfaces/models/Content";
 
 class Content {
 
@@ -214,18 +215,17 @@ class Content {
             let translate: ITranslateService = new translateService();
             let _articleService: IArticleService = new articleService();
 
-            const subParagraphs = (await search.perform("1", subtitle.translatedName)).map(paragraphObejct => paragraphObejct ? paragraphObejct.paragraph : "").filter(paragraph => paragraph !== "");
+            const subParagraphs = (await search.perform("1", subtitle.translatedName)).map((paragraphObejct): IContent => paragraphObejct ? {content: paragraphObejct.paragraph, selected: false, contentLanguage: ""} : {content: "", selected: false, contentLanguage: ""}).filter(paragraph => paragraph.content !== "");
             subtitle.enContent = [...subParagraphs];
 
             await Promise.all(subParagraphs.map(async (paragraph, paragraphIndex) => {
-                const translation = await translate.perform(paragraph, 'es');
+                const translation = await translate.perform(paragraph.content, 'es');
                 if (translation.success) {
-                    subParagraphs[paragraphIndex] = translation.body[0]['translations'][0].text;
+                    subParagraphs[paragraphIndex].content = translation.body[0]['translations'][0].text;
                 }
             }))
 
             subtitle.content = subParagraphs;
-
             subtitle = await _articleService.saveSubtitleAfterContentSearched(subtitle)
 
             return new SuccessResponse('Success', {

@@ -14,7 +14,6 @@ const ContentEditor = () => {
 
     useEffect(() => {
         if(article.article.id === 0 && id) dispatch(getArticleByInternalId(parseInt(id)))
-        
         return () => {}
     }, []);
 

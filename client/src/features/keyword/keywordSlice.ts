@@ -45,7 +45,11 @@ export const getKeywordById = createAsyncThunk(
 export const keywordSlice = createSlice({
   name: 'keyword',
   initialState,
-  reducers: {},
+  reducers: {
+    setInitialState: (state) => {
+      state.subtitle = initialState.subtitle
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getKeywordContent.pending, (state) => {
@@ -71,7 +75,7 @@ export const keywordSlice = createSlice({
   },
 });
 
-export const {} = keywordSlice.actions;
+export const { setInitialState } = keywordSlice.actions;
 
 export const selectKeyword = (state: RootState) => state.keyword;
 
