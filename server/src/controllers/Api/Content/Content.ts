@@ -215,9 +215,10 @@ class Content {
             let translate: ITranslateService = new translateService();
             let _articleService: IArticleService = new articleService();
 
-            const subParagraphs = (await search.perform("1", subtitle.translatedName)).map((paragraphObejct): IContent => paragraphObejct ? {content: paragraphObejct.paragraph, selected: false, contentLanguage: ""} : {content: "", selected: false, contentLanguage: ""}).filter(paragraph => paragraph.content !== "");
+            const subParagraphs = (await search.perform("1", subtitle.translatedName)).map((paragraphObejct, index): IContent => paragraphObejct ? {subtitleId: subtitle.id, content: paragraphObejct.paragraph, selected: false, contentLanguage: "", orderNumber: index+1, link: paragraphObejct.link, wordsCount: paragraphObejct.wordCount} : {content: "", selected: false, contentLanguage: ""}).filter(paragraph => paragraph.content !== "");
             subtitle.enContent = [...subParagraphs];
-
+            console.log(subtitle.enContent)
+           
             await Promise.all(subParagraphs.map(async (paragraph, paragraphIndex) => {
                 const translation = await translate.perform(paragraph.content, 'es');
                 if (translation.success) {

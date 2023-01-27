@@ -314,6 +314,9 @@ CREATE TABLE IF NOT EXISTS public.contents
     deleted boolean,
     deleted_by integer,
     deleted_at timestamp with time zone,
+    link character(200) COLLATE pg_catalog."default",
+    order_number integer,
+    words_count integer,
     CONSTRAINT contents_pkey PRIMARY KEY (id),
     CONSTRAINT contents_articles_fkey FOREIGN KEY (articles_id)
         REFERENCES public.articles (id) MATCH SIMPLE

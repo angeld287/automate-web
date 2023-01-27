@@ -233,8 +233,8 @@ export class articleService implements IArticleService {
     async createContextForSubtitle(content: IContent): Promise<IContent> {
         const createContent = {
             name: 'create-new-content-for-subtitle',
-            text: 'INSERT INTO public.contents(content, selected, content_language, subtitles_id) VALUES ($1, $2, $3, $4) RETURNING id, TRIM(content) as content, selected, content_language, articles_id, subtitles_id',
-            values: [content.content, content.selected, content.contentLanguage, content.subtitleId],
+            text: 'INSERT INTO public.contents(content, selected, content_language, subtitles_id, link, order_number, words_count) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, TRIM(content) as content, selected, content_language, articles_id, subtitles_id, link, order_number, words_count',
+            values: [content.content, content.selected, content.contentLanguage, content.subtitleId, content.link, content.orderNumber, content.wordsCount],
         }
 
         return await this.createContent(createContent);
@@ -261,6 +261,9 @@ export class articleService implements IArticleService {
                 contentLanguage: result.rows[0].content_language,
                 articleId: result.rows[0].articles_id,
                 subtitleId: result.rows[0].subtitles_id,
+                link: result.rows[0].link,
+                orderNumber: result.rows[0].order_number,
+                wordsCount: result.rows[0].words_count,
             }
             
             return _content;
@@ -274,7 +277,7 @@ export class articleService implements IArticleService {
         const getQuery = {
             name: 'get-contents-by-subtitle',
             text:  `
-                SELECT id, selected, content_language, subtitles_id, articles_id, deleted, deleted_by, deleted_at, TRIM(content) as content
+                SELECT id, selected, content_language, link, order_number, words_count, subtitles_id, articles_id, deleted, deleted_by, deleted_at, TRIM(content) as content
                 FROM public.contents
                 WHERE deleted IS NOT true AND subtitles_id = $1
             `,
@@ -296,6 +299,9 @@ export class articleService implements IArticleService {
                     selected: row.selected,
                     content: row.content,
                     contentLanguage: row.content_language,
+                    link: row.link,
+                    orderNumber: row.order_number,
+                    wordsCount: row.words_count,
                 })
             });
             return contents;
@@ -380,30 +386,21 @@ export class articleService implements IArticleService {
 
     async saveSubtitleAfterContentSearched(subtitle: SubTitleContent): Promise<SubTitleContent> {
         try {
-            const {id, content, enContent} = subtitle;
+            const {content, enContent} = subtitle;
             
             let savedContents: Array<IContent> = []
             await Promise.all(enContent.map(async (enContent: IContent) => {
                 if(enContent.content.length < 1900){
-                    const content: IContent = {
-                        subtitleId: subtitle.id,
-                        contentLanguage: Lagunages.ENGLISH,
-                        selected: false,
-                        content: enContent.content
-                    }
-                    savedContents.push(await this.createContextForSubtitle(content));    
+                    enContent.contentLanguage = Lagunages.ENGLISH;
+                    console.log(enContent)
+                    savedContents.push(await this.createContextForSubtitle(enContent));    
                 }
             }));
 
             await Promise.all(content.map(async (_content: IContent) => {
                 if(_content.content.length < 1900){
-                    const content: IContent = {
-                        subtitleId: subtitle.id,
-                        contentLanguage: Lagunages.SPANISH,
-                        selected: false,
-                        content: _content.content
-                    }
-                    savedContents.push(await this.createContextForSubtitle(content));
+                    _content.contentLanguage = Lagunages.SPANISH;
+                    savedContents.push(await this.createContextForSubtitle(_content));
                 }
             }));
                 
