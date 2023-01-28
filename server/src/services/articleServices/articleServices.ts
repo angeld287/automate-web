@@ -155,7 +155,7 @@ export class articleService implements IArticleService {
     async getArticles(page: number, size: number, userId: number): Promise<Array<INewArticle> | boolean> {
         const getQuery = {
             name: 'get-articles-by-id',
-            text: `SELECT * FROM public.articles WHERE created_by = $3 ORDER BY created_at DESC LIMIT $2 OFFSET $1;`,
+            text: `SELECT * FROM public.articles WHERE created_by = $3 AND deleted IS NOT true ORDER BY created_at DESC LIMIT $2 OFFSET $1;`,
             values: [page, size, userId],
         }
 
@@ -391,15 +391,12 @@ export class articleService implements IArticleService {
             let savedContents: Array<IContent> = []
             await Promise.all(enContent.map(async (enContent: IContent) => {
                 if(enContent.content.length < 1900){
-                    enContent.contentLanguage = Lagunages.ENGLISH;
-                    console.log(enContent)
                     savedContents.push(await this.createContextForSubtitle(enContent));    
                 }
             }));
 
             await Promise.all(content.map(async (_content: IContent) => {
                 if(_content.content.length < 1900){
-                    _content.contentLanguage = Lagunages.SPANISH;
                     savedContents.push(await this.createContextForSubtitle(_content));
                 }
             }));

@@ -3,7 +3,8 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { getKeywordById, getKeywordContent, selectKeyword, setInitialState } from "../../../features/keyword/keywordSlice";
 import CustomLoader from "../../CustomLoader";
 import ISearchKeyword from "./ISearchKeyword";
-import { Editor, EditorState } from "react-draft-wysiwyg";
+import { Editor } from "react-draft-wysiwyg";
+import { EditorState, convertToRaw } from 'draft-js';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { List, Popover, Row, Typography } from "antd";
 import IContent from "../../../interfaces/models/Content";
@@ -13,7 +14,14 @@ import { CopyOutlined, FileTextOutlined, LinkOutlined, TranslationOutlined } fro
 const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
     const dispatch = useAppDispatch();
     const keyword = useAppSelector(selectKeyword);
-    const [text, setText] = useState<EditorState>()
+    const [editorState, setEditorState] = useState(
+        () => EditorState.createEmpty(),
+      );
+    
+    //useEffect(() => {
+    //    console.log(editorState.getCurrentContent().getPlainText('\u0001'))
+    //    console.log(convertToRaw(editorState.getCurrentContent()).blocks)
+    //}, [editorState]);
 
     useEffect(() => {
         return () => {
@@ -29,10 +37,6 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
         if(keyword.subtitle.content && keyword.subtitle.content.length === 0) dispatch(getKeywordContent(keyword.subtitle));
     }, [keyword.subtitle]);
 
-    const onEditorStateChange = (e: any) => {
-        console.log(e)
-    } 
-
     const copyContent = (content: string) => {
         navigator.clipboard.writeText(content);
     }
@@ -42,7 +46,7 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
             <p>Words Count: {item.content.split(" ").length}</p>,
             <Popover title="English Text" content={keyword.subtitle.enContent?.find(content => content.orderNumber === item.orderNumber)?.content}><TranslationOutlined /></Popover>,
             <Popover content="Copy the parapraph."><CustomButton onClick={() => copyContent(item.content)}><CopyOutlined /></CustomButton></Popover>,
-            <Popover content="Go to reference page."><CustomButton onClick={() => copyContent(item.content)}><LinkOutlined /></CustomButton></Popover>,
+            <Popover content={`Go to reference page. ${item.link}`}><a target="_blank" href={item.link}><LinkOutlined /></a></Popover>,
         ]
     }, [keyword.subtitle]);
 
@@ -72,11 +76,8 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
             </Row>
             <Row>
                 <Editor
-                    editorState={text}
-                    toolbarClassName="toolbarClassName"
-                    wrapperClassName="wrapperClassName"
-                    editorClassName="editorClassName"
-                    onEditorStateChange={onEditorStateChange}
+                    editorState={editorState}
+                    onEditorStateChange={setEditorState}
                 />
             </Row>
         </>

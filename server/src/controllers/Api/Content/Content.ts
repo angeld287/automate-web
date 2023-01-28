@@ -12,6 +12,7 @@ import { searchService } from "../../../services/searchEngine/searchService";
 import { translateService } from "../../../services/translation/translateService";
 import categoryService from "../../../services/wordpress/categoryServices";
 import IContent from "../../../interfaces/models/Content";
+import { Lagunages } from "../../../interfaces/Enums/Laguages";
 
 class Content {
 
@@ -215,18 +216,27 @@ class Content {
             let translate: ITranslateService = new translateService();
             let _articleService: IArticleService = new articleService();
 
-            const subParagraphs = (await search.perform("1", subtitle.translatedName)).map((paragraphObejct, index): IContent => paragraphObejct ? {subtitleId: subtitle.id, content: paragraphObejct.paragraph, selected: false, contentLanguage: "", orderNumber: index+1, link: paragraphObejct.link, wordsCount: paragraphObejct.wordCount} : {content: "", selected: false, contentLanguage: ""}).filter(paragraph => paragraph.content !== "");
-            subtitle.enContent = [...subParagraphs];
-            console.log(subtitle.enContent)
+            const subParagraphs = (await search.perform("1", subtitle.translatedName)).map((paragraphObejct, index): IContent => paragraphObejct ? {subtitleId: subtitle.id, content: paragraphObejct.paragraph, selected: false, contentLanguage: Lagunages.ENGLISH, orderNumber: index+1, link: paragraphObejct.link, wordsCount: paragraphObejct.wordCount} : {content: "", selected: false, contentLanguage: ""}).filter(paragraph => paragraph.content !== "");
+            const translatedContent: Array<IContent> = []
            
             await Promise.all(subParagraphs.map(async (paragraph, paragraphIndex) => {
                 const translation = await translate.perform(paragraph.content, 'es');
                 if (translation.success) {
-                    subParagraphs[paragraphIndex].content = translation.body[0]['translations'][0].text;
+                    translatedContent.push({
+                            orderNumber: paragraph.orderNumber,
+                            link: paragraph.link,
+                            selected: false,
+                            subtitleId: paragraph.subtitleId, 
+                            wordsCount: paragraph.wordsCount,
+                            contentLanguage: Lagunages.SPANISH,
+                            content: translation.body[0]['translations'][0].text
+                        }
+                    );
                 }
             }))
 
-            subtitle.content = subParagraphs;
+            subtitle.content = translatedContent;
+            subtitle.enContent = subParagraphs;
             subtitle = await _articleService.saveSubtitleAfterContentSearched(subtitle)
 
             return new SuccessResponse('Success', {
