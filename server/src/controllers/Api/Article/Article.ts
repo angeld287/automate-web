@@ -235,19 +235,9 @@ class Article {
 
             let _articleService: IArticleService = new articleService();
             
-            const _content = req.body.content;
-            const selected = req.body.selected;
-            const contentLanguage = req.body.contentLanguage;
-            const subtitleId = req.body.subtitleId;
+            const contents: Array<IContent> = req.body.content;
+            const subtitleId = contents[0].subtitleId;
             
-
-            let content: IContent = {
-                content: _content,
-                selected,
-                contentLanguage,
-                subtitleId
-            };
-
             const subtitle: SubTitleContent | boolean = await _articleService.getSubtitleById(subtitleId)
 
             if(!subtitle){
@@ -256,12 +246,19 @@ class Article {
                 }).send(res);
             }
 
-            content = await _articleService.createContextForSubtitle(content);
+            const userId = req.session.passport.user.id;
+            const existingContent: Array<IContent> = await _articleService.getKeywordSelectedContent(subtitleId);
+
+            if(existingContent.length > 0){
+                await _articleService.deleteKeywordSelectedContent(existingContent, parseInt(userId));
+            }
+
+            const createdContents = await _articleService.saveKeywordNewSelectedContent(contents);
 
             return new SuccessResponse('Success', {
                 success: true,
-                response: content,
-                error: null
+                response: createdContents,
+                error: null,
             }).send(res);
 
         } catch (error) {

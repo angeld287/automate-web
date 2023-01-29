@@ -23,4 +23,10 @@ export interface IArticleService {
 
     saveSubtitleAfterContentSearched(subtitle: SubTitleContent): Promise<SubTitleContent>;
 
+    deleteKeywordSelectedContent(contents: Array<IContent>, userId: number): Promise<boolean>;
+
+    getKeywordSelectedContent(subtitleId: number): Promise<Array<IContent>>;
+
+    saveKeywordNewSelectedContent(contents: Array<IContent>): Promise<Array<IContent>>;
+
 }

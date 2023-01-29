@@ -1,8 +1,9 @@
 import { INewArticle, SubTitleContent } from "../../interfaces/Content/Article";
-import { Lagunages } from "../../interfaces/Enums/Laguages";
+import { Languages } from "../../interfaces/Enums/Languages";
 import { IArticleService } from "../../interfaces/IArticleService";
 import IContent from "../../interfaces/models/Content";
 import { Query } from "../../interfaces/Query";
+import Log from "../../middlewares/Log";
 import Database from "../../providers/Database";
 
 export class articleService implements IArticleService {
@@ -65,8 +66,8 @@ export class articleService implements IArticleService {
                     name: row.subtitles_name,
                     translatedName: row.translated_name,
                     articleId: row.articles_id,
-                    content: contents.filter(content => content.contentLanguage === Lagunages.SPANISH),
-                    enContent: contents.filter(content => content.contentLanguage === Lagunages.ENGLISH),
+                    content: contents.filter(content => content.contentLanguage === Languages.SPANISH),
+                    enContent: contents.filter(content => content.contentLanguage === Languages.ENGLISH),
                 })
             }));
 
@@ -210,8 +211,8 @@ export class articleService implements IArticleService {
                 id: result.rows[0].id,
                 name: result.rows[0].subtitles_name,
                 translatedName: result.rows[0].translated_name,
-                content: contents.filter(content => content.contentLanguage === Lagunages.SPANISH),
-                enContent: contents.filter(content => content.contentLanguage === Lagunages.ENGLISH),
+                content: contents.filter(content => content.contentLanguage === Languages.SPANISH),
+                enContent: contents.filter(content => content.contentLanguage === Languages.ENGLISH),
             }
 
             return subtitle;
@@ -302,6 +303,7 @@ export class articleService implements IArticleService {
                     link: row.link,
                     orderNumber: row.order_number,
                     wordsCount: row.words_count,
+                    deleted: row.deleted,
                 })
             });
             return contents;
@@ -350,7 +352,7 @@ export class articleService implements IArticleService {
                 await Promise.all(subtitle.enContent.map(async (enContent: IContent) => {
                     const content: IContent = {
                         subtitleId: subtitle.id,
-                        contentLanguage: Lagunages.ENGLISH,
+                        contentLanguage: Languages.ENGLISH,
                         selected: false,
                         content: enContent.content
                     }
@@ -360,7 +362,7 @@ export class articleService implements IArticleService {
                 await Promise.all(subtitle.content.map(async (_content: string | IContent) => {
                     const content: IContent = {
                         subtitleId: subtitle.id,
-                        contentLanguage: Lagunages.SPANISH,
+                        contentLanguage: Languages.SPANISH,
                         selected: false,
                         content: typeof _content === "string" ? _content : _content.content
                     }
@@ -371,8 +373,8 @@ export class articleService implements IArticleService {
 
             savedArticle.subtitles.map(subtitle => ({
                 ...subtitle, 
-                content: savedContents.filter(content => content.subtitleId === subtitle.id && content.contentLanguage === Lagunages.SPANISH),
-                contentEn: savedContents.filter(content => content.subtitleId === subtitle.id && content.contentLanguage === Lagunages.ENGLISH)
+                content: savedContents.filter(content => content.subtitleId === subtitle.id && content.contentLanguage === Languages.SPANISH),
+                contentEn: savedContents.filter(content => content.subtitleId === subtitle.id && content.contentLanguage === Languages.ENGLISH)
             }));
             
             // = savedSubtitles
@@ -403,9 +405,88 @@ export class articleService implements IArticleService {
                 
             return {
                 ...subtitle, 
-                content: savedContents.filter(content => content.subtitleId === subtitle.id && content.contentLanguage === Lagunages.SPANISH),
-                enContent: savedContents.filter(content => content.subtitleId === subtitle.id && content.contentLanguage === Lagunages.ENGLISH)
+                content: savedContents.filter(content => content.subtitleId === subtitle.id && content.contentLanguage === Languages.SPANISH),
+                enContent: savedContents.filter(content => content.subtitleId === subtitle.id && content.contentLanguage === Languages.ENGLISH)
             }
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async deleteKeywordSelectedContent(contents: Array<IContent>, userId: number): Promise<boolean>{
+        try {
+            await Promise.all(contents.map(async (content: IContent) => {
+                const updateDeleteContents = {
+                    name: 'update-delete-content-for-subtitle',
+                    text: 'UPDATE public.contents SET deleted=true, deleted_by=$2 WHERE id=$1;',
+                    values: [content.id, userId],
+                }
+                try {
+                    await Database.sqlToDB(updateDeleteContents);
+                } catch (error) {
+                    throw new Error(error.message);
+                }
+            }));
+
+            return true;
+            
+        } catch (error) {
+            Log.error(error.message)
+            return false;
+        }
+    }
+
+    async getKeywordSelectedContent(subtitleId: number): Promise<Array<IContent>>{
+        try {
+            const queryParams = {
+                name: 'get-keyword-selected-content',
+                text:  `
+                    SELECT id, content_language, selected, TRIM(content) as content, deleted
+                    FROM public.contents
+                    WHERE deleted IS NOT true AND selected = true AND subtitles_id = $1 
+                `,
+                values: [subtitleId]
+            };
+
+            let result = null;
+            try {
+                result = await Database.sqlToDB(queryParams);
+                
+                if (result.rows.length === 0)
+                    return []
+                
+                const contents: Array<IContent> = []
+
+                result.rows.forEach(row => {
+                    contents.push({
+                        id: row.id,
+                        selected: row.selected,
+                        content: row.content,
+                        contentLanguage: row.content_language,
+                        deleted: row.deleted,
+                    })
+                });
+                return contents;
+            } catch (error) {
+                throw new Error(error.message);
+            }
+            
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async saveKeywordNewSelectedContent(contents: Array<IContent>): Promise<Array<IContent>> {
+        try {
+            const _contents: Array<IContent> = []
+            await Promise.all(contents.map(async (content: IContent) => {
+                if(content.content.length < 1900){
+                    _contents.push(await this.createContextForSubtitle(content));
+                }
+            }));
+
+            return _contents;
+            
         } catch (error) {
             throw new Error(error.message);
         }

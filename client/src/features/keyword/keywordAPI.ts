@@ -1,5 +1,6 @@
 import Locals from "../../config/Locals";
 import {SubTitleContent} from "../../interfaces/models/Article";
+import IContent from "../../interfaces/models/Content";
 
 export async function searchKeywordContent(subtitle: SubTitleContent) {
   const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}searchKeyword`, {
@@ -9,6 +10,19 @@ export async function searchKeywordContent(subtitle: SubTitleContent) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({subtitle: subtitle})
+  })
+
+  return await fetchData.json();
+}
+
+export async function createContent(content: Array<IContent>) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}createSubtitleContent`, {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({content})
   })
 
   return await fetchData.json();

@@ -1,4 +1,4 @@
-export enum Lagunages {
+export enum Languages {
     ENGLISH = "en",
     SPANISH = "eS"
 }

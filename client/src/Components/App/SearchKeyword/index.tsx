@@ -1,27 +1,23 @@
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { getKeywordById, getKeywordContent, selectKeyword, setInitialState } from "../../../features/keyword/keywordSlice";
+import { getKeywordById, getKeywordContent, selectKeyword, setFinalParagraphs, setInitialState } from "../../../features/keyword/keywordSlice";
 import CustomLoader from "../../CustomLoader";
 import ISearchKeyword from "./ISearchKeyword";
 import { Editor } from "react-draft-wysiwyg";
-import { EditorState, convertToRaw } from 'draft-js';
+import { EditorState, convertToRaw, ContentState, convertFromHTML, ContentBlock } from 'draft-js';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { List, Popover, Row, Typography } from "antd";
 import IContent from "../../../interfaces/models/Content";
 import CustomButton from "../../CustomButton";
 import { CopyOutlined, FileTextOutlined, LinkOutlined, TranslationOutlined } from "@ant-design/icons";
+import { Languages } from "../../../interfaces/Enums/Languages";
 
 const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
     const dispatch = useAppDispatch();
     const keyword = useAppSelector(selectKeyword);
     const [editorState, setEditorState] = useState(
         () => EditorState.createEmpty(),
-      );
-    
-    //useEffect(() => {
-    //    console.log(editorState.getCurrentContent().getPlainText('\u0001'))
-    //    console.log(convertToRaw(editorState.getCurrentContent()).blocks)
-    //}, [editorState]);
+    );
 
     useEffect(() => {
         return () => {
@@ -30,10 +26,34 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
     }, [])
 
     useEffect(() => {
+        const blocks = convertToRaw(editorState.getCurrentContent()).blocks;
+        const finalContents: Array<IContent> = blocks.map((block): IContent => ({
+            content: block.text,
+            contentLanguage: Languages.SPANISH,
+            selected: true,
+            subtitleId: subtitle?.id,
+            wordsCount: block.text.split(" ").length,
+        })).filter(block => block.content !== "");
+
+        dispatch(setFinalParagraphs(finalContents));
+    }, [editorState, subtitle]);
+
+    useEffect(() => {
         if(subtitle) dispatch(getKeywordById(subtitle));
     }, [subtitle])
 
     useEffect(() => {
+        const selectedContent = keyword.subtitle.content ? keyword.subtitle.content?.filter(cont => cont.selected): [];
+
+        const stringContent: string = `<p>${selectedContent.map(content => content.content).join("</p><p>")}</p>`
+        setEditorState(() => 
+            EditorState.createWithContent(
+                ContentState.createFromBlockArray(
+                    convertFromHTML(stringContent).contentBlocks
+                )
+            )
+        )
+        
         if(keyword.subtitle.content && keyword.subtitle.content.length === 0) dispatch(getKeywordContent(keyword.subtitle));
     }, [keyword.subtitle]);
 
@@ -64,7 +84,7 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
                     itemLayout="vertical"
                     header={<div><FileTextOutlined/> Searched Content</div>}
                     bordered
-                    dataSource={keyword.subtitle.content}
+                    dataSource={keyword.subtitle.content?.filter(cont => !cont.selected)}
                     renderItem={(item: IContent) => (
                         <List.Item actions={actionsList(item)}>
                             <Paragraph>
@@ -74,10 +94,14 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
                     )}
                 />
             </Row>
-            <Row>
+            <Row style={{minHeight: 300, marginBottom: 100}}>
                 <Editor
                     editorState={editorState}
+                    defaultEditorState={editorState}
                     onEditorStateChange={setEditorState}
+                    wrapperClassName="wrapper-class"
+                    editorClassName="editor-class"
+                    toolbarClassName="toolbar-class"
                 />
             </Row>
         </>

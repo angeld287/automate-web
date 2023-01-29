@@ -8,4 +8,5 @@ export default interface Content {
     contentLanguage: string;
     subtitleId?: number;
     articleId?: number;
+    deleted?: boolean;
 }

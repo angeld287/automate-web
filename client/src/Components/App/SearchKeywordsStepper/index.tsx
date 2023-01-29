@@ -1,5 +1,7 @@
 import { Divider, Popover, Steps } from "antd";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { crateKeywordContent, selectKeyword } from "../../../features/keyword/keywordSlice";
 import CustomButton from "../../CustomButton";
 import CustomModal from "../../CustomModal";
 import SearchKeyword from "../SearchKeyword";
@@ -7,16 +9,24 @@ import ISearchKeywordsStepper, { CustomStepProps } from "./ISearchKeywordsSteppe
 
 const SearchKeywordsStepper: React.FC<ISearchKeywordsStepper> = ({subtitles, onNext, open, setOpen}) => {
     const [current, setCurrent] = useState(0);
+
+    const dispatch = useAppDispatch();
+    const { createUpdateStatus, finalParagraphs} = useAppSelector(selectKeyword);
     
     const onChange = (value: number) => {
       onNext()
       setCurrent(value);
     };
 
+    const saveContentKeyword = useCallback(() => {
+      dispatch(crateKeywordContent(finalParagraphs));
+    }, [finalParagraphs]);
+
     const footerOptions = useMemo(() => [
-      <CustomButton key="back_btn-1" disabled={current === 0} danger>Back</CustomButton>,
-      <CustomButton key="next_btn-2" type="primary">Next</CustomButton>,
-    ], [current])
+      <CustomButton key="back_btn-1" loading={createUpdateStatus === 'loading'} onClick={saveContentKeyword}>Save</CustomButton>,
+      <CustomButton key="back_btn-2" disabled={current === 0} type="primary" danger>Back</CustomButton>,
+      <CustomButton key="next_btn-3" type="primary">Next</CustomButton>,
+    ], [current, finalParagraphs])
 
     const stepsItems: Array<CustomStepProps> = useMemo((): Array<CustomStepProps> =>  subtitles.map((subtitle, index) => ({ 
       title: `Keyword ${index+1}`, 

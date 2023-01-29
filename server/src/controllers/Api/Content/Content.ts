@@ -12,7 +12,7 @@ import { searchService } from "../../../services/searchEngine/searchService";
 import { translateService } from "../../../services/translation/translateService";
 import categoryService from "../../../services/wordpress/categoryServices";
 import IContent from "../../../interfaces/models/Content";
-import { Lagunages } from "../../../interfaces/Enums/Laguages";
+import { Languages } from "../../../interfaces/Enums/Languages";
 
 class Content {
 
@@ -216,7 +216,7 @@ class Content {
             let translate: ITranslateService = new translateService();
             let _articleService: IArticleService = new articleService();
 
-            const subParagraphs = (await search.perform("1", subtitle.translatedName)).map((paragraphObejct, index): IContent => paragraphObejct ? {subtitleId: subtitle.id, content: paragraphObejct.paragraph, selected: false, contentLanguage: Lagunages.ENGLISH, orderNumber: index+1, link: paragraphObejct.link, wordsCount: paragraphObejct.wordCount} : {content: "", selected: false, contentLanguage: ""}).filter(paragraph => paragraph.content !== "");
+            const subParagraphs = (await search.perform("1", subtitle.translatedName)).map((paragraphObejct, index): IContent => paragraphObejct ? {subtitleId: subtitle.id, content: paragraphObejct.paragraph, selected: false, contentLanguage: Languages.ENGLISH, orderNumber: index+1, link: paragraphObejct.link, wordsCount: paragraphObejct.wordCount} : {content: "", selected: false, contentLanguage: ""}).filter(paragraph => paragraph.content !== "");
             const translatedContent: Array<IContent> = []
            
             await Promise.all(subParagraphs.map(async (paragraph, paragraphIndex) => {
@@ -228,7 +228,7 @@ class Content {
                             selected: false,
                             subtitleId: paragraph.subtitleId, 
                             wordsCount: paragraph.wordsCount,
-                            contentLanguage: Lagunages.SPANISH,
+                            contentLanguage: Languages.SPANISH,
                             content: translation.body[0]['translations'][0].text
                         }
                     );
