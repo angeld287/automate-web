@@ -61,25 +61,17 @@ const Keywords = () => {
         setTitle(article.title)
     }, [article])
 
-    const subTitles: Array<SubTitleContent> = useMemo(() => keywords.map( keyword =>
-        ({
-            id: keyword.id,
-            name: keyword.text,
-            translatedName: keyword.enText,
-        })
-    ), [keywords]);
-
     const categoryList: Array<ISelectOptions> = useMemo(() => {
         if(statusc === "loading") return []
         return categories.map(category => ({id: category.slug, name: category.name }))
-    }, [categories])
+    }, [categories, statusc])
 
     useEffect(() => {
         dispatch(addTitle(title))
     },[title]);
 
     const onChangeKeywords = (id: number, value: string) => {
-        const { subtitles, title, category } = article;
+        const { subtitles } = article;
         setError(undefined)
         const currentKeyword = keywords.find(keyword => keyword.id === id)
         if(!currentKeyword) return null;

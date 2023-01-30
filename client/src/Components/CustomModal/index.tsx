@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Button, Modal } from 'antd';
+import React from 'react';
+import { Modal } from 'antd';
 import IModal from './IModal'
 
 const CustomModal: React.FC<IModal> = ({title, open, setOpen, width, children, footer, style}) => {

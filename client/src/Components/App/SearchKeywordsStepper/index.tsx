@@ -26,7 +26,7 @@ const SearchKeywordsStepper: React.FC<ISearchKeywordsStepper> = ({subtitles, onN
       <CustomButton key="back_btn-1" loading={createUpdateStatus === 'loading'} onClick={saveContentKeyword}>Save</CustomButton>,
       <CustomButton key="back_btn-2" disabled={current === 0} type="primary" danger>Back</CustomButton>,
       <CustomButton key="next_btn-3" type="primary">Next</CustomButton>,
-    ], [current, finalParagraphs])
+    ], [current, createUpdateStatus, saveContentKeyword])
 
     const stepsItems: Array<CustomStepProps> = useMemo((): Array<CustomStepProps> =>  subtitles.map((subtitle, index) => ({ 
       title: `Keyword ${index+1}`, 

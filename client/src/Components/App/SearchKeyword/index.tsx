@@ -4,7 +4,7 @@ import { getKeywordById, getKeywordContent, selectKeyword, setFinalParagraphs, s
 import CustomLoader from "../../CustomLoader";
 import ISearchKeyword from "./ISearchKeyword";
 import { Editor } from "react-draft-wysiwyg";
-import { EditorState, convertToRaw, ContentState, convertFromHTML, ContentBlock } from 'draft-js';
+import { EditorState, convertToRaw, ContentState, convertFromHTML } from 'draft-js';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { List, Popover, Row, Typography } from "antd";
 import IContent from "../../../interfaces/models/Content";
@@ -66,7 +66,7 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
             <p>Words Count: {item.content.split(" ").length}</p>,
             <Popover title="English Text" content={keyword.subtitle.enContent?.find(content => content.orderNumber === item.orderNumber)?.content}><TranslationOutlined /></Popover>,
             <Popover content="Copy the parapraph."><CustomButton onClick={() => copyContent(item.content)}><CopyOutlined /></CustomButton></Popover>,
-            <Popover content={`Go to reference page. ${item.link}`}><a target="_blank" href={item.link}><LinkOutlined /></a></Popover>,
+            <Popover content={`Go to reference page. ${item.link}`}><a rel="noreferrer" target="_blank" href={item.link}><LinkOutlined /></a></Popover>,
         ]
     }, [keyword.subtitle]);
 
