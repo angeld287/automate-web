@@ -11,7 +11,6 @@ function App() {
   const { getSessionStatus, activeSession } = useAppSelector(selectUserSession);
   const dispatch = useAppDispatch();
 
-
   useEffect(() => {
     dispatch(getSessionAsync());
     return () => {}

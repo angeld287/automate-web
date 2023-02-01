@@ -274,6 +274,7 @@ CREATE TABLE IF NOT EXISTS public.subtitles
     subtitles_name character(100) COLLATE pg_catalog."default",
     translated_name character(100) COLLATE pg_catalog."default",
     articles_id integer NOT NULL,
+    order_number integer,
     CONSTRAINT subtitles_pkey PRIMARY KEY (id),
     CONSTRAINT subtitles_articles_fkey FOREIGN KEY (articles_id)
         REFERENCES public.articles (id) MATCH SIMPLE

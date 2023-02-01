@@ -22,7 +22,7 @@ const Keywords = () => {
     const [error, setError] = useState<undefined|string>(undefined)
     const [title , setTitle] = useState('')
     const [keywords, setKeyWords] = useState<Array<IKeyword>>([
-        { label: "Keyword number 1", text: "", id: getHashCode()}
+        { label: "Keyword number 1", text: "", id: getHashCode(), orderNumber: 0}
     ]);
 
     const navigate = useNavigate()
@@ -46,15 +46,16 @@ const Keywords = () => {
             setKeyWords(subtitles.map(
                 (subtitle, index) => ({
                     id: subtitle.id,
-                    label: `Keyword number ${index}`, 
+                    label: `Keyword number ${index}`,
                     text: subtitle.name,
-                    enText: subtitle.translatedName
+                    enText: subtitle.translatedName,
+                    orderNumber: subtitle.orderNumber,
                 })
             ))
         }else{
             dispatch(setKewordsTranslated(false))
             setKeyWords([
-                { label: "Keyword number 1", text: "", id: getHashCode()}
+                { label: "Keyword number 1", text: "", id: getHashCode(), orderNumber: 0}
             ])
         }
 
@@ -79,19 +80,20 @@ const Keywords = () => {
         let hasLineBreak = /\r|\n/.exec(value);
         let _keywords = null;
         if (hasLineBreak) {
-            _keywords = value.split(/\r|\n/).map((keyword, index) => ({ label: `Keyword number ${index+1}`, text: keyword, id: index+1}));
+            _keywords = value.split(/\r|\n/).map((keyword, index) => ({ label: `Keyword number ${index+1}`, text: keyword, id: index+1, orderNumber: index}));
         }else{
             currentKeyword.text = value;
-            _keywords = [...keywords.filter(keyword => keyword.id !== id), currentKeyword]
+            _keywords = [...keywords.filter(keyword => keyword.id !== id), currentKeyword].sort((kA, kB) => (kA.orderNumber < kB.orderNumber ? -1 : 1))
         }
 
         setKeyWords([..._keywords.map(keyword => ({...keyword, enText: subtitles.find(subtitle => subtitle.id === keyword.id)?.translatedName}))])
         
-        if(_keywords.length > 3) dispatch(addSubtitles(_keywords.map( keyword =>
+        if(_keywords.length > 3) dispatch(addSubtitles(_keywords.map( (keyword, index) =>
             ({
                 id: keyword.id,
                 name: keyword.text,
                 translatedName: subtitles.find(subtitle => subtitle.id === keyword.id)?.translatedName,
+                orderNumber: index,
             })
         )))
     }
@@ -137,7 +139,7 @@ const Keywords = () => {
         </Row>
         <Row>
             <Col span={24}>
-                {keywords.sort((keyword_a, keyword_b) => (keyword_a.id < keyword_b.id ? -1 : 1)).map(keyword => {
+                {keywords.map(keyword => {
                     return <Row key={`key-id-${keyword.id}`} className="keyword-input-group">
                         <Col span={4} className="keyword-label">
                             <label>{keyword.label}</label>

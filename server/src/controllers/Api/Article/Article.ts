@@ -25,12 +25,14 @@ class Article {
             
             const name = req.body.name;
             const translatedName = req.body.translatedName;
-            const articleId = req.body.articleId;            
+            const articleId = req.body.articleId;
+            const orderNumber = req.body.orderNumber;
 
             let subtitle: SubTitleContent = {
                 name,
                 translatedName,
-                articleId
+                articleId,
+                orderNumber
             }
 
             const article: INewArticle | false = await _articleService.getArticleById(articleId)

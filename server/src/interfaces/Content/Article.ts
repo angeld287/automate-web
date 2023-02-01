@@ -20,6 +20,7 @@ export interface INewArticle {
 export interface SubTitleContent {
     id?: number;
     name: string;
+    orderNumber: number;
     translatedName: string;
     articleId?: number;
     content?: Array<IContent>;

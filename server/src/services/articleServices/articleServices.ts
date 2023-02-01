@@ -12,8 +12,8 @@ export class articleService implements IArticleService {
         try {
             const createSubtitle = {
                 name: 'create-new-subtitle',
-                text: 'INSERT INTO public.subtitles(subtitles_name, translated_name, articles_id)VALUES ($1, $2, $3) RETURNING id, subtitles_name, translated_name, articles_id',
-                values: [subtitle.name, subtitle.translatedName, subtitle.articleId],
+                text: 'INSERT INTO public.subtitles(subtitles_name, translated_name, articles_id, order_number)VALUES ($1, $2, $3, $4) RETURNING id, subtitles_name, translated_name, articles_id, order_number',
+                values: [subtitle.name, subtitle.translatedName, subtitle.articleId, subtitle.orderNumber],
             }
 
             let result = null, client = null;
@@ -33,6 +33,7 @@ export class articleService implements IArticleService {
                 name: result.rows[0].subtitles_name,
                 translatedName: result.rows[0].translated_name,
                 articleId: result.rows[0].articles_id,
+                orderNumber: result.rows[0].order_number,
             }
             
             return _subtitle;
@@ -64,6 +65,7 @@ export class articleService implements IArticleService {
                 subtitles.push({
                     id: row.id,
                     name: row.subtitles_name,
+                    orderNumber: row.order_number,
                     translatedName: row.translated_name,
                     articleId: row.articles_id,
                     content: contents.filter(content => content.contentLanguage === Languages.SPANISH),
@@ -194,7 +196,7 @@ export class articleService implements IArticleService {
     async getSubtitleById(subtitleId: number): Promise<SubTitleContent | false> {
         const getQuery = {
             name: 'get-subtitle-by-id',
-            text: `SELECT id, subtitles_name, translated_name, articles_id FROM public.subtitles where id = $1`,
+            text: `SELECT id, subtitles_name, translated_name, articles_id, order_number FROM public.subtitles where id = $1`,
             values: [subtitleId],
         }
 
@@ -210,6 +212,7 @@ export class articleService implements IArticleService {
             const subtitle: SubTitleContent = {
                 id: result.rows[0].id,
                 name: result.rows[0].subtitles_name,
+                orderNumber: result.rows[0].order_number,
                 translatedName: result.rows[0].translated_name,
                 content: contents.filter(content => content.contentLanguage === Languages.SPANISH),
                 enContent: contents.filter(content => content.contentLanguage === Languages.ENGLISH),

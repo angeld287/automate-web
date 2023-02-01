@@ -3,4 +3,5 @@ export default interface IKeyword {
     text: string;
     enText?: string;
     label: string;
+    orderNumber: number;
 }

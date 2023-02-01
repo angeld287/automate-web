@@ -119,7 +119,9 @@ export const articleSlice = createSlice({
       })
       .addCase(getArticleByInternalId.fulfilled, (state, action) => {
         state.status = 'idle';
+        const subs = [...action.payload.article.subtitles];
         state.article = action.payload.article;
+        state.article.subtitles = subs.sort((subA, subB) => (subA.orderNumber < subB.orderNumber ? -1 : 1))
       })
       .addCase(getArticleByInternalId.rejected, (state) => {
         state.status = 'failed';

@@ -185,6 +185,7 @@ router.post(
     body('name', 'field name cannot be blank.').notEmpty(),
     body('translatedName', 'field translatedName cannot be blank.').notEmpty(),
     body('articleId', 'field articleId cannot be blank.').notEmpty(),
+    body('orderNumber', 'field orderNumber cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     ArticleController.createSubtitle
 );

@@ -15,7 +15,8 @@ export interface KeywordState {
 const initialState: KeywordState = {
   subtitle: {
     id: 0,
-    name: ""
+    name: "",
+    orderNumber: 0,
   },
   finalParagraphs: [],
   status: 'idle',
