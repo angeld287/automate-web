@@ -101,7 +101,7 @@ export const articleSlice = createSlice({
     },
     setKewordsTranslated: (state, action: PayloadAction<boolean>) => {
       state.kewordsTranslated = action.payload
-    }
+    },
   },
   extraReducers: (builder) => {
     builder

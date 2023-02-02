@@ -34,10 +34,9 @@ const Home = () => {
                 </Button>
             </Row>
             <Row className="rows">
-                <Col span={15} className="home-draft-list">
+                <Col span={22} className="home-draft-list">
                     <DraftArticles {...{onClickEdit}}/>
                 </Col>
-                <Col span={9} className="home-draft-list"><h2>Home</h2></Col>
             </Row>
         </>
     );

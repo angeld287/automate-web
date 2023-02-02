@@ -5,6 +5,7 @@ import { getArticleByInternalId, selectArticle } from "../../../features/article
 import Paragraph from "../Paragraph";
 import { useParams } from "react-router-dom";
 import SearchKeywordsStepper from "../../../Components/App/SearchKeywordsStepper";
+import CustomLoader from "../../../Components/CustomLoader";
 
 const ContentEditor = () => {
 
@@ -19,6 +20,9 @@ const ContentEditor = () => {
 
     const dispatch = useAppDispatch();
     const onNext = () => {}
+
+    if(article.status === 'loading' && article.article.subtitles.length === 0) return <CustomLoader/>
+
     return <>
         <SearchKeywordsStepper {...{onNext, open, setOpen}} subtitles={article.article.subtitles}/>
         <Row className="">

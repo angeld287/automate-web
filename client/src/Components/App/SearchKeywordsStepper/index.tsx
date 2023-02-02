@@ -2,6 +2,7 @@ import { Divider, Popover, Steps } from "antd";
 import { useCallback, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { crateKeywordContent, selectKeyword } from "../../../features/keyword/keywordSlice";
+import { SubTitleContent } from "../../../interfaces/models/Article";
 import CustomButton from "../../CustomButton";
 import CustomModal from "../../CustomModal";
 import SearchKeyword from "../SearchKeyword";
@@ -28,11 +29,20 @@ const SearchKeywordsStepper: React.FC<ISearchKeywordsStepper> = ({subtitles, onN
       <CustomButton key="next_btn-3" type="primary">Next</CustomButton>,
     ], [current, createUpdateStatus, saveContentKeyword])
 
-    const stepsItems: Array<CustomStepProps> = useMemo((): Array<CustomStepProps> =>  subtitles.map((subtitle, index) => ({ 
-      title: `Keyword ${index+1}`, 
-      description: <Popover key={`key-${subtitle.id}`} content={<p>{subtitle.name}</p>}>{`${subtitle.name.substring(0, 23 - (subtitles.length * 1.5) )}...`}</Popover>,
-      content: <SearchKeyword {...{subtitle}}/>
-    })), [subtitles]);
+    const getSubtitleState = useCallback((subtitle: SubTitleContent, currentStep: number): "wait" | "process" | "finish" => {
+      const hasContent = subtitle.content?.find(cont => cont.selected);
+      const hasSearchedParagraphs = subtitle.content?.find(cont => !cont.selected);
+      return hasContent ? "finish" : hasSearchedParagraphs ? "process" : "wait"
+    }, []);
+
+    const stepsItems: Array<CustomStepProps> = useMemo((): Array<CustomStepProps> =>  subtitles.map((subtitle, index) => {
+      return ({ 
+        title: `Keyword ${index+1}`,
+        status: getSubtitleState(subtitle, current), //'wait' | 'process' | 'finish' | 'error'
+        description: <Popover key={`key-${subtitle.id}`} content={<p>{subtitle.name}</p>}>{`${subtitle.name.substring(0, 23 - (subtitles.length * 1.5) )}...`}</Popover>,
+        content: <SearchKeyword {...{subtitle}}/>
+      })
+    }), [subtitles, current, getSubtitleState]);
 
     const currentStep = useMemo(() => stepsItems[current] ? stepsItems[current].content : <h1>step not defined</h1>, [stepsItems, current]);
 
