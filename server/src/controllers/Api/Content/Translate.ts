@@ -23,7 +23,7 @@ class Translate {
             }
 
             let translate: ITranslateService = new translateService();
-            const translation = (await translate.perform(req.body.text, req.body.language)).body[0]['translations'][0].text
+            const translation = (await translate.perform(req.body.text, req.body.from, req.body.to)).body[0]['translations'][0].text
 
             return new SuccessResponse('Success', {
                 success: true,

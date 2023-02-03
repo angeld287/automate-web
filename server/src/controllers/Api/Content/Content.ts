@@ -66,7 +66,7 @@ class Content {
             let keyword = req.body.keyword;
 
             let translate: ITranslateService = new translateService();
-            const translatedKeyword = await translate.perform(keyword, 'en');
+            const translatedKeyword = await translate.perform(keyword, 'es', 'en');
 
             return new SuccessResponse('Success', {
                 keyword, translatedKeyword
@@ -116,24 +116,22 @@ class Content {
             let translate: ITranslateService = new translateService();
             let _articleService: IArticleService = new articleService();
 
-            const titleTranslation = await translate.perform(article.title, 'en');
-            if (titleTranslation.success) {
-                article.translatedTitle = titleTranslation.body[0]['translations'][0].text;
-                article.error = false;
-            } else {
-                article.error = { message: "Error occurred in titles translations." };
-            }
+            const joinedStrings = `${article.title} | ${article.subtitles.map(subtitle => subtitle.name).join(' | ')}`
 
-            await Promise.all(article.subtitles.map(async (subtitle: SubTitleContent, index) => {
-                const translation = await translate.perform(subtitle.name, 'en');
-                if (translation.success) {
-                    article.subtitles[index].translatedName = translation.body[0]['translations'][0].text;
-                    article.subtitles[index].error = false;
-                }
-                else {
-                    article.subtitles[index].error = { message: "Error occurred in subtitles translations." };
-                }
-            }));
+            const translation = await translate.perform(joinedStrings, 'es', 'en');
+
+            if(!translation.success){
+                return new InternalErrorResponse('translateKeywords - axios request Error', {
+                    error: 'Internal Server Error',
+                }).send(res);
+            }
+            
+            const translatedTitles = translation.body[0]['translations'][0].text.split(' | ')
+
+            article.translatedTitle = translatedTitles[0];
+            article.subtitles.forEach((subtitle, index) => {
+                subtitle.translatedName = translatedTitles[index + 1];
+            });
 
             article.createdBy = parseInt(req.session.passport.user.id); 
 
@@ -141,12 +139,12 @@ class Content {
             
 
             return new SuccessResponse('Success', {
-                article
+                article: article
             }).send(res);
 
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('Validation Error', {
+            return new InternalErrorResponse('translateKeywords Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }
@@ -175,7 +173,7 @@ class Content {
                 article.subtitles[index].enContent = [...subParagraphs];
 
                 await Promise.all(subParagraphs.map(async (paragraph, paragraphIndex) => {
-                    const translation = await translate.perform(paragraph, 'es');
+                    const translation = await translate.perform(paragraph, 'en', 'es');
                     if (translation.success) {
                         subParagraphs[paragraphIndex] = translation.body[0]['translations'][0].text;
                     }
@@ -220,7 +218,7 @@ class Content {
             const translatedContent: Array<IContent> = []
            
             await Promise.all(subParagraphs.map(async (paragraph, paragraphIndex) => {
-                const translation = await translate.perform(paragraph.content, 'es');
+                const translation = await translate.perform(paragraph.content, 'en', 'es');
                 if (translation.success) {
                     translatedContent.push({
                             orderNumber: paragraph.orderNumber,
@@ -266,7 +264,7 @@ class Content {
             let translate: ITranslateService = new translateService();
 
             await Promise.all(article.subtitles.map(async (subtitle: SubTitleContent, index) => {
-                const translation = await translate.perform(subtitle.content[0].toString(), 'es');
+                const translation = await translate.perform(subtitle.content[0].toString(), 'en', 'es');
                 if (translation.success) {
                     article.subtitles[index].translatedContent = translation.body[0]['translations'][0].text;
                     article.subtitles[index].error = false;
@@ -291,7 +289,7 @@ class Content {
     static async translateTitles(article: INewArticle): Promise<INewArticle> {
         try {
             let translate: ITranslateService = new translateService();
-            const titleTranslation = await translate.perform(article.title, 'en');
+            const titleTranslation = await translate.perform(article.title, 'es', 'en');
             if (titleTranslation.success) {
                 article.translatedTitle = titleTranslation.body[0]['translations'][0].text;
                 article.error = false;
@@ -300,7 +298,7 @@ class Content {
             }
 
             await Promise.all(article.subtitles.map(async (subtitle: SubTitleContent, index) => {
-                const translation = await translate.perform(subtitle.name, 'en');
+                const translation = await translate.perform(subtitle.name, 'es', 'en');
                 if (translation.success) {
                     article.subtitles[index].translatedName = translation.body[0]['translations'][0].text;
                     article.subtitles[index].error = false;
@@ -323,7 +321,7 @@ class Content {
             let translate: ITranslateService = new translateService();
 
             await Promise.all(article.subtitles.map(async (subtitle: SubTitleContent, index) => {
-                const translation = await translate.perform(subtitle.content[0].toString(), 'es');
+                const translation = await translate.perform(subtitle.content[0].toString(), 'en', 'es');
                 if (translation.success) {
                     article.subtitles[index].translatedContent = translation.body[0]['translations'][0].text;
                     article.subtitles[index].error = false;
@@ -349,7 +347,7 @@ class Content {
                 const subParagraphs = (await search.perform("1", subtitle.translatedName)).map(paragraphObejct => paragraphObejct ? paragraphObejct.paragraph : "").filter(paragraph => paragraph !== "");
 
                 await Promise.all(subParagraphs.map(async (paragraph, paragraphIndex) => {
-                    const translation = await translate.perform(paragraph, 'es');
+                    const translation = await translate.perform(paragraph, 'en', 'es');
                     if (translation.success) {
                         subParagraphs[paragraphIndex] = translation.body[0]['translations'][0].text;
                     }

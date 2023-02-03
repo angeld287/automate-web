@@ -33,8 +33,10 @@ class Locals {
         const GOOGLE_RESULTS_QUANTITY = 10;
 
         //Bing Translate Configuration
-        const translateApiUrl = "https://microsoft-translator-text.p.rapidapi.com/translate";
+        const translateApiUrl = "https://api.cognitive.microsofttranslator.com/translate";
+        const translateApiUrlRedit = "https://microsoft-translator-text.p.rapidapi.com/translate";
         const rapiApiKey = process.env.RAPID_API_KEY || "rak";
+        const azureApiKey = process.env.AZURE_API_KEY || "rak";
         const rapiApiHost = "microsoft-translator-text.p.rapidapi.com";
         const MIN_CHARACTERS_LENGTH = 680;
 
@@ -80,7 +82,9 @@ class Locals {
             GOOGLE_RESULTS_QUANTITY,
 
             translateApiUrl,
+            translateApiUrlRedit,
             rapiApiKey,
+            azureApiKey,
             rapiApiHost,
             MIN_CHARACTERS_LENGTH,
 

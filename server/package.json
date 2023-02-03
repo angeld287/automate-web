@@ -46,6 +46,7 @@
     "redis": "^4.5.1",
     "request": "^2.88.2",
     "sharp": "^0.31.1",
+    "uuid": "^9.0.0",
     "wpapi": "^1.2.2"
   },
   "devDependencies": {
@@ -63,6 +64,7 @@
     "@types/passport": "^1.0.8",
     "@types/passport-google-oauth20": "^2.0.11",
     "@types/supertest": "^2.0.12",
+    "@types/uuid": "^9.0.0",
     "jest": "^28.1.0",
     "nodemon": "^2.0.16",
     "supertest": "^6.2.3",

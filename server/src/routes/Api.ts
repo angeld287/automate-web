@@ -71,7 +71,8 @@ router.post(
 router.post(
     '/translate',
     body('text', 'text cannot be blank.').notEmpty(),
-    body('language', 'language cannot be blank.').notEmpty(),
+    body('from', 'from cannot be blank.').notEmpty(),
+    body('to', 'to cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     TranslateController.perform
 );
