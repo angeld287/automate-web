@@ -18,6 +18,10 @@ const ContentEditor = () => {
         return () => {}
     }, []);
 
+    useEffect(() => {
+        if(id && !open) dispatch(getArticleByInternalId(parseInt(id)))
+    }, [open, id]);
+
     const dispatch = useAppDispatch();
     const onNext = () => {}
 
