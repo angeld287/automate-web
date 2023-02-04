@@ -3,6 +3,7 @@ import { TranslateResult } from "../../interfaces/response/TranslateResult";
 import Locals from "../../providers/Locals";
 import { axios, fetch } from "../../utils";
 import {v4 as uuidv4} from 'uuid';
+import { ITranslateItem } from "../../interfaces/Utils";
 
 export class translateService implements ITranslateService {
     async perform(text: string, from: string, to: string): Promise<TranslateResult> {
@@ -23,6 +24,33 @@ export class translateService implements ITranslateService {
                     to,
                 },
                 data: [{ Text: text }]
+            };
+
+            const result = await axios(options);
+            return result;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async translateMultipleTexts(texts: Array<ITranslateItem>, from: string, to: string): Promise<TranslateResult> {
+        try {
+            // Add your code here
+            var options = {
+                method: 'POST',
+                url: Locals.config().translateApiUrl,
+                headers: {
+                    'Ocp-Apim-Subscription-Key': Locals.config().azureApiKey,
+                    'Ocp-Apim-Subscription-Region': 'eastus',
+                    'Content-type': 'application/json',
+                    'X-ClientTraceId': uuidv4().toString(),
+                },
+                params: {
+                    'api-version': '3.0',
+                    from,
+                    to,
+                },
+                data: texts
             };
 
             const result = await axios(options);

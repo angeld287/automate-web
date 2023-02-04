@@ -233,7 +233,7 @@ export class searchService implements ISearchService {
 
                 }
 
-                if (paragraph.paragraph.split(/\s+/).length > Locals.config().MIN_WORDS_IN_PARAGRAPH)
+                if (paragraph.paragraph.split(/\s+/).length > Locals.config().MIN_WORDS_IN_PARAGRAPH && paragraph.paragraph.length < Locals.config().MAX_PARAGRAPH_LENGTH)
                     paragraphs.push(paragraph);
 
             }));

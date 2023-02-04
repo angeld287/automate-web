@@ -13,6 +13,7 @@ import { translateService } from "../../../services/translation/translateService
 import categoryService from "../../../services/wordpress/categoryServices";
 import IContent from "../../../interfaces/models/Content";
 import { Languages } from "../../../interfaces/Enums/Languages";
+import { ITranslateItem } from "../../../interfaces/Utils";
 
 class Content {
 
@@ -116,21 +117,24 @@ class Content {
             let translate: ITranslateService = new translateService();
             let _articleService: IArticleService = new articleService();
 
-            const joinedStrings = `${article.title} | ${article.subtitles.map(subtitle => subtitle.name).join(' | ')}`
+            const translateItems: Array<ITranslateItem> = [
+                { Text: article.title, id: 'title'}, 
+                ...article.subtitles.map((subtitle): ITranslateItem => ({Text: subtitle.name, id: subtitle.name}))
+            ];
 
-            const translation = await translate.perform(joinedStrings, 'es', 'en');
+            const translationResult = await translate.translateMultipleTexts(translateItems, 'es', 'en');
 
-            if(!translation.success){
+            if(!translationResult.success){
                 return new InternalErrorResponse('translateKeywords - axios request Error', {
                     error: 'Internal Server Error',
                 }).send(res);
             }
             
-            const translatedTitles = translation.body[0]['translations'][0].text.split(' | ')
-
-            article.translatedTitle = translatedTitles[0];
+            const translation: Array<ITranslateItem> = translationResult.body.map((result): ITranslateItem => ({...result.translations[0]})) 
+            
+            article.translatedTitle = translation[0].text;
             article.subtitles.forEach((subtitle, index) => {
-                subtitle.translatedName = translatedTitles[index + 1];
+                subtitle.translatedName = translation[index + 1].text;
             });
 
             article.createdBy = parseInt(req.session.passport.user.id); 
@@ -139,7 +143,7 @@ class Content {
             
 
             return new SuccessResponse('Success', {
-                article: article
+                article
             }).send(res);
 
         } catch (error) {

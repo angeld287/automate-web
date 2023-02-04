@@ -15,3 +15,9 @@ export interface IImageSharp extends IImageSize {
     premultiplied?: boolean;
     size?: number;
 }
+
+export interface ITranslateItem {
+    Text?: string;
+    text?: string;
+    id?: string;
+}

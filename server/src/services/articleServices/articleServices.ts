@@ -5,6 +5,7 @@ import IContent from "../../interfaces/models/Content";
 import { Query } from "../../interfaces/Query";
 import Log from "../../middlewares/Log";
 import Database from "../../providers/Database";
+import Locals from "../../providers/Locals";
 
 export class articleService implements IArticleService {
 
@@ -395,13 +396,13 @@ export class articleService implements IArticleService {
             
             let savedContents: Array<IContent> = []
             await Promise.all(enContent.map(async (enContent: IContent) => {
-                if(enContent.content.length < 1900){
+                if(enContent.content.length < Locals.config().MAX_PARAGRAPH_LENGTH){
                     savedContents.push(await this.createContextForSubtitle(enContent));    
                 }
             }));
 
             await Promise.all(content.map(async (_content: IContent) => {
-                if(_content.content.length < 1900){
+                if(_content.content.length < Locals.config().MAX_PARAGRAPH_LENGTH){
                     savedContents.push(await this.createContextForSubtitle(_content));
                 }
             }));

@@ -54,6 +54,7 @@ class Locals {
         const MIN_WORDS_IN_SNIPPED = 8
         const MIN_WORDS_IN_PARAGRAPH = 20
         const MAX_WORDS_IN_PARAGRAPH = 150
+        const MAX_PARAGRAPH_LENGTH = 1900
         const MIN_PAGE_SOURCE_LENGTH = 500
 
         //Media Configurations
@@ -97,6 +98,7 @@ class Locals {
             MIN_CHARACTERS_IN_SNIPPED,
             MIN_WORDS_IN_SNIPPED,
             MIN_WORDS_IN_PARAGRAPH,
+            MAX_PARAGRAPH_LENGTH,
             MAX_WORDS_IN_PARAGRAPH,
             NUMBER_OF_PARAGRAPHS_ALLOWED,
             MIN_PAGE_SOURCE_LENGTH,

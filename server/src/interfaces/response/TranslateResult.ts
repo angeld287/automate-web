@@ -1,6 +1,6 @@
 export interface TranslateResult {
     success: boolean;
     url: string;
-    body: string;
+    body: any;
     errorDetails?: any;
 }
