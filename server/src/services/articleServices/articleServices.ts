@@ -13,7 +13,7 @@ export class articleService implements IArticleService {
         try {
             const createSubtitle = {
                 name: 'create-new-subtitle',
-                text: 'INSERT INTO public.subtitles(subtitles_name, translated_name, articles_id, order_number)VALUES ($1, $2, $3, $4) RETURNING id, subtitles_name, translated_name, articles_id, order_number',
+                text: 'INSERT INTO public.subtitles(subtitles_name, translated_name, articles_id, order_number)VALUES ($1, $2, $3, $4) RETURNING id, TRIM(subtitles_name) AS subtitles_name, TRIM(translated_name) AS translated_name, articles_id, order_number',
                 values: [subtitle.name, subtitle.translatedName, subtitle.articleId, subtitle.orderNumber],
             }
 
@@ -47,7 +47,13 @@ export class articleService implements IArticleService {
     async getSubtitlesByArticleId(articleId: number): Promise<Array<SubTitleContent>> {
         const getQuery = {
             name: 'get-subtitles-by-article_id',
-            text: `SELECT * FROM public.subtitles WHERE articles_id = $1`,
+            text: `
+                    SELECT id, TRIM(subtitles_name) as subtitles_name,
+                        TRIM(translated_name) as translated_name,
+                        articles_id, order_number
+                    FROM public.subtitles
+                    WHERE articles_id = $1
+                `,
             values: [articleId],
         }
 
@@ -85,7 +91,7 @@ export class articleService implements IArticleService {
         try {
             const createArticle = {
                 name: 'create-new-article',
-                text: 'INSERT INTO public.articles(title, translated_title, category, created_by) VALUES ($1, $2, $3, $4) RETURNING internal_id, id, title, translated_title, category, created_by, created_at',
+                text: 'INSERT INTO public.articles(title, translated_title, category, created_by) VALUES ($1, $2, $3, $4) RETURNING internal_id, id, TRIM(title) AS title, TRIM(translated_title) AS translated_title, category, created_by, created_at',
                 values: [article.title, article.translatedTitle, article.category, article.createdBy],
             }
 
@@ -126,7 +132,7 @@ export class articleService implements IArticleService {
 
         const getQuery = {
             name: 'get-article-by-id',
-            text: `SELECT id, internal_id, title, translated_title, category, created_by, created_at FROM public.articles where internal_id = $1`,
+            text: `SELECT id, internal_id, TRIM(title) AS title , TRIM(translated_title) AS translated_title, category, created_by, created_at FROM public.articles where internal_id = $1`,
             values: [articleId],
         }
 
@@ -159,7 +165,13 @@ export class articleService implements IArticleService {
     async getArticles(page: number, size: number, userId: number): Promise<Array<INewArticle> | boolean> {
         const getQuery = {
             name: 'get-articles-by-id',
-            text: `SELECT * FROM public.articles WHERE created_by = $3 AND deleted IS NOT true ORDER BY created_at DESC LIMIT $2 OFFSET $1;`,
+            text: `
+                    SELECT  id,
+                        TRIM(title) as title, 
+                        TRIM(translated_title) as translated_title, 
+                        category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at
+                    FROM public.articles WHERE created_by = $3 AND deleted IS NOT true ORDER BY created_at DESC LIMIT $2 OFFSET $1;
+                `,
             values: [page, size, userId],
         }
 
@@ -197,7 +209,7 @@ export class articleService implements IArticleService {
     async getSubtitleById(subtitleId: number): Promise<SubTitleContent | false> {
         const getQuery = {
             name: 'get-subtitle-by-id',
-            text: `SELECT id, subtitles_name, translated_name, articles_id, order_number FROM public.subtitles where id = $1`,
+            text: `SELECT id, TRIM(subtitles_name) as subtitles_name, TRIM(translated_name) as translated_name, articles_id, order_number FROM public.subtitles where id = $1`,
             values: [subtitleId],
         }
 
