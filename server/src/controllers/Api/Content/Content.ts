@@ -217,25 +217,52 @@ class Content {
             let search: ISearchService = new searchService();
             let translate: ITranslateService = new translateService();
             let _articleService: IArticleService = new articleService();
+            let subParagraphs = null;
+            let translation: Array<ITranslateItem> = [];
 
-            const subParagraphs = (await search.perform("1", subtitle.translatedName)).map((paragraphObejct, index): IContent => paragraphObejct ? {subtitleId: subtitle.id, content: paragraphObejct.paragraph, selected: false, contentLanguage: Languages.ENGLISH, orderNumber: index+1, link: paragraphObejct.link, wordsCount: paragraphObejct.wordCount} : {content: "", selected: false, contentLanguage: ""}).filter(paragraph => paragraph.content !== "");
-            const translatedContent: Array<IContent> = []
-           
-            await Promise.all(subParagraphs.map(async (paragraph, paragraphIndex) => {
-                const translation = await translate.perform(paragraph.content, 'en', 'es');
-                if (translation.success) {
-                    translatedContent.push({
-                            orderNumber: paragraph.orderNumber,
-                            link: paragraph.link,
-                            selected: false,
-                            subtitleId: paragraph.subtitleId, 
-                            wordsCount: paragraph.wordsCount,
-                            contentLanguage: Languages.SPANISH,
-                            content: translation.body[0]['translations'][0].text
-                        }
-                    );
+            const searchResult = await search.perform("1", subtitle.translatedName);
+            const translatedContent: Array<IContent> = [];
+
+            if(searchResult.length !== 0){
+                subParagraphs = searchResult.map((paragraphObejct, index): IContent => paragraphObejct ? {subtitleId: subtitle.id, content: paragraphObejct.paragraph, selected: false, contentLanguage: Languages.ENGLISH, orderNumber: index+1, link: paragraphObejct.link, wordsCount: paragraphObejct.wordCount} : {content: "", selected: false, contentLanguage: ""}).filter(paragraph => paragraph.content !== "");
+                const translateItems: Array<ITranslateItem> = subParagraphs.map((paragraph): ITranslateItem => ({Text: paragraph.content}));
+                const translationResult = await translate.translateMultipleTextsNf(translateItems, 'en', 'es');
+
+                if(!translationResult.success){
+                    Log.error(`searchKeyword - axios request Error - ${translationResult.errorDetails}`)
+                    return new InternalErrorResponse('searchKeyword - axios request Error', {
+                        error: 'Internal Server Error',
+                    }).send(res);
                 }
-            }))
+
+                translation = translationResult.body.map((result): ITranslateItem =>  ({...result.translations[0]})) 
+            }else{
+                subParagraphs = [{
+                    subtitleId: subtitle.id, 
+                    content: 'Not result Found!', 
+                    selected: false, 
+                    contentLanguage: Languages.ENGLISH, 
+                    orderNumber: 1, 
+                    link: '', 
+                    wordsCount: 0
+                }];
+
+                translation = [
+                    {text: 'Not result Found!'}
+                ]
+            }
+            
+            subParagraphs.forEach((paragraph, index) => {
+                translatedContent.push({
+                    orderNumber: paragraph.orderNumber,
+                    link: paragraph.link,
+                    selected: false,
+                    subtitleId: paragraph.subtitleId, 
+                    wordsCount: paragraph.wordsCount,
+                    contentLanguage: Languages.SPANISH,
+                    content: translation[index].text
+                });
+            });
 
             subtitle.content = translatedContent;
             subtitle.enContent = subParagraphs;

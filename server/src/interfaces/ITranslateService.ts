@@ -9,4 +9,6 @@ export interface ITranslateService {
 
     translateMultipleTexts(texts: Array<ITranslateItem>, from: string, to: string): Promise<TranslateResult>;
 
+    translateMultipleTextsNf(texts: Array<ITranslateItem>, from: string, to: string): Promise<TranslateResult>;
+
 }

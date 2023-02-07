@@ -61,7 +61,6 @@ export class translateService implements ITranslateService {
     }
 
     async performNf(text: string, from: string, to: string): Promise<TranslateResult> {
-        console.log(Locals.config().azureApiKey)
         try {
             // Add your code here
             var options = {
@@ -73,6 +72,28 @@ export class translateService implements ITranslateService {
                     'X-ClientTraceId': uuidv4().toString(),
                 },
                 body: JSON.stringify([{ Text: text }])
+            };
+
+            //&text-type=plain&profanity-action=noaction
+            const result = await fetch(`${Locals.config().translateApiUrl}?api-version=3.0&to=${to}&from=${from}`, options);
+            return result;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async translateMultipleTextsNf(texts: Array<ITranslateItem>, from: string, to: string): Promise<TranslateResult> {
+        try {
+            // Add your code here
+            var options = {
+                method: 'POST',
+                headers: {
+                    'Ocp-Apim-Subscription-Key': Locals.config().azureApiKey,
+                    'Ocp-Apim-Subscription-Region': 'eastus',
+                    'Content-type': 'application/json',
+                    'X-ClientTraceId': uuidv4().toString(),
+                },
+                body: JSON.stringify(texts)
             };
 
             //&text-type=plain&profanity-action=noaction
