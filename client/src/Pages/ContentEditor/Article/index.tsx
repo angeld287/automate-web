@@ -8,11 +8,12 @@ import SearchKeywordsStepper from "../../../Components/App/SearchKeywordsStepper
 import CustomLoader from "../../../Components/CustomLoader";
 import CustomButton from "../../../Components/CustomButton";
 import { EditOutlined, FileImageOutlined } from "@ant-design/icons";
+import AddImage from "../../../Components/App/AddImage";
 
 const ContentEditor = () => {
 
     const [open, setOpen] = useState(true)
-    const [addImageModal, openAddImageModal] = useState(true)
+    const [addImageModal, openAddImageModal] = useState(false)
     let { id } = useParams();
     const article = useAppSelector(selectArticle);
 
@@ -40,7 +41,6 @@ const ContentEditor = () => {
         <Row>
             <Col style={{margin: 10}}><CustomButton onClick={() => { setOpen(true)}}>Edit Content<EditOutlined /></CustomButton></Col>
         </Row>
-        <SearchKeywordsStepper {...{onNext, open, setOpen}} subtitles={article.article.subtitles}/>
         <Row className="">
             <Col>
                 <List
@@ -56,7 +56,7 @@ const ContentEditor = () => {
                                 actions={
                                 !loading
                                     ? [
-                                        <CustomButton onClick={() => { openAddImageModal(true)}}><FileImageOutlined /></CustomButton>,
+                                        <CustomButton onClick={(e) => { openAddImageModal(true)}}><FileImageOutlined /></CustomButton>,
                                     ]
                                     : undefined
                                 }
@@ -85,6 +85,8 @@ const ContentEditor = () => {
                 />
             </Col>
         </Row>
+        <SearchKeywordsStepper {...{onNext, open, setOpen}} subtitles={article.article.subtitles}/>
+        <AddImage open={addImageModal} setOpen={openAddImageModal}/>
     </>;
 }
 
