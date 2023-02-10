@@ -9,11 +9,12 @@ import CustomLoader from "../../../Components/CustomLoader";
 import CustomButton from "../../../Components/CustomButton";
 import { EditOutlined, FileImageOutlined } from "@ant-design/icons";
 import AddImage from "../../../Components/App/AddImage";
+import './article.css'
 
 const ContentEditor = () => {
 
-    const [open, setOpen] = useState(true)
-    const [addImageModal, openAddImageModal] = useState(false)
+    const [open, setOpen] = useState(true);
+    const [addImageModal, openAddImageModal] = useState(false);
     let { id } = useParams();
     const article = useAppSelector(selectArticle);
 
@@ -49,19 +50,20 @@ const ContentEditor = () => {
                     dataSource={article.article.subtitles}
                     renderItem={(item) => {
                         const contentText = item.content?.filter(paragraph => paragraph.selected).map(paragraph => <p style={{textAlign: 'start'}} key={paragraph.id}>{paragraph.content}</p>)
+                        const paragraphLoading = item.content?.filter(paragraph => paragraph.selected).length === 0;
                         return (
                             <List.Item
                                 style={{textAlign: 'right'}}
                                 key={item.name}
                                 actions={
-                                !loading
+                                !paragraphLoading
                                     ? [
                                         <CustomButton onClick={(e) => { openAddImageModal(true)}}><FileImageOutlined /></CustomButton>,
                                     ]
                                     : undefined
                                 }
                                 extra={
-                                !loading && (
+                                !paragraphLoading && (
                                     <img
                                     width={272}
                                     alt="logo"
@@ -70,10 +72,10 @@ const ContentEditor = () => {
                                 )
                                 }
                             >
-                                <Skeleton loading={loading} active avatar>
+                                <Skeleton loading={paragraphLoading} active avatar className="skeleton-paragraph">
                                     <List.Item.Meta
                                         style={{textAlign: "left"}}
-                                        avatar={<Avatar src="https://cdn.shopify.com/s/files/1/2216/9173/files/Aceite_de_coco_sqre.jpg" />}
+                                        avatar={<Avatar src="https://www.nicepng.com/png/detail/111-1113975_validation-green-check-circle-transparent.png" />}
                                         title={item.name}
                                         description={`words count: ${item.content?.reduce((a, b) => a + (b.wordsCount ? b.wordsCount : 0), 0)}`}
                                     />

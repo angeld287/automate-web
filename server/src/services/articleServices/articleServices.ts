@@ -370,17 +370,18 @@ export class articleService implements IArticleService {
                         subtitleId: subtitle.id,
                         contentLanguage: Languages.ENGLISH,
                         selected: false,
-                        content: enContent.content
+                        content: `${enContent.content.charAt(0).toUpperCase()}${enContent.content.slice(1)}`
                     }
                     savedContents.push(await this.createContextForSubtitle(content));
                 }));
 
                 await Promise.all(subtitle.content.map(async (_content: string | IContent) => {
+                    const __content = typeof _content === "string" ? _content : _content.content;
                     const content: IContent = {
                         subtitleId: subtitle.id,
                         contentLanguage: Languages.SPANISH,
                         selected: false,
-                        content: typeof _content === "string" ? _content : _content.content
+                        content:  `${__content.charAt(0).toUpperCase()}${__content.slice(1)}`
                     }
                     savedContents.push(await this.createContextForSubtitle(content));
                 }));
