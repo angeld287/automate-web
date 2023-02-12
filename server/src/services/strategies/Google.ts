@@ -7,8 +7,10 @@
 import { Strategy, StrategyOptionsWithRequest } from 'passport-google-oauth20';
 import IUserService from '../../interfaces/IUserService';
 import IUser, { FederatedAuthProfiles, UserPictures, UserRole } from '../../interfaces/models/User';
+import ILogin from '../../interfaces/wordpress/ILogin';
 import Locals from '../../providers/Locals';
 import userService from '../userService';
+import WpLogin from '../wordpress/login';
 
 class Google {
 	public static init(_passport: any): any {
@@ -23,9 +25,12 @@ class Google {
 
 			const _strategy: Strategy = new Strategy(options, async (req: any, accessToken: any, refreshToken: any, profile: any, done: any) => {
 
-				let googleUserExist: IUser | boolean = await user.getUserByGoogle(profile.id)
+				let googleUserExist: IUser | false = await user.getUserByGoogle(profile.id)
+				let login: ILogin = new WpLogin();
+				const wpToken: any = await login.getToken();
 
 				if (googleUserExist !== false) {
+					googleUserExist.wpToken = wpToken;
 					return done(null, googleUserExist);
 				}
 
@@ -44,7 +49,8 @@ class Google {
 					fullname: profile.displayName,
 					userName: '',
 					password: 'google',
-					roles: []
+					roles: [],
+					wpToken,
 				}
 
 				const createUser = await user.createNewUserFromGoogle(userData, newUserProfile.id);

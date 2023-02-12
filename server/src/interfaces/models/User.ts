@@ -22,6 +22,8 @@ export interface IUser extends Express.User {
     fullname: string;
     gender?: string;
     userName: string;
+
+    wpToken: any;
 }
 
 export interface Tokens {

@@ -178,6 +178,7 @@ class userService implements IUserService {
                 fullname: dbUser.fullname,
                 gender: dbUser.gender,
                 userName: dbUser.user_name,
+                wpToken: '',
             } : false
         } catch (error) {
             throw new Error(error.message);

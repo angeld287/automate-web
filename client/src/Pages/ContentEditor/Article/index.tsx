@@ -15,6 +15,7 @@ const ContentEditor = () => {
 
     const [open, setOpen] = useState(true);
     const [addImageModal, openAddImageModal] = useState(false);
+    const [currentImageTitle, setCurrentImageTitle] = useState('');
     let { id } = useParams();
     const article = useAppSelector(selectArticle);
 
@@ -58,7 +59,7 @@ const ContentEditor = () => {
                                 actions={
                                 !paragraphLoading
                                     ? [
-                                        <CustomButton onClick={(e) => { openAddImageModal(true)}}><FileImageOutlined /></CustomButton>,
+                                        <CustomButton onClick={(e) => { openAddImageModal(true); setCurrentImageTitle(item.name)}}><FileImageOutlined /></CustomButton>,
                                     ]
                                     : undefined
                                 }
@@ -88,7 +89,7 @@ const ContentEditor = () => {
             </Col>
         </Row>
         <SearchKeywordsStepper {...{onNext, open, setOpen}} subtitles={article.article.subtitles}/>
-        <AddImage open={addImageModal} setOpen={openAddImageModal}/>
+        <AddImage open={addImageModal} setOpen={openAddImageModal} title={currentImageTitle}/>
     </>;
 }
 

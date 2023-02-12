@@ -16,13 +16,13 @@ export function Media() {
       <div className={styles.row}>
         <button
           className={styles.button}
-          onClick={() => dispatch(createMedia({
-            alt_text: "Aceite es muy espeso",
-            title: "Aceite es muy espeso",
-            caption: "Aceite es muy espeso",
-            description: "Aceite es muy espeso",
-            id: "498"
-          }))}
+          //onClick={() => dispatch(createMedia({
+          //  alt_text: "Aceite es muy espeso",
+          //  title: "Aceite es muy espeso",
+          //  caption: "Aceite es muy espeso",
+          //  description: "Aceite es muy espeso",
+          //  id: "498"
+          //}))}
         >
           Update Media
         </button>

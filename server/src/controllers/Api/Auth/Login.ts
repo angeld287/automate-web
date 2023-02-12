@@ -14,6 +14,8 @@ var passport = require('passport');
 import { IResponse, IRequest, INext } from '../../../interfaces/vendors';
 import { AuthFailureResponse, BadRequestResponse, SuccessResponse } from '../../../core/ApiResponse';
 import ExpressValidator from '../../../providers/ExpressValidation';
+import ILogin from '../../../interfaces/wordpress/ILogin';
+import WpLogin from '../../../services/wordpress/login';
 
 
 class Login {
@@ -28,6 +30,7 @@ class Login {
         try {
             const errors = new ExpressValidator().validator(req);
             let user: IUserService = new userService();
+            let login: ILogin = new WpLogin();
 
             if (!errors.isEmpty()) {
                 return new BadRequestResponse('Error', {
@@ -67,6 +70,8 @@ class Login {
             Log.info(`New user logged ` + _username);
 
             const userRoles: Array<UserRole> = await user.getUserRoles(_user.id)
+            //const wpToken: any = await login.getTokenWithCredentials(_username, _password);
+            const wpToken: any = await login.getToken();
 
             let userObject: IUser = {
                 id: _user.id,
@@ -78,7 +83,8 @@ class Login {
                 gender: _user.gender,
                 profile: _user.profile,
                 userName: _user.user_name,
-                roles: userRoles
+                roles: userRoles,
+                wpToken
             };
 
             passport.authenticate('local', (err: any, user: any, info: any) => {

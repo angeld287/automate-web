@@ -8,6 +8,15 @@ import userSessionReducer from '../features/userSession/userSessionSlice';
 import userRegisterReducer from '../features/userRegister/userRegisterSlice';
 import wpUtilsReducer from '../features/WPUtils/wputilsSlice';
 
+const authMiddleware = (store: any) => (next: any) => (action: any) => {
+  if(action.type === "userSession/login/fulfilled"){
+    localStorage.setItem('wp-token', action.payload.data.session.wpToken.body.token);
+  }else if(action.type === "userSession/logout/fulfilled"){
+    localStorage.setItem('wp-token', '');
+  }
+  return next(action);
+};
+
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
@@ -22,7 +31,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
   getDefaultMiddleware({
     serializableCheck: false,
-  }),
+  }).concat(authMiddleware),
 
 });
 

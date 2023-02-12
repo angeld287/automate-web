@@ -3,7 +3,7 @@ import { IMediaServiceResponse } from "../../interfaces/response/IServiceRespons
 import { IImageSharp, IPromiseBase } from "../../interfaces/Utils";
 import { IMediaService } from "../../interfaces/wordpress/IMediaService";
 import Locals from "../../providers/Locals";
-import { axios, createWriteStream, sharp, downloadImage, imagesize, readFileSync, addMedia } from "../../utils";
+import { axios, createWriteStream, sharp, downloadImage, imagesize, readFileSync, addMedia, fetch } from "../../utils";
 
 export default class mediaService implements IMediaService {
 
@@ -33,8 +33,19 @@ export default class mediaService implements IMediaService {
 
         const dataFile = await readFileSync(compressedImagePath)
 
-        const result = await axios({
-            url: `${Locals.config().wordpressUrl}media`,
+        //const result = await axios({
+        //    url: `${Locals.config().wordpressUrl}media`,
+        //    method: 'POST',
+        //    headers: {
+        //        'Content-Type': 'image/webp',
+        //        'Authorization': token,
+        //        'cache-control': 'no-cache',
+        //        'content-disposition': `attachment; filename=${fileName}`
+        //    },
+        //    data: dataFile.response
+        //});
+
+        const result = await fetch(`${Locals.config().wordpressUrl}media`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'image/webp',
@@ -42,8 +53,9 @@ export default class mediaService implements IMediaService {
                 'cache-control': 'no-cache',
                 'content-disposition': `attachment; filename=${fileName}`
             },
-            data: dataFile.response
+            body: dataFile.response
         });
+        
 
         if (!result.success) {
             return { success: false, message: "Error uploading media. ", media: result };

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import Media from '../../interfaces/models/Media';
 import { getBearer } from '../autenticate/authenticateAPI';
-import { addMediaToWordpress } from './mediaAPI';
+import { addMediaToWordpress, updateMediaData } from './mediaAPI';
 
 export interface MediaState {
   media: Media;
@@ -18,9 +18,21 @@ const initialState: MediaState = {
 
 export const createMedia = createAsyncThunk(
   'media/create',
+  async ({title, imageAddress}: {title: string, imageAddress: string}) => {
+    const token = getBearer()
+    const response = await addMediaToWordpress(imageAddress, title, token);
+    
+    console.log(response.data.response.source_url);
+    
+    return response;
+  }
+);
+
+export const updateMedia = createAsyncThunk(
+  'media/update',
   async (media: Media) => {
-    const bearer = await (await getBearer()).json()
-    const response = await addMediaToWordpress(media, `Bearer ${bearer.token}`);
+    const bearer = getBearer()
+    const response = await updateMediaData(media, bearer);
     console.log(response.body);
     
     return response;

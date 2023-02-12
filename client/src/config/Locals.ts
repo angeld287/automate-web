@@ -18,8 +18,7 @@ class Locals {
         const wordpressDomain = "elaceite.de"
         const WP_JSON_URL = `https://${wordpressDomain}/wp-json`
         const WP_API_BASE_URL = `${WP_JSON_URL}/wp/v2/`
-        const WORDPRESS_USER = process.env.REACT_APP_WORDPRESS_USER || "automator"
-        const WORDPRESS_USER_PASSWORD = process.env.REACT_APP_WORDPRESS_USER_PASSWORD || "admin"
+        
 
         const TOCKEN_URL = `${WP_JSON_URL}/jwt-auth/v1/token`
 
@@ -31,8 +30,6 @@ class Locals {
             WP_JSON_URL,
             WP_API_BASE_URL,
             TOCKEN_URL,
-            WORDPRESS_USER,
-            WORDPRESS_USER_PASSWORD,
             WS_BACKEND_BASE_URL,
         }
     }
