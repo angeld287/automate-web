@@ -10,12 +10,15 @@ import CustomButton from "../../../Components/CustomButton";
 import { EditOutlined, FileImageOutlined } from "@ant-design/icons";
 import AddImage from "../../../Components/App/AddImage";
 import './article.css'
+import { SubTitleContent } from "../../../interfaces/models/Article";
 
 const ContentEditor = () => {
 
     const [open, setOpen] = useState(true);
     const [addImageModal, openAddImageModal] = useState(false);
-    const [currentImageTitle, setCurrentImageTitle] = useState('');
+    const [selectedItem, setSelectedItem] = useState<SubTitleContent>();
+    const [imageType, setImageType ] = useState<'subtitle' | 'article'>('subtitle');
+
     let { id } = useParams();
     const article = useAppSelector(selectArticle);
 
@@ -59,7 +62,7 @@ const ContentEditor = () => {
                                 actions={
                                 !paragraphLoading
                                     ? [
-                                        <CustomButton onClick={(e) => { openAddImageModal(true); setCurrentImageTitle(item.name)}}><FileImageOutlined /></CustomButton>,
+                                        <CustomButton onClick={(e) => { openAddImageModal(true); setSelectedItem(item); setImageType('subtitle')}}><FileImageOutlined /></CustomButton>,
                                     ]
                                     : undefined
                                 }
@@ -89,7 +92,13 @@ const ContentEditor = () => {
             </Col>
         </Row>
         <SearchKeywordsStepper {...{onNext, open, setOpen}} subtitles={article.article.subtitles}/>
-        <AddImage open={addImageModal} setOpen={openAddImageModal} title={currentImageTitle}/>
+        <AddImage 
+            open={addImageModal} 
+            setOpen={openAddImageModal} 
+            title={selectedItem? selectedItem.name: ""} 
+            type={imageType} 
+            relatedId={selectedItem ? selectedItem.id: 0}
+        />
     </>;
 }
 

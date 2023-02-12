@@ -8,7 +8,7 @@ import CustomInput from "../../CustomInput";
 import CustomModal from "../../CustomModal";
 import IAddImage from "./IAddImage";
 
-const AddImage: React.FC<IAddImage> = ({open, setOpen, title}) => {
+const AddImage: React.FC<IAddImage> = ({open, setOpen, title, type, relatedId}) => {
     const [url, setUrl] = useState('');
     const [error, setError] = useState<undefined | string>(undefined);
     const dispatch = useAppDispatch();
@@ -26,7 +26,7 @@ const AddImage: React.FC<IAddImage> = ({open, setOpen, title}) => {
             return setError('Please provide an image url.')
         }
 
-        dispatch(createMedia({imageAddress: url, title}))
+        dispatch(createMedia({imageAddress: url, title, type, relatedId}))
     }
     
     return (

@@ -5,10 +5,13 @@
  */
 
 import { BadRequestResponse, InternalErrorResponse, SuccessResponse } from '../../../core/ApiResponse';
+import { IArticleService } from '../../../interfaces/IArticleService';
 import { IRequest, IResponse } from '../../../interfaces/vendors';
 import { IMediaService } from '../../../interfaces/wordpress/IMediaService';
+import IMedia, { DbMedia } from '../../../interfaces/models/Media';
 import Log from '../../../middlewares/Log';
 import ExpressValidator from '../../../providers/ExpressValidation';
+import { articleService } from '../../../services/articleServices/articleServices';
 import mediaService from '../../../services/wordpress/MediaServices';
 
 class Media {
@@ -23,8 +26,8 @@ class Media {
             }
 
             let _mediaService: IMediaService = new mediaService();
-            const imageAddress = req.body.imageAddress
-            const title = req.body.title
+            const articleServices: IArticleService = new articleService();
+            const {imageAddress, title, type, relatedId} = req.body;
 
             const imageIsFine = await _mediaService.imageHaveCorrectSize(imageAddress);
             
@@ -36,11 +39,36 @@ class Media {
                 }).send(res);
             }
 
-            const media: Media = (await _mediaService.create(title, imageAddress, req.headers.authorization)).media
+            const media: IMedia = (await _mediaService.create(title, imageAddress, req.headers.authorization)).media
+            
+            let dbMedia: DbMedia = null;
+            if(type === 'subtitle') {
+                const subtitleImages = await articleServices.getMediaBySubtitleId(relatedId);
+
+                await Promise.all(subtitleImages.map(async (image) => await articleServices.deleteMedia(parseInt(image.id), parseInt(req.session.passport.user.id))))
+                
+                dbMedia = await articleServices.createMediaForSubtitle({
+                    source_url: media.source_url,
+                    title,
+                    wpId: media.id,
+                    subtitleId: relatedId,
+                });
+            }else if(type === 'article'){
+                const articleImages = await articleServices.getMediaByArticleId(relatedId);
+
+                await Promise.all(articleImages.map(async (image) => await articleServices.deleteMedia(parseInt(image.id), parseInt(req.session.passport.user.id))))
+                
+                dbMedia = await articleServices.createMediaForArticle({
+                    source_url: media.source_url,
+                    title,
+                    wpId: media.id,
+                    articleId: relatedId,
+                });
+            }
 
             return new SuccessResponse('Success', {
                 success: true,
-                response: media,
+                response: dbMedia,
                 error: null
             }).send(res);
 
@@ -67,7 +95,7 @@ class Media {
             const id = req.body.id
             const title = req.body.title
 
-            const media: Media = (await _mediaService.update(id, { title: title }, req.headers.authorization)).media
+            const media: IMedia = (await _mediaService.update(id, { title: title }, req.headers.authorization)).media
 
             return new SuccessResponse('Success', {
                 success: true,

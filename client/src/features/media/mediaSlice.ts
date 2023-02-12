@@ -18,9 +18,9 @@ const initialState: MediaState = {
 
 export const createMedia = createAsyncThunk(
   'media/create',
-  async ({title, imageAddress}: {title: string, imageAddress: string}) => {
+  async ({title, imageAddress, type, relatedId}: {title: string, imageAddress: string, type: string, relatedId: number}) => {
     const token = getBearer()
-    const response = await addMediaToWordpress(imageAddress, title, token);
+    const response = await addMediaToWordpress(imageAddress, title, type, relatedId, token);
     
     console.log(response.data.response.source_url);
     

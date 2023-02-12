@@ -373,3 +373,52 @@ CREATE TRIGGER set_timestamp_to_deleted_at
     ON public.contents
     FOR EACH ROW
     EXECUTE PROCEDURE public.trigger_set_timestamp_deleted_at();
+
+
+
+-- Table: public.media
+
+-- DROP TABLE IF EXISTS public.media;
+
+CREATE TABLE IF NOT EXISTS public.media
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    source_url character(250) COLLATE pg_catalog."default" NOT NULL,
+    wp_id integer NOT NULL,
+    deleted boolean,
+    deleted_by integer,
+    deleted_at timestamp with time zone,
+    article_id integer,
+    subtitle_id integer,
+    title character(100) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT media_pkey PRIMARY KEY (id),
+    CONSTRAINT media_articles_fkey FOREIGN KEY (article_id)
+        REFERENCES public.articles (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT media_deleted_by_fkey FOREIGN KEY (deleted_by)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT media_subtitles_fkey FOREIGN KEY (subtitle_id)
+        REFERENCES public.subtitles (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.media
+    OWNER to admin;
+
+-- Trigger: set_timestamp_to_deleted_at
+
+-- DROP TRIGGER IF EXISTS set_timestamp_to_deleted_at ON public.media;
+
+CREATE TRIGGER set_timestamp_to_deleted_at
+    BEFORE UPDATE OF deleted
+    ON public.media
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.trigger_set_timestamp_deleted_at();

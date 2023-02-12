@@ -2,6 +2,7 @@ import { INewArticle, SubTitleContent } from "../../interfaces/Content/Article";
 import { Languages } from "../../interfaces/Enums/Languages";
 import { IArticleService } from "../../interfaces/IArticleService";
 import IContent from "../../interfaces/models/Content";
+import { DbMedia } from "../../interfaces/models/Media";
 import { Query } from "../../interfaces/Query";
 import Log from "../../middlewares/Log";
 import Database from "../../providers/Database";
@@ -504,6 +505,192 @@ export class articleService implements IArticleService {
 
             return _contents;
             
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async createMediaForArticle(media: DbMedia): Promise<DbMedia> {
+        const createArticleImage = {
+            name: 'create-article-image',
+            text: 'INSERT INTO public.media(source_url, wp_id, article_id, title) VALUES ($1, $2, $3, $4) RETURNING id, source_url, wp_id, article_id, title;',
+            values: [media.source_url, media.wpId, media.articleId, media.title],
+        }
+
+        return await this.createMedia(createArticleImage);
+    }
+
+    async createMediaForSubtitle(media: DbMedia): Promise<DbMedia> {
+        const createSubtitleImage = {
+            name: 'create-subtitle-image',
+            text: 'INSERT INTO public.media(source_url, wp_id, subtitle_id, title) VALUES ($1, $2, $3, $4) RETURNING id, source_url, wp_id, subtitle_id, title;',
+            values: [media.source_url, media.wpId, media.subtitleId, media.title],
+        }
+
+        return await this.createMedia(createSubtitleImage);
+    }
+
+    async createMedia(createMedia: Query): Promise<DbMedia> {
+        try {
+            let result = null, client = null;
+
+            client = await Database.getTransaction();
+
+            try {
+                result = await Database.sqlExecSingleRow(client, createMedia);
+                await Database.commit(client);
+            } catch (error) {
+                await Database.rollback(client);
+                throw new Error(error);
+            }
+
+            let _media: DbMedia = {
+                id: result.rows[0].id,
+                source_url: result.rows[0].source_url,
+                wpId: result.rows[0].wp_id,
+                subtitleId: result.rows[0].subtitle_id,
+                title: result.rows[0].title,
+            }
+            
+            return _media;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async getMediaBySubtitleId(subtitleId: number): Promise<Array<DbMedia>> {
+        const getQuery = {
+            name: 'get-media-by-subtitle',
+            text:  `
+                SELECT id, source_url, wp_id, subtitle_id, title 
+                FROM public.media 
+                WHERE deleted IS NOT true AND subtitle_id = $1;
+            `,
+            values: [subtitleId]
+        };
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            if (result.rows.length === 0)
+                return []
+            
+            const media: Array<DbMedia> = []
+
+            result.rows.forEach(row => {
+                media.push({
+                    id: row.id,
+                    source_url: row.source_url,
+                    wpId: row.wp_id,
+                    subtitleId: row.subtitle_id,
+                    title: row.title,
+                })
+            });
+            return media;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async getMediaByArticleId(articleId: number): Promise<Array<DbMedia>> {
+        const getQuery = {
+            name: 'get-media-by-article',
+            text:  `
+                SELECT id, source_url, wp_id, article_id, title 
+                FROM public.media 
+                WHERE deleted IS NOT true AND article_id = $1;
+            `,
+            values: [articleId]
+        };
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            if (result.rows.length === 0)
+                return []
+            
+            const media: Array<DbMedia> = []
+
+            result.rows.forEach(row => {
+                media.push({
+                    id: row.id,
+                    source_url: row.source_url,
+                    wpId: row.wp_id,
+                    articleId: row.article_id,
+                    title: row.title,
+                })
+            });
+            return media;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async updateMedia(media: DbMedia): Promise<DbMedia> {
+        try {
+            const updateMedia = {
+                name: 'create-subtitle-image',
+                text: 'UPDATE public.media SET title=$1 WHERE id = $2 RETURNING id, source_url, wp_id, subtitle_id, title;',
+                values: [media.title, media.id],
+            }
+
+            let result = null, client = null;
+
+            client = await Database.getTransaction();
+
+            try {
+                result = await Database.sqlExecSingleRow(client, updateMedia);
+                await Database.commit(client);
+            } catch (error) {
+                await Database.rollback(client);
+                throw new Error(error);
+            }
+
+            let _media: DbMedia = {
+                id: result.rows[0].id,
+                source_url: result.rows[0].source_url,
+                wpId: result.rows[0].wp_id,
+                subtitleId: result.rows[0].subtitle_id,
+                title: result.rows[0].title,
+            }
+            
+            return _media;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async deleteMedia(id: number, userId: number): Promise<DbMedia> {
+        try {
+            const updateMedia = {
+                name: 'create-subtitle-image',
+                text: 'UPDATE public.media SET deleted=true, deleted_by=$1 WHERE id = $2 RETURNING id, source_url, wp_id, subtitle_id, title;',
+                values: [userId, id],
+            }
+
+            let result = null, client = null;
+
+            client = await Database.getTransaction();
+
+            try {
+                result = await Database.sqlExecSingleRow(client, updateMedia);
+                await Database.commit(client);
+            } catch (error) {
+                await Database.rollback(client);
+                throw new Error(error);
+            }
+
+            let _media: DbMedia = {
+                id: result.rows[0].id,
+                source_url: result.rows[0].source_url,
+                wpId: result.rows[0].wp_id,
+                subtitleId: result.rows[0].subtitle_id,
+                title: result.rows[0].title,
+            }
+            
+            return _media;
         } catch (error) {
             throw new Error(error.message);
         }

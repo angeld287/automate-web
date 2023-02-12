@@ -1,5 +1,6 @@
 import { INewArticle, SubTitleContent } from "./Content/Article";
 import IContent from "./models/Content";
+import { DbMedia } from "./models/Media";
 
 export interface IArticleService {
 
@@ -29,4 +30,15 @@ export interface IArticleService {
 
     saveKeywordNewSelectedContent(contents: Array<IContent>): Promise<Array<IContent>>;
 
+    createMediaForArticle(media: DbMedia): Promise<DbMedia>;
+
+    createMediaForSubtitle(media: DbMedia): Promise<DbMedia>;
+
+    getMediaBySubtitleId(subtitleId: number): Promise<Array<DbMedia>>;
+
+    getMediaByArticleId(articleId: number): Promise<Array<DbMedia>>;
+
+    updateMedia(media: DbMedia): Promise<DbMedia>;
+
+    deleteMedia(id: number, userId: number): Promise<DbMedia>;
 }

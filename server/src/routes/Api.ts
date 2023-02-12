@@ -142,6 +142,8 @@ router.post(
     '/uploadImage',
     body('imageAddress', 'field imageAddress cannot be blank.').notEmpty(),
     body('title', 'field title cannot be blank.').notEmpty(),
+    body('type', 'field type cannot be blank.').notEmpty(),
+    body('relatedId', 'field relatedId cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     MediaController.create
 );
