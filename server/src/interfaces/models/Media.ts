@@ -32,4 +32,5 @@ export interface DbMedia extends Media{
     wpId: string;
     subtitleId?: number;
     articleId?: number;
+    deleted?: boolean;
 }

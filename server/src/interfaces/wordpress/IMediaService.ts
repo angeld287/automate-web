@@ -9,4 +9,6 @@ export interface IMediaService {
     update(id: number, fieldsToUpdate: any, token: string): Promise<IMediaServiceResponse>;
 
     imageHaveCorrectSize(imageAddress: string): Promise<boolean>;
+
+    deleteImagesInsidePath(imagesPath: string);
 }

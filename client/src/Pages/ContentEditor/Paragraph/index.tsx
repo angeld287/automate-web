@@ -3,17 +3,12 @@ import { Avatar, Card, Skeleton } from "antd";
 import Meta from "antd/es/card/Meta";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { useAppDispatch } from "../../../app/hooks";
 import CustomButton from "../../../Components/CustomButton";
-import { updateSubtitle } from "../../../features/article/articleSlice";
 //import { searchKeywordContent } from "../../../features/keyword/keywordAPI";
-import { SubTitleContent } from "../../../interfaces/models/Article";
 import { IParagraph } from "./IParagraph";
 
 const Paragraph: React.FC<IParagraph> = ({ content, index }) => {
-    const [ paragraphContent, setParagraphContent ] = useState<SubTitleContent>();
     const [ loading, setLoading ] = useState(true);
-    const dispatch = useAppDispatch();
 
     useEffect(() => {
         let didCancel = false;

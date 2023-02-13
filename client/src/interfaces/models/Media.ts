@@ -27,3 +27,10 @@ export default interface Media {
     source_url?: string;
     missing_image_sizes?: string;
 }
+
+export interface DbMedia extends Media{
+    wpId: string;
+    subtitleId?: number;
+    articleId?: number;
+    deleted?: boolean;
+}

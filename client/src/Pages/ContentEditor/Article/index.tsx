@@ -11,6 +11,9 @@ import { EditOutlined, FileImageOutlined } from "@ant-design/icons";
 import AddImage from "../../../Components/App/AddImage";
 import './article.css'
 import { SubTitleContent } from "../../../interfaces/models/Article";
+import Locals from "../../../config/Locals";
+import { selectMedia } from "../../../features/media/mediaSlice";
+import { updateSubtitle } from "../../../features/article/articleSlice";
 
 const ContentEditor = () => {
 
@@ -18,10 +21,12 @@ const ContentEditor = () => {
     const [addImageModal, openAddImageModal] = useState(false);
     const [selectedItem, setSelectedItem] = useState<SubTitleContent>();
     const [imageType, setImageType ] = useState<'subtitle' | 'article'>('subtitle');
+    const media = useAppSelector(selectMedia);
 
     let { id } = useParams();
     const article = useAppSelector(selectArticle);
-
+    const dispatch = useAppDispatch();
+    
     useEffect(() => {
         if(article.article.id === 0 && id) dispatch(getArticleByInternalId(parseInt(id)))
         return () => {}
@@ -31,12 +36,20 @@ const ContentEditor = () => {
         if(id && !open) dispatch(getArticleByInternalId(parseInt(id)))
     }, [open, id]);
 
+    useEffect(() => {
+        let currentSubtitle = article.article.subtitles.find(subtitle => subtitle.id === media.media.subtitleId)
+        if(currentSubtitle) {
+            currentSubtitle = {...currentSubtitle, image: media.media};
+            dispatch(updateSubtitle(currentSubtitle));
+            openAddImageModal(false)
+        }
+    }, [media]);
+
     //useEffect(() => {
     //    console.log(article.status)
     //    setOpen(!(article.article.subtitles.filter(sub => sub.content? sub.content.filter(paragraph => paragraph.selected).length === 0 : true).length === 0))
     //}, [article]);
-
-    const dispatch = useAppDispatch();
+    
     const onNext = () => {}
     const loading = article.status === 'loading';
 
@@ -55,6 +68,7 @@ const ContentEditor = () => {
                     renderItem={(item) => {
                         const contentText = item.content?.filter(paragraph => paragraph.selected).map(paragraph => <p style={{textAlign: 'start'}} key={paragraph.id}>{paragraph.content}</p>)
                         const paragraphLoading = item.content?.filter(paragraph => paragraph.selected).length === 0;
+                        const image = item.image ? item.image.source_url : Locals.config().DEFAULT_IMAGE;
                         return (
                             <List.Item
                                 style={{textAlign: 'right'}}
@@ -69,9 +83,9 @@ const ContentEditor = () => {
                                 extra={
                                 !paragraphLoading && (
                                     <img
-                                    width={272}
-                                    alt="logo"
-                                    src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
+                                        width={272}
+                                        alt="logo"
+                                        src={image}
                                     />
                                 )
                                 }

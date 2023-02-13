@@ -70,6 +70,7 @@ export class articleService implements IArticleService {
 
             await Promise.all(result.rows.map(async (row) => {
                 const contents: Array<IContent> = await this.getContentBySubtitleId(row.id);
+                const media: Array<DbMedia> = await this.getMediaBySubtitleId(row.id);
                 subtitles.push({
                     id: row.id,
                     name: row.subtitles_name,
@@ -78,6 +79,7 @@ export class articleService implements IArticleService {
                     articleId: row.articles_id,
                     content: contents.filter(content => content.contentLanguage === Languages.SPANISH),
                     enContent: contents.filter(content => content.contentLanguage === Languages.ENGLISH),
+                    image: media[0],
                 })
             }));
 
@@ -145,7 +147,8 @@ export class articleService implements IArticleService {
                 return false
 
             const subtitles: Array<SubTitleContent> = await this.getSubtitlesByArticleId(result.rows[0].id)
-            
+            const media: Array<DbMedia> = await this.getMediaByArticleId(result.rows[0].id);
+
             const article: INewArticle = {
                 id: result.rows[0].id,
                 internalId: result.rows[0].internal_id,
@@ -153,6 +156,7 @@ export class articleService implements IArticleService {
                 translatedTitle: result.rows[0].translated_title,
                 category: result.rows[0].category,
                 subtitles: subtitles,
+                image: media[0],
                 createdBy: result.rows[0].created_by,
                 createdAt: result.rows[0].created_at,
             }
@@ -222,6 +226,7 @@ export class articleService implements IArticleService {
                 return false
             
             const contents: Array<IContent> = await this.getContentBySubtitleId(result.rows[0].id);
+            const media: Array<DbMedia> = await this.getMediaBySubtitleId(result.rows[0].id);
             
             const subtitle: SubTitleContent = {
                 id: result.rows[0].id,
@@ -230,6 +235,7 @@ export class articleService implements IArticleService {
                 translatedName: result.rows[0].translated_name,
                 content: contents.filter(content => content.contentLanguage === Languages.SPANISH),
                 enContent: contents.filter(content => content.contentLanguage === Languages.ENGLISH),
+                image: media[0]
             }
 
             return subtitle;
@@ -513,7 +519,7 @@ export class articleService implements IArticleService {
     async createMediaForArticle(media: DbMedia): Promise<DbMedia> {
         const createArticleImage = {
             name: 'create-article-image',
-            text: 'INSERT INTO public.media(source_url, wp_id, article_id, title) VALUES ($1, $2, $3, $4) RETURNING id, source_url, wp_id, article_id, title;',
+            text: 'INSERT INTO public.media(source_url, wp_id, article_id, title) VALUES ($1, $2, $3, $4) RETURNING id, TRIM(source_url) AS source_url, wp_id, article_id, title;',
             values: [media.source_url, media.wpId, media.articleId, media.title],
         }
 
@@ -523,7 +529,7 @@ export class articleService implements IArticleService {
     async createMediaForSubtitle(media: DbMedia): Promise<DbMedia> {
         const createSubtitleImage = {
             name: 'create-subtitle-image',
-            text: 'INSERT INTO public.media(source_url, wp_id, subtitle_id, title) VALUES ($1, $2, $3, $4) RETURNING id, source_url, wp_id, subtitle_id, title;',
+            text: 'INSERT INTO public.media(source_url, wp_id, subtitle_id, title) VALUES ($1, $2, $3, $4) RETURNING id, TRIM(source_url) AS source_url, wp_id, subtitle_id, title;',
             values: [media.source_url, media.wpId, media.subtitleId, media.title],
         }
 
@@ -631,8 +637,8 @@ export class articleService implements IArticleService {
     async updateMedia(media: DbMedia): Promise<DbMedia> {
         try {
             const updateMedia = {
-                name: 'create-subtitle-image',
-                text: 'UPDATE public.media SET title=$1 WHERE id = $2 RETURNING id, source_url, wp_id, subtitle_id, title;',
+                name: 'update-image',
+                text: 'UPDATE public.media SET title=$1 WHERE id = $2 RETURNING id, TRIM(source_url) AS source_url, wp_id, subtitle_id, title;',
                 values: [media.title, media.id],
             }
 
@@ -665,8 +671,8 @@ export class articleService implements IArticleService {
     async deleteMedia(id: number, userId: number): Promise<DbMedia> {
         try {
             const updateMedia = {
-                name: 'create-subtitle-image',
-                text: 'UPDATE public.media SET deleted=true, deleted_by=$1 WHERE id = $2 RETURNING id, source_url, wp_id, subtitle_id, title;',
+                name: 'delete-image',
+                text: 'UPDATE public.media SET deleted=true, deleted_by=$1 WHERE id = $2 RETURNING id, TRIM(source_url) AS source_url, wp_id, subtitle_id, title;',
                 values: [userId, id],
             }
 

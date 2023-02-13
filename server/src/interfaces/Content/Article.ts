@@ -1,4 +1,5 @@
 import IContent from '../models/Content'
+import { DbMedia } from '../models/Media';
 
 export interface INewArticle {
     id?: number;
@@ -9,6 +10,7 @@ export interface INewArticle {
     category: string;
     introduction?: string;
     translatedContent?: string;
+    image?: DbMedia
     error?: boolean | ProcessError;
     createdBy: number;
     createdAt: string;
@@ -26,6 +28,7 @@ export interface SubTitleContent {
     content?: Array<IContent>;
     enContent?: Array<IContent>;
     translatedContent?: string;
+    image?: DbMedia
     error?: boolean | ProcessError
 }
 

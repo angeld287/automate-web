@@ -4,6 +4,10 @@ import { IImageSharp, IPromiseBase } from "../../interfaces/Utils";
 import { IMediaService } from "../../interfaces/wordpress/IMediaService";
 import Locals from "../../providers/Locals";
 import { axios, createWriteStream, sharp, downloadImage, imagesize, readFileSync, addMedia, fetch } from "../../utils";
+import * as fs from 'fs'
+import * as path from 'path'
+import Log from "../../middlewares/Log";
+
 
 export default class mediaService implements IMediaService {
 
@@ -12,8 +16,24 @@ export default class mediaService implements IMediaService {
         return response.body
     }
 
+    deleteImagesInsidePath(imagesPath: string){
+        try {
+            if(fs.existsSync(imagesPath)){
+                fs.readdirSync(imagesPath).forEach((file) => {
+                    const curPath = path.join(imagesPath, file);
+                    fs.unlinkSync(curPath);
+                });
+            }
+        } catch(err) {
+            Log.error(`MediaService - DeleteImagesInsidePath Error: ` + err);
+        }
+    }
+
     async create(title: string, imageAddress: string, token: string): Promise<IMediaServiceResponse> {
         const fileName = `${title.replace(new RegExp(" ", 'g'), '-').toLowerCase()}.webp`;
+
+        this.deleteImagesInsidePath(Locals.config().DOWNLOADED_IMAGES_PATH)
+        this.deleteImagesInsidePath(Locals.config().DOWNLOADED_IMAGES_COMPRESSED_PATH)
 
         const filePath = Locals.config().DOWNLOADED_IMAGES_PATH + fileName;
         const compressedImagePath = Locals.config().DOWNLOADED_IMAGES_COMPRESSED_PATH + fileName;

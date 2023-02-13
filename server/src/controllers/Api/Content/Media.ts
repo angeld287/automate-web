@@ -13,6 +13,7 @@ import Log from '../../../middlewares/Log';
 import ExpressValidator from '../../../providers/ExpressValidation';
 import { articleService } from '../../../services/articleServices/articleServices';
 import mediaService from '../../../services/wordpress/MediaServices';
+import Locals from '../../../providers/Locals';
 
 class Media {
     public static async create(req: IRequest, res: IResponse): Promise<any> {
@@ -29,15 +30,15 @@ class Media {
             const articleServices: IArticleService = new articleService();
             const {imageAddress, title, type, relatedId} = req.body;
 
-            const imageIsFine = await _mediaService.imageHaveCorrectSize(imageAddress);
-            
-            if (!imageIsFine){
-                return new BadRequestResponse('Error', {
-                    success: false,
-                    response: 'The image must be greater than width: 590 and height: 350.',
-                    error: null
-                }).send(res);
-            }
+            //const imageIsFine = await _mediaService.imageHaveCorrectSize(imageAddress);
+            //
+            //if (!imageIsFine){
+            //    return new BadRequestResponse('Error', {
+            //        success: false,
+            //        response: 'The image must be greater than width: 590 and height: 350.',
+            //        error: null
+            //    }).send(res);
+            //}
 
             const media: IMedia = (await _mediaService.create(title, imageAddress, req.headers.authorization)).media
             
@@ -65,6 +66,9 @@ class Media {
                     articleId: relatedId,
                 });
             }
+
+            _mediaService.deleteImagesInsidePath(Locals.config().DOWNLOADED_IMAGES_PATH)
+            _mediaService.deleteImagesInsidePath(Locals.config().DOWNLOADED_IMAGES_COMPRESSED_PATH)
 
             return new SuccessResponse('Success', {
                 success: true,

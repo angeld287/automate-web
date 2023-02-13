@@ -8,5 +8,6 @@ export default interface IModal {
     style?: React.CSSProperties;
     children?: any;
     title?: string;
-    footer?: ReactNode
+    footer?: ReactNode;
+    confirmLoading?: boolean;
 }

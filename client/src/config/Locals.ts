@@ -23,6 +23,8 @@ class Locals {
         const TOCKEN_URL = `${WP_JSON_URL}/jwt-auth/v1/token`
 
         const  WS_BACKEND_BASE_URL = `http://localhost:3002/api/`
+
+        const DEFAULT_IMAGE = 'https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png'
         
 
         return {
@@ -31,6 +33,7 @@ class Locals {
             WP_API_BASE_URL,
             TOCKEN_URL,
             WS_BACKEND_BASE_URL,
+            DEFAULT_IMAGE,
         }
     }
 
