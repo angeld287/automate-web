@@ -15,6 +15,10 @@ const AddImage: React.FC<IAddImage> = ({open, setOpen, title, type, relatedId}) 
     const media = useAppSelector(selectMedia);
 
     useEffect(() => {
+        return () => setUrl('')
+    }, [])
+
+    useEffect(() => {
         if(url !== '' && (!isValidUrl(url) || !isValidImageUrl(url))) {
             setError('The url is not valid image url.')
         } else{

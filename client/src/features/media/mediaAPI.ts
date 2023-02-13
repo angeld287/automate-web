@@ -16,7 +16,7 @@ export async function addMediaToWordpress(imageAddress: string, title: string, t
 }
 
 export async function updateMediaData(media: Media, token: string) {
-  const result = fetch(`${Locals.config().WP_API_BASE_URL}media/${media.id}`, {
+  const result = await fetch(`${Locals.config().WP_API_BASE_URL}media/${media.id}`, {
     method: "POST",
     credentials: 'include',
     headers: {
@@ -25,5 +25,5 @@ export async function updateMediaData(media: Media, token: string) {
     },
     body: JSON.stringify(media)
   })
-  return result
+  return result.json()
 }

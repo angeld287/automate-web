@@ -72,11 +72,11 @@ const ContentEditor = () => {
                         return (
                             <List.Item
                                 style={{textAlign: 'right'}}
-                                key={item.name}
+                                key={item.id}
                                 actions={
                                 !paragraphLoading
                                     ? [
-                                        <CustomButton onClick={(e) => { openAddImageModal(true); setSelectedItem(item); setImageType('subtitle')}}><FileImageOutlined /></CustomButton>,
+                                        <CustomButton loading={media.media.subtitleId === item.id && media.status === 'loading'} onClick={(e) => { openAddImageModal(true); setSelectedItem(item); setImageType('subtitle')}}><FileImageOutlined /></CustomButton>,
                                     ]
                                     : undefined
                                 }

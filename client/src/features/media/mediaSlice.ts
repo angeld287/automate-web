@@ -7,6 +7,7 @@ import { addMediaToWordpress, updateMediaData } from './mediaAPI';
 export interface MediaState {
   media: DbMedia;
   status: 'idle' | 'loading' | 'failed';
+  uStatus: 'idle' | 'loading' | 'failed';
 }
 
 const initialState: MediaState = {
@@ -14,6 +15,7 @@ const initialState: MediaState = {
     wpId: '0'
   },
   status: 'idle',
+  uStatus: 'idle',
 };
 
 export const createMedia = createAsyncThunk(
@@ -21,16 +23,29 @@ export const createMedia = createAsyncThunk(
   async ({title, imageAddress, type, relatedId}: {title: string, imageAddress: string, type: string, relatedId: number}) => {
     const token = getBearer()
     const response = await addMediaToWordpress(imageAddress, title, type, relatedId, token);
+    await updateMediaData({
+      alt_text: title,
+      title: title,
+      caption: title,
+      description: title,
+      id: response.data.response.wpId
+    }, token);
     return response.data.response;
   }
 );
 
 export const updateMedia = createAsyncThunk(
   'media/update',
-  async (media: Media) => {
+  async ({id, title}:{id: string, title: string}) => {
     const bearer = getBearer()
-    const response = await updateMediaData(media, bearer);
-    return response.body;
+    const response = await updateMediaData({
+        alt_text: title,
+        title: title,
+        caption: title,
+        description: title,
+        id
+      }, bearer);
+    return response;
   }
 );
 
@@ -53,6 +68,16 @@ export const mediaSlice = createSlice({
       })
       .addCase(createMedia.rejected, (state) => {
         state.status = 'failed';
+      })
+      .addCase(updateMedia.pending, (state) => {
+        state.uStatus = 'loading';
+      })
+      .addCase(updateMedia.fulfilled, (state, action) => {
+        state.uStatus = 'idle';
+        state.media = {...action.payload}
+      })
+      .addCase(updateMedia.rejected, (state) => {
+        state.uStatus = 'failed';
       });
   },
 });
