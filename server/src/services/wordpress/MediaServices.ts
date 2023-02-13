@@ -103,6 +103,22 @@ export default class mediaService implements IMediaService {
         return { success: true, message: "success", media: updateResult.body };
     }
 
+    async delete(id: number, token: string): Promise<IMediaServiceResponse> {
+        const deleteResult = await fetch(`${Locals.config().wordpressUrl}media/${id}?force=true`, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': token
+            }
+        });
+
+        if (!deleteResult.success) {
+            return { success: false, message: "Error deleting media." };
+        }
+        return { success: true, message: "success" };
+    }
+
     async imageHaveCorrectSize(imageAddress: string): Promise<boolean>{
         const imageSize = (await imagesize(imageAddress))
         return imageSize.success && imageSize.width > Locals.config().POST_IMAGE_WIDTH && imageSize.height > Locals.config().POST_IMAGE_HEIGHT;

@@ -14,6 +14,7 @@ import ExpressValidator from '../../../providers/ExpressValidation';
 import { articleService } from '../../../services/articleServices/articleServices';
 import mediaService from '../../../services/wordpress/MediaServices';
 import Locals from '../../../providers/Locals';
+import { IMediaServiceResponse } from '../../../interfaces/response/IServiceResponse';
 
 class Media {
     public static async create(req: IRequest, res: IResponse): Promise<any> {
@@ -46,7 +47,10 @@ class Media {
             if(type === 'subtitle') {
                 const subtitleImages = await articleServices.getMediaBySubtitleId(relatedId);
 
-                await Promise.all(subtitleImages.map(async (image) => await articleServices.deleteMedia(parseInt(image.id), parseInt(req.session.passport.user.id))))
+                await Promise.all(subtitleImages.map(async (image) => {
+                    await articleServices.deleteMedia(parseInt(image.id), parseInt(req.session.passport.user.id));
+                    await _mediaService.delete(parseInt(image.wpId), req.headers.authorization)
+                }))
                 
                 dbMedia = await articleServices.createMediaForSubtitle({
                     source_url: media.source_url,
@@ -57,7 +61,10 @@ class Media {
             }else if(type === 'article'){
                 const articleImages = await articleServices.getMediaByArticleId(relatedId);
 
-                await Promise.all(articleImages.map(async (image) => await articleServices.deleteMedia(parseInt(image.id), parseInt(req.session.passport.user.id))))
+                await Promise.all(articleImages.map(async (image) => {
+                    await articleServices.deleteMedia(parseInt(image.id), parseInt(req.session.passport.user.id));
+                    await _mediaService.delete(parseInt(image.wpId), req.headers.authorization)
+                }))
                 
                 dbMedia = await articleServices.createMediaForArticle({
                     source_url: media.source_url,
@@ -110,6 +117,35 @@ class Media {
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
             return new InternalErrorResponse('Update Media Controller Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
+    public static async deleteMedia(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            const errors = new ExpressValidator().validator(req);
+
+            if (!errors.isEmpty()) {
+                return new BadRequestResponse('Error', {
+                    errors: errors.array()
+                }).send(res);
+            }
+
+            let _mediaService: IMediaService = new mediaService();
+            const id = req.body.id
+
+            const media: IMediaServiceResponse = (await _mediaService.delete(id, req.headers.authorization))
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: media,
+                error: null
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Delete Media Controller Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }

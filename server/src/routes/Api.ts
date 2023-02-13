@@ -156,6 +156,13 @@ router.post(
     MediaController.updateMediaTitles
 );
 
+router.delete(
+    '/deleteImage',
+    body('id', 'field id cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    MediaController.deleteMedia
+);
+
 
 router.get(
     '/categoryList',

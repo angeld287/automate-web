@@ -41,5 +41,5 @@ export const isValidUrl = (urlString: string) => {
 }
 
 export const isValidImageUrl = (urlString: string) => {
-  return(urlString.match(/\.(jpeg|jpg|gif|png)$/) != null);
+  return(urlString.match(/\.(jpeg|jpg|gif|png|webp)$/) != null);
 }
