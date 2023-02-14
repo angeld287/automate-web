@@ -1,14 +1,16 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { IArticle, SubTitleContent } from '../../interfaces/models/Article';
+import IContent from '../../interfaces/models/Content';
 import { searchKeywordContent } from '../keyword/keywordAPI';
-import { getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
+import { createContentForArticle, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
 
 export interface ArticleState {
   article: IArticle;
   status: 'idle' | 'loading' | 'failed';
   statusKc: 'idle' | 'loading' | 'failed';
   statusTk: 'idle' | 'loading' | 'failed';
+  statusCC: 'idle' | 'loading' | 'failed';
   kewordsTranslated: boolean;
 }
 
@@ -26,6 +28,7 @@ const initialState: ArticleState = {
   status: 'idle',
   statusKc: 'idle',
   statusTk: 'idle',
+  statusCC: 'idle',
   kewordsTranslated: false,
 };
 
@@ -72,6 +75,19 @@ export const getArticleByInternalId = createAsyncThunk(
     try {    
       const result = await getArticleById(internalId);
       return result.data.response;
+    } catch (error) {
+      throw new Error('Error in ArticleState at getArticleByInternalId')
+    }
+  }
+);
+
+export const createArticleIntroAndConclusion = createAsyncThunk(
+  'article/createContent',
+  async (contents: Array<IContent>) => {
+    try {    
+      //const result = await createContentForArticle(content);
+      const result = await Promise.all(contents.map(async (paragraph) => (await createContentForArticle(paragraph)).data.response));
+      return result;
     } catch (error) {
       throw new Error('Error in ArticleState at getArticleByInternalId')
     }
@@ -136,6 +152,17 @@ export const articleSlice = createSlice({
       })
       .addCase(translateKeywords.rejected, (state) => {
         state.statusTk = 'failed';
+      })
+      .addCase(createArticleIntroAndConclusion.pending, (state) => {
+        state.statusCC = 'loading';
+      })
+      .addCase(createArticleIntroAndConclusion.fulfilled, (state, action: PayloadAction<Array<IContent>>) => {
+        state.statusCC = 'idle';
+        console.log(action.payload)
+        if(state.article.contents) state.article.contents = [...state.article.contents, ...action.payload];
+      })
+      .addCase(createArticleIntroAndConclusion.rejected, (state) => {
+        state.statusCC = 'failed';
       });
   },
 });

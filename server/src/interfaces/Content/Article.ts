@@ -8,8 +8,8 @@ export interface INewArticle {
     translatedTitle: string;
     subtitles: Array<SubTitleContent>;
     category: string;
-    introduction?: string;
     translatedContent?: string;
+    contents?: Array<IContent>;
     image?: DbMedia
     error?: boolean | ProcessError;
     createdBy: number;

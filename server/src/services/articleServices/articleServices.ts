@@ -148,7 +148,8 @@ export class articleService implements IArticleService {
 
             const subtitles: Array<SubTitleContent> = await this.getSubtitlesByArticleId(result.rows[0].id)
             const media: Array<DbMedia> = await this.getMediaByArticleId(result.rows[0].id);
-
+            const contents: Array<IContent> = await this.getContentByArticleId(result.rows[0].id);
+            
             const article: INewArticle = {
                 id: result.rows[0].id,
                 internalId: result.rows[0].internal_id,
@@ -157,6 +158,7 @@ export class articleService implements IArticleService {
                 category: result.rows[0].category,
                 subtitles: subtitles,
                 image: media[0],
+                contents,
                 createdBy: result.rows[0].created_by,
                 createdAt: result.rows[0].created_at,
             }
@@ -244,20 +246,20 @@ export class articleService implements IArticleService {
         }
     }
 
-    async createContextForArticle(content: IContent): Promise<IContent> {
+    async createContentForArticle(content: IContent): Promise<IContent> {
         const createContent = {
             name: 'create-new-content-for-article',
-            text: 'INSERT INTO public.contents(content, selected, content_language, articles_id) VALUES ($1, $2, $3, $4) RETURNING id, TRIM(content) as content, selected, content_language, articles_id, subtitles_id',
-            values: [content.content, content.selected, content.contentLanguage, content.articleId],
+            text: 'INSERT INTO public.contents(content, selected, content_language, articles_id, type, words_count) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, TRIM(content) as content, selected, content_language, articles_id, subtitles_id, link, order_number, words_count, type',
+            values: [content.content, content.selected, content.contentLanguage, content.articleId, content.type, content.wordsCount],
         }
 
         return await this.createContent(createContent);
     }
 
-    async createContextForSubtitle(content: IContent): Promise<IContent> {
+    async createContentForSubtitle(content: IContent): Promise<IContent> {
         const createContent = {
             name: 'create-new-content-for-subtitle',
-            text: 'INSERT INTO public.contents(content, selected, content_language, subtitles_id, link, order_number, words_count) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, TRIM(content) as content, selected, content_language, articles_id, subtitles_id, link, order_number, words_count',
+            text: 'INSERT INTO public.contents(content, selected, content_language, subtitles_id, link, order_number, words_count, type) VALUES ($1, $2, $3, $4, $5, $6, $7, "paragraph") RETURNING id, TRIM(content) as content, selected, content_language, articles_id, subtitles_id, link, order_number, words_count, type',
             values: [content.content, content.selected, content.contentLanguage, content.subtitleId, content.link, content.orderNumber, content.wordsCount],
         }
 
@@ -288,10 +290,51 @@ export class articleService implements IArticleService {
                 link: result.rows[0].link,
                 orderNumber: result.rows[0].order_number,
                 wordsCount: result.rows[0].words_count,
+                type: result.rows[0].type,
             }
             
             return _content;
             
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async getContentByArticleId(articleId: number): Promise<Array<IContent>> {
+        const getQuery = {
+            name: 'get-contents-by-articleid',
+            text:  `
+                SELECT id, selected, content_language, link, order_number, words_count, articles_id, deleted, deleted_by, deleted_at, TRIM(content) as content, type
+                FROM public.contents
+                WHERE deleted IS NOT true AND articles_id = $1
+            `,
+            values: [articleId]
+        };
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            if (result.rows.length === 0)
+                return []
+            
+            const contents: Array<IContent> = []
+
+            result.rows.forEach(row => {
+                contents.push({
+                    id: row.id,
+                    selected: row.selected,
+                    content: row.content,
+                    contentLanguage: row.content_language,
+                    link: row.link,
+                    orderNumber: row.order_number,
+                    wordsCount: row.words_count,
+                    articleId: row.article_id,
+                    type: row.type,
+                    deleted: row.deleted,
+                })
+            });
+            return contents;
         } catch (error) {
             throw new Error(error.message);
         }
@@ -326,6 +369,7 @@ export class articleService implements IArticleService {
                     link: row.link,
                     orderNumber: row.order_number,
                     wordsCount: row.words_count,
+                    subtitleId: row.subtitles_id,
                     deleted: row.deleted,
                 })
             });
@@ -379,7 +423,7 @@ export class articleService implements IArticleService {
                         selected: false,
                         content: `${enContent.content.charAt(0).toUpperCase()}${enContent.content.slice(1)}`
                     }
-                    savedContents.push(await this.createContextForSubtitle(content));
+                    savedContents.push(await this.createContentForSubtitle(content));
                 }));
 
                 await Promise.all(subtitle.content.map(async (_content: string | IContent) => {
@@ -390,7 +434,7 @@ export class articleService implements IArticleService {
                         selected: false,
                         content:  `${__content.charAt(0).toUpperCase()}${__content.slice(1)}`
                     }
-                    savedContents.push(await this.createContextForSubtitle(content));
+                    savedContents.push(await this.createContentForSubtitle(content));
                 }));
                 
             }));
@@ -417,13 +461,13 @@ export class articleService implements IArticleService {
             let savedContents: Array<IContent> = []
             await Promise.all(enContent.map(async (enContent: IContent) => {
                 if(enContent.content.length < Locals.config().MAX_PARAGRAPH_LENGTH){
-                    savedContents.push(await this.createContextForSubtitle(enContent));    
+                    savedContents.push(await this.createContentForSubtitle(enContent));    
                 }
             }));
 
             await Promise.all(content.map(async (_content: IContent) => {
                 if(_content.content.length < Locals.config().MAX_PARAGRAPH_LENGTH){
-                    savedContents.push(await this.createContextForSubtitle(_content));
+                    savedContents.push(await this.createContentForSubtitle(_content));
                 }
             }));
                 
@@ -505,7 +549,7 @@ export class articleService implements IArticleService {
             const _contents: Array<IContent> = []
             await Promise.all(contents.map(async (content: IContent) => {
                 if(content.content.length < 1900){
-                    _contents.push(await this.createContextForSubtitle(content));
+                    _contents.push(await this.createContentForSubtitle(content));
                 }
             }));
 

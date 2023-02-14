@@ -1,26 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Avatar, Col, List, Row, Skeleton } from "antd";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { getArticleByInternalId, selectArticle } from "../../../features/article/articleSlice"
-import Paragraph from "../Paragraph";
 import { useParams } from "react-router-dom";
 import SearchKeywordsStepper from "../../../Components/App/SearchKeywordsStepper";
 import CustomLoader from "../../../Components/CustomLoader";
 import CustomButton from "../../../Components/CustomButton";
-import { EditOutlined, FileImageOutlined } from "@ant-design/icons";
+import { ContainerOutlined, EditOutlined, FileImageOutlined, FileTextOutlined } from "@ant-design/icons";
 import AddImage from "../../../Components/App/AddImage";
 import './article.css'
 import { SubTitleContent } from "../../../interfaces/models/Article";
 import Locals from "../../../config/Locals";
 import { selectMedia } from "../../../features/media/mediaSlice";
 import { updateSubtitle } from "../../../features/article/articleSlice";
+import AddIntroAndConclusion from "../../../Components/App/AddIntroAndConclusion";
 
 const ContentEditor = () => {
 
     const [open, setOpen] = useState(true);
     const [addImageModal, openAddImageModal] = useState(false);
+    const [addContentModal, openAddContentModal] = useState(false);
     const [selectedItem, setSelectedItem] = useState<SubTitleContent>();
     const [imageType, setImageType ] = useState<'subtitle' | 'article'>('subtitle');
+    const [contentType, setContentType ] = useState<'introduction' | 'conclusion'>('introduction');
     const media = useAppSelector(selectMedia);
 
     let { id } = useParams();
@@ -53,11 +55,15 @@ const ContentEditor = () => {
     const onNext = () => {}
     const loading = article.status === 'loading';
 
+    const allSubtitlesCompleted = useMemo(() => article.article.subtitles.filter(subtitle => subtitle.content?.find(cont => cont.selected)).length === article.article.subtitles.length, [article]);
+
     if(loading && article.article.subtitles.length === 0) return <CustomLoader/>
 
     return <>
         <Row>
             <Col style={{margin: 10}}><CustomButton onClick={() => { setOpen(true)}}>Edit Content<EditOutlined /></CustomButton></Col>
+            <Col style={{margin: 10}}><CustomButton disabled={!allSubtitlesCompleted} onClick={() => { openAddContentModal(true); setContentType('introduction');}}>Add Introduction<FileTextOutlined /></CustomButton></Col>
+            <Col style={{margin: 10}}><CustomButton disabled={!allSubtitlesCompleted} onClick={() => { openAddContentModal(true); setContentType('conclusion');}}>Add Conclusion<ContainerOutlined /></CustomButton></Col>
         </Row>
         <Row className="">
             <Col>
@@ -112,6 +118,15 @@ const ContentEditor = () => {
             title={selectedItem? selectedItem.name: ""} 
             type={imageType} 
             relatedId={selectedItem ? selectedItem.id: 0}
+        />
+        <AddIntroAndConclusion
+            open={addContentModal} 
+            setOpen={openAddContentModal} 
+            title={article.article.title}
+            articleId={article.article.internalId}
+            type={contentType}
+            image={article.article.image?.source_url}
+            contents={article.article.contents}
         />
     </>;
 }

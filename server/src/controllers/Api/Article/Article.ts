@@ -193,29 +193,20 @@ class Article {
             if(ValidateErrors.validate(req, res) !== true) return
 
             let _articleService: IArticleService = new articleService();
-            
-            const _content = req.body.content;
-            const selected = req.body.selected;
-            const contentLanguage = req.body.contentLanguage;
-            const articleId = req.body.articleId;
-            
 
-            let content: IContent = {
-                content: _content,
-                selected,
-                contentLanguage,
-                articleId
-            };
+            let content: IContent = req.body.content
 
-            const article: INewArticle | false = await _articleService.getArticleById(articleId)
+            const article: INewArticle | false = await _articleService.getArticleById(content.articleId)
 
             if(!article){
                 return new BadRequestResponse('Error', {
                     error: "The article does not exist."
                 }).send(res);
             }
+
+            content.articleId = article.id;
             
-            content = await _articleService.createContextForArticle(content);
+            content = await _articleService.createContentForArticle(content);
 
             return new SuccessResponse('Success', {
                 success: true,
@@ -265,7 +256,7 @@ class Article {
 
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('Create Content - Article Controller Error', {
+            return new InternalErrorResponse('Create Content for subttle - Article Controller Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }

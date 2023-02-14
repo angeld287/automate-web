@@ -8,7 +8,7 @@ export interface IArticle {
     translatedTitle?: string;
     subtitles: Array<SubTitleContent>;
     category?: string;
-    content?: string;
+    contents?: Array<IContent>;
     translatedContent?: string;
     image?: DbMedia;
     error?: boolean | ProcessError

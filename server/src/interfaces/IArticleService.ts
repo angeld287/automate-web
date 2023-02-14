@@ -14,9 +14,9 @@ export interface IArticleService {
 
     getSubtitleById(subtitleId: number): Promise<SubTitleContent | false>
 
-    createContextForArticle(content: IContent): Promise<IContent>;
+    createContentForArticle(content: IContent): Promise<IContent>;
 
-    createContextForSubtitle(content: IContent): Promise<IContent>;
+    createContentForSubtitle(content: IContent): Promise<IContent>;
 
     saveArticleAfterTranslateKeywords(article: INewArticle): Promise<INewArticle>;
 

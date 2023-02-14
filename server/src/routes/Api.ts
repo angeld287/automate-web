@@ -225,9 +225,6 @@ router.get(
 router.post(
     '/createArticleContent',
     body('content', 'field content cannot be blank.').notEmpty(),
-    body('selected', 'field selected cannot be blank.').notEmpty(),
-    body('contentLanguage', 'field contentLanguage cannot be blank.').notEmpty(),
-    body('articleId', 'field articleId cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     ArticleController.createContentForArticle
 );
