@@ -40,7 +40,7 @@ export async function getTranslatedKeywords(article: IArticle) {
   return await fetchData.json();
 }
 
-export async function createContentForArticle(content: IContent) {
+export async function createContentForArticle(content: Array<IContent>) {
   const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}createArticleContent`, {
     method: "POST",
     credentials: 'include',

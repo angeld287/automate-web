@@ -101,7 +101,7 @@ export const keywordSlice = createSlice({
         const { content } = subtitle;
         const existingContent = content ? content : []
         state.createUpdateStatus = 'idle';
-        state.subtitle.content = [...existingContent, ...action.payload];
+        state.subtitle.content = [...existingContent.filter(content => !content.selected), ...action.payload];
       })
       .addCase(crateKeywordContent.rejected, (state) => {
         state.createUpdateStatus = 'failed';

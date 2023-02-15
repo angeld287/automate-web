@@ -26,17 +26,22 @@ const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({open, setOpen,
 
     useEffect(() => {
         const blocks = convertToRaw(editorState.getCurrentContent()).blocks;
-        const finalContents: Array<IContent> = blocks.map((block): IContent => ({
-            content: block.text,
-            contentLanguage: Languages.SPANISH,
-            selected: true,
-            articleId,
-            wordsCount: block.text.split(" ").length,
-            type, 
-        })).filter(block => block.content !== "");
+        
+        const finalContents: Array<IContent> = blocks.map((block): IContent => {
+            const id = contents?.find(cont => cont.content === block.text && cont.selected)?.id
+            return ({
+                content: block.text,
+                contentLanguage: Languages.SPANISH,
+                selected: true,
+                articleId,
+                wordsCount: block.text.split(" ").length,
+                type, 
+                id,
+            })
+        }).filter(block => block.content !== "");
 
         setParagraph(finalContents);
-    }, [editorState, articleId, type]);
+    }, [editorState, articleId, type, contents]);
 
     useEffect(() => {
         populateContent()

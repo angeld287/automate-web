@@ -194,23 +194,31 @@ class Article {
 
             let _articleService: IArticleService = new articleService();
 
-            let content: IContent = req.body.content
+            let contents: Array<IContent> = req.body.content
+            const articleId = contents[0].articleId;
 
-            const article: INewArticle | false = await _articleService.getArticleById(content.articleId)
+            const article: INewArticle | false = await _articleService.getArticleById(articleId)
 
             if(!article){
                 return new BadRequestResponse('Error', {
                     error: "The article does not exist."
                 }).send(res);
             }
-
-            content.articleId = article.id;
             
-            content = await _articleService.createContentForArticle(content);
+            const userId = req.session.passport.user.id;
+            const existingContent: Array<IContent> = (await _articleService.getIntroSelectedContent(article.id)).filter(content => content.type.trim() === contents[0].type.trim());
+
+            if(existingContent.length > 0){
+                await _articleService.deleteKeywordSelectedContent(existingContent, parseInt(userId));
+            }
+
+            contents = contents.map(content => ({...content, articleId: article.id}))
+
+            const createdContents = await _articleService.saveKeywordNewSelectedContent(contents);
 
             return new SuccessResponse('Success', {
                 success: true,
-                response: content,
+                response: createdContents,
                 error: null
             }).send(res);
 

@@ -259,7 +259,7 @@ export class articleService implements IArticleService {
     async createContentForSubtitle(content: IContent): Promise<IContent> {
         const createContent = {
             name: 'create-new-content-for-subtitle',
-            text: 'INSERT INTO public.contents(content, selected, content_language, subtitles_id, link, order_number, words_count, type) VALUES ($1, $2, $3, $4, $5, $6, $7, "paragraph") RETURNING id, TRIM(content) as content, selected, content_language, articles_id, subtitles_id, link, order_number, words_count, type',
+            text: `INSERT INTO public.contents(content, selected, content_language, subtitles_id, link, order_number, words_count, type) VALUES ($1, $2, $3, $4, $5, $6, $7, 'paragraph') RETURNING id, TRIM(content) as content, selected, content_language, articles_id, subtitles_id, link, order_number, words_count, type`,
             values: [content.content, content.selected, content.contentLanguage, content.subtitleId, content.link, content.orderNumber, content.wordsCount],
         }
 
@@ -295,6 +295,40 @@ export class articleService implements IArticleService {
             
             return _content;
             
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async getContentById(contentId: number): Promise<IContent | false> {
+        const getQuery = {
+            name: 'get-content-by-id',
+            text: `SELECT id, TRIM(content) as content, selected, content_language, subtitles_id, articles_id, deleted, link, order_number, words_count, type FROM public.contents where id = $1`,
+            values: [contentId],
+        }
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            if (result.rows.length === 0)
+                return false
+            
+            const content: IContent = {
+                id: result.rows[0].id,
+                content: result.rows[0].content,
+                selected: result.rows[0].selected,
+                contentLanguage: result.rows[0].content_language,
+                subtitleId: result.rows[0].subtitles_id,
+                articleId: result.rows[0].articles_id,
+                deleted: result.rows[0].deleted,
+                link: result.rows[0].link,
+                orderNumber: result.rows[0].order_number,
+                wordsCount: result.rows[0].words_count,
+                type: result.rows[0].type,
+            }
+
+            return content;
         } catch (error) {
             throw new Error(error.message);
         }
@@ -509,16 +543,44 @@ export class articleService implements IArticleService {
             const queryParams = {
                 name: 'get-keyword-selected-content',
                 text:  `
-                    SELECT id, content_language, selected, TRIM(content) as content, deleted
+                    SELECT id, content_language, selected, TRIM(content) as content, deleted, subtitles_id, type, words_count
                     FROM public.contents
                     WHERE deleted IS NOT true AND selected = true AND subtitles_id = $1 
                 `,
                 values: [subtitleId]
             };
 
+            return this.getSelectedContent(queryParams);
+            
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async getIntroSelectedContent(articleId: number): Promise<Array<IContent>>{
+        try {
+            const queryParams = {
+                name: 'get-keyword-selected-content',
+                text:  `
+                    SELECT id, content_language, selected, TRIM(content) as content, deleted, articles_id, type, words_count, subtitles_id, order_number
+                    FROM public.contents
+                    WHERE deleted IS NOT true AND selected = true AND articles_id = $1 
+                `,
+                values: [articleId]
+            };
+
+            return this.getSelectedContent(queryParams);
+            
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async getSelectedContent(query: Query): Promise<Array<IContent>>{
+        try {
             let result = null;
             try {
-                result = await Database.sqlToDB(queryParams);
+                result = await Database.sqlToDB(query);
                 
                 if (result.rows.length === 0)
                     return []
@@ -532,6 +594,10 @@ export class articleService implements IArticleService {
                         content: row.content,
                         contentLanguage: row.content_language,
                         deleted: row.deleted,
+                        type: row.type,
+                        articleId: row.articles_id,
+                        subtitleId: row.subtitles_id,
+                        orderNumber: row.order_number,
                     })
                 });
                 return contents;
@@ -549,7 +615,11 @@ export class articleService implements IArticleService {
             const _contents: Array<IContent> = []
             await Promise.all(contents.map(async (content: IContent) => {
                 if(content.content.length < 1900){
-                    _contents.push(await this.createContentForSubtitle(content));
+                    if(content.type === "paragraph"){
+                        _contents.push(await this.createContentForSubtitle(content));
+                    }else if(content.type === "conclusion" || content.type === "introduction"){
+                        _contents.push(await this.createContentForArticle(content));
+                    }
                 }
             }));
 

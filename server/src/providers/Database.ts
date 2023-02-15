@@ -64,10 +64,10 @@ class Database {
         Log.info(`sqlExecSingleRow()`);
         try {
             let result = await client.query(inputObject);
-            Log.info(`sqlExecSingleRow(): ${result.command} | ${result.rowCount}`);
+            Log.info(`${inputObject.name} - sqlExecSingleRow(): ${result.command} | ${result.rowCount}`);
             return result
         } catch (error) {
-            Log.error(`sqlExecSingleRow() error: ${error.message} | sql: ${inputObject.text} | data: ${inputObject.data}`);
+            Log.error(`${inputObject.name} - sqlExecSingleRow() error: ${error.message} | sql: ${inputObject.text} | data: ${inputObject.data}`);
             throw new Error(error.message);
         }
     }
@@ -83,11 +83,11 @@ class Database {
         if (inputObject.listData.length > 0) {
             for (let item of inputObject.listData) {
                 try {
-                    Log.info(`sqlExecMultipleRows() item: ${item}`);
-                    Log.info(`sqlExecMultipleRows() sql: ${inputObject.text}`);
+                    Log.info(`${inputObject.name} - sqlExecMultipleRows() item: ${item}`);
+                    Log.info(`${inputObject.name} - sqlExecMultipleRows() sql: ${inputObject.text}`);
                     await client.query(inputObject.text, item);
                 } catch (error) {
-                    Log.error(`sqlExecMultipleRows() error: ${error.message}`);
+                    Log.error(`${inputObject.name} - sqlExecMultipleRows() error: ${error.message}`);
                     throw new Error(error.message);
                 }
             }

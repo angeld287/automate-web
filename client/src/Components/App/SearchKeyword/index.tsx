@@ -27,16 +27,21 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
 
     useEffect(() => {
         const blocks = convertToRaw(editorState.getCurrentContent()).blocks;
-        const finalContents: Array<IContent> = blocks.map((block): IContent => ({
-            content: block.text,
-            contentLanguage: Languages.SPANISH,
-            selected: true,
-            subtitleId: subtitle?.id,
-            wordsCount: block.text.split(" ").length,
-        })).filter(block => block.content !== "");
+        const finalContents: Array<IContent> = blocks.map((block): IContent => {
+            const id = keyword.subtitle.content?.find(cont => cont.content === block.text && cont.selected)?.id
+            return ({
+                content: block.text,
+                contentLanguage: Languages.SPANISH,
+                selected: true,
+                subtitleId: subtitle?.id,
+                wordsCount: block.text.split(" ").length,
+                id,
+                type: 'paragraph',
+            })
+        }).filter(block => block.content !== "");
 
         dispatch(setFinalParagraphs(finalContents));
-    }, [editorState, subtitle]);
+    }, [editorState, subtitle, keyword.subtitle.content]);
 
     useEffect(() => {
         if(subtitle) dispatch(getKeywordById(subtitle));

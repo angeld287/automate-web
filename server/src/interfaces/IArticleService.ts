@@ -28,6 +28,8 @@ export interface IArticleService {
 
     getKeywordSelectedContent(subtitleId: number): Promise<Array<IContent>>;
 
+    getIntroSelectedContent(articleId: number): Promise<Array<IContent>>
+
     saveKeywordNewSelectedContent(contents: Array<IContent>): Promise<Array<IContent>>;
 
     createMediaForArticle(media: DbMedia): Promise<DbMedia>;

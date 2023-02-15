@@ -85,9 +85,8 @@ export const createArticleIntroAndConclusion = createAsyncThunk(
   'article/createContent',
   async (contents: Array<IContent>) => {
     try {    
-      //const result = await createContentForArticle(content);
-      const result = await Promise.all(contents.map(async (paragraph) => (await createContentForArticle(paragraph)).data.response));
-      return result;
+      const result = await createContentForArticle(contents);
+      return result.data.response;
     } catch (error) {
       throw new Error('Error in ArticleState at getArticleByInternalId')
     }
