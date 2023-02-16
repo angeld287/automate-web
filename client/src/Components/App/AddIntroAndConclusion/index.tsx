@@ -1,7 +1,7 @@
 import { CloseCircleOutlined } from "@ant-design/icons";
 import { Col, Input, Row, Tag } from "antd";
 import { Editor } from "react-draft-wysiwyg";
-import { ContentState, convertFromHTML, convertToRaw, EditorState } from "draft-js";
+import { ContentState, convertFromHTML, convertToRaw, EditorState, RawDraftContentBlock } from "draft-js";
 import React, { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { createMedia, selectMedia } from "../../../features/media/mediaSlice";
@@ -27,10 +27,11 @@ const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({open, setOpen,
     useEffect(() => {
         const blocks = convertToRaw(editorState.getCurrentContent()).blocks;
         
-        const finalContents: Array<IContent> = blocks.map((block): IContent => {
+        const finalContents: Array<IContent> = blocks.map((block: RawDraftContentBlock, index): IContent => {
             const id = contents?.find(cont => cont.content === block.text && cont.selected)?.id
             return ({
                 content: block.text,
+                orderNumber: (index + 1),
                 contentLanguage: Languages.SPANISH,
                 selected: true,
                 articleId,
@@ -48,7 +49,7 @@ const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({open, setOpen,
     }, [type]);
 
     const populateContent = useCallback(() => {
-        const selectedContent = contents ? contents.filter(cont => cont.type && cont.type.trim() === type): [];
+        const selectedContent = contents ? contents.filter(cont => cont.type && cont.type.trim() === type).sort((cA, cB) => (cA.orderNumber && cB.orderNumber ? cA.orderNumber < cB.orderNumber ? -1 : 1 : -1)) : [];
         const stringContent: string = `<p>${selectedContent.map(content => content.content).join("</p><p>")}</p>`
         setEditorState(() => 
             EditorState.createWithContent(

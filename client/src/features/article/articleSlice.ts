@@ -157,7 +157,6 @@ export const articleSlice = createSlice({
       })
       .addCase(createArticleIntroAndConclusion.fulfilled, (state, action: PayloadAction<Array<IContent>>) => {
         state.statusCC = 'idle';
-        console.log(action.payload)
         if(state.article.contents) state.article.contents = [...state.article.contents, ...action.payload];
       })
       .addCase(createArticleIntroAndConclusion.rejected, (state) => {

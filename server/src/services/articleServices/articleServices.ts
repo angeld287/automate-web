@@ -249,8 +249,8 @@ export class articleService implements IArticleService {
     async createContentForArticle(content: IContent): Promise<IContent> {
         const createContent = {
             name: 'create-new-content-for-article',
-            text: 'INSERT INTO public.contents(content, selected, content_language, articles_id, type, words_count) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, TRIM(content) as content, selected, content_language, articles_id, subtitles_id, link, order_number, words_count, type',
-            values: [content.content, content.selected, content.contentLanguage, content.articleId, content.type, content.wordsCount],
+            text: 'INSERT INTO public.contents(content, selected, content_language, articles_id, type, words_count, order_number) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, TRIM(content) as content, selected, content_language, articles_id, subtitles_id, link, order_number, words_count, type',
+            values: [content.content, content.selected, content.contentLanguage, content.articleId, content.type, content.wordsCount, content.orderNumber],
         }
 
         return await this.createContent(createContent);

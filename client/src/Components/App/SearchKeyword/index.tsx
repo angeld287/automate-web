@@ -4,7 +4,7 @@ import { getKeywordById, getKeywordContent, selectKeyword, setFinalParagraphs, s
 import CustomLoader from "../../CustomLoader";
 import ISearchKeyword from "./ISearchKeyword";
 import { Editor } from "react-draft-wysiwyg";
-import { EditorState, convertToRaw, ContentState, convertFromHTML } from 'draft-js';
+import { EditorState, convertToRaw, ContentState, convertFromHTML, RawDraftContentBlock } from 'draft-js';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { List, Popover, Row, Typography } from "antd";
 import IContent from "../../../interfaces/models/Content";
@@ -27,10 +27,11 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
 
     useEffect(() => {
         const blocks = convertToRaw(editorState.getCurrentContent()).blocks;
-        const finalContents: Array<IContent> = blocks.map((block): IContent => {
+        const finalContents: Array<IContent> = blocks.map((block: RawDraftContentBlock, index): IContent => {
             const id = keyword.subtitle.content?.find(cont => cont.content === block.text && cont.selected)?.id
             return ({
                 content: block.text,
+                orderNumber: (index + 1),
                 contentLanguage: Languages.SPANISH,
                 selected: true,
                 subtitleId: subtitle?.id,
@@ -48,8 +49,7 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
     }, [subtitle])
 
     useEffect(() => {
-        const selectedContent = keyword.subtitle.content ? keyword.subtitle.content?.filter(cont => cont.selected): [];
-
+        const selectedContent = keyword.subtitle.content ? keyword.subtitle.content?.filter(cont => cont.selected).sort((cA, cB) => (cA.orderNumber && cB.orderNumber ? cA.orderNumber < cB.orderNumber ? -1 : 1 : -1)) : [];
         const stringContent: string = `<p>${selectedContent.map(content => content.content).join("</p><p>")}</p>`
         setEditorState(() => 
             EditorState.createWithContent(
