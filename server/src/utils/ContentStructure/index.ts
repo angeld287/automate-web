@@ -1,32 +1,45 @@
 import { INewArticle } from '../../interfaces/Content/Article';
+import IContent from '../../interfaces/models/Content';
 
-const createContent = (article: INewArticle) => {
+const createContent = (article: INewArticle): string => {
     //\n
     //Post Principal Image
     //\n\n\n\n
     //Space Block
     //\n\n\n\n
     //Introduction
+    const intro: string = createParagraph(article.contents.filter(content => content.type.trim() === 'introduction'))
     //\n\n\n\n
     //Table Content
     //\n
-    //Subtitle
-    //\n\n\n\n
-    //Subtitle Image (if have)
-    //\n\n\n\n
-    //Paragraph
-    //\n\n\n\n
+
+    const body: string = article.subtitles.map(subtitleObj => {
+        //Subtitle
+        const subtitle: string = createSubtitle(subtitleObj.name)
+        //\n\n\n\n
+        //Subtitle Image (if have)
+        const image: string = createImageConteiner(subtitleObj.image.source_url, subtitleObj.name);
+        //\n\n\n\n
+        //Paragraph
+        const paragraph: string = createParagraph(subtitleObj.content.filter(content => content.selected))
+        //\n\n\n\n
+
+        return `${subtitle}${image}${paragraph}`
+    }).join();
+
     //Conclusion Paragraph
+    const conclusion: string = createParagraph(article.contents.filter(content => content.type.trim() === 'conclusion'))
     //\n\n\n\n
     //goodbyes and thanks
+    return `${intro}${body}${conclusion}`;
 }
 
-const createSubtitle = (subtitle: string) => {
+const createSubtitle = (subtitle: string): string => {
     return `<h2><span class=\"ez-toc-section\" id=\"${subtitle.replace(" ", "-")}\"></span>${subtitle}<span class=\"ez-toc-section-end\"></span></h2>`
 }
 
-const createParagraph = (paragraph: string) => {
-    return `<p>${paragraph}</p>`
+const createParagraph = (paragraphs: Array<IContent>): string => {
+    return paragraphs.map(paragraph => `<p>${paragraph.content}</p>`).join('');
 }
 
 const createTable = (postUrl: string, subtitles: Array<string>) => {
@@ -40,7 +53,7 @@ const createTableList = (postUrl: string, subtitles: Array<string>) => {
 }
 
 const createImageConteiner = (imageUrl: string, subtitle: string) => {
-    return `<div class="wp-block-image"><figure class="aligncenter size-full">${createImage(imageUrl, subtitle)}<figcaption>${subtitle}</figcaption></figure></div>`
+    return `<div class="wp-block-image"><figure class="aligncenter size-full">${createImage(imageUrl.trim(), subtitle.trim())}<figcaption>${subtitle.trim()}</figcaption></figure></div>`
 }
 
 const createImage = (imageUrl: string, subtitle: string) => {
@@ -50,3 +63,5 @@ const createImage = (imageUrl: string, subtitle: string) => {
 const createSpacer = () => {
     return `<div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>`
 }
+
+export default createContent;

@@ -1,3 +1,4 @@
+import { INewArticle } from "../../interfaces/Content/Article";
 import Post from "../../interfaces/models/Post";
 import { IPostService } from "../../interfaces/wordpress/IPostService";
 import Locals from "../../providers/Locals";

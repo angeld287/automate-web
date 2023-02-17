@@ -16,6 +16,7 @@ import { ICategoryService } from '../../../interfaces/wordpress/ICategoryService
 import CategoryService from '../../../services/wordpress/categoryServices';
 import { INewArticle } from '../../../interfaces/Content/Article';
 import Category from '../../../interfaces/models/Category';
+import createContent from '../../../utils/ContentStructure';
 
 class Post {
     public static async create(req: IRequest, res: IResponse): Promise<any> {
@@ -33,24 +34,24 @@ class Post {
 
             const article: INewArticle = req.body.article as INewArticle;
             const title: string = article.title;
-            const content: any = 'post content in wordpress';
+            const content: string = createContent(article);
             const bodyCategory: string = article.category;
             
-            const category: Category = (await categoryService.getList()).find(category => category.name.toLowerCase() === bodyCategory.toLowerCase())
+            //const category: Category = (await categoryService.getList()).find(category => category.name.toLowerCase() === bodyCategory.toLowerCase())
 
-            if (!category){
-                return new BadRequestResponse('Error', {
-                    error: true,
-                    message: 'The category does not exist.',
-                }).send(res);
-            }
+            //if (!category){
+            //    return new BadRequestResponse('Error', {
+            //        error: true,
+            //        message: 'The category does not exist.',
+            //    }).send(res);
+            //}
 
             const post: IPost = {
                 slug: article.title.replace(" ", "_"),
                 status: "DRAFT",
                 title: article.title,
                 content: content,
-                categories: [category.id],
+                categories: [0],
             };
 
             const created = true//await postService.create(post)

@@ -1,4 +1,4 @@
-import { Post } from "../models/Post";
+import Post from "../models/Post";
 
 export interface IPostService {
     getList(): Promise<Array<Post>>;
