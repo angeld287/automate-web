@@ -41,8 +41,8 @@ class Locals {
         const MIN_CHARACTERS_LENGTH = 680;
 
         //wordpress site configuration
-        const wordpressDomain = "elaceite.de"
-        const WP_JSON_URL = `https://${wordpressDomain}/wp-json`
+        const WP_DOMAIN = "elaceite.de"
+        const WP_JSON_URL = `https://${WP_DOMAIN}/wp-json`
         const wordpressUrl = `${WP_JSON_URL}/wp/v2/`
         const WORDPRESS_USER = process.env.WORDPRESS_USER || "admin"
         const WORDPRESS_USER_PASSWORD = process.env.WORDPRESS_USER_PASSWORD || "admin"
@@ -71,6 +71,7 @@ class Locals {
 
 
         return {
+            WP_DOMAIN,
             apiPrefix,
             appSecret,
             port,
