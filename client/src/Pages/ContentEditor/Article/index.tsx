@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Avatar, Col, List, Row, Skeleton } from "antd";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { getArticleByInternalId, selectArticle } from "../../../features/article/articleSlice"
+import { createWpPost, getArticleByInternalId, selectArticle } from "../../../features/article/articleSlice"
 import { useParams } from "react-router-dom";
 import SearchKeywordsStepper from "../../../Components/App/SearchKeywordsStepper";
 import CustomLoader from "../../../Components/CustomLoader";
@@ -56,6 +56,7 @@ const ContentEditor = () => {
     const loading = article.status === 'loading';
 
     const allSubtitlesCompleted = useMemo(() => article.article.subtitles.filter(subtitle => subtitle.content?.find(cont => cont.selected)).length === article.article.subtitles.length, [article]);
+    const IntroAndConclusionCompleted = useMemo(() => article.article.contents?.filter(content => (content.type === 'conclusion' || content.type === 'introduction')).length !== 0 , [article]);
 
     if(loading && article.article.subtitles.length === 0) return <CustomLoader/>
 
@@ -64,6 +65,7 @@ const ContentEditor = () => {
             <Col style={{margin: 10}}><CustomButton onClick={() => { setOpen(true)}}>Edit Content<EditOutlined /></CustomButton></Col>
             <Col style={{margin: 10}}><CustomButton disabled={!allSubtitlesCompleted} onClick={() => { openAddContentModal(true); setContentType('introduction');}}>Add Introduction<FileTextOutlined /></CustomButton></Col>
             <Col style={{margin: 10}}><CustomButton disabled={!allSubtitlesCompleted} onClick={() => { openAddContentModal(true); setContentType('conclusion');}}>Add Conclusion<ContainerOutlined /></CustomButton></Col>
+            <Col style={{margin: 10}}><CustomButton disabled={!IntroAndConclusionCompleted} onClick={() => { dispatch(createWpPost(article.article)); }}>Create WP Article<ContainerOutlined /></CustomButton></Col>
         </Row>
         <Row className="">
             <Col>

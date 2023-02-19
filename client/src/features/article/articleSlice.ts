@@ -3,7 +3,7 @@ import { RootState } from '../../app/store';
 import { IArticle, SubTitleContent } from '../../interfaces/models/Article';
 import IContent from '../../interfaces/models/Content';
 import { searchKeywordContent } from '../keyword/keywordAPI';
-import { createContentForArticle, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
+import { createContentForArticle, createPost, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
 
 export interface ArticleState {
   article: IArticle;
@@ -11,6 +11,7 @@ export interface ArticleState {
   statusKc: 'idle' | 'loading' | 'failed';
   statusTk: 'idle' | 'loading' | 'failed';
   statusCC: 'idle' | 'loading' | 'failed';
+  statusCP: 'idle' | 'loading' | 'failed';
   kewordsTranslated: boolean;
 }
 
@@ -29,6 +30,7 @@ const initialState: ArticleState = {
   statusKc: 'idle',
   statusTk: 'idle',
   statusCC: 'idle',
+  statusCP: 'idle',
   kewordsTranslated: false,
 };
 
@@ -88,10 +90,23 @@ export const createArticleIntroAndConclusion = createAsyncThunk(
       const result = await createContentForArticle(contents);
       return result.data.response;
     } catch (error) {
-      throw new Error('Error in ArticleState at getArticleByInternalId')
+      throw new Error('Error in ArticleState at createArticleIntroAndConclusion')
     }
   }
 );
+
+export const createWpPost = createAsyncThunk(
+  'article/createWpPost',
+  async (article: IArticle) => {
+    try {    
+      const result = await createPost(article);
+      return result.data.response;
+    } catch (error) {
+      throw new Error('Error in ArticleState at createWpPost')
+    }
+  }
+);
+
 
 export const articleSlice = createSlice({
   name: 'article',
@@ -161,6 +176,15 @@ export const articleSlice = createSlice({
       })
       .addCase(createArticleIntroAndConclusion.rejected, (state) => {
         state.statusCC = 'failed';
+      })
+      .addCase(createWpPost.pending, (state) => {
+        state.statusCP = 'loading';
+      })
+      .addCase(createWpPost.fulfilled, (state, action: PayloadAction<IArticle>) => {
+        state.statusCP = 'idle';
+      })
+      .addCase(createWpPost.rejected, (state) => {
+        state.statusCP = 'failed';
       });
   },
 });

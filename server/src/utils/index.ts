@@ -14,4 +14,6 @@ const delay = (delayInms) => {
     });
 }
 
+export const replaceSpace = (text: string): string => text.replace(/(?: )/g, '_')
+
 export { _fetch as fetch, _axios as axios, delay, readFileSync, createWriteStream, downloadImage, _sharp as sharp, _imagesize as imagesize, addMedia };

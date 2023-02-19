@@ -52,3 +52,16 @@ export async function createContentForArticle(content: Array<IContent>) {
 
   return await fetchData.json();
 }
+
+export async function createPost(article: IArticle) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}createPost`, {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({article})
+  })
+
+  return await fetchData.json();
+}
