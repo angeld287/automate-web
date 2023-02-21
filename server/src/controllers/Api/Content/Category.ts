@@ -32,7 +32,7 @@ class Category {
                 slug: name.replace(" ", "_").toLowerCase(),
             };
 
-            category = await _categoryService.create(category, req.headers.authorization)
+            category = await _categoryService.createNF(category, req.headers.authorization)
 
             return new SuccessResponse('Success', {
                 success: true,

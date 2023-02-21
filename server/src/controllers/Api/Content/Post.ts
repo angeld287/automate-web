@@ -52,7 +52,7 @@ class Post {
                 status: "draft",
                 title: article.title,
                 content: content,
-                categories: [0],
+                categories: [category.id],
             };
 
             const created = await postService.createNf(post, req.headers.authorization)

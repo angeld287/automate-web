@@ -26,6 +26,21 @@ export default class categoryService implements ICategoryService {
         return result;
     }
 
+    async createNF(category: Category, token: string): Promise<any> {
+        category.meta = []
+        category.parent = 0
+        const result = await fetch(`${Locals.config().wordpressUrl}categories`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token,
+                'cache-control': 'no-cache',
+            },
+            body: JSON.stringify(category)
+        });
+        return result;
+    }
+
     async update(category: Category, token: string): Promise<any> {
         const result = await axios({
             url: `${Locals.config().wordpressUrl}categories/${category.id}`,
