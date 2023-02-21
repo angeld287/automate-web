@@ -55,7 +55,7 @@ class Post {
                 categories: [0],
             };
 
-            const created = await postService.createNf(post)
+            const created = await postService.createNf(post, req.headers.authorization)
 
             return new SuccessResponse('Success', {
                 post: created,

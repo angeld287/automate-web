@@ -11,25 +11,27 @@ export default class postService implements IPostService {
         return await response.json();
     }
 
-    async create(post: Post): Promise<Post> {
+    async create(post: Post, token: string): Promise<Post> {
         const result = await axios({
             url: `${Locals.config().wordpressUrl}/posts`,
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': token,
             },
             body: JSON.stringify(post)
         });
         return result;
     }
 
-    async createNf(post: Post): Promise<Post> {
+    async createNf(post: Post, token: string): Promise<Post> {
         const result = await fetch(`${Locals.config().wordpressUrl}posts`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': token,
             },
             body: JSON.stringify(post)
         });
