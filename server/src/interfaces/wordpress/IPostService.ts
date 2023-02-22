@@ -5,5 +5,5 @@ export interface IPostService {
 
     create(post: Post, token: string): Promise<Post>;
 
-    createNf(post: Post, token: string): Promise<Post>;
+    createNf(post: Post, token: string): Promise<Post | false>;
 }

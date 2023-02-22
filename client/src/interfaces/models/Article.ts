@@ -4,6 +4,7 @@ import { DbMedia } from "./Media";
 export interface IArticle {
     id: number;
     internalId: number;
+    wpId?: number;
     title: string;
     translatedTitle?: string;
     subtitles: Array<SubTitleContent>;

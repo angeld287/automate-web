@@ -18,6 +18,8 @@ import { INewArticle } from '../../../interfaces/Content/Article';
 import Category from '../../../interfaces/models/Category';
 import createContent from '../../../utils/ContentStructure';
 import { replaceSpace } from '../../../utils';
+import { IArticleService } from '../../../interfaces/IArticleService';
+import { articleService } from '../../../services/articleServices/articleServices';
 
 class Post {
     public static async create(req: IRequest, res: IResponse): Promise<any> {
@@ -31,12 +33,30 @@ class Post {
             }
 
             let postService: IPostService = new PostService();
+            let _articleService: IArticleService = new articleService();
             let categoryService: ICategoryService = new CategoryService();
 
-            const article: INewArticle = req.body.article as INewArticle;
+            let article: INewArticle = req.body.article as INewArticle;
             const title: string = article.title;
-            const content: string = createContent(article);
             const bodyCategory: string = article.category.trim().toLowerCase();
+
+            if(!article.image || !(article.subtitles.filter(subtitle => !subtitle.image).length > 2)){
+                return new BadRequestResponse('Error', {
+                    error: true,
+                    message: 'The article needs at least 3 images.',
+                }).send(res); 
+            }
+
+            const articleExist = await _articleService.getArticleById(article.internalId);
+
+            if(articleExist === false){
+                return new BadRequestResponse('Error', {
+                    error: true,
+                    message: 'The article does not exist.',
+                }).send(res); 
+            }else{
+                article = articleExist
+            }
             
             const category: Category = (await categoryService.getList()).find(category => category.name.toLowerCase() === bodyCategory)
 
@@ -47,6 +67,7 @@ class Post {
                 }).send(res);
             }
 
+            const content: string = createContent(article);
             const post: IPost = {
                 slug: replaceSpace(article.title),
                 status: "draft",
@@ -56,13 +77,33 @@ class Post {
             };
 
             const created = await postService.createNf(post, req.headers.authorization)
+            
+            if(created !== false){
 
-            return new SuccessResponse('Success', {
-                post: created,
-                success: true,
-                error: null
-            }).send(res);
+                article.wpId = created.id;
+                const updateArticle = await _articleService.updateArticleWpId(article)
 
+                if(updateArticle !== false){
+                    return new SuccessResponse('Success', {
+                        article,
+                        success: true,
+                        error: null
+                    }).send(res);
+                }else{
+                    return new InternalErrorResponse('Error', {
+                        post: null,
+                        success: false,
+                        error: 'Post Create - Error updateArticle the article to add the wpId'
+                    }).send(res);    
+                }
+
+            }else{
+                return new InternalErrorResponse('Error', {
+                    post: null,
+                    success: false,
+                    error: 'Post Create - Error creating the post'
+                }).send(res);
+            }
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
             return new InternalErrorResponse('Post Controller Error', {

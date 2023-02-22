@@ -13,7 +13,7 @@ import IAddIntroAndConclusion from "./IAddIntroAndConclusion";
 import Locals from "../../../config/Locals";
 import { createArticleIntroAndConclusion } from "../../../features/article/articleSlice";
 
-const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({open, setOpen, type, title, articleId, image, contents}) => {
+const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({open, setOpen, type, title, articleId, relatedId, image, contents}) => {
     //const [url, setUrl] = useState('');
     const [error, setError] = useState<undefined | string>(undefined);
     const [paragraph, setParagraph] = useState<Array<IContent>>([])
@@ -70,8 +70,8 @@ const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({open, setOpen,
         }
 
         setError(undefined)
-        dispatch(createMedia({imageAddress: url, title: title ? title : "", type: 'article', relatedId: articleId}))
-    } , [title, articleId])
+        dispatch(createMedia({imageAddress: url, title: title ? title : "", type: 'article', relatedId}))
+    } , [title, relatedId])
 
     const addContent = useCallback(() => {
         if(paragraph.length === 0){

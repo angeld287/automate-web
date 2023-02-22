@@ -1,4 +1,5 @@
 export default interface Post {
+    id?: number;
     date?: string;	            //The date the object was published, in the site's timezone.
     date_gmt?: string;	        //The date the object was published, as GMT.
     slug: string;	            //An alphanumeric identifier for the object unique to its type.

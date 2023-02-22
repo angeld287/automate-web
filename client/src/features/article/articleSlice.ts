@@ -2,6 +2,8 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { IArticle, SubTitleContent } from '../../interfaces/models/Article';
 import IContent from '../../interfaces/models/Content';
+import ApiResponse from '../../interfaces/Responses/ApiResponse';
+import { getBearer } from '../autenticate/authenticateAPI';
 import { searchKeywordContent } from '../keyword/keywordAPI';
 import { createContentForArticle, createPost, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
 
@@ -13,6 +15,7 @@ export interface ArticleState {
   statusCC: 'idle' | 'loading' | 'failed';
   statusCP: 'idle' | 'loading' | 'failed';
   kewordsTranslated: boolean;
+  error: string | false;
 }
 
 const initialState: ArticleState = {
@@ -31,6 +34,7 @@ const initialState: ArticleState = {
   statusTk: 'idle',
   statusCC: 'idle',
   statusCP: 'idle',
+  error: false,
   kewordsTranslated: false,
 };
 
@@ -99,8 +103,9 @@ export const createWpPost = createAsyncThunk(
   'article/createWpPost',
   async (article: IArticle) => {
     try {    
-      const result = await createPost(article);
-      return result.data.response;
+      const token = getBearer()
+      const result = await createPost(article, token);
+      return result;
     } catch (error) {
       throw new Error('Error in ArticleState at createWpPost')
     }
@@ -132,6 +137,9 @@ export const articleSlice = createSlice({
     setKewordsTranslated: (state, action: PayloadAction<boolean>) => {
       state.kewordsTranslated = action.payload
     },
+    setErrorFalse: (state) => {
+      state.error = false
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -180,7 +188,9 @@ export const articleSlice = createSlice({
       .addCase(createWpPost.pending, (state) => {
         state.statusCP = 'loading';
       })
-      .addCase(createWpPost.fulfilled, (state, action: PayloadAction<IArticle>) => {
+      .addCase(createWpPost.fulfilled, (state, action: PayloadAction<ApiResponse>) => {
+        state.error = action.payload.message === 'Error' ? action.payload.data.message : false;
+        state.article = action.payload.message === 'Success' ? action.payload.data.article : state.article;
         state.statusCP = 'idle';
       })
       .addCase(createWpPost.rejected, (state) => {
@@ -189,7 +199,7 @@ export const articleSlice = createSlice({
   },
 });
 
-export const { updateSubtitle, setKewordsTranslated, addCategory, addTitle, addSubtitles, setArticleInititalState } = articleSlice.actions;
+export const { setErrorFalse, updateSubtitle, setKewordsTranslated, addCategory, addTitle, addSubtitles, setArticleInititalState } = articleSlice.actions;
 
 export const selectArticle = (state: RootState) => state.article;
 

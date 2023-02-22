@@ -53,12 +53,13 @@ export async function createContentForArticle(content: Array<IContent>) {
   return await fetchData.json();
 }
 
-export async function createPost(article: IArticle) {
+export async function createPost(article: IArticle, token: string) {
   const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}createPost`, {
     method: "POST",
     credentials: 'include',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': token
     },
     body: JSON.stringify({article})
   })

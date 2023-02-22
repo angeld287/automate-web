@@ -23,13 +23,13 @@ const createContent = (article: INewArticle): string => {
         const subtitle: string = createSubtitle(subtitleObj.name.trim())
         //\n\n\n\n
         //Subtitle Image (if have)
-        const image: string = createImageConteiner(subtitleObj.image.source_url.trim(), subtitleObj.name.trim());
+        const image: string = subtitleObj.image ? `${createImageConteiner(subtitleObj.image.source_url.trim(), subtitleObj.name.trim())}\n\n\n\n` : "";
         //\n\n\n\n
         //Paragraph
         const paragraph: string = createParagraph(subtitleObj.content.filter(content => content.selected))
         //\n\n\n\n
 
-        return `${subtitle}\n\n\n\n${image}\n\n\n\n${paragraph}\n\n\n\n`
+        return `${subtitle}\n\n\n\n${image}${paragraph}\n\n\n\n`
     }).join();
 
     //Conclusion Paragraph

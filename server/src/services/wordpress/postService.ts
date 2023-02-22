@@ -25,7 +25,7 @@ export default class postService implements IPostService {
         return result;
     }
 
-    async createNf(post: Post, token: string): Promise<Post> {
+    async createNf(post: Post, token: string): Promise<Post | false> {
         const result = await fetch(`${Locals.config().wordpressUrl}posts`, {
             method: 'POST',
             headers: {
@@ -35,6 +35,6 @@ export default class postService implements IPostService {
             },
             body: JSON.stringify(post)
         });
-        return result;
+        return result.success ? result.body : false;
     }
 }

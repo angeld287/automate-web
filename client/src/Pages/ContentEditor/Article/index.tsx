@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Avatar, Col, List, Row, Skeleton } from "antd";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { createWpPost, getArticleByInternalId, selectArticle } from "../../../features/article/articleSlice"
+import { createWpPost, getArticleByInternalId, selectArticle, setErrorFalse } from "../../../features/article/articleSlice"
 import { useParams } from "react-router-dom";
 import SearchKeywordsStepper from "../../../Components/App/SearchKeywordsStepper";
 import CustomLoader from "../../../Components/CustomLoader";
 import CustomButton from "../../../Components/CustomButton";
-import { ContainerOutlined, EditOutlined, FileImageOutlined, FileTextOutlined } from "@ant-design/icons";
+import { ContainerOutlined, EditOutlined, FileAddOutlined, FileImageOutlined, FileTextOutlined } from "@ant-design/icons";
 import AddImage from "../../../Components/App/AddImage";
 import './article.css'
 import { SubTitleContent } from "../../../interfaces/models/Article";
@@ -14,6 +14,9 @@ import Locals from "../../../config/Locals";
 import { selectMedia } from "../../../features/media/mediaSlice";
 import { updateSubtitle } from "../../../features/article/articleSlice";
 import AddIntroAndConclusion from "../../../Components/App/AddIntroAndConclusion";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const ContentEditor = () => {
 
@@ -47,6 +50,10 @@ const ContentEditor = () => {
         }
     }, [media]);
 
+    useEffect(() => {
+        if(article.error !== false) toast(article.error)
+    }, [article.error]);
+
     //useEffect(() => {
     //    console.log(article.status)
     //    setOpen(!(article.article.subtitles.filter(sub => sub.content? sub.content.filter(paragraph => paragraph.selected).length === 0 : true).length === 0))
@@ -58,14 +65,19 @@ const ContentEditor = () => {
     const allSubtitlesCompleted = useMemo(() => article.article.subtitles.filter(subtitle => subtitle.content?.find(cont => cont.selected)).length === article.article.subtitles.length, [article]);
     const IntroAndConclusionCompleted = useMemo(() => article.article.contents?.filter(content => (content.type === 'conclusion' || content.type === 'introduction')).length !== 0 , [article]);
 
+    const publishWpPost = useCallback(() => {
+        dispatch(setErrorFalse());
+        dispatch(createWpPost(article.article));
+    }, [article.article])
+
     if(loading && article.article.subtitles.length === 0) return <CustomLoader/>
 
     return <>
         <Row>
-            <Col style={{margin: 10}}><CustomButton onClick={() => { setOpen(true)}}>Edit Content<EditOutlined /></CustomButton></Col>
-            <Col style={{margin: 10}}><CustomButton disabled={!allSubtitlesCompleted} onClick={() => { openAddContentModal(true); setContentType('introduction');}}>Add Introduction<FileTextOutlined /></CustomButton></Col>
-            <Col style={{margin: 10}}><CustomButton disabled={!allSubtitlesCompleted} onClick={() => { openAddContentModal(true); setContentType('conclusion');}}>Add Conclusion<ContainerOutlined /></CustomButton></Col>
-            <Col style={{margin: 10}}><CustomButton disabled={!IntroAndConclusionCompleted} onClick={() => { dispatch(createWpPost(article.article)); }}>Create WP Article<ContainerOutlined /></CustomButton></Col>
+            <Col style={{margin: 10}}><CustomButton disabled={article.article.wpId !== null} onClick={() => { setOpen(true)}}>Edit Content<EditOutlined /></CustomButton></Col>
+            <Col style={{margin: 10}}><CustomButton disabled={article.article.wpId !== null || !allSubtitlesCompleted} onClick={() => { openAddContentModal(true); setContentType('introduction');}}>Add Introduction<FileTextOutlined /></CustomButton></Col>
+            <Col style={{margin: 10}}><CustomButton disabled={article.article.wpId !== null || !allSubtitlesCompleted} onClick={() => { openAddContentModal(true); setContentType('conclusion');}}>Add Conclusion<ContainerOutlined /></CustomButton></Col>
+            <Col style={{margin: 10}}><CustomButton loading={article.statusCP === 'loading'} disabled={article.article.wpId !== null && !IntroAndConclusionCompleted} onClick={() => { publishWpPost() }}>Create WP Article<FileAddOutlined /></CustomButton></Col>
         </Row>
         <Row className="">
             <Col>
@@ -126,10 +138,12 @@ const ContentEditor = () => {
             setOpen={openAddContentModal} 
             title={article.article.title}
             articleId={article.article.internalId}
+            relatedId={article.article.id}
             type={contentType}
             image={article.article.image?.source_url}
             contents={article.article.contents}
         />
+        <ToastContainer/>
     </>;
 }
 

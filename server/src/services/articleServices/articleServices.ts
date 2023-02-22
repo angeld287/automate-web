@@ -128,6 +128,50 @@ export class articleService implements IArticleService {
         }
     }
 
+    async updateArticleWpId(article: INewArticle): Promise<INewArticle | false> {
+        try {
+
+            if(!article.wpId){
+                return false;
+            }
+
+            const createArticle = {
+                name: 'create-new-article',
+                text: 'UPDATE public.articles SET wp_id=$2 WHERE internal_id = $1 RETURNING internal_id, id, TRIM(title) AS title, TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id',
+                values: [article.internalId, article.wpId],
+            }
+
+            let result = null, client = null;
+
+            client = await Database.getTransaction();
+
+            try {
+                result = await Database.sqlExecSingleRow(client, createArticle);
+                await Database.commit(client);
+            } catch (error) {
+                await Database.rollback(client);
+                throw new Error(error);
+            }
+
+            let _article: INewArticle = {
+                id: result.rows[0].id,
+                internalId: result.rows[0].internal_id,
+                wpId: result.rows[0].wp_id,
+                category: result.rows[0].category,
+                subtitles: [],
+                title: result.rows[0].title,
+                translatedTitle: result.rows[0].translated_title,
+                createdBy: result.rows[0].created_by,
+                createdAt: result.rows[0].created_at,
+            }
+            
+            return _article;
+            
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
     async getArticleById(articleId: number): Promise<INewArticle | false> {
 
         if (!articleId)
@@ -135,7 +179,7 @@ export class articleService implements IArticleService {
 
         const getQuery = {
             name: 'get-article-by-id',
-            text: `SELECT id, internal_id, TRIM(title) AS title , TRIM(translated_title) AS translated_title, category, created_by, created_at FROM public.articles where internal_id = $1`,
+            text: `SELECT id, internal_id, TRIM(title) AS title , TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id FROM public.articles where internal_id = $1`,
             values: [articleId],
         }
 
@@ -153,6 +197,7 @@ export class articleService implements IArticleService {
             const article: INewArticle = {
                 id: result.rows[0].id,
                 internalId: result.rows[0].internal_id,
+                wpId: result.rows[0].wp_id,
                 title: result.rows[0].title,
                 translatedTitle: result.rows[0].translated_title,
                 category: result.rows[0].category,

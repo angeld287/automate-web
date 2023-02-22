@@ -203,6 +203,7 @@ CREATE TABLE IF NOT EXISTS public.articles
     translated_title character(100) COLLATE pg_catalog."default",
     category character(50) COLLATE pg_catalog."default",
     internal_id integer NOT NULL DEFAULT nextval('articles_internal_id_seq'::regclass),
+    wp_id integer,
     created_by integer NOT NULL,
     deleted boolean,
     deleted_by integer,
