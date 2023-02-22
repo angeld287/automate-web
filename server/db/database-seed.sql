@@ -204,6 +204,7 @@ CREATE TABLE IF NOT EXISTS public.articles
     category character(50) COLLATE pg_catalog."default",
     internal_id integer NOT NULL DEFAULT nextval('articles_internal_id_seq'::regclass),
     wp_id integer,
+    wp_link character(100) COLLATE pg_catalog."default",
     created_by integer NOT NULL,
     deleted boolean,
     deleted_by integer,

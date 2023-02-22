@@ -18,4 +18,5 @@ export default interface Post {
     template?: string;	        //The theme file to use to display the object.
     categories: Array<number>;	        //The terms assigned to the object in the category taxonomy.
     tags?: string;	            //The terms assigned to the object in the post_tag taxonomy
+    link?: string;
 }

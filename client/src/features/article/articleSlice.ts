@@ -9,6 +9,7 @@ import { createContentForArticle, createPost, getArticleById, getTranslatedKeywo
 
 export interface ArticleState {
   article: IArticle;
+  articleState: 'draft' | 'created_in_wp' | 'published_in_wp'
   status: 'idle' | 'loading' | 'failed';
   statusKc: 'idle' | 'loading' | 'failed';
   statusTk: 'idle' | 'loading' | 'failed';
@@ -29,6 +30,7 @@ const initialState: ArticleState = {
     createdAt: "",
     createdBy: 0,
   },
+  articleState: 'draft',
   status: 'idle',
   statusKc: 'idle',
   statusTk: 'idle',
@@ -80,7 +82,7 @@ export const getArticleByInternalId = createAsyncThunk(
   async (internalId: number) => {
     try {    
       const result = await getArticleById(internalId);
-      return result.data.response;
+      return result.data.response.article;
     } catch (error) {
       throw new Error('Error in ArticleState at getArticleByInternalId')
     }
@@ -155,11 +157,12 @@ export const articleSlice = createSlice({
       .addCase(getArticleByInternalId.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(getArticleByInternalId.fulfilled, (state, action) => {
+      .addCase(getArticleByInternalId.fulfilled, (state, action: PayloadAction<IArticle>) => {
         state.status = 'idle';
-        const subs = [...action.payload.article.subtitles];
-        state.article = action.payload.article;
+        const subs = [...action.payload.subtitles];
+        state.article = action.payload;
         state.article.subtitles = subs.sort((subA, subB) => (subA.orderNumber < subB.orderNumber ? -1 : 1))
+        state.articleState = action.payload.wpLink ? "created_in_wp" : "draft"
       })
       .addCase(getArticleByInternalId.rejected, (state) => {
         state.status = 'failed';
@@ -192,6 +195,7 @@ export const articleSlice = createSlice({
         state.error = action.payload.message === 'Error' ? action.payload.data.message : false;
         state.article = action.payload.message === 'Success' ? action.payload.data.article : state.article;
         state.statusCP = 'idle';
+        state.articleState = action.payload.message === 'Error' ? 'draft' : 'created_in_wp';
       })
       .addCase(createWpPost.rejected, (state) => {
         state.statusCP = 'failed';

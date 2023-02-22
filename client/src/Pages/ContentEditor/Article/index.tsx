@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Avatar, Col, List, Row, Skeleton } from "antd";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { createWpPost, getArticleByInternalId, selectArticle, setErrorFalse } from "../../../features/article/articleSlice"
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import SearchKeywordsStepper from "../../../Components/App/SearchKeywordsStepper";
 import CustomLoader from "../../../Components/CustomLoader";
 import CustomButton from "../../../Components/CustomButton";
@@ -31,6 +31,7 @@ const ContentEditor = () => {
     let { id } = useParams();
     const article = useAppSelector(selectArticle);
     const dispatch = useAppDispatch();
+    const navigate = useNavigate()
     
     useEffect(() => {
         if(article.article.id === 0 && id) dispatch(getArticleByInternalId(parseInt(id)))
@@ -53,6 +54,10 @@ const ContentEditor = () => {
     useEffect(() => {
         if(article.error !== false) toast(article.error)
     }, [article.error]);
+
+    useEffect(() => {
+        if(article.articleState === 'created_in_wp') navigate('/');
+    }, [article.articleState]);
 
     //useEffect(() => {
     //    console.log(article.status)

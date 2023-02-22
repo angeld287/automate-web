@@ -12,7 +12,8 @@ export interface IArticle {
     contents?: Array<IContent>;
     translatedContent?: string;
     image?: DbMedia;
-    error?: boolean | ProcessError
+    error?: boolean | ProcessError;
+    wpLink?: string;
     createdAt: string;
     createdBy: number;
     deleted?: boolean;

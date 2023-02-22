@@ -13,6 +13,7 @@ export interface INewArticle {
     contents?: Array<IContent>;
     image?: DbMedia
     error?: boolean | ProcessError;
+    wpLink?: string;
     createdBy: number;
     createdAt: string;
     deleted?: boolean;

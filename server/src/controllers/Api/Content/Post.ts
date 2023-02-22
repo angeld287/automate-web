@@ -81,6 +81,7 @@ class Post {
             if(created !== false){
 
                 article.wpId = created.id;
+                article.wpLink = created.link;
                 const updateArticle = await _articleService.updateArticleWpId(article)
 
                 if(updateArticle !== false){

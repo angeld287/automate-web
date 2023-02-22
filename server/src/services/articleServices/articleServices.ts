@@ -179,7 +179,7 @@ export class articleService implements IArticleService {
 
         const getQuery = {
             name: 'get-article-by-id',
-            text: `SELECT id, internal_id, TRIM(title) AS title , TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id FROM public.articles where internal_id = $1`,
+            text: `SELECT id, internal_id, TRIM(title) AS title , TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, wp_link FROM public.articles where internal_id = $1`,
             values: [articleId],
         }
 
@@ -206,6 +206,7 @@ export class articleService implements IArticleService {
                 contents,
                 createdBy: result.rows[0].created_by,
                 createdAt: result.rows[0].created_at,
+                wpLink: result.rows[0].wp_link,
             }
 
             return article;
