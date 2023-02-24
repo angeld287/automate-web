@@ -18,6 +18,7 @@ import PostController from '../controllers/Api/Content/Post';
 import MediaController from '../controllers/Api/Content/Media';
 import Categoryontroller from '../controllers/Api/Content/Category';
 import ArticleController from '../controllers/Api/Article/Article';
+import SearchKeywordController from '../controllers/Api/Job/SearchKeyword';
 
 const router = Router();
 
@@ -234,6 +235,12 @@ router.post(
     body('content', 'field content cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     ArticleController.createContentForSubtitle
+);
+
+router.post(
+    '/startKeywordsSearchJob',
+    //Passport.isAuthenticated,
+    SearchKeywordController.perform
 );
 
 export default router;
