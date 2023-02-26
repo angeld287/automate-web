@@ -15,5 +15,7 @@ const delay = (delayInms) => {
 }
 
 export const replaceSpace = (text: string): string => text.replace(/(?: )/g, '_')
+export const replaceSpaceForPlus = (text: string): string => text.replace(/(?: )/g, '+')
+export const replacePlusForSpace = (text: string): string => text.replace(/(?:\+)/g, ' ')
 
 export { _fetch as fetch, _axios as axios, delay, readFileSync, createWriteStream, downloadImage, _sharp as sharp, _imagesize as imagesize, addMedia };

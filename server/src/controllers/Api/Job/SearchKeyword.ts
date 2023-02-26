@@ -25,7 +25,7 @@ class SearchKeyword {
 
             let search: ISearchService = new searchService();
 
-            const result = await search.getResultsAndSuggestions("1", "aceite de coco");
+            const result = await search.getResultsAndSuggestions("1", "Que puedo comer después de tomar aceite de ricino");
 
             let searchJob: NodeCron = new NodeCron([''], async () => {
                 

@@ -1,7 +1,7 @@
 import { ISearchService } from "../../interfaces/ISearchService";
 import Paragraph, { SeekerScenario } from "../../interfaces/models/Paragraph";
 import Locals from "../../providers/Locals";
-import { axios } from "../../utils";
+import { axios, replacePlusForSpace, replaceSpaceForPlus } from "../../utils";
 var request = require('request');
 
 export class searchService implements ISearchService {
@@ -43,10 +43,18 @@ export class searchService implements ISearchService {
     async getResultsAndSuggestions(index: string, keyword: string): Promise<Array<any>>{
         try {
             let result: Array<any> = [];
-            const response = await axios({ url: `${Locals.config().SEARCH_ENGINE_URL}&num=${Locals.config().GOOGLE_RESULTS_QUANTITY}&start=${index}&q=${encodeURIComponent(keyword)}` })
-            result.push(response)
-            return result;
+            //const response = await axios({ url: `${Locals.config().SEARCH_ENGINE_URL}&num=${Locals.config().GOOGLE_RESULTS_QUANTITY}&start=${index}&q=${encodeURIComponent(keyword)}` })
+            const response = await searchService.requestPageSource(`https://www.google.com/search?q=${replaceSpaceForPlus(keyword)}`);
+            result.push(response.response);
+            const regrexGetRelatedSearch = new RegExp(/search\?ie=UTF-8&amp;q=(.*?)&amp;sa=/g);
+            let relatedSearchKeywords = response.response.match(regrexGetRelatedSearch);
+
+            if(relatedSearchKeywords !== null){
+                relatedSearchKeywords = relatedSearchKeywords.map(keyword => replacePlusForSpace(decodeURI(keyword.replace(/search\?ie=UTF-8&amp;q=/g, '').replace(/&amp;sa=/g, ''))))
+            }
+            return relatedSearchKeywords !== null ? relatedSearchKeywords : []; //response.response; //
         } catch (error) {
+            console.log(error)
             throw new Error("Error in getResultsAndSuggestions service.");
         }
     }
