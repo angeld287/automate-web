@@ -4,21 +4,19 @@ import Log from '../middlewares/Log';
 class NodeCron {
     public scheduledTask: cron.ScheduledTask;
 
-    constructor(keywords: Array<string>) {
-        this.scheduledTask = this.createJob(); 
+    constructor(keywords: Array<string>, job: string | ((now: Date | "manual" | "init") => void)) {
+        this.scheduledTask = this.createJob(keywords, job); 
     }
 
-    private createJob(): cron.ScheduledTask {
-        return cron.schedule('* * * * *', () =>  {
-            Log.info(`The job has been created!`);
-          }, {
+    private createJob(keywords: Array<string>, job: string | ((now: Date | "manual" | "init") => void)): cron.ScheduledTask {
+        return cron.schedule('* * * * *', job, {
             scheduled: false
           })
     }
 
     public startPotentialKeywordsSearchJob(){
         this.scheduledTask.start();
-        Log.info(`The job has been started!`);
+        Log.error(`The job has been started!`);
     }
 
     public stopProcess(){

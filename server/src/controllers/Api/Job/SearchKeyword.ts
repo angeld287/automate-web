@@ -5,10 +5,12 @@
  */
 
 import { BadRequestResponse, InternalErrorResponse, SuccessResponse } from '../../../core/ApiResponse';
+import { ISearchService } from '../../../interfaces/ISearchService';
 import { IRequest, IResponse } from '../../../interfaces/vendors';
 import Log from '../../../middlewares/Log';
 import ExpressValidator from '../../../providers/ExpressValidation';
 import NodeCron from '../../../providers/NodeCron';
+import { searchService } from '../../../services/searchEngine/searchService';
 
 class SearchKeyword {
     public static async perform(req: IRequest, res: IResponse): Promise<any> {
@@ -21,13 +23,20 @@ class SearchKeyword {
                 }).send(res);
             }
 
-            let searchJob: NodeCron = new NodeCron(['']);
+            let search: ISearchService = new searchService();
+
+            const result = await search.getResultsAndSuggestions("1", "aceite de coco");
+
+            let searchJob: NodeCron = new NodeCron([''], async () => {
+                
+            });
 
             searchJob.startPotentialKeywordsSearchJob();
 
             return new SuccessResponse('Success', {
                 success: true,
-                error: null
+                error: null,
+                result
             }).send(res);
 
         } catch (error) {

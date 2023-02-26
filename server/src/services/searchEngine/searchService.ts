@@ -40,6 +40,17 @@ export class searchService implements ISearchService {
         }
     }
 
+    async getResultsAndSuggestions(index: string, keyword: string): Promise<Array<any>>{
+        try {
+            let result: Array<any> = [];
+            const response = await axios({ url: `${Locals.config().SEARCH_ENGINE_URL}&num=${Locals.config().GOOGLE_RESULTS_QUANTITY}&start=${index}&q=${encodeURIComponent(keyword)}` })
+            result.push(response)
+            return result;
+        } catch (error) {
+            throw new Error("Error in getResultsAndSuggestions service.");
+        }
+    }
+
     static async requestPageSource(url: string): Promise<any> {
         try {
             return new Promise(function (resolve, reject) {
