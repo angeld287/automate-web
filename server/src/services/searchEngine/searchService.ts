@@ -1,5 +1,6 @@
 import { ISearchService } from "../../interfaces/ISearchService";
 import Paragraph, { SeekerScenario } from "../../interfaces/models/Paragraph";
+import { IResultsAndSuggestions, IKeywordPotential } from "../../interfaces/response/ISearchKeyword";
 import Locals from "../../providers/Locals";
 import { axios, replacePlusForSpace, replaceSpaceForPlus } from "../../utils";
 var request = require('request');
@@ -40,22 +41,35 @@ export class searchService implements ISearchService {
         }
     }
 
-    async getResultsAndSuggestions(index: string, keyword: string): Promise<Array<any>>{
+    async getResultsAndSuggestions(keyword: string): Promise<IResultsAndSuggestions>{
         try {
-            let result: Array<any> = [];
-            //const response = await axios({ url: `${Locals.config().SEARCH_ENGINE_URL}&num=${Locals.config().GOOGLE_RESULTS_QUANTITY}&start=${index}&q=${encodeURIComponent(keyword)}` })
-            const response = await searchService.requestPageSource(`https://www.google.com/search?q=${replaceSpaceForPlus(keyword)}`);
-            result.push(response.response);
+            const searchResponse = await axios({ url: `${Locals.config().SEARCH_ENGINE_URL}&num=${Locals.config().GOOGLE_RESULTS_QUANTITY}&start=1&q=${encodeURIComponent(keyword)}` })
+            const googleSearchHtmlPage = await searchService.requestPageSource(`https://www.google.com/search?q=${replaceSpaceForPlus(keyword)}`);
+
             const regrexGetRelatedSearch = new RegExp(/search\?ie=UTF-8&amp;q=(.*?)&amp;sa=/g);
-            let relatedSearchKeywords = response.response.match(regrexGetRelatedSearch);
+            let relatedSearchKeywords = googleSearchHtmlPage.response.match(regrexGetRelatedSearch);
 
             if(relatedSearchKeywords !== null){
                 relatedSearchKeywords = relatedSearchKeywords.map(keyword => replacePlusForSpace(decodeURI(keyword.replace(/search\?ie=UTF-8&amp;q=/g, '').replace(/&amp;sa=/g, ''))))
             }
-            return relatedSearchKeywords !== null ? relatedSearchKeywords : []; //response.response; //
+   
+            return {
+                searchResult: searchResponse.body.items,
+                relatedSearch: relatedSearchKeywords !== null ? relatedSearchKeywords : []
+            };
         } catch (error) {
-            console.log(error)
+            console.log(error);
             throw new Error("Error in getResultsAndSuggestions service.");
+        }
+    }
+
+    async checkKeywordPotential(): Promise<IKeywordPotential>{
+        try {
+            
+            return {}
+        } catch (error) {
+            console.log(error);
+            throw new Error("Error in checkKeywordPotential service.");
         }
     }
 

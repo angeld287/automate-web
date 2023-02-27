@@ -23,15 +23,15 @@ class SearchKeyword {
                 }).send(res);
             }
 
+            const longTailKeyword = req.body.longTailKeyword;
+            const mainKeyword = req.body.mainKeyword;
+
             let search: ISearchService = new searchService();
 
-            const result = await search.getResultsAndSuggestions("1", "Que puedo comer después de tomar aceite de ricino");
+            const result = await search.getResultsAndSuggestions(longTailKeyword);
 
-            let searchJob: NodeCron = new NodeCron([''], async () => {
-                
-            });
-
-            searchJob.startPotentialKeywordsSearchJob();
+            //let searchJob: NodeCron = new NodeCron([''], async () => {});
+            //searchJob.startPotentialKeywordsSearchJob();
 
             return new SuccessResponse('Success', {
                 success: true,

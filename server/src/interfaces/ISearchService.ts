@@ -1,8 +1,9 @@
+import {IResultsAndSuggestions} from "./response/ISearchKeyword";
 
 export interface ISearchService {
 
     perform(index: string, keyword: string): Promise<Array<any>>;
 
-    getResultsAndSuggestions(index: string, keyword: string): Promise<Array<any>>;
+    getResultsAndSuggestions(keyword: string): Promise<IResultsAndSuggestions>;
 
 }
