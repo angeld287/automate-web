@@ -69,6 +69,10 @@ class Locals {
         const REDIS_HTTPHOST = "127.0.0.1"
         const REDIS_DB = "q"
 
+        //twinword configurations - https://www.twinword.com/api/account/
+        const TWINWORD_API_ENDPOINT = "https://api.twinword.com/api/text/similarity/latest/";
+        const TWINWORD_API_KEY = process.env.TWINWORD_API_KEY || "key=k";
+
 
         return {
             WP_DOMAIN,
@@ -113,6 +117,9 @@ class Locals {
             REDIS_HTTPPORT,
             REDIS_HTTPHOST,
             REDIS_DB,
+
+            TWINWORD_API_ENDPOINT,
+            TWINWORD_API_KEY,
         }
     }
 
