@@ -22,8 +22,8 @@ class Locals {
         //allow origin cors
         const url = process.env.APP_URL || `http://localhost:3003`;
 
-        const clientId = process.env.GOOGLE_ID || "a.apps.googleusercontent.com";
-        const clientSecret = process.env.GOOGLE_SECRET || "ks";
+        const GOOGLE_AUTH_CLIENT_ID = process.env.GOOGLE_ID || "a.apps.googleusercontent.com";
+        const GOOGLE_AUTH_CLIENT_SECRET = process.env.GOOGLE_SECRET || "ks";
 
         //Search Engine Configuration
         const googleCustomSearch = "https://www.googleapis.com/customsearch/v1?";
@@ -73,6 +73,12 @@ class Locals {
         const TWINWORD_API_ENDPOINT = "https://api.twinword.com/api/text/similarity/latest/";
         const TWINWORD_API_KEY = process.env.TWINWORD_API_KEY || "key=k";
 
+        //Google access token
+        const  GOOGLE_ACCESS_TOKEN_URL = "https://www.googleapis.com/oauth2/v3/token";
+
+        //Google Ads API config
+        const GOOGLE_ADS_API_URL = "https://googleads.googleapis.com/"
+
 
         return {
             WP_DOMAIN,
@@ -81,8 +87,10 @@ class Locals {
             port,
             dbUrl: DATABASE_URL,
             url,
-            clientId,
-            clientSecret,
+            GOOGLE_AUTH_CLIENT_ID,
+            GOOGLE_AUTH_CLIENT_SECRET,
+            GOOGLE_ACCESS_TOKEN_URL,
+            GOOGLE_ADS_API_URL,
 
             SEARCH_ENGINE_URL,
             GOOGLE_RESULTS_QUANTITY,

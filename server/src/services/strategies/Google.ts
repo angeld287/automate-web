@@ -6,7 +6,7 @@
 
 import { Strategy, StrategyOptionsWithRequest } from 'passport-google-oauth20';
 import IUserService from '../../interfaces/IUserService';
-import IUser, { FederatedAuthProfiles, UserPictures, UserRole } from '../../interfaces/models/User';
+import IUser from '../../interfaces/models/User';
 import ILogin from '../../interfaces/wordpress/ILogin';
 import Locals from '../../providers/Locals';
 import userService from '../userService';
@@ -17,8 +17,8 @@ class Google {
 		let user: IUserService = new userService()
 		try {
 			const options: StrategyOptionsWithRequest = {
-				clientID: Locals.config().clientId,
-				clientSecret: Locals.config().clientSecret,
+				clientID: Locals.config().GOOGLE_AUTH_CLIENT_ID,
+				clientSecret: Locals.config().GOOGLE_AUTH_CLIENT_SECRET,
 				callbackURL: `${Locals.config().url}/auth/google/callback`,
 				passReqToCallback: true,
 			}
