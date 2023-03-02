@@ -74,10 +74,12 @@ class Locals {
         const TWINWORD_API_KEY = process.env.TWINWORD_API_KEY || "key=k";
 
         //Google access token
-        const  GOOGLE_ACCESS_TOKEN_URL = "https://www.googleapis.com/oauth2/v3/token";
+        const  GOOGLE_ACCESS_TOKEN_URL = "https://accounts.google.com/o/oauth2/token";
+        const  GOOGLE_ACCESS_REFRESH_TOKEN = process.env.GOOGLE_ACCESS_REFRESH_TOKEN || "key=k";
 
         //Google Ads API config
         const GOOGLE_ADS_API_URL = "https://googleads.googleapis.com/"
+        const GOOGLE_ADS_TOKEN_PROGRAMADOR = process.env.GOOGLE_ADS_TOKEN_PROGRAMADOR || "";
 
 
         return {
@@ -87,10 +89,15 @@ class Locals {
             port,
             dbUrl: DATABASE_URL,
             url,
+
             GOOGLE_AUTH_CLIENT_ID,
             GOOGLE_AUTH_CLIENT_SECRET,
+
             GOOGLE_ACCESS_TOKEN_URL,
+            GOOGLE_ACCESS_REFRESH_TOKEN,
+
             GOOGLE_ADS_API_URL,
+            GOOGLE_ADS_TOKEN_PROGRAMADOR,
 
             SEARCH_ENGINE_URL,
             GOOGLE_RESULTS_QUANTITY,

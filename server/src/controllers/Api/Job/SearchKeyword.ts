@@ -5,6 +5,8 @@
  */
 
 import { BadRequestResponse, InternalErrorResponse, SuccessResponse } from '../../../core/ApiResponse';
+import IGoogelAdsServices from '../../../interfaces/IGoogelAdsServices';
+import IGoogelServices from '../../../interfaces/IGoogelServices';
 import { ISearchService } from '../../../interfaces/ISearchService';
 import ITextSimilarityServices from '../../../interfaces/ITextSimilarityServices';
 import IKeyword from '../../../interfaces/models/Keyword';
@@ -12,6 +14,8 @@ import { IRequest, IResponse } from '../../../interfaces/vendors';
 import Log from '../../../middlewares/Log';
 import ExpressValidator from '../../../providers/ExpressValidation';
 import NodeCron from '../../../providers/NodeCron';
+import googelAdsServices from '../../../services/google/googleAdsServices';
+import googelServices from '../../../services/google/googleServices';
 import { searchService } from '../../../services/searchEngine/searchService';
 import textSimilarityServices from '../../../services/twinword/textSimilarityServices';
 
@@ -36,17 +40,22 @@ class SearchKeyword {
 
             let search: ISearchService = new searchService();
             let similarity: ITextSimilarityServices = new textSimilarityServices();
+            let google: IGoogelServices = new googelServices();
+            let googleAds: IGoogelAdsServices = new googelAdsServices();
 
-            const result = await search.getResultsAndSuggestions(longTailKeyword);
+            //const result = await search.getResultsAndSuggestions(longTailKeyword);
+            //const token = await google.refreshTokenAxios();
+            
+            const customers = await googleAds.listAccessibleCustomers(req.headers['google-access-token'].toString());
 
-            await Promise.all(result.searchResult.map(async (itemResult) => {
-                const similarityResponse = await similarity.checkSimilarity(longTailKeyword, itemResult.title)
-                keyword.resultsSimilarity.push({
-                    name: itemResult.title,
-                    similarity: similarityResponse.similarity,
-                    value: similarityResponse.value
-                })
-            }))
+            //await Promise.all(result.searchResult.map(async (itemResult) => {
+            //    const similarityResponse = await similarity.checkSimilarity(longTailKeyword, itemResult.title)
+            //    keyword.resultsSimilarity.push({
+            //        name: itemResult.title,
+            //        similarity: similarityResponse.similarity,
+            //        value: similarityResponse.value
+            //    })
+            //}))
 
             //let searchJob: NodeCron = new NodeCron([''], async () => {});
             //searchJob.startPotentialKeywordsSearchJob();
@@ -54,8 +63,10 @@ class SearchKeyword {
             return new SuccessResponse('Success', {
                 success: true,
                 error: null,
-                result,
-                keyword
+                //result,
+                keyword,
+                //token,
+                customers,
             }).send(res);
 
         } catch (error) {
