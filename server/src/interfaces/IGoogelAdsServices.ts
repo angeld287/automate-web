@@ -1,4 +1,4 @@
 export default interface IGoogelAdsServices {
     
-    listAccessibleCustomers(token: string): Promise<any>
+    listCustomers(token: string): Promise<any>
 }

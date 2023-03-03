@@ -29,6 +29,7 @@
     "express-validator": "^6.14.0",
     "fs": "0.0.1-security",
     "gifsicle": "^5.2.1",
+    "google-ads-api": "^12.0.1",
     "http": "0.0.1-security",
     "https": "^1.0.0",
     "imagesize": "^1.0.0",

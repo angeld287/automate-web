@@ -7,6 +7,7 @@
 import { BadRequestResponse, InternalErrorResponse, SuccessResponse } from '../../../core/ApiResponse';
 import IGoogelAdsServices from '../../../interfaces/IGoogelAdsServices';
 import IGoogelServices from '../../../interfaces/IGoogelServices';
+import IGoogleAdsKeywordPlansServices from '../../../interfaces/IGoogleAdsKeywordPlansServices';
 import { ISearchService } from '../../../interfaces/ISearchService';
 import ITextSimilarityServices from '../../../interfaces/ITextSimilarityServices';
 import IKeyword from '../../../interfaces/models/Keyword';
@@ -14,6 +15,7 @@ import { IRequest, IResponse } from '../../../interfaces/vendors';
 import Log from '../../../middlewares/Log';
 import ExpressValidator from '../../../providers/ExpressValidation';
 import NodeCron from '../../../providers/NodeCron';
+import googleAdsKeywordPlansServices from '../../../services/google/googleAdsKeywordPlansServices';
 import googelAdsServices from '../../../services/google/googleAdsServices';
 import googelServices from '../../../services/google/googleServices';
 import { searchService } from '../../../services/searchEngine/searchService';
@@ -42,11 +44,13 @@ class SearchKeyword {
             let similarity: ITextSimilarityServices = new textSimilarityServices();
             let google: IGoogelServices = new googelServices();
             let googleAds: IGoogelAdsServices = new googelAdsServices();
+            let googlePlans: IGoogleAdsKeywordPlansServices = new googleAdsKeywordPlansServices();
 
             //const result = await search.getResultsAndSuggestions(longTailKeyword);
             //const token = await google.refreshTokenAxios();
             
-            const customers = await googleAds.listAccessibleCustomers(req.headers['google-access-token'].toString());
+            const customers = await googleAds.listCustomers(req.headers['google-access-token'].toString());
+            //const keywordPlans = await googlePlans.generateForecastMetrics(req.headers['google-access-token'].toString());
 
             //await Promise.all(result.searchResult.map(async (itemResult) => {
             //    const similarityResponse = await similarity.checkSimilarity(longTailKeyword, itemResult.title)
