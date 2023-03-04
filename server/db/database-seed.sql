@@ -425,3 +425,83 @@ CREATE TRIGGER set_timestamp_to_deleted_at
     ON public.media
     FOR EACH ROW
     EXECUTE PROCEDURE public.trigger_set_timestamp_deleted_at();
+
+
+
+-- Table: public.keyword_search_job
+
+-- DROP TABLE IF EXISTS public.keyword_search_job;
+
+CREATE TABLE IF NOT EXISTS public.keyword_search_job
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    created_by integer NOT NULL,
+    deleted boolean,
+    deleted_by integer,
+    created_at timestamp with time zone NOT NULL,
+    deleted_at timestamp with time zone,
+    CONSTRAINT keyword_search_job_pkey PRIMARY KEY (id),
+    CONSTRAINT keyword_search_job_created_by_fkey FOREIGN KEY (created_by)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.keyword_search_job
+    OWNER to admin;
+-- Index: fki_keyword_search_job_created_by_fkey
+
+-- DROP INDEX IF EXISTS public.fki_keyword_search_job_created_by_fkey;
+
+CREATE INDEX IF NOT EXISTS fki_keyword_search_job_created_by_fkey
+    ON public.keyword_search_job USING btree
+    (created_by ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+-- Trigger: set_timestamp_to_created_at
+
+-- DROP TRIGGER IF EXISTS set_timestamp_to_created_at ON public.keyword_search_job;
+
+CREATE TRIGGER set_timestamp_to_created_at
+    BEFORE INSERT
+    ON public.keyword_search_job
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.trigger_set_timestamp();
+
+
+
+-- Table: public.keywords
+
+-- DROP TABLE IF EXISTS public.keywords;
+
+CREATE TABLE IF NOT EXISTS public.keywords
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    name character(100) COLLATE pg_catalog."default",
+    similarity integer,
+    keyword_search_job_id integer NOT NULL,
+    CONSTRAINT keywords_pkey PRIMARY KEY (id),
+    CONSTRAINT keywords_keyword_search_job_fkey FOREIGN KEY (keyword_search_job_id)
+        REFERENCES public.keyword_search_job (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.keywords
+    OWNER to admin;
+-- Index: fki_keywords_keyword_search_job_fkey
+
+-- DROP INDEX IF EXISTS public.fki_keywords_keyword_search_job_fkey;
+
+CREATE INDEX IF NOT EXISTS fki_keywords_keyword_search_job_fkey
+    ON public.keywords USING btree
+    (keyword_search_job_id ASC NULLS LAST)
+    TABLESPACE pg_default;

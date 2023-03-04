@@ -49,7 +49,7 @@ class SearchKeyword {
             //const result = await search.getResultsAndSuggestions(longTailKeyword);
             //const token = await google.refreshTokenAxios();
             
-            const customers = await googleAds.listCustomers(req.headers['google-access-token'].toString());
+            //const customers = await googleAds.listCustomers(req.headers['google-access-token'].toString());
             //const keywordPlans = await googlePlans.generateForecastMetrics(req.headers['google-access-token'].toString());
 
             //await Promise.all(result.searchResult.map(async (itemResult) => {
@@ -70,7 +70,7 @@ class SearchKeyword {
                 //result,
                 keyword,
                 //token,
-                customers,
+                //customers,
             }).send(res);
 
         } catch (error) {
