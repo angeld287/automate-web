@@ -8,3 +8,7 @@ export interface IResultTitleSimilarity {
     similarity: number;
     value: number;
 }
+
+export interface IKeywordSearchJob {
+
+}
