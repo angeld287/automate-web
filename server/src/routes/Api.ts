@@ -238,11 +238,11 @@ router.post(
 );
 
 router.post(
-    '/startKeywordsSearchJob',
+    '/keywordsSearchJob/start',
     body('longTailKeyword', 'field longTailKeyword cannot be blank.').notEmpty(),
     body('mainKeyword', 'field mainKeyword cannot be blank.').notEmpty(),
-    //Passport.isAuthenticated,
-    SearchKeywordController.perform
+    Passport.isAuthenticated,
+    SearchKeywordController.startJob
 );
 
 export default router;

@@ -1,6 +1,9 @@
 export default interface IKeyword {
+    id?: number;
     name: string;
-    resultsSimilarity: Array<IResultTitleSimilarity>
+    resultsSimilarity?: Array<IResultTitleSimilarity>
+    similarity?: number;
+    keywordSearchJobId?: number;
 }
 
 export interface IResultTitleSimilarity {
@@ -10,5 +13,6 @@ export interface IResultTitleSimilarity {
 }
 
 export interface IKeywordSearchJob {
-
+    id?: number;
+    createdBy: string;
 }
