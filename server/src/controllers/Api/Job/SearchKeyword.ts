@@ -37,58 +37,67 @@ class SearchKeyword {
             const longTailKeyword = req.body.longTailKeyword;
             const mainKeyword = req.body.mainKeyword;
 
-            let keyword: IKeyword = {
-                name: longTailKeyword,
-                resultsSimilarity: []
-            };
-
-            let search: ISearchService = new searchService();
-            let similarity: ITextSimilarityServices = new textSimilarityServices();
-            let keywordS: IKeywordService = new keywordService();
-            let google: IGoogelServices = new googelServices();
-            let googleAds: IGoogelAdsServices = new googelAdsServices();
-            let googlePlans: IGoogleAdsKeywordPlansServices = new googleAdsKeywordPlansServices();
-
-            const result = await search.getResultsAndSuggestions(longTailKeyword);
-            
-            let searchJob: IKeywordSearchJob = await keywordS.createKeywordSearchJob({
-                createdBy: req.session.passport.user.id
-            } as IKeywordSearchJob)
+            //google adsense used to get keywords statistic info.
+            //let google: IGoogelServices = new googelServices();
+            //let googleAds: IGoogelAdsServices = new googelAdsServices();
+            //let googlePlans: IGoogleAdsKeywordPlansServices = new googleAdsKeywordPlansServices();
 
             //const token = await google.refreshTokenAxios();
             
             //const customers = await googleAds.listCustomers(req.headers['google-access-token'].toString());
             //const keywordPlans = await googlePlans.generateForecastMetrics(req.headers['google-access-token'].toString());
 
-            let similaritySum = 0
-            await Promise.all(result.searchResult.map(async (itemResult) => {
-                const similarityResponse = await similarity.checkSimilarity(longTailKeyword, itemResult.title)
-                similaritySum = similaritySum + similarityResponse.similarity;
-                keyword.resultsSimilarity.push({
-                    name: itemResult.title,
-                    similarity: similarityResponse.similarity,
-                    value: similarityResponse.value
-                })
-            }))
+            let search: ISearchService = new searchService();
+            let similarity: ITextSimilarityServices = new textSimilarityServices();
+            let keywordS: IKeywordService = new keywordService();
+            let keywords: Array<IKeyword> = [
+                {
+                    name: longTailKeyword,
+                    resultsSimilarity: []
+                }
+            ]
 
-            keyword.similarity = Math.round((similaritySum/10)*100);
-            keyword.keywordSearchJobId = searchJob.id;
+            let searchJob: IKeywordSearchJob = await keywordS.createKeywordSearchJob({
+                createdBy: req.session.passport.user.id
+            } as IKeywordSearchJob)
 
-            const keywordAlreadyExist: IKeyword | false = await keywordS.getKeywordByName(keyword.name);
 
-            if(keywordAlreadyExist === false)
-                keyword = await keywordS.createKeyword(keyword);
+            const searchJobNode: NodeCron = new NodeCron([''], async () => {
+                await Promise.all(keywords.map(async (keyword) => {
 
-            //let searchJob: NodeCron = new NodeCron([''], async () => {});
-            //searchJob.startPotentialKeywordsSearchJob();
+                    let result = await search.getResultsAndSuggestions(keyword.name);
+                    result.relatedSearch = result.relatedSearch.filter(related =>  related.name.includes(mainKeyword));
+                    
+                    let similaritySum = 0;
+                    await Promise.all(result.searchResult.map(async (itemResult) => {
+                        const similarityResponse = await similarity.checkSimilarity(longTailKeyword, itemResult.title)
+                        similaritySum = similaritySum + similarityResponse.similarity;
+                        keyword.resultsSimilarity.push({
+                            name: itemResult.title,
+                            similarity: similarityResponse.similarity,
+                            value: similarityResponse.value
+                        })
+                    }))
+        
+                    keyword.similarity = Math.round((similaritySum/10)*100);
+                    keyword.keywordSearchJobId = searchJob.id;
+        
+                    //keywords = [keyword, ...keywords, ...result.relatedSearch];
+        
+                    const keywordAlreadyExist: IKeyword | false = await keywordS.getKeywordByName(keyword.name);
+        
+                    if(keywordAlreadyExist === false)
+                        keyword = await keywordS.createKeyword(keyword);
+
+                }))
+            });
+
+            searchJobNode.startPotentialKeywordsSearchJob();
 
             return new SuccessResponse('Success', {
                 success: true,
                 error: null,
-                result,
-                keyword,
-                //token,
-                //customers,
+                jobDetails: searchJob
             }).send(res);
 
         } catch (error) {

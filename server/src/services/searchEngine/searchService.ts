@@ -1,4 +1,5 @@
 import { ISearchService } from "../../interfaces/ISearchService";
+import IKeyword from "../../interfaces/models/Keyword";
 import Paragraph, { SeekerScenario } from "../../interfaces/models/Paragraph";
 import { IResultsAndSuggestions, IKeywordPotential } from "../../interfaces/response/ISearchKeyword";
 import Locals from "../../providers/Locals";
@@ -47,7 +48,7 @@ export class searchService implements ISearchService {
             const googleSearchHtmlPage = await searchService.requestPageSource(`https://www.google.com/search?q=${replaceSpaceForPlus(keyword)}`);
 
             const regrexGetRelatedSearch = new RegExp(/search\?ie=UTF-8&amp;q=(.*?)&amp;sa=/g);
-            let relatedSearchKeywords = googleSearchHtmlPage.response.match(regrexGetRelatedSearch);
+            let relatedSearchKeywords: Array<string> = googleSearchHtmlPage.response.match(regrexGetRelatedSearch);
 
             if(relatedSearchKeywords !== null){
                 relatedSearchKeywords = relatedSearchKeywords.map(keyword => replacePlusForSpace(decodeURI(keyword.replace(/search\?ie=UTF-8&amp;q=/g, '').replace(/&amp;sa=/g, ''))))
@@ -55,7 +56,7 @@ export class searchService implements ISearchService {
    
             return {
                 searchResult: searchResponse.body.items,
-                relatedSearch: relatedSearchKeywords !== null ? relatedSearchKeywords : []
+                relatedSearch: relatedSearchKeywords !== null ? relatedSearchKeywords.map((keyword): IKeyword => ({name: keyword})) : []
             };
         } catch (error) {
             console.log(error);

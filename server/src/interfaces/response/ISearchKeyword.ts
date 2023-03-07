@@ -1,6 +1,8 @@
+import IKeyword from "../models/Keyword";
+
 export interface IResultsAndSuggestions{
     searchResult: any;
-    relatedSearch: Array<string>;
+    relatedSearch: Array<IKeyword>;
 }
 
 export interface IKeywordPotential {
