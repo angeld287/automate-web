@@ -15,4 +15,6 @@ export interface IResultTitleSimilarity {
 export interface IKeywordSearchJob {
     id?: number;
     createdBy: string;
+    uniqueName?: string;
+    status?: 'RUNNING' | 'STOPPED'
 }

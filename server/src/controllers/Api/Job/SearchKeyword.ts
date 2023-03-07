@@ -15,7 +15,7 @@ import IKeyword, { IKeywordSearchJob } from '../../../interfaces/models/Keyword'
 import { IRequest, IResponse } from '../../../interfaces/vendors';
 import Log from '../../../middlewares/Log';
 import ExpressValidator from '../../../providers/ExpressValidation';
-import NodeCron from '../../../providers/NodeCron';
+import NodeJob from '../../../providers/NodeJob';
 import googleAdsKeywordPlansServices from '../../../services/google/googleAdsKeywordPlansServices';
 import googelAdsServices from '../../../services/google/googleAdsServices';
 import googelServices from '../../../services/google/googleServices';
@@ -58,13 +58,15 @@ class SearchKeyword {
             ]
 
             let searchJob: IKeywordSearchJob = await keywordS.createKeywordSearchJob({
-                createdBy: req.session.passport.user.id
+                createdBy: req.session.passport.user.id,
+                status: `RUNNING`
             } as IKeywordSearchJob)
 
 
-            const searchJobNode: NodeCron = new NodeCron([''], async () => {
+            const searchJobNode: NodeJob = new NodeJob();
+            searchJobNode.startJob(`JOB-${searchJob.id}`, async () => {
+                console.log('FUNCTION CALLED!')
                 await Promise.all(keywords.map(async (keyword) => {
-
                     let result = await search.getResultsAndSuggestions(keyword.name);
                     result.relatedSearch = result.relatedSearch.filter(related =>  related.name.includes(mainKeyword));
                     
@@ -82,18 +84,16 @@ class SearchKeyword {
                     keyword.similarity = Math.round((similaritySum/10)*100);
                     keyword.keywordSearchJobId = searchJob.id;
         
-                    //keywords = [keyword, ...keywords, ...result.relatedSearch];
+                    keywords = [keyword, ...keywords, ...result.relatedSearch];
         
                     const keywordAlreadyExist: IKeyword | false = await keywordS.getKeywordByName(keyword.name);
         
                     if(keywordAlreadyExist === false)
                         keyword = await keywordS.createKeyword(keyword);
 
+                    console.log('test the process is running', keywords)
                 }))
-            });
-
-            searchJobNode.startPotentialKeywordsSearchJob();
-
+            })
             return new SuccessResponse('Success', {
                 success: true,
                 error: null,
@@ -102,7 +102,64 @@ class SearchKeyword {
 
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('Translate Controller Error', {
+            return new InternalErrorResponse('SearchKeyword Job Controller Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
+    public static async stopJob(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            const errors = new ExpressValidator().validator(req);
+
+            if (!errors.isEmpty()) {
+                return new BadRequestResponse('Error', {
+                    errors: errors.array()
+                }).send(res);
+            }
+
+            const jobId = req.body.jobId;
+            
+            const searchJobNode: NodeJob = new NodeJob();
+            searchJobNode.stopJob(`JOB-${jobId}`);
+
+            return new SuccessResponse('Success', {
+                success: true,
+                error: null,
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('SearchKeyword Job Controller Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
+    public static async getJobDetails(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            const errors = new ExpressValidator().validator(req);
+
+            if (!errors.isEmpty()) {
+                return new BadRequestResponse('Error', {
+                    errors: errors.array()
+                }).send(res);
+            }
+
+            const jobId = req.body.jobId;
+            
+            const searchJobNode: NodeJob = new NodeJob();
+            const detils = searchJobNode.getDetails(`JOB-${jobId}`);
+
+            return new SuccessResponse('Success', {
+                success: true,
+                error: null,
+                result: detils
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('SearchKeyword Job Controller Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }

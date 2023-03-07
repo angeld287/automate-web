@@ -435,6 +435,8 @@ CREATE TRIGGER set_timestamp_to_deleted_at
 CREATE TABLE IF NOT EXISTS public.keyword_search_job
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    unique_name character(10) COLLATE pg_catalog."default",
+    status character(7) COLLATE pg_catalog."default",
     created_by integer NOT NULL,
     deleted boolean,
     deleted_by integer,

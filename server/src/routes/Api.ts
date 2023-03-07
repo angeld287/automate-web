@@ -245,4 +245,18 @@ router.post(
     SearchKeywordController.startJob
 );
 
+router.post(
+    '/keywordsSearchJob/stop',
+    body('jobId', 'field jobId cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    SearchKeywordController.stopJob
+);
+
+router.post(
+    '/keywordsSearchJob/getDetails',
+    body('jobId', 'field jobId cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    SearchKeywordController.getJobDetails
+);
+
 export default router;
