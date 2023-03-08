@@ -8,8 +8,8 @@ export class keywordService implements IKeywordService {
         try {
             const createKeywordSearchJobTmpl = {
                 name: 'create-new-keyword_search_job',
-                text: 'INSERT INTO public.keyword_search_job(created_by) VALUES ($1) RETURNING id, created_by',
-                values: [job.createdBy],
+                text: 'INSERT INTO public.keyword_search_job(created_by, long_tail_keyword) VALUES ($1, $2) RETURNING id, created_by, long_tail_keyword',
+                values: [job.createdBy, job.longTailKeyword],
             }
 
             let result = null, client = null;
@@ -27,6 +27,7 @@ export class keywordService implements IKeywordService {
             let _job: IKeywordSearchJob = {
                 id: result.rows[0].id,
                 createdBy: result.rows[0].created_by,
+                longTailKeyword: result.rows[0].long_tail_keyword,
             }
             
             return _job;
@@ -92,6 +93,92 @@ export class keywordService implements IKeywordService {
             }
 
             return keyword;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async getKeywordSearchJob(jobId: number): Promise<IKeywordSearchJob | false> {
+        const getQuery = {
+            name: 'get-keyword-search-job-by-id',
+            text: `SELECT id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status FROM public.keyword_search_job WHERE id = $1`,
+            values: [jobId],
+        }
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            if (result.rows.length === 0)
+                return false
+            
+            const keywords: Array<IKeyword> = await this.getKeywordsByJobId(result.rows[0].id);
+            
+            const job: IKeywordSearchJob = {
+                id: result.rows[0].id,
+                createdBy: result.rows[0].created_by,
+                status: result.rows[0].status,
+                uniqueName: result.rows[0].unique_name,
+                keywords
+            }
+
+            return job;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async getKeywordsByJobId(jobId: number): Promise<Array<IKeyword>> {
+        const getQuery = {
+            name: 'get-keywords-by-job-id',
+            text: `SELECT id, name, similarity, keyword_search_job_id FROM public.keywords WHERE keyword_search_job_id = $1`,
+            values: [jobId],
+        }
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            const keyowrds: Array<IKeyword> = []
+
+            result.rows.forEach(row => {
+                keyowrds.push({
+                    id: row.id,
+                    name: row.name,
+                    similarity: row.similarity,
+                    keywordSearchJobId: row.keyword_search_job_id,
+                })
+            });
+
+            return keyowrds;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async getAllKeywordSearchJobs(userId: number): Promise<Array<IKeywordSearchJob>> {
+        const getQuery = {
+            name: 'get-all-keywords',
+            text: `SELECT id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status FROM public.keyword_search_job WHERE created_by = $1`,
+            values: [userId],
+        }
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            const keyowrdSearchJons: Array<IKeywordSearchJob> = []
+
+            result.rows.forEach(row => {
+                keyowrdSearchJons.push({
+                    id: row.id,
+                    createdBy: row.created_by,
+                    createdAt: row.created_at,
+                    status: row.status
+                })
+            });
+
+            return keyowrdSearchJons;
         } catch (error) {
             throw new Error(error.message);
         }

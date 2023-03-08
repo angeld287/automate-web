@@ -19,6 +19,7 @@ import MediaController from '../controllers/Api/Content/Media';
 import Categoryontroller from '../controllers/Api/Content/Category';
 import ArticleController from '../controllers/Api/Article/Article';
 import SearchKeywordController from '../controllers/Api/Job/SearchKeyword';
+import KeywordsController from '../controllers/Api/Keywords/Keywords';
 
 const router = Router();
 
@@ -257,6 +258,19 @@ router.post(
     body('jobId', 'field jobId cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     SearchKeywordController.getJobDetails
+);
+
+router.post(
+    '/keywords/getSearchJob',
+    body('jobId', 'field jobId cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    KeywordsController.getSearchJob
+);
+
+router.post(
+    '/keywords/getAllSearchJobs',
+    Passport.isAuthenticated,
+    KeywordsController.getAllSearchJobs
 );
 
 export default router;

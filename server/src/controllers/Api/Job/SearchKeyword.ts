@@ -59,7 +59,8 @@ class SearchKeyword {
 
             let searchJob: IKeywordSearchJob = await keywordS.createKeywordSearchJob({
                 createdBy: req.session.passport.user.id,
-                status: `RUNNING`
+                status: `RUNNING`,
+                longTailKeyword
             } as IKeywordSearchJob)
 
 

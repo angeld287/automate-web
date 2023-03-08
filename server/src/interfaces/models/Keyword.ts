@@ -14,7 +14,10 @@ export interface IResultTitleSimilarity {
 
 export interface IKeywordSearchJob {
     id?: number;
-    createdBy: string;
     uniqueName?: string;
-    status?: 'RUNNING' | 'STOPPED'
+    longTailKeyword?: string;
+    status?: 'RUNNING' | 'STOPPED';
+    keywords?: Array<IKeyword>;
+    createdBy: string;
+    createdAt?: string;
 }
