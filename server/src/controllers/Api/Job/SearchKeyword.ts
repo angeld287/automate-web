@@ -66,7 +66,9 @@ class SearchKeyword {
             const searchJobNode: NodeJob = new NodeJob();
             searchJobNode.startJob(`JOB-${searchJob.id}`, async () => {
                 console.log('FUNCTION CALLED!')
-                await Promise.all(keywords.map(async (keyword) => {
+
+                for (let i = 0; i < keywords.length; i++) {
+                    let keyword: IKeyword = keywords[i];
                     let result = await search.getResultsAndSuggestions(keyword.name);
                     result.relatedSearch = result.relatedSearch.filter(related =>  related.name.includes(mainKeyword));
                     
@@ -83,16 +85,16 @@ class SearchKeyword {
         
                     keyword.similarity = Math.round((similaritySum/10)*100);
                     keyword.keywordSearchJobId = searchJob.id;
+                    const othersKeywords = result.relatedSearch.filter(keyword => keywords.filter(globalKeyword => keyword.name.toLowerCase() === globalKeyword.name.toLowerCase()).length === 0).map(keyword => ({...keyword, resultsSimilarity: []}))
         
-                    keywords = [keyword, ...keywords, ...result.relatedSearch];
-        
+                    keywords = [...keywords, ...othersKeywords];
+                    
                     const keywordAlreadyExist: IKeyword | false = await keywordS.getKeywordByName(keyword.name);
         
+                    console.log(keyword.name)
                     if(keywordAlreadyExist === false)
-                        keyword = await keywordS.createKeyword(keyword);
-
-                    console.log('test the process is running', keywords)
-                }))
+                        keyword = await keywordS.createKeyword(keyword);   
+                }
             })
             return new SuccessResponse('Success', {
                 success: true,
