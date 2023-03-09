@@ -24,6 +24,10 @@ const Menu: React.FC = () => {
       key: 'home',
     },
     {
+      label: (<Link to="/jobs">Jobs</Link>),
+      key: 'jobs',
+    },
+    {
       label: (<Link to="/posts">Posts</Link>),
       key: 'posts',
     },

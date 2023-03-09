@@ -260,14 +260,13 @@ router.post(
     SearchKeywordController.getJobDetails
 );
 
-router.post(
+router.get(
     '/keywords/getSearchJob',
-    body('jobId', 'field jobId cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     KeywordsController.getSearchJob
 );
 
-router.post(
+router.get(
     '/keywords/getAllSearchJobs',
     Passport.isAuthenticated,
     KeywordsController.getAllSearchJobs

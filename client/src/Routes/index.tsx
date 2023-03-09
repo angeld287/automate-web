@@ -8,6 +8,7 @@ import {
 import Menu from "../Components/Menu";
 import ContentEditor from "../Pages/ContentEditor/Article";
 import Home from "../Pages/Home";
+import Jobs from "../Pages/Jobs";
 import Keywords from "../Pages/Keywords";
 import Login from "../Pages/Login";
 import Posts from "../Pages/Posts";
@@ -26,6 +27,8 @@ const Routes = ({activeSession}: IRoutes) => {
           <Route path="/keywords/:id" element={<Protected {...{activeSession}}><Keywords/></Protected>}/>
           <Route path="/" element={<Protected {...{activeSession}}><Home/></Protected>}/>
           <Route path="/login" element={<UnProtected {...{activeSession}}><Login /></UnProtected>} />
+
+          <Route path="/jobs" element={<Protected {...{activeSession}}><Jobs/></Protected>}/>
         </Switch>
       </div>
     </Router>

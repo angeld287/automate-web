@@ -4,7 +4,7 @@
  * @author Angel Angeles <aangeles@litystyles.com>
  */
 
-import { InternalErrorResponse, SuccessResponse } from '../../../core/ApiResponse';
+import { BadRequestResponse, InternalErrorResponse, SuccessResponse } from '../../../core/ApiResponse';
 import { IKeywordService } from '../../../interfaces/IKeywordService';
 import { IRequest, IResponse } from '../../../interfaces/vendors';
 import Log from '../../../middlewares/Log';
@@ -14,15 +14,14 @@ import { keywordService } from '../../../services/keywords/keywordServices';
 class Keywords {
     public static async getSearchJob(req: IRequest, res: IResponse): Promise<any> {
         try {
-            const errors = new ExpressValidator().validator(req);
 
-            if (!errors.isEmpty()) {
-                return new SuccessResponse('Success', {
-                    errors: errors.array()
+            if(!req.query.id){
+                return new BadRequestResponse('Error', {
+                    error: "Param id are required."
                 }).send(res);
             }
 
-            const id = req.body.jobId;
+            const id = parseInt(req.query.id.toString());
             const _keywordService: IKeywordService = new keywordService()
 
             const job = await _keywordService.getKeywordSearchJob(id);
@@ -42,14 +41,7 @@ class Keywords {
 
     public static async getAllSearchJobs(req: IRequest, res: IResponse): Promise<any> {
         try {
-            const errors = new ExpressValidator().validator(req);
-
-            if (!errors.isEmpty()) {
-                return new SuccessResponse('Success', {
-                    errors: errors.array()
-                }).send(res);
-            }
-
+           
             const _keywordService: IKeywordService = new keywordService()
             const userId: number = parseInt(req.session.passport.user.id);
 
