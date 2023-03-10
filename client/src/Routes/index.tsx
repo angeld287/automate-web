@@ -6,6 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import Menu from "../Components/Menu";
+import ArticlesPlanner from "../Pages/ArticlesPlanner";
 import ContentEditor from "../Pages/ContentEditor/Article";
 import Home from "../Pages/Home";
 import Jobs from "../Pages/Jobs";
@@ -29,6 +30,7 @@ const Routes = ({activeSession}: IRoutes) => {
           <Route path="/login" element={<UnProtected {...{activeSession}}><Login /></UnProtected>} />
 
           <Route path="/jobs" element={<Protected {...{activeSession}}><Jobs/></Protected>}/>
+          <Route path="/jobs/:id" element={<Protected {...{activeSession}}><ArticlesPlanner/></Protected>}/>
         </Switch>
       </div>
     </Router>

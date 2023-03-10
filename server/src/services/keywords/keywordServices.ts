@@ -159,7 +159,7 @@ export class keywordService implements IKeywordService {
     async getAllKeywordSearchJobs(userId: number): Promise<Array<IKeywordSearchJob>> {
         const getQuery = {
             name: 'get-all-keywords',
-            text: `SELECT id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status FROM public.keyword_search_job WHERE created_by = $1`,
+            text: `SELECT id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status, long_tail_keyword FROM public.keyword_search_job WHERE created_by = $1`,
             values: [userId],
         }
 
@@ -174,7 +174,8 @@ export class keywordService implements IKeywordService {
                     id: row.id,
                     createdBy: row.created_by,
                     createdAt: row.created_at,
-                    status: row.status
+                    status: row.status,
+                    longTailKeyword: row.long_tail_keyword,
                 })
             });
 

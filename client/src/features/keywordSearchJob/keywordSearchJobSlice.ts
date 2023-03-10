@@ -75,6 +75,6 @@ export const keywordSearchJobSlice = createSlice({
 
 export const { } = keywordSearchJobSlice.actions;
 
-export const selectKeyword = (state: RootState) => state.keywordSearchJob;
+export const selectKeywordSearchJob = (state: RootState) => state.keywordSearchJob;
 
 export default keywordSearchJobSlice.reducer;
