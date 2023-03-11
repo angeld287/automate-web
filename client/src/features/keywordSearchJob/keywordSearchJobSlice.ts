@@ -8,7 +8,7 @@ export interface keywordSearchJobState {
   status: 'idle' | 'loading' | 'failed';
   AllJobs: Array<IKeywordSearchJob>;
   getAllStatus: 'idle' | 'loading' | 'failed';
-  selectStatus: 'idle' | 'loading' | 'failed';
+  selectStatus: 'idle' | `loading` | 'failed';
   relateStatus: 'idle' | 'loading' | 'failed';
 }
 
@@ -60,23 +60,11 @@ export const selectKeyword = createAsyncThunk(
   }
 );
 
-export const addKeywordToArticle = createAsyncThunk(
-  'keywordSearchJob/addKeywordToArticle',
-  async ({id, articleId}: {id: number, articleId: number}) => {
+export const addRemoveKeywordFromArticle = createAsyncThunk(
+  'keywordSearchJob/addRemoveKeywordFromArticle',
+  async ({id, articleId}: {id: number, articleId: number | null}) => {
     try {    
       const result = await addRemoveKeywordToArticle(id, articleId);
-      return result.data.response;
-    } catch (error) {
-      console.log(error) 
-    }
-  }
-);
-
-export const removeKeywordFromArticle = createAsyncThunk(
-  'keywordSearchJob/removeKeywordFromArticle',
-  async ({id}: {id: number}) => {
-    try {    
-      const result = await addRemoveKeywordToArticle(id, null);
       return result.data.response;
     } catch (error) {
       console.log(error) 
@@ -116,31 +104,20 @@ export const keywordSearchJobSlice = createSlice({
       .addCase(selectKeyword.fulfilled, (state, action: PayloadAction<IKeyword>) => {
         state.selectStatus = 'idle';
         if(state.keywordSearchJob.keywords)
-          state.keywordSearchJob.keywords = [...state.keywordSearchJob.keywords.filter(keyword => keyword.id !== action.payload.id), action.payload].sort((kwA, kwB) => (kwA.similarity < kwB.similarity ? -1 : 1));
+          state.keywordSearchJob.keywords = [...state.keywordSearchJob.keywords.filter(keyword => keyword.id !== action.payload.id), action.payload].sort((kwA, kwB) => kwA.similarity < kwB.similarity ? -1 : (kwA.similarity > kwB.similarity ? 1 : kwA.name < kwB.name ? -1 : 1));;
       })
       .addCase(selectKeyword.rejected, (state) => {
         state.selectStatus = 'failed';
       })
-      .addCase(addKeywordToArticle.pending, (state) => {
+      .addCase(addRemoveKeywordFromArticle.pending, (state) => {
         state.relateStatus = 'loading';
       })
-      .addCase(addKeywordToArticle.fulfilled, (state, action: PayloadAction<IKeyword>) => {
+      .addCase(addRemoveKeywordFromArticle.fulfilled, (state, action: PayloadAction<IKeyword>) => {
         state.relateStatus = 'idle';
         if(state.keywordSearchJob.keywords)
-          state.keywordSearchJob.keywords = [...state.keywordSearchJob.keywords.filter(keyword => keyword.id !== action.payload.id), action.payload].sort((kwA, kwB) => (kwA.similarity < kwB.similarity ? -1 : 1));
+          state.keywordSearchJob.keywords = [...state.keywordSearchJob.keywords.filter(keyword => keyword.id !== action.payload.id), action.payload].sort((kwA, kwB) => kwA.similarity < kwB.similarity ? -1 : (kwA.similarity > kwB.similarity ? 1 : kwA.name < kwB.name ? -1 : 1));;
       })
-      .addCase(addKeywordToArticle.rejected, (state) => {
-        state.relateStatus = 'failed';
-      })
-      .addCase(removeKeywordFromArticle.pending, (state) => {
-        state.relateStatus = 'loading';
-      })
-      .addCase(removeKeywordFromArticle.fulfilled, (state, action: PayloadAction<IKeyword>) => {
-        state.relateStatus = 'idle';
-        if(state.keywordSearchJob.keywords)
-          state.keywordSearchJob.keywords = [...state.keywordSearchJob.keywords.filter(keyword => keyword.id !== action.payload.id), action.payload].sort((kwA, kwB) => (kwA.similarity < kwB.similarity ? -1 : 1));
-      })
-      .addCase(removeKeywordFromArticle.rejected, (state) => {
+      .addCase(addRemoveKeywordFromArticle.rejected, (state) => {
         state.relateStatus = 'failed';
       });
   },

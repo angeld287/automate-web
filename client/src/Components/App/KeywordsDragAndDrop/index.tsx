@@ -18,7 +18,8 @@ const KeywordsDragAndDrop: React.FC<IKeywordsDragAndDrop> = (props) => {
 
   useEffect(() => {
     setKeywords(props.keywords.map(keyword => ({
-            parent: null,
+            similarity: keyword.similarity,
+            parent: keyword.articleId ? keyword.articleId : null,
             name: keyword.name,
             id: keyword.id,
             component: (

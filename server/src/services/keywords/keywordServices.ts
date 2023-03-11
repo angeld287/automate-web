@@ -77,7 +77,7 @@ export class keywordService implements IKeywordService {
         try {
             const createKeywordTmpl = {
                 name: 'add-remove-keyword-article-relation',
-                text: 'UPDATE public.keywords selected=$2, article_id=$1  WHERE id = $3 RETURNING id, name, similarity, keyword_search_job_id, article_id, selected',
+                text: 'UPDATE public.keywords SET selected=$2, article_id=$1  WHERE id = $3 RETURNING id, name, similarity, keyword_search_job_id, article_id, selected',
                 values: [keyword.articleId, keyword.selected, keyword.id],
             }
 
@@ -192,7 +192,7 @@ export class keywordService implements IKeywordService {
                 })
             });
 
-            return keyowrds.sort((kwA, kwB) => (kwA.similarity < kwB.similarity ? -1 : 1));
+            return keyowrds.sort((kwA, kwB) => kwA.similarity < kwB.similarity ? -1 : (kwA.similarity > kwB.similarity ? 1 : kwA.name < kwB.name ? -1 : 1));
         } catch (error) {
             throw new Error(error.message);
         }
