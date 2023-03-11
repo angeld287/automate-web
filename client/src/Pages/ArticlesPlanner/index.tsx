@@ -31,10 +31,10 @@ const ArticlesPlanner = () => {
         <h2>Articles Planner {id}</h2>
         <Row className="">
             <Col span={7} style={{border: 'solid 1px #000'}}>
-                <KeywordsList items={keywords} setFavsKeywords={setFavsKeywords}/>
+                <KeywordsList items={keywords}/>
             </Col>
             <Col span={17} className="drag-and-drop" style={{border: 'solid 1px #000'}}>
-                <KeywordsDragAndDrop keywords={favsKeywords}/>
+                <KeywordsDragAndDrop keywords={keywords.filter(keyword => keyword.selected)}/>
             </Col>
         </Row>
     </>;

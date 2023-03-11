@@ -11,7 +11,7 @@ import CustomTable from "../../CustomTable/CustomTable";
 import Draggable from "../KeywordsDragAndDrop/Draggable";
 import IKeywordsList, { IKeywordsTable } from "./IKeywordsList"
 
-const KeywordsList: React.FC<IKeywordsList> = ({items, setFavsKeywords}) => {
+const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
     const [kewords, setKeywords] = useState<Array<IKeywordsTable>>([])
     const [kwLoading, setKwloading] = useState<number>(0)
     const dispatch = useAppDispatch();
@@ -22,10 +22,8 @@ const KeywordsList: React.FC<IKeywordsList> = ({items, setFavsKeywords}) => {
             setKwloading(item.id)
             if(e.target.checked){
                 dispatch(selectKeyword({id: item.id, selected: true}));
-                setFavsKeywords((prev) => [...prev.filter(keyword => keyword.id !== item.id), item])
             }else{
                 dispatch(selectKeyword({id: item.id, selected: false}));
-                setFavsKeywords((prev) => [...prev.filter(keyword => keyword.id !== item.id)])
             }
         }
     }

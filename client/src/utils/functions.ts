@@ -44,6 +44,11 @@ export const replaceSpace = (text: string): string => text.trim().replace(/(?: )
 
 export const getGoogleSearchUrl = (name: string): string => `https://www.google.com/search?q=${name.trim().replace(/(?: )/g, '+')}`
 
+export const removeDuplicate = (items: Array<any>, filterProperty: string): Array<any> => {
+  const ids = items.map(item => item[filterProperty])
+  return items.filter((item, index) => !ids.includes(item[filterProperty], index + 1))
+}
+
 export const isValidImageUrl = (urlString: string) => {
   return(urlString.match(/\.(jpeg|jpg|gif|png|webp)$/) != null);
 }

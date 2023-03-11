@@ -4,7 +4,7 @@ import Draggable from './Draggable';
 import Droppable from './Droppable';
 import { Card, Col, List, Row } from 'antd';
 import IKeywordsDragAndDrop, { IDragKeyword } from './IKeywordsDragAndDrop';
-import { replaceSpace } from '../../../utils/functions';
+import { removeDuplicate, replaceSpace } from '../../../utils/functions';
 
 const KeywordsDragAndDrop: React.FC<IKeywordsDragAndDrop> = (props) => {
   const articles = ['1'];
@@ -32,7 +32,7 @@ const KeywordsDragAndDrop: React.FC<IKeywordsDragAndDrop> = (props) => {
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <Row>
             <Col span={12}>
-                {keywords.filter(keyword => keyword.parent === null).map((keyword) => <div key={keyword.id}>{keyword.component}</div>)}
+                {removeDuplicate(keywords, 'id').filter(keyword => keyword.parent === null).map((keyword) => <div key={keyword.id}>{keyword.component}</div>)}
             </Col>
             <Col span={12}>
                 {articles.map((id) => {
@@ -43,7 +43,7 @@ const KeywordsDragAndDrop: React.FC<IKeywordsDragAndDrop> = (props) => {
                             style={{margin: 20}} 
                             title={'title'}
                         >
-                            {dragged ? dragged.map(keyword => <div key={keyword.id}>{keyword.component}</div>) : 'Drop here'}
+                            {dragged ? removeDuplicate(dragged, 'id').map(keyword => <div key={keyword.id}>{keyword.component}</div>) : 'Drop here'}
                         </Card>
                     </Droppable>
                 )
