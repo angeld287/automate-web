@@ -10,4 +10,10 @@ export interface IKeywordService {
     getKeywordSearchJob(jobId: number): Promise<IKeywordSearchJob | false>
 
     getAllKeywordSearchJobs(userId: number): Promise<Array<IKeywordSearchJob>>
+
+    getKeywordsById(jobId: number): Promise<IKeyword>
+
+    getKeywordsByJobId(jobId: number): Promise<Array<IKeyword>>
+
+    updateKeyword(keyword: IKeyword): Promise<IKeyword>
 }

@@ -6,9 +6,10 @@
 
 import { BadRequestResponse, InternalErrorResponse, SuccessResponse } from '../../../core/ApiResponse';
 import { IKeywordService } from '../../../interfaces/IKeywordService';
+import IKeyword from '../../../interfaces/models/Keyword';
 import { IRequest, IResponse } from '../../../interfaces/vendors';
 import Log from '../../../middlewares/Log';
-import ExpressValidator from '../../../providers/ExpressValidation';
+import ExpressValidator, { ValidateErrors } from '../../../providers/ExpressValidation';
 import { keywordService } from '../../../services/keywords/keywordServices';
 
 class Keywords {
@@ -33,7 +34,7 @@ class Keywords {
             }).send(res);
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('Page Source Error', {
+            return new InternalErrorResponse('Keywords Controller Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }
@@ -54,11 +55,65 @@ class Keywords {
             }).send(res);
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('Page Source Error', {
+            return new InternalErrorResponse('Keywords Controller Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }
     }
+
+    public static async selectPotentialKeyword(req: IRequest, res: IResponse): Promise<any> {
+        try {
+
+            if(ValidateErrors.validate(req, res) !== true) return
+
+            const _keywordService: IKeywordService = new keywordService()
+            
+            const id = req.body.id;
+            const selected = req.body.selected;
+
+            let keyowrd: IKeyword = await _keywordService.getKeywordsById(id)
+            keyowrd.selected = selected;
+            keyowrd = await _keywordService.updateKeyword(keyowrd)
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: keyowrd,
+                error: null
+            }).send(res);
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Keywords Controller Error - selectPotentialKeyword', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
+    public static async addRemoveKeywordToArticle(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            if(ValidateErrors.validate(req, res) !== true) return
+
+            const _keywordService: IKeywordService = new keywordService()
+            
+            const id = req.body.id;
+            const articleId = req.body.articleId;
+
+            let keyowrd: IKeyword = await _keywordService.getKeywordsById(id)
+            keyowrd.articleId = articleId;
+            keyowrd = await _keywordService.updateKeyword(keyowrd)
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: keyowrd,
+                error: null
+            }).send(res);
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Keywords Controller Error - selectPotentialKeyword', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
 }
 
 export default Keywords;

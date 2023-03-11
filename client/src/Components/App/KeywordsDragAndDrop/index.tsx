@@ -7,7 +7,7 @@ import IKeywordsDragAndDrop, { IDragKeyword } from './IKeywordsDragAndDrop';
 import { replaceSpace } from '../../../utils/functions';
 
 const KeywordsDragAndDrop: React.FC<IKeywordsDragAndDrop> = (props) => {
-  const articles = ['1', '2', '3'];
+  const articles = ['1'];
   const [draggedKeyword, setDraggedKeyword] = useState<UniqueIdentifier>('');
 
   const [keywords, setKeywords] = useState<Array<IDragKeyword>>([]);

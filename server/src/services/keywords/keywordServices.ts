@@ -41,7 +41,7 @@ export class keywordService implements IKeywordService {
         try {
             const createKeywordTmpl = {
                 name: 'create-new-keyword',
-                text: 'INSERT INTO public.keywords(name, similarity, keyword_search_job_id) VALUES ($1, $2, $3) RETURNING id, name, similarity, keyword_search_job_id',
+                text: 'INSERT INTO public.keywords(name, similarity, keyword_search_job_id) VALUES ($1, $2, $3) RETURNING id, name, similarity, keyword_search_job_id, article_id, selected',
                 values: [keyword.name, keyword.similarity, keyword.keywordSearchJobId],
             }
 
@@ -62,6 +62,44 @@ export class keywordService implements IKeywordService {
                 name: result.rows[0].name,
                 similarity: result.rows[0].similarity,
                 keywordSearchJobId: result.rows[0].keyword_search_job_id,
+                articleId: result.rows[0].article_id,
+                selected: result.rows[0].selected
+            }
+            
+            return _keyword;
+            
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async updateKeyword(keyword: IKeyword): Promise<IKeyword> {
+        try {
+            const createKeywordTmpl = {
+                name: 'add-remove-keyword-article-relation',
+                text: 'UPDATE public.keywords selected=$2, article_id=$1  WHERE id = $3 RETURNING id, name, similarity, keyword_search_job_id, article_id, selected',
+                values: [keyword.articleId, keyword.selected, keyword.id],
+            }
+
+            let result = null, client = null;
+
+            client = await Database.getTransaction();
+
+            try {
+                result = await Database.sqlExecSingleRow(client, createKeywordTmpl);
+                await Database.commit(client);
+            } catch (error) {
+                await Database.rollback(client);
+                throw new Error(error);
+            }
+
+            let _keyword: IKeyword = {
+                id: result.rows[0].id,
+                name: result.rows[0].name,
+                similarity: result.rows[0].similarity,
+                keywordSearchJobId: result.rows[0].keyword_search_job_id,
+                articleId: result.rows[0].article_id,
+                selected: result.rows[0].selected
             }
             
             return _keyword;
@@ -74,7 +112,7 @@ export class keywordService implements IKeywordService {
     async getKeywordByName(name: string): Promise<IKeyword | false> {
         const getQuery = {
             name: 'get-keyword-by-name',
-            text: `SELECT id, name, similarity, keyword_search_job_id FROM public.keywords where name = $1`,
+            text: `SELECT id, name, similarity, keyword_search_job_id, article_id, selected FROM public.keywords where name = $1`,
             values: [name],
         }
 
@@ -90,6 +128,8 @@ export class keywordService implements IKeywordService {
                 name: result.rows[0].name,
                 similarity: result.rows[0].similarity,
                 keywordSearchJobId: result.rows[0].keyword_search_job_id,
+                articleId: result.rows[0].article_id,
+                selected: result.rows[0].selected
             }
 
             return keyword;
@@ -131,7 +171,7 @@ export class keywordService implements IKeywordService {
     async getKeywordsByJobId(jobId: number): Promise<Array<IKeyword>> {
         const getQuery = {
             name: 'get-keywords-by-job-id',
-            text: `SELECT id, name, similarity, keyword_search_job_id FROM public.keywords WHERE keyword_search_job_id = $1`,
+            text: `SELECT id, name, similarity, keyword_search_job_id, article_id, selected FROM public.keywords WHERE keyword_search_job_id = $1`,
             values: [jobId],
         }
 
@@ -147,6 +187,8 @@ export class keywordService implements IKeywordService {
                     name: row.name,
                     similarity: row.similarity,
                     keywordSearchJobId: row.keyword_search_job_id,
+                    articleId: row.article_id,
+                    selected: row.selected
                 })
             });
 
@@ -156,9 +198,35 @@ export class keywordService implements IKeywordService {
         }
     }
 
+    async getKeywordsById(id: number): Promise<IKeyword> {
+        const getQuery = {
+            name: 'get-keywords-by-id',
+            text: `SELECT id, name, similarity, keyword_search_job_id, article_id, selected FROM public.keywords WHERE id = $1`,
+            values: [id],
+        }
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            const keyowrd: IKeyword = {
+                id: result.rows[0].id,
+                name: result.rows[0].name,
+                similarity: result.rows[0].similarity,
+                keywordSearchJobId: result.rows[0].keyword_search_job_id,
+                articleId: result.rows[0].article_id,
+                selected: result.rows[0].selected
+            }
+
+            return keyowrd
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
     async getAllKeywordSearchJobs(userId: number): Promise<Array<IKeywordSearchJob>> {
         const getQuery = {
-            name: 'get-all-keywords',
+            name: 'get-all-keywords-search-jobs',
             text: `SELECT id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status, long_tail_keyword FROM public.keyword_search_job WHERE created_by = $1`,
             values: [userId],
         }

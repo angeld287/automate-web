@@ -272,4 +272,20 @@ router.get(
     KeywordsController.getAllSearchJobs
 );
 
+router.post(
+    '/keywords/selectPotentialKeyword',
+    body('id', 'field id cannot be blank.').notEmpty(),
+    body('selected', 'field selected cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    KeywordsController.selectPotentialKeyword
+);
+
+router.post(
+    '/keywords/addRemoveKeywordToArticle',
+    body('id', 'field id cannot be blank.').notEmpty(),
+    body('articleId', 'field articleId cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    KeywordsController.addRemoveKeywordToArticle
+);
+
 export default router;

@@ -487,7 +487,13 @@ CREATE TABLE IF NOT EXISTS public.keywords
     name character(100) COLLATE pg_catalog."default",
     similarity integer,
     keyword_search_job_id integer NOT NULL,
+    selected boolean,
+    article_id integer,
     CONSTRAINT keywords_pkey PRIMARY KEY (id),
+    CONSTRAINT keywords_article_fkey FOREIGN KEY (article_id)
+        REFERENCES public.articles (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
     CONSTRAINT keywords_keyword_search_job_fkey FOREIGN KEY (keyword_search_job_id)
         REFERENCES public.keyword_search_job (id) MATCH SIMPLE
         ON UPDATE NO ACTION
@@ -500,6 +506,7 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.keywords
     OWNER to admin;
+
 -- Index: fki_keywords_keyword_search_job_fkey
 
 -- DROP INDEX IF EXISTS public.fki_keywords_keyword_search_job_fkey;
@@ -507,4 +514,13 @@ ALTER TABLE IF EXISTS public.keywords
 CREATE INDEX IF NOT EXISTS fki_keywords_keyword_search_job_fkey
     ON public.keywords USING btree
     (keyword_search_job_id ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+-- Index: fki_keywords_article_fkey
+
+-- DROP INDEX IF EXISTS public.fki_keywords_article_fkey;
+
+CREATE INDEX IF NOT EXISTS fki_keywords_article_fkey
+    ON public.keywords USING btree
+    (article_id ASC NULLS LAST)
     TABLESPACE pg_default;

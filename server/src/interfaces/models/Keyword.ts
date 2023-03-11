@@ -4,6 +4,8 @@ export default interface IKeyword {
     resultsSimilarity?: Array<IResultTitleSimilarity>
     similarity?: number;
     keywordSearchJobId?: number;
+    selected?: boolean;
+    articleId?: number;
 }
 
 export interface IResultTitleSimilarity {
