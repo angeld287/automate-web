@@ -6,3 +6,7 @@ export interface IDragKeyword extends IKeyword {
     parent: UniqueIdentifier | null;
     component: ReactElement;
 }
+
+export default interface IKeywordsDragAndDrop {
+    keywords: Array<IKeyword>
+}

@@ -40,7 +40,7 @@ export const isValidUrl = (urlString: string) => {
   return !!urlPattern.test(urlString);
 }
 
-export const replaceSpace = (text: string): string => text.replace(/(?: )/g, '_')
+export const replaceSpace = (text: string): string => text.trim().replace(/(?: )/g, '_')
 
 export const getGoogleSearchUrl = (name: string): string => `https://www.google.com/search?q=${name.trim().replace(/(?: )/g, '+')}`
 
