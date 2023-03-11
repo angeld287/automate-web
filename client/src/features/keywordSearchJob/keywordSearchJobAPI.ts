@@ -13,7 +13,7 @@ export async function getAllSearchJobs() {
 }
 
 export async function getSearchJob(id: number) {
-  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}getSearchJob?id=${id}`, {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}keywords/getSearchJob?id=${id}`, {
     method: "GET",
     credentials: 'include',
     headers: {

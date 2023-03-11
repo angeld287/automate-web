@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {DndContext, DragEndEvent, DragStartEvent, UniqueIdentifier} from '@dnd-kit/core';
 import Draggable from './Draggable';
 import Droppable from './Droppable';
@@ -27,11 +27,6 @@ const KeywordsDragAndDrop: React.FC = () => {
     }
   ]);
 
-  const [parent, setParent] = useState<UniqueIdentifier | null>(null);
-  const draggableMarkup = (
-    <Draggable id="draggable">Drag me</Draggable>
-  );
-
   const handleDragStart = (event: DragStartEvent) =>{
     setDraggedKeyword(event.active.id)
   }
@@ -44,10 +39,10 @@ const KeywordsDragAndDrop: React.FC = () => {
             </Col>
             <Col span={12}>
                 {articles.map((id) => {
-
+                  const dragged = keywords.find(keyword => keyword.parent === id);
                   return (
                     <Droppable key={id} id={id}>
-                      {parent === id ? draggableMarkup : 'Drop here'}
+                      {dragged ? dragged.component : 'Drop here'}
                     </Droppable>
                 )
                 })}
@@ -58,11 +53,10 @@ const KeywordsDragAndDrop: React.FC = () => {
 
   function handleDragEnd(event: DragEndEvent) {
     const {over} = event;
-    if(over){
-      const keyword = keywords.find(k => k.id === draggedKeyword)
-      if(keyword){
-        keyword.parent = over.id;
-      }
+    const keyword = keywords.find(_keyword => _keyword.id?.toString() === draggedKeyword.toString())
+    if(keyword){
+      keyword.parent = over ? over.id : null;
+      setKeywords([...keywords.filter(_keyword => _keyword.id != draggedKeyword), keyword])
     }
   }
 };

@@ -150,7 +150,7 @@ export class keywordService implements IKeywordService {
                 })
             });
 
-            return keyowrds;
+            return keyowrds.sort((kwA, kwB) => (kwA.similarity < kwB.similarity ? -1 : 1));
         } catch (error) {
             throw new Error(error.message);
         }
@@ -179,7 +179,7 @@ export class keywordService implements IKeywordService {
                 })
             });
 
-            return keyowrdSearchJons;
+            return keyowrdSearchJons
         } catch (error) {
             throw new Error(error.message);
         }
