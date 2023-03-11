@@ -1,35 +1,69 @@
 import React, {useState} from 'react';
-import {DndContext} from '@dnd-kit/core';
+import {DndContext, DragEndEvent, DragStartEvent, UniqueIdentifier} from '@dnd-kit/core';
 import Draggable from './Draggable';
 import Droppable from './Droppable';
+import { Col, Row } from 'antd';
+import { IDragKeyword } from './IKeywordsDragAndDrop';
 
 const KeywordsDragAndDrop: React.FC = () => {
-  const containers = ['A', 'B', 'C'];
-  const [parent, setParent] = useState(null);
+  const articles = ['1', '2', '3'];
+  const [draggedKeyword, setDraggedKeyword] = useState<UniqueIdentifier>('');
+
+  const [keywords, setKeywords] = useState<Array<IDragKeyword>>([{
+      parent: null,
+      name: "",
+      id: 1,
+      component: (
+        <Draggable id="1">Drag me 1</Draggable>
+      )
+    }, 
+    {
+      parent: null,
+      name: "",
+      id: 2,
+      component: (
+        <Draggable id="2">Drag me 2</Draggable>
+      )
+    }
+  ]);
+
+  const [parent, setParent] = useState<UniqueIdentifier | null>(null);
   const draggableMarkup = (
     <Draggable id="draggable">Drag me</Draggable>
   );
 
-  return (
-    <DndContext onDragEnd={handleDragEnd}>
-      {parent === null ? draggableMarkup : null}
+  const handleDragStart = (event: DragStartEvent) =>{
+    setDraggedKeyword(event.active.id)
+  }
 
-      {containers.map((id) => (
-        // We updated the Droppable component so it would accept an `id`
-        // prop and pass it to `useDroppable`
-        <Droppable key={id} id={id}>
-          {parent === id ? draggableMarkup : 'Drop here'}
-        </Droppable>
-      ))}
+  return (
+    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <Row>
+            <Col span={12}>
+                {keywords.filter(keyword => keyword.parent === null).map((keyword) => <div key={keyword.id}>{keyword.component}</div>)}
+            </Col>
+            <Col span={12}>
+                {articles.map((id) => {
+
+                  return (
+                    <Droppable key={id} id={id}>
+                      {parent === id ? draggableMarkup : 'Drop here'}
+                    </Droppable>
+                )
+                })}
+            </Col>
+        </Row>
     </DndContext>
   );
 
-  function handleDragEnd(event: any) {
+  function handleDragEnd(event: DragEndEvent) {
     const {over} = event;
-
-    // If the item is dropped over a container, set it as the parent
-    // otherwise reset the parent to `null`
-    setParent(over ? over.id : null);
+    if(over){
+      const keyword = keywords.find(k => k.id === draggedKeyword)
+      if(keyword){
+        keyword.parent = over.id;
+      }
+    }
   }
 };
 
