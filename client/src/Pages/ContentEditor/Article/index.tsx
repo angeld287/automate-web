@@ -16,6 +16,7 @@ import { updateSubtitle } from "../../../features/article/articleSlice";
 import AddIntroAndConclusion from "../../../Components/App/AddIntroAndConclusion";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { ArticleState } from "../../../interfaces/Enums/States";
 
 
 const ContentEditor = () => {
@@ -56,7 +57,7 @@ const ContentEditor = () => {
     }, [article.error]);
 
     useEffect(() => {
-        if(article.articleState === 'created_in_wp') navigate('/');
+        if(article.articleState === ArticleState.CREATED_IN_WP) navigate('/');
     }, [article.articleState]);
 
     //useEffect(() => {

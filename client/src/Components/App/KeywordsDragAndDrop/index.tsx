@@ -5,16 +5,23 @@ import Droppable from './Droppable';
 import { Card, Col, List, Row } from 'antd';
 import IKeywordsDragAndDrop, { IDragKeyword } from './IKeywordsDragAndDrop';
 import { removeDuplicate, replaceSpace } from '../../../utils/functions';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { getPlanningArticles, selectArticles } from '../../../features/articles/articlesSlice';
+import PlanningArticles from './PlanningArticles';
 
 const KeywordsDragAndDrop: React.FC<IKeywordsDragAndDrop> = (props) => {
-  const articles = ['1'];
   const [draggedKeyword, setDraggedKeyword] = useState<UniqueIdentifier>('');
-
   const [keywords, setKeywords] = useState<Array<IDragKeyword>>([]);
+  const {planningArticles} = useAppSelector(selectArticles);
+  const dispatch = useAppDispatch()
 
   const handleDragStart = (event: DragStartEvent) =>{
     setDraggedKeyword(event.active.id)
   }
+
+  useEffect(() => {
+    if(props.jobId) dispatch(getPlanningArticles(parseInt(props.jobId)))
+  }, []);
 
   useEffect(() => {
     setKeywords(props.keywords.map(keyword => ({
@@ -31,23 +38,11 @@ const KeywordsDragAndDrop: React.FC<IKeywordsDragAndDrop> = (props) => {
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <Row>
-            <Col span={12}>
+            <Col span={12} style={{border: 'solid 1px #000'}}>
                 {removeDuplicate(keywords, 'id').filter(keyword => keyword.parent === null).map((keyword) => <div key={keyword.id}>{keyword.component}</div>)}
             </Col>
             <Col span={12}>
-                {articles.map((id) => {
-                  const dragged = keywords.filter(keyword => keyword.parent === id);
-                  return (
-                    <Droppable key={id} id={id}>
-                        <Card 
-                            style={{margin: 20}} 
-                            title={'title'}
-                        >
-                            {dragged ? removeDuplicate(dragged, 'id').map(keyword => <div key={keyword.id}>{keyword.component}</div>) : 'Drop here'}
-                        </Card>
-                    </Droppable>
-                )
-                })}
+              <PlanningArticles jobId={props.jobId} articles={planningArticles} keywords={keywords}/>
             </Col>
         </Row>
     </DndContext>

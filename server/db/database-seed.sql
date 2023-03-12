@@ -203,13 +203,15 @@ CREATE TABLE IF NOT EXISTS public.articles
     translated_title character(100) COLLATE pg_catalog."default",
     category character(50) COLLATE pg_catalog."default",
     internal_id integer NOT NULL DEFAULT nextval('articles_internal_id_seq'::regclass),
-    wp_id integer,
-    wp_link character(100) COLLATE pg_catalog."default",
     created_by integer NOT NULL,
     deleted boolean,
     deleted_by integer,
     created_at timestamp with time zone NOT NULL,
     deleted_at timestamp with time zone,
+    wp_id integer,
+    wp_link character(100) COLLATE pg_catalog."default",
+    sys_state character(15) COLLATE pg_catalog."default",
+    job_id integer,
     CONSTRAINT articles_pkey PRIMARY KEY (id),
     CONSTRAINT articles_created_by_fkey FOREIGN KEY (created_by)
         REFERENCES public.users (id) MATCH SIMPLE
@@ -217,6 +219,10 @@ CREATE TABLE IF NOT EXISTS public.articles
         ON DELETE NO ACTION,
     CONSTRAINT articles_deleted_by_fkey FOREIGN KEY (deleted_by)
         REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT articles_keyword_search_job_fkey FOREIGN KEY (job_id)
+        REFERENCES public.keyword_search_job (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
@@ -242,6 +248,14 @@ CREATE INDEX IF NOT EXISTS fki_articles_created_by_fkey
 CREATE INDEX IF NOT EXISTS fki_articles_deleted_by_fkey
     ON public.articles USING btree
     (deleted_by ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: fki_articles_keyword_search_job_fkey
+
+-- DROP INDEX IF EXISTS public.fki_articles_keyword_search_job_fkey;
+
+CREATE INDEX IF NOT EXISTS fki_articles_keyword_search_job_fkey
+    ON public.articles USING btree
+    (job_id ASC NULLS LAST)
     TABLESPACE pg_default;
 
 -- Trigger: set_timestamp_to_created_at

@@ -1,3 +1,4 @@
+import { ArticleState } from "../Enums/States";
 import IContent from "../models/Content";
 import { DbMedia } from "./Media";
 
@@ -5,6 +6,7 @@ export interface IArticle {
     id: number;
     internalId: number;
     wpId?: number;
+    sysState?: ArticleState
     title: string;
     translatedTitle?: string;
     subtitles: Array<SubTitleContent>;
@@ -19,6 +21,13 @@ export interface IArticle {
     deleted?: boolean;
     deletedAt?: string;
     deletedBy?: number;
+    jobId?: number;
+}
+
+export interface INewPlanningArticle {
+    jobId: number;
+    category: string;
+    sysState: ArticleState;
 }
 
 export interface SubTitleContent {

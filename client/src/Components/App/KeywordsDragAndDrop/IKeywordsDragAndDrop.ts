@@ -8,5 +8,6 @@ export interface IDragKeyword extends IKeyword {
 }
 
 export default interface IKeywordsDragAndDrop {
+    jobId?: string;
     keywords: Array<IKeyword>
 }

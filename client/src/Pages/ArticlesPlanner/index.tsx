@@ -34,7 +34,7 @@ const ArticlesPlanner = () => {
                 <KeywordsList items={keywords}/>
             </Col>
             <Col span={17} className="drag-and-drop" style={{border: 'solid 1px #000'}}>
-                <KeywordsDragAndDrop keywords={keywords.filter(keyword => keyword.selected)}/>
+                <KeywordsDragAndDrop jobId={id} keywords={keywords.filter(keyword => keyword.selected)}/>
             </Col>
         </Row>
     </>;

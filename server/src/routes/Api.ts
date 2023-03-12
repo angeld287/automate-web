@@ -205,9 +205,20 @@ router.post(
 
 router.post(
     '/createArticle',
-    body('title', 'field content cannot be blank.').notEmpty(),
-    body('category', 'field selected cannot be blank.').notEmpty(),
-    body('translatedTitle', 'field contentLanguage cannot be blank.').notEmpty(),
+    body('title', 'field title cannot be blank.').notEmpty(),
+    body('category', 'field category cannot be blank.').notEmpty(),
+    body('translatedTitle', 'field translatedTitle cannot be blank.').notEmpty(),
+    body('sysState', 'field sysState cannot be blank.').notEmpty(),
+    body('jobId', 'field jobId cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    ArticleController.createArticle
+);
+
+router.post(
+    '/createPlanningArticle',
+    body('category', 'field category cannot be blank.').notEmpty(),
+    body('sysState', 'field sysState cannot be blank.').notEmpty(),
+    body('jobId', 'field jobId cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     ArticleController.createArticle
 );
@@ -222,6 +233,12 @@ router.get(
     '/getArticles',
     Passport.isAuthenticated,
     ArticleController.getArticles
+);
+
+router.get(
+    '/getPlanningArticles',
+    Passport.isAuthenticated,
+    ArticleController.getPlanningArticles
 );
 
 router.post(

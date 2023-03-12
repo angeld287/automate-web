@@ -1,20 +1,22 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { IArticle, SubTitleContent } from '../../interfaces/models/Article';
+import { IArticle, INewPlanningArticle, SubTitleContent } from '../../interfaces/models/Article';
 import IContent from '../../interfaces/models/Content';
 import ApiResponse from '../../interfaces/Responses/ApiResponse';
 import { getBearer } from '../autenticate/authenticateAPI';
 import { searchKeywordContent } from '../keyword/keywordAPI';
-import { createContentForArticle, createPost, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
+import { ArticleState as State} from '../../interfaces/Enums/States'
+import { createArticle, createContentForArticle, createPost, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
 
 export interface ArticleState {
   article: IArticle;
-  articleState: 'draft' | 'created_in_wp' | 'published_in_wp'
+  articleState: State; //'draft' | 'created_in_wp' | 'published_in_wp'
   status: 'idle' | 'loading' | 'failed';
   statusKc: 'idle' | 'loading' | 'failed';
   statusTk: 'idle' | 'loading' | 'failed';
   statusCC: 'idle' | 'loading' | 'failed';
   statusCP: 'idle' | 'loading' | 'failed';
+  statusCA: 'idle' | 'loading' | 'failed';
   kewordsTranslated: boolean;
   error: string | false;
 }
@@ -30,12 +32,13 @@ const initialState: ArticleState = {
     createdAt: "",
     createdBy: 0,
   },
-  articleState: 'draft',
+  articleState: State.DRAFT,
   status: 'idle',
   statusKc: 'idle',
   statusTk: 'idle',
   statusCC: 'idle',
   statusCP: 'idle',
+  statusCA: 'idle',
   error: false,
   kewordsTranslated: false,
 };
@@ -114,6 +117,19 @@ export const createWpPost = createAsyncThunk(
   }
 );
 
+export const createNewArticle = createAsyncThunk(
+  'article/createNewArticle',
+  async (article: INewPlanningArticle) => {
+    try {    
+      const token = getBearer()
+      const result = await createArticle(article, token);
+      return result;
+    } catch (error) {
+      throw new Error('Error in ArticleState at createNewArticle')
+    }
+  }
+);
+
 
 export const articleSlice = createSlice({
   name: 'article',
@@ -162,7 +178,7 @@ export const articleSlice = createSlice({
         const subs = [...action.payload.subtitles];
         state.article = action.payload;
         state.article.subtitles = subs.sort((subA, subB) => (subA.orderNumber < subB.orderNumber ? -1 : 1))
-        state.articleState = action.payload.wpLink ? "created_in_wp" : "draft"
+        state.articleState = action.payload.wpLink ? State.CREATED_IN_WP : State.DRAFT
       })
       .addCase(getArticleByInternalId.rejected, (state) => {
         state.status = 'failed';
@@ -195,10 +211,22 @@ export const articleSlice = createSlice({
         state.error = action.payload.message === 'Error' ? action.payload.data.message : false;
         state.article = action.payload.message === 'Success' ? action.payload.data.article : state.article;
         state.statusCP = 'idle';
-        state.articleState = action.payload.message === 'Error' ? 'draft' : 'created_in_wp';
+        state.articleState = action.payload.message === 'Error' ? State.DRAFT : State.CREATED_IN_WP;
       })
       .addCase(createWpPost.rejected, (state) => {
         state.statusCP = 'failed';
+      })
+      .addCase(createNewArticle.pending, (state) => {
+        state.statusCA = 'loading';
+      })
+      .addCase(createNewArticle.fulfilled, (state, action: PayloadAction<ApiResponse>) => {
+        state.error = action.payload.message === 'Error' ? action.payload.data.message : false;
+        state.article = action.payload.message === 'Success' ? action.payload.data.article : state.article;
+        state.statusCA = 'idle';
+        state.articleState = action.payload.message === 'Error' ? State.DRAFT : State.CREATED_IN_WP;
+      })
+      .addCase(createNewArticle.rejected, (state) => {
+        state.statusCA = 'failed';
       });
   },
 });

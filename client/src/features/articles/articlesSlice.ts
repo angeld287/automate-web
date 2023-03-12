@@ -1,12 +1,14 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import IPagination from '../../interfaces/IPagination';
 import { IArticle } from '../../interfaces/models/Article';
-import { getArticlesFromDb } from './articlesAPI';
+import { getArticlesFromDb, getPlanningArticlesFromDb } from './articlesAPI';
 
 export interface ArticlesState {
   articles: Array<IArticle>;
+  planningArticles: Array<IArticle>;
   status: 'idle' | 'loading' | 'failed';
+  statusPA: 'idle' | 'loading' | 'failed';
   page: number;
   size: number;
   hasMore: boolean;
@@ -14,7 +16,9 @@ export interface ArticlesState {
 
 const initialState: ArticlesState = {
   articles: [],
+  planningArticles: [],
   status: 'idle',
+  statusPA: 'idle',
   page: 0,
   size: 5,
   hasMore: true,
@@ -25,6 +29,18 @@ export const getArticles = createAsyncThunk(
   async ({page, size}: IPagination) => {
     try {    
       const result = await getArticlesFromDb(page, size);
+      return result.data.response;
+    } catch (error) {
+      console.log(error) 
+    }
+  }
+);
+
+export const getPlanningArticles = createAsyncThunk(
+  'articles/getPlanninglist',
+  async (jobId: number) => {
+    try {    
+      const result = await getPlanningArticlesFromDb(jobId);
       return result.data.response;
     } catch (error) {
       console.log(error) 
@@ -58,6 +74,16 @@ export const articlesSlice = createSlice({
       .addCase(getArticles.rejected, (state) => {
         state.status = 'failed';
       })
+      .addCase(getPlanningArticles.pending, (state) => {
+        state.statusPA = 'loading';
+      })
+      .addCase(getPlanningArticles.fulfilled, (state, action: PayloadAction<Array<IArticle> | false>) => {
+        state.statusPA = 'idle';
+        state.planningArticles = action.payload !== false ? action.payload : [];
+      })
+      .addCase(getPlanningArticles.rejected, (state) => {
+        state.statusPA = 'failed';
+      });
   },
 });
 

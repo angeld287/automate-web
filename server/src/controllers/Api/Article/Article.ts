@@ -98,12 +98,14 @@ class Article {
             const title = req.body.title;
             const category = req.body.category;
             const translatedTitle = req.body.translatedTitle;  
-            const userId = req.session.passport.user.id;     
+            const userId = req.session.passport.user.id;
+            const sysState = req.body.translatedTitle;
 
             let article: INewArticle = {
                 title,
                 category,
                 subtitles: [],
+                sysState,
                 translatedTitle,
                 createdBy: parseInt(userId),
                 createdAt: (new Date()).toString()
@@ -150,6 +152,35 @@ class Article {
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
             return new InternalErrorResponse('Get Article - Article Controller Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
+    public static async getPlanningArticles(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            if(!req.query.id){
+                return new BadRequestResponse('Error', {
+                    error: "Param id are required."
+                }).send(res);
+            }
+            
+            let _articleService: IArticleService = new articleService();
+
+            const jobId = parseInt(req.query.id.toString());
+            const userId = parseInt(req.session.passport.user.id);
+
+            const articles: Array<INewArticle> | false = await _articleService.getPlanningArticles(jobId, userId)
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: articles,
+                error: null
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('getPlanningArticles - Article Controller Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }

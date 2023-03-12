@@ -10,9 +10,13 @@ export interface IArticleService {
 
     updateArticleWpId(article: INewArticle): Promise<INewArticle | false>
 
-    getArticles(page: number, size: number, userId: number): Promise<Array<INewArticle> | boolean>
+    getArticles(page: number, size: number, userId: number): Promise<Array<INewArticle> | false>
 
     getArticleById(articleId: number): Promise<INewArticle | false>
+
+    getPlanningArticle(jobId: number, userId: number): Promise<INewArticle | false>
+
+    getPlanningArticles(jobId: number, userId: number): Promise<Array<INewArticle> | false>
 
     getSubtitleById(subtitleId: number): Promise<SubTitleContent | false>
 

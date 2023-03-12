@@ -1,5 +1,6 @@
 import { INewArticle, SubTitleContent } from "../../interfaces/Content/Article";
 import { Languages } from "../../interfaces/Enums/Languages";
+import { ArticleState } from "../../interfaces/Enums/States";
 import { IArticleService } from "../../interfaces/IArticleService";
 import IContent from "../../interfaces/models/Content";
 import { DbMedia } from "../../interfaces/models/Media";
@@ -94,8 +95,8 @@ export class articleService implements IArticleService {
         try {
             const createArticle = {
                 name: 'create-new-article',
-                text: 'INSERT INTO public.articles(title, translated_title, category, created_by) VALUES ($1, $2, $3, $4) RETURNING internal_id, id, TRIM(title) AS title, TRIM(translated_title) AS translated_title, category, created_by, created_at',
-                values: [article.title, article.translatedTitle, article.category, article.createdBy],
+                text: 'INSERT INTO public.articles(title, translated_title, category, created_by, sys_state, job_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING internal_id, id, TRIM(title) AS title, TRIM(translated_title) AS translated_title, category, created_by, created_at, sys_state, job_id',
+                values: [article.title, article.translatedTitle, article.category, article.createdBy, article.sysState, article.jobId],
             }
 
             let result = null, client = null;
@@ -113,6 +114,8 @@ export class articleService implements IArticleService {
             let _article: INewArticle = {
                 id: result.rows[0].id,
                 internalId: result.rows[0].internal_id,
+                sysState: result.rows[0].sys_state,
+                jobId: result.rows[0].job_id,
                 category: result.rows[0].category,
                 subtitles: [],
                 title: result.rows[0].title,
@@ -137,7 +140,7 @@ export class articleService implements IArticleService {
 
             const createArticle = {
                 name: 'create-new-article',
-                text: 'UPDATE public.articles SET wp_id=$2 WHERE internal_id = $1 RETURNING internal_id, id, TRIM(title) AS title, TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id',
+                text: 'UPDATE public.articles SET wp_id=$2 WHERE internal_id = $1 RETURNING internal_id, id, TRIM(title) AS title, TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, sys_state, job_id',
                 values: [article.internalId, article.wpId],
             }
 
@@ -157,6 +160,8 @@ export class articleService implements IArticleService {
                 id: result.rows[0].id,
                 internalId: result.rows[0].internal_id,
                 wpId: result.rows[0].wp_id,
+                sysState: result.rows[0].sys_state,
+                jobId: result.rows[0].job_id,
                 category: result.rows[0].category,
                 subtitles: [],
                 title: result.rows[0].title,
@@ -179,13 +184,40 @@ export class articleService implements IArticleService {
 
         const getQuery = {
             name: 'get-article-by-id',
-            text: `SELECT id, internal_id, TRIM(title) AS title , TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, wp_link FROM public.articles where internal_id = $1`,
+            text: `SELECT id, internal_id, TRIM(title) AS title , TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, wp_link, sys_state, job_id FROM public.articles where internal_id = $1`,
             values: [articleId],
         }
 
+        try {
+            return await this.querySingleArticle(getQuery);
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async getPlanningArticle(jobId: number, userId: number): Promise<INewArticle | false> {
+
+        if (!jobId)
+                return false
+
+        const getQuery = {
+            name: 'get-planning-article',
+            text: `SELECT id, internal_id, TRIM(title) AS title , TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, wp_link, sys_state, job_id FROM public.articles WHERE sys_state = ${ArticleState.KEYWORD_PLANNING} AND job_id = $1 AND created_by = $2`,
+            values: [jobId, userId],
+        }
+
+        try {
+            return await this.querySingleArticle(getQuery);
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async querySingleArticle(query: Query): Promise<INewArticle | false> {
+
         let result = null;
         try {
-            result = await Database.sqlToDB(getQuery);
+            result = await Database.sqlToDB(query);
             
             if (result.rows.length === 0)
                 return false
@@ -198,6 +230,8 @@ export class articleService implements IArticleService {
                 id: result.rows[0].id,
                 internalId: result.rows[0].internal_id,
                 wpId: result.rows[0].wp_id,
+                sysState: result.rows[0].sys_state,
+                jobId: result.rows[0].job_id,
                 title: result.rows[0].title,
                 translatedTitle: result.rows[0].translated_title,
                 category: result.rows[0].category,
@@ -215,22 +249,50 @@ export class articleService implements IArticleService {
         }
     }
 
-    async getArticles(page: number, size: number, userId: number): Promise<Array<INewArticle> | boolean> {
+    async getArticles(page: number, size: number, userId: number): Promise<Array<INewArticle> | false> {
         const getQuery = {
             name: 'get-articles-by-id',
             text: `
                     SELECT  id,
                         TRIM(title) as title, 
                         TRIM(translated_title) as translated_title, 
-                        category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at
+                        category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id
                     FROM public.articles WHERE created_by = $3 AND deleted IS NOT true ORDER BY created_at DESC LIMIT $2 OFFSET $1;
                 `,
             values: [page, size, userId],
         }
 
+        try {
+            return await this.queryArticles(getQuery);
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async getPlanningArticles(jobId: number, userId: number): Promise<Array<INewArticle> | false> {
+        const getQuery = {
+            name: 'get-planning-articles',
+            text: `
+                    SELECT  id,
+                        TRIM(title) as title, 
+                        TRIM(translated_title) as translated_title, 
+                        category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id
+                    FROM public.articles WHERE created_by = $2 AND deleted IS NOT true AND sys_state = '${ArticleState.KEYWORD_PLANNING}' AND job_id = $1;
+                `,
+            values: [jobId, userId],
+        }
+
+        try {
+            return await this.queryArticles(getQuery);
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async queryArticles(query: Query): Promise<Array<INewArticle> | false> {
         let result = null;
         try {
-            result = await Database.sqlToDB(getQuery);
+            result = await Database.sqlToDB(query);
             
             if (result.rows.length === 0)
                 return false
@@ -241,6 +303,8 @@ export class articleService implements IArticleService {
                articles.push({
                     id: row.id,
                     internalId: row.internal_id,
+                    sysState: row.sys_state,
+                    jobId: row.job_id,
                     title: row.title,
                     translatedTitle: row.translated_title,
                     category: row.category,
