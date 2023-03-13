@@ -38,10 +38,10 @@ const KeywordsDragAndDrop: React.FC<IKeywordsDragAndDrop> = (props) => {
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <Row>
-            <Col span={12} style={{border: 'solid 1px #000'}}>
+            <Col span={10} style={{border: 'solid 1px #000'}}>
                 {removeDuplicate(keywords, 'id').filter(keyword => keyword.parent === null).map((keyword) => <div key={keyword.id}>{keyword.component}</div>)}
             </Col>
-            <Col span={12}>
+            <Col span={14}>
               <PlanningArticles jobId={props.jobId} articles={planningArticles} keywords={keywords}/>
             </Col>
         </Row>

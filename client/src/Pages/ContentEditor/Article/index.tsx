@@ -14,7 +14,7 @@ import Locals from "../../../config/Locals";
 import { selectMedia } from "../../../features/media/mediaSlice";
 import { updateSubtitle } from "../../../features/article/articleSlice";
 import AddIntroAndConclusion from "../../../Components/App/AddIntroAndConclusion";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ArticleState } from "../../../interfaces/Enums/States";
 
@@ -149,7 +149,6 @@ const ContentEditor = () => {
             image={article.article.image?.source_url}
             contents={article.article.contents}
         />
-        <ToastContainer/>
     </>;
 }
 

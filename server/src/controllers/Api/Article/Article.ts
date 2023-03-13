@@ -99,7 +99,8 @@ class Article {
             const category = req.body.category;
             const translatedTitle = req.body.translatedTitle;  
             const userId = req.session.passport.user.id;
-            const sysState = req.body.translatedTitle;
+            const sysState = req.body.sysState;
+            const jobId = req.body.jobId;
 
             let article: INewArticle = {
                 title,
@@ -108,7 +109,8 @@ class Article {
                 sysState,
                 translatedTitle,
                 createdBy: parseInt(userId),
-                createdAt: (new Date()).toString()
+                createdAt: (new Date()).toString(),
+                jobId
             }
             
             article = await _articleService.createArticle(article);
