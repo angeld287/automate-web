@@ -80,24 +80,34 @@ class Post {
             
             if(created !== false){
 
-                article.wpId = created.id;
-                article.wpLink = created.link;
-                const updateArticle = await _articleService.updateArticleWpId(article)
+                const dbArticle = await _articleService.getArticleById(article.internalId);
 
-                if(updateArticle !== false){
-                    return new SuccessResponse('Success', {
-                        article,
-                        success: true,
-                        error: null
-                    }).send(res);
+                if(dbArticle !== false){
+                    dbArticle.wpId = created.id;
+                    dbArticle.wpLink = created.link;
+                    
+                    const updateArticle = await _articleService.updateArticle(article)
+    
+                    if(updateArticle !== false){
+                        return new SuccessResponse('Success', {
+                            article,
+                            success: true,
+                            error: null
+                        }).send(res);
+                    }else{
+                        return new InternalErrorResponse('Error', {
+                            post: null,
+                            success: false,
+                            error: 'Post Create - Error updateArticle the article to add the wpId'
+                        }).send(res);    
+                    }
                 }else{
                     return new InternalErrorResponse('Error', {
                         post: null,
                         success: false,
-                        error: 'Post Create - Error updateArticle the article to add the wpId'
-                    }).send(res);    
+                        error: 'Post Create - Error updateArticle the article was not found!'
+                    }).send(res);   
                 }
-
             }else{
                 return new InternalErrorResponse('Error', {
                     post: null,

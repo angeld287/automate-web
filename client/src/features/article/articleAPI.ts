@@ -80,3 +80,16 @@ export async function createArticle(article: INewPlanningArticle, token: string)
 
   return await fetchData.json();
 }
+
+export async function editArticleTitle(id: number, title: string) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}article/updateTitle`, {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({id, title})
+  })
+
+  return await fetchData.json();
+}

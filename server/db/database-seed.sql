@@ -503,6 +503,7 @@ CREATE TABLE IF NOT EXISTS public.keywords
     keyword_search_job_id integer NOT NULL,
     selected boolean,
     article_id integer,
+    is_main boolean,
     CONSTRAINT keywords_pkey PRIMARY KEY (id),
     CONSTRAINT keywords_article_fkey FOREIGN KEY (article_id)
         REFERENCES public.articles (id) MATCH SIMPLE

@@ -261,9 +261,9 @@ class Article {
                 error: 'Internal Server Error',
             }).send(res);
         }
-     }
+    }
 
-     public static async createContentForSubtitle(req: IRequest, res: IResponse): Promise<any> {
+    public static async createContentForSubtitle(req: IRequest, res: IResponse): Promise<any> {
         try {
             if(ValidateErrors.validate(req, res) !== true) return
 
@@ -301,7 +301,40 @@ class Article {
                 error: 'Internal Server Error',
             }).send(res);
         }
-     }
+    }
+
+    public static async updateArticleTitle(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            if(ValidateErrors.validate(req, res) !== true) return
+
+            let _articleService: IArticleService = new articleService();
+            
+            const id = req.body.id;
+            const title = req.body.title;
+
+            let article = await _articleService.getArticleByDbId(id)
+
+            if(article === false){
+                return new BadRequestResponse('Error', {
+                    error: "Article not found."
+                }).send(res);
+            }
+            
+            article.title = title;
+            article = await _articleService.updateArticle(article)
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: article,
+                error: null
+            }).send(res);
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Keywords Controller Error - selectPotentialKeyword', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
 }
 
 export default Article

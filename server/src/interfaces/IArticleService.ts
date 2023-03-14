@@ -8,11 +8,13 @@ export interface IArticleService {
 
     createArticle(article: INewArticle): Promise<INewArticle>
 
-    updateArticleWpId(article: INewArticle): Promise<INewArticle | false>
+    updateArticle(article: INewArticle): Promise<INewArticle | false>
 
     getArticles(page: number, size: number, userId: number): Promise<Array<INewArticle> | false>
 
     getArticleById(articleId: number): Promise<INewArticle | false>
+    
+    getArticleByDbId(articleId: number): Promise<INewArticle | false>
 
     getPlanningArticle(jobId: number, userId: number): Promise<INewArticle | false>
 

@@ -6,7 +6,7 @@ import ApiResponse from '../../interfaces/Responses/ApiResponse';
 import { getBearer } from '../autenticate/authenticateAPI';
 import { searchKeywordContent } from '../keyword/keywordAPI';
 import { ArticleState as State} from '../../interfaces/Enums/States'
-import { createArticle, createContentForArticle, createPost, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
+import { createArticle, createContentForArticle, createPost, editArticleTitle, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
 
 export interface ArticleState {
   article: IArticle;
@@ -126,6 +126,18 @@ export const createNewArticle = createAsyncThunk(
       return result;
     } catch (error) {
       throw new Error('Error in ArticleState at createNewArticle')
+    }
+  }
+);
+
+export const updateArticleTitle = createAsyncThunk(
+  'article/addArticleTitle',
+  async ({id, title}: {id: number, title: string}) => {
+    try {    
+      const result = await editArticleTitle(id, title);
+      return result;
+    } catch (error) {
+      throw new Error('Error in ArticleState at updateArticleTitle')
     }
   }
 );

@@ -131,17 +131,12 @@ export class articleService implements IArticleService {
         }
     }
 
-    async updateArticleWpId(article: INewArticle): Promise<INewArticle | false> {
+    async updateArticle(article: INewArticle): Promise<INewArticle | false> {
         try {
-
-            if(!article.wpId){
-                return false;
-            }
-
             const createArticle = {
-                name: 'create-new-article',
-                text: 'UPDATE public.articles SET wp_id=$2 WHERE internal_id = $1 RETURNING internal_id, id, TRIM(title) AS title, TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, sys_state, job_id',
-                values: [article.internalId, article.wpId],
+                name: 'update-article',
+                text: 'UPDATE public.articles SET title=$2, category=$3, wp_id=$4, wp_link=$5, sys_state=$6 WHERE internal_id = $1 RETURNING internal_id, id, TRIM(title) AS title, TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, sys_state, job_id',
+                values: [article.internalId, article.title, article.category, article.wpId, article.wpLink, article.sysState],
             }
 
             let result = null, client = null;
@@ -186,6 +181,24 @@ export class articleService implements IArticleService {
             name: 'get-article-by-id',
             text: `SELECT id, internal_id, TRIM(title) AS title , TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, wp_link, sys_state, job_id FROM public.articles where internal_id = $1`,
             values: [articleId],
+        }
+
+        try {
+            return await this.querySingleArticle(getQuery);
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async getArticleByDbId(id: number): Promise<INewArticle | false> {
+
+        if (!id)
+                return false
+
+        const getQuery = {
+            name: 'get-article-by-id',
+            text: `SELECT id, internal_id, TRIM(title) AS title , TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, wp_link, sys_state, job_id FROM public.articles where id = $1`,
+            values: [id],
         }
 
         try {

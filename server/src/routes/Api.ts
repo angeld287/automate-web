@@ -219,8 +219,17 @@ router.post(
     body('category', 'field category cannot be blank.').notEmpty(),
     body('sysState', 'field sysState cannot be blank.').notEmpty(),
     body('jobId', 'field jobId cannot be blank.').notEmpty(),
+    body('title', 'field title cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     ArticleController.createArticle
+);
+
+router.post(
+    '/article/updateTitle',
+    body('id', 'field category cannot be blank.').notEmpty(),
+    body('title', 'field title cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    ArticleController.updateArticleTitle
 );
 
 router.get(
@@ -300,9 +309,17 @@ router.post(
 router.post(
     '/keywords/addRemoveKeywordToArticle',
     body('id', 'field id cannot be blank.').notEmpty(),
-    body('articleId', 'field articleId cannot be blank.').notEmpty(),
+    //body('articleId', 'field articleId cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     KeywordsController.addRemoveKeywordToArticle
+);
+
+router.post(
+    '/keywords/setMainKeyword',
+    body('id', 'field id cannot be blank.').notEmpty(),
+    body('isMain', 'field isMain cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    KeywordsController.setMainKeyword
 );
 
 export default router;

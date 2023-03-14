@@ -6,6 +6,7 @@ export default interface IKeyword {
     keywordSearchJobId?: number;
     selected?: boolean;
     articleId?: number;
+    isMain?: boolean;
 }
 
 export interface IResultTitleSimilarity {

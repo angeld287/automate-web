@@ -8,6 +8,7 @@ import { removeDuplicate, replaceSpace } from '../../../utils/functions';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { getPlanningArticles, selectArticles } from '../../../features/articles/articlesSlice';
 import PlanningArticles from './PlanningArticles';
+import { addRemoveKeywordFromArticle } from '../../../features/keywordSearchJob/keywordSearchJobSlice';
 
 const KeywordsDragAndDrop: React.FC<IKeywordsDragAndDrop> = (props) => {
   const [draggedKeyword, setDraggedKeyword] = useState<UniqueIdentifier>('');
@@ -25,13 +26,11 @@ const KeywordsDragAndDrop: React.FC<IKeywordsDragAndDrop> = (props) => {
 
   useEffect(() => {
     setKeywords(props.keywords.map(keyword => ({
-            similarity: keyword.similarity,
-            parent: keyword.articleId ? keyword.articleId : null,
-            name: keyword.name,
-            id: keyword.id,
+            parent: keyword.articleId ? keyword.articleId : null,            
             component: (
                 <Draggable id={`${replaceSpace(keyword.name)}-${keyword.id}`} dbId={keyword.id}>{keyword.name}</Draggable>
-            )
+            ),
+            ...keyword
         })))
 }, [props.keywords])
 
@@ -54,6 +53,7 @@ const KeywordsDragAndDrop: React.FC<IKeywordsDragAndDrop> = (props) => {
     if(keyword){
       keyword.parent = over ? over.id : null;
       setKeywords([...keywords.filter(_keyword => _keyword.id != draggedKeyword), keyword])
+      if(keyword.id) dispatch(addRemoveKeywordFromArticle({id: keyword.id.toString(), articleId: over ? over.id.toString() : null}))
     }
   }
 };

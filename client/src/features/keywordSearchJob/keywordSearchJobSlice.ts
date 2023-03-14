@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import IKeyword, { IKeywordSearchJob } from '../../interfaces/models/Keyword';
-import { addRemoveKeywordToArticle, getAllSearchJobs, getSearchJob, selectPotentialKeyword } from './keywordSearchJobAPI';
+import { addRemoveKeywordToArticle, getAllSearchJobs, getSearchJob, selectPotentialKeyword, setMainKeyword } from './keywordSearchJobAPI';
 
 export interface keywordSearchJobState {
   keywordSearchJob: IKeywordSearchJob;
@@ -10,6 +10,7 @@ export interface keywordSearchJobState {
   getAllStatus: 'idle' | 'loading' | 'failed';
   selectStatus: 'idle' | `loading` | 'failed';
   relateStatus: 'idle' | 'loading' | 'failed';
+  isMainStatus: 'idle' | 'loading' | 'failed';
 }
 
 const initialState: keywordSearchJobState = {
@@ -21,6 +22,7 @@ const initialState: keywordSearchJobState = {
   getAllStatus: 'idle',
   selectStatus: 'idle',
   relateStatus: 'idle',
+  isMainStatus: 'idle',
   AllJobs: []
 };
 
@@ -62,9 +64,21 @@ export const selectKeyword = createAsyncThunk(
 
 export const addRemoveKeywordFromArticle = createAsyncThunk(
   'keywordSearchJob/addRemoveKeywordFromArticle',
-  async ({id, articleId}: {id: number, articleId: number | null}) => {
+  async ({id, articleId}: {id: string, articleId: string | null}) => {
     try {    
       const result = await addRemoveKeywordToArticle(id, articleId);
+      return result.data.response;
+    } catch (error) {
+      console.log(error) 
+    }
+  }
+);
+
+export const setKeywordAsMain = createAsyncThunk(
+  'keywordSearchJob/setMainKeyword',
+  async ({id, isMain}: {id: string, isMain: boolean}) => {
+    try {    
+      const result = await setMainKeyword(id, isMain);
       return result.data.response;
     } catch (error) {
       console.log(error) 
@@ -119,6 +133,17 @@ export const keywordSearchJobSlice = createSlice({
       })
       .addCase(addRemoveKeywordFromArticle.rejected, (state) => {
         state.relateStatus = 'failed';
+      })
+      .addCase(setKeywordAsMain.pending, (state) => {
+        state.isMainStatus = 'loading';
+      })
+      .addCase(setKeywordAsMain.fulfilled, (state, action: PayloadAction<IKeyword>) => {
+        state.isMainStatus = 'idle';
+        if(state.keywordSearchJob.keywords)
+          state.keywordSearchJob.keywords = [...state.keywordSearchJob.keywords.filter(keyword => keyword.id !== action.payload.id), action.payload].sort((kwA, kwB) => kwA.similarity < kwB.similarity ? -1 : (kwA.similarity > kwB.similarity ? 1 : kwA.name < kwB.name ? -1 : 1));;
+      })
+      .addCase(setKeywordAsMain.rejected, (state) => {
+        state.isMainStatus = 'failed';
       });
   },
 });

@@ -28,6 +28,7 @@ export interface INewPlanningArticle {
     jobId: number;
     category: string;
     sysState: ArticleState;
+    title: string;
 }
 
 export interface SubTitleContent {
