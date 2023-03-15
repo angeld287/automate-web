@@ -504,6 +504,7 @@ CREATE TABLE IF NOT EXISTS public.keywords
     selected boolean,
     article_id integer,
     is_main boolean,
+    order_number integer,
     CONSTRAINT keywords_pkey PRIMARY KEY (id),
     CONSTRAINT keywords_article_fkey FOREIGN KEY (article_id)
         REFERENCES public.articles (id) MATCH SIMPLE

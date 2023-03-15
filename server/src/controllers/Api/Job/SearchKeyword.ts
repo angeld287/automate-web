@@ -70,28 +70,30 @@ class SearchKeyword {
 
                 for (let i = 0; i < keywords.length; i++) {
                     let keyword: IKeyword = keywords[i];
+                    const keywordAlreadyExist: IKeyword | false = await keywordS.getKeywordByName(keyword.name);
                     let result = await search.getResultsAndSuggestions(keyword.name);
                     result.relatedSearch = result.relatedSearch.filter(related =>  related.name.includes(mainKeyword));
                     
                     let similaritySum = 0;
-                    await Promise.all(result.searchResult.map(async (itemResult) => {
-                        const similarityResponse = await similarity.checkSimilarity(longTailKeyword, itemResult.title)
-                        similaritySum = similaritySum + similarityResponse.similarity;
-                        keyword.resultsSimilarity.push({
-                            name: itemResult.title,
-                            similarity: similarityResponse.similarity,
-                            value: similarityResponse.value
-                        })
-                    }))
-        
-                    keyword.similarity = Math.round((similaritySum/10)*100);
+                    if(keywordAlreadyExist === false){
+                        await Promise.all(result.searchResult.map(async (itemResult) => {
+                            const similarityResponse = await similarity.checkSimilarity(longTailKeyword, itemResult.title)
+                            similaritySum = similaritySum + similarityResponse.similarity;
+                            keyword.resultsSimilarity.push({
+                                name: itemResult.title,
+                                similarity: similarityResponse.similarity,
+                                value: similarityResponse.value
+                            })
+                        }))
+            
+                        keyword.similarity = Math.round((similaritySum/10)*100);
+                    }
+                    
                     keyword.keywordSearchJobId = searchJob.id;
                     const othersKeywords = result.relatedSearch.filter(keyword => keywords.filter(globalKeyword => keyword.name.toLowerCase() === globalKeyword.name.toLowerCase()).length === 0).map(keyword => ({...keyword, resultsSimilarity: []}))
         
                     keywords = [...keywords, ...othersKeywords];
                     
-                    const keywordAlreadyExist: IKeyword | false = await keywordS.getKeywordByName(keyword.name);
-        
                     console.log(keyword.name)
                     if(keywordAlreadyExist === false)
                         keyword = await keywordS.createKeyword(keyword);   
