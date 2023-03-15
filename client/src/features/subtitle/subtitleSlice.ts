@@ -2,9 +2,9 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { SubTitleContent } from '../../interfaces/models/Article';
 import IContent from '../../interfaces/models/Content';
-import { createContent, searchKeywordContent, searchSubtitle } from './keywordAPI';
+import { createContent, searchKeywordContent, searchSubtitle } from './subtitleAPI';
 
-export interface KeywordState {
+export interface SubtitleState {
   subtitle: SubTitleContent;
   status: 'idle' | 'loading' | 'failed';
   getStatus: 'idle' | 'loading' | 'failed';
@@ -12,7 +12,7 @@ export interface KeywordState {
   finalParagraphs: Array<IContent>;
 }
 
-const initialState: KeywordState = {
+const initialState: SubtitleState = {
   subtitle: {
     id: 0,
     name: "",
@@ -25,7 +25,7 @@ const initialState: KeywordState = {
 };
 
 export const getKeywordContent = createAsyncThunk(
-  'keyword/search',
+  'subtitle/search',
   async (subtitle: SubTitleContent) => {
     try {    
       const result = await searchKeywordContent(subtitle);
@@ -36,8 +36,8 @@ export const getKeywordContent = createAsyncThunk(
   }
 );
 
-export const getKeywordById = createAsyncThunk(
-  'keyword/get',
+export const getSubtitleById = createAsyncThunk(
+  'subtitle/get',
   async (subtitle: SubTitleContent) => {
     try {    
       const result = await searchSubtitle(subtitle);
@@ -48,8 +48,8 @@ export const getKeywordById = createAsyncThunk(
   }
 );
 
-export const crateKeywordContent = createAsyncThunk(
-  'keyword/createContent',
+export const crateSubtitleContent = createAsyncThunk(
+  'subtitle/createContent',
   async (contents: Array<IContent>) => {
     try {    
       const result = await createContent(contents);
@@ -60,8 +60,8 @@ export const crateKeywordContent = createAsyncThunk(
   }
 );
 
-export const keywordSlice = createSlice({
-  name: 'keyword',
+export const subtitleSlice = createSlice({
+  name: 'subtitle',
   initialState,
   reducers: {
     setInitialState: (state) => {
@@ -83,34 +83,34 @@ export const keywordSlice = createSlice({
       .addCase(getKeywordContent.rejected, (state) => {
         state.status = 'failed';
       })
-      .addCase(getKeywordById.pending, (state) => {
+      .addCase(getSubtitleById.pending, (state) => {
         state.getStatus = 'loading';
       })
-      .addCase(getKeywordById.fulfilled, (state, action: PayloadAction<SubTitleContent>) => {
+      .addCase(getSubtitleById.fulfilled, (state, action: PayloadAction<SubTitleContent>) => {
         state.getStatus = 'idle';
         state.subtitle = action.payload;
       })
-      .addCase(getKeywordById.rejected, (state) => {
+      .addCase(getSubtitleById.rejected, (state) => {
         state.getStatus = 'failed';
       })
-      .addCase(crateKeywordContent.pending, (state) => {
+      .addCase(crateSubtitleContent.pending, (state) => {
         state.createUpdateStatus = 'loading';
       })
-      .addCase(crateKeywordContent.fulfilled, (state, action: PayloadAction<Array<IContent>>) => {
+      .addCase(crateSubtitleContent.fulfilled, (state, action: PayloadAction<Array<IContent>>) => {
         const { subtitle } = state;
         const { content } = subtitle;
         const existingContent = content ? content : []
         state.createUpdateStatus = 'idle';
         state.subtitle.content = [...existingContent.filter(content => !content.selected), ...action.payload];
       })
-      .addCase(crateKeywordContent.rejected, (state) => {
+      .addCase(crateSubtitleContent.rejected, (state) => {
         state.createUpdateStatus = 'failed';
       });
   },
 });
 
-export const { setInitialState, setFinalParagraphs } = keywordSlice.actions;
+export const { setInitialState, setFinalParagraphs } = subtitleSlice.actions;
 
-export const selectKeyword = (state: RootState) => state.keyword;
+export const selectSubtitle = (state: RootState) => state.subtitle;
 
-export default keywordSlice.reducer;
+export default subtitleSlice.reducer;

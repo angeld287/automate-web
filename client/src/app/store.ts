@@ -3,7 +3,7 @@ import counterReducer from '../features/counter/counterSlice';
 import mediaReducer from '../features/media/mediaSlice';
 import articleReducer from '../features/article/articleSlice';
 import articlesReducer from '../features/articles/articlesSlice';
-import keywordReducer from '../features/keyword/keywordSlice';
+import subtitleReducer from '../features/subtitle/subtitleSlice';
 import userSessionReducer from '../features/userSession/userSessionSlice';
 import userRegisterReducer from '../features/userRegister/userRegisterSlice';
 import wpUtilsReducer from '../features/WPUtils/wputilsSlice';
@@ -24,7 +24,7 @@ export const store = configureStore({
     media: mediaReducer,
     article: articleReducer,
     articles: articlesReducer,
-    keyword: keywordReducer,
+    subtitle: subtitleReducer,
     userSession: userSessionReducer,
     userRegister: userRegisterReducer,
     wputils: wpUtilsReducer,

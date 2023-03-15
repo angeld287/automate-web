@@ -4,7 +4,7 @@ import { IArticle, INewPlanningArticle, SubTitleContent } from '../../interfaces
 import IContent from '../../interfaces/models/Content';
 import ApiResponse from '../../interfaces/Responses/ApiResponse';
 import { getBearer } from '../autenticate/authenticateAPI';
-import { searchKeywordContent } from '../keyword/keywordAPI';
+import { searchKeywordContent } from '../subtitle/subtitleAPI';
 import { ArticleState as State} from '../../interfaces/Enums/States'
 import { createArticle, createContentForArticle, createPost, editArticleTitle, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
 

@@ -1,6 +1,6 @@
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { getKeywordById, getKeywordContent, selectKeyword, setFinalParagraphs, setInitialState } from "../../../features/keyword/keywordSlice";
+import { getSubtitleById, getKeywordContent, selectSubtitle, setFinalParagraphs, setInitialState } from "../../../features/subtitle/subtitleSlice";
 import CustomLoader from "../../CustomLoader";
 import ISearchKeyword from "./ISearchKeyword";
 import { Editor } from "react-draft-wysiwyg";
@@ -14,7 +14,7 @@ import { Languages } from "../../../interfaces/Enums/Languages";
 
 const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
     const dispatch = useAppDispatch();
-    const keyword = useAppSelector(selectKeyword);
+    const _subtitle = useAppSelector(selectSubtitle);
     const [editorState, setEditorState] = useState(
         () => EditorState.createEmpty(),
     );
@@ -28,7 +28,7 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
     useEffect(() => {
         const blocks = convertToRaw(editorState.getCurrentContent()).blocks;
         const finalContents: Array<IContent> = blocks.map((block: RawDraftContentBlock, index): IContent => {
-            const id = keyword.subtitle.content?.find(cont => cont.content === block.text && cont.selected)?.id
+            const id = _subtitle.subtitle.content?.find(cont => cont.content === block.text && cont.selected)?.id
             return ({
                 content: block.text,
                 orderNumber: (index + 1),
@@ -42,14 +42,14 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
         }).filter(block => block.content !== "");
 
         dispatch(setFinalParagraphs(finalContents));
-    }, [editorState, subtitle, keyword.subtitle.content]);
+    }, [editorState, subtitle, _subtitle.subtitle.content]);
 
     useEffect(() => {
-        if(subtitle) dispatch(getKeywordById(subtitle));
+        if(subtitle) dispatch(getSubtitleById(subtitle));
     }, [subtitle])
 
     useEffect(() => {
-        const selectedContent = keyword.subtitle.content ? keyword.subtitle.content?.filter(cont => cont.selected).sort((cA, cB) => (cA.orderNumber && cB.orderNumber ? cA.orderNumber < cB.orderNumber ? -1 : 1 : -1)) : [];
+        const selectedContent = _subtitle.subtitle.content ? _subtitle.subtitle.content?.filter(cont => cont.selected).sort((cA, cB) => (cA.orderNumber && cB.orderNumber ? cA.orderNumber < cB.orderNumber ? -1 : 1 : -1)) : [];
         const stringContent: string = `<p>${selectedContent.map(content => content.content).join("</p><p>")}</p>`
         setEditorState(() => 
             EditorState.createWithContent(
@@ -59,8 +59,8 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
             )
         )
         
-        if(keyword.subtitle.content && keyword.subtitle.content.length === 0) dispatch(getKeywordContent(keyword.subtitle));
-    }, [keyword.subtitle]);
+        if(_subtitle.subtitle.content && _subtitle.subtitle.content.length === 0) dispatch(getKeywordContent(_subtitle.subtitle));
+    }, [_subtitle.subtitle]);
 
     const copyContent = (content: string) => {
         navigator.clipboard.writeText(content);
@@ -69,13 +69,13 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
     const actionsList = useCallback((item: IContent): Array<ReactNode> => {
         return [
             <p>Words Count: {item.content.split(" ").length}</p>,
-            <Popover title="English Text" content={keyword.subtitle.enContent?.find(content => content.orderNumber === item.orderNumber)?.content}><TranslationOutlined /></Popover>,
+            <Popover title="English Text" content={_subtitle.subtitle.enContent?.find(content => content.orderNumber === item.orderNumber)?.content}><TranslationOutlined /></Popover>,
             <Popover content="Copy the parapraph."><CustomButton onClick={() => copyContent(item.content)}><CopyOutlined /></CustomButton></Popover>,
             <Popover content={`Go to reference page. ${item.link}`}><a rel="noreferrer" target="_blank" href={item.link}><LinkOutlined /></a></Popover>,
         ]
-    }, [keyword.subtitle]);
+    }, [_subtitle.subtitle]);
 
-    if (keyword.status === 'loading' || keyword.getStatus === 'loading') return <CustomLoader />
+    if (_subtitle.status === 'loading' || _subtitle.getStatus === 'loading') return <CustomLoader />
 
     const { Paragraph } = Typography
 
@@ -89,7 +89,7 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
                     itemLayout="vertical"
                     header={<div><FileTextOutlined/> Searched Content</div>}
                     bordered
-                    dataSource={keyword.subtitle.content?.filter(cont => !cont.selected)}
+                    dataSource={_subtitle.subtitle.content?.filter(cont => !cont.selected)}
                     renderItem={(item: IContent) => (
                         <List.Item actions={actionsList(item)}>
                             <Paragraph>

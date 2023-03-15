@@ -1,7 +1,7 @@
 import { Divider, Popover, Steps } from "antd";
 import { useCallback, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { crateKeywordContent, selectKeyword } from "../../../features/keyword/keywordSlice";
+import { crateSubtitleContent, selectSubtitle } from "../../../features/subtitle/subtitleSlice";
 import { SubTitleContent } from "../../../interfaces/models/Article";
 import CustomButton from "../../CustomButton";
 import CustomModal from "../../CustomModal";
@@ -12,7 +12,7 @@ const SearchKeywordsStepper: React.FC<ISearchKeywordsStepper> = ({subtitles, onN
     const [current, setCurrent] = useState(0);
 
     const dispatch = useAppDispatch();
-    const { createUpdateStatus, finalParagraphs} = useAppSelector(selectKeyword);
+    const { createUpdateStatus, finalParagraphs} = useAppSelector(selectSubtitle);
     
     const onChange = (value: number) => {
       onNext()
@@ -20,7 +20,7 @@ const SearchKeywordsStepper: React.FC<ISearchKeywordsStepper> = ({subtitles, onN
     };
 
     const saveContentKeyword = useCallback(() => {
-      dispatch(crateKeywordContent(finalParagraphs));
+      dispatch(crateSubtitleContent(finalParagraphs));
     }, [finalParagraphs]);
 
     const footerOptions = useMemo(() => [

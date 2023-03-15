@@ -270,7 +270,7 @@ export class articleService implements IArticleService {
                         TRIM(title) as title, 
                         TRIM(translated_title) as translated_title, 
                         category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id
-                    FROM public.articles WHERE created_by = $3 AND deleted IS NOT true ORDER BY created_at DESC LIMIT $2 OFFSET $1;
+                    FROM public.articles WHERE created_by = $3 AND deleted IS NOT true AND sys_state = '${ArticleState.CONTENT_RESEARCH}' ORDER BY created_at DESC LIMIT $2 OFFSET $1;
                 `,
             values: [page, size, userId],
         }
