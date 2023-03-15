@@ -7,6 +7,7 @@ export default interface IKeyword {
     selected?: boolean;
     articleId?: number;
     isMain?: boolean;
+    orderNumber?: number;
 }
 
 export interface IResultTitleSimilarity {
