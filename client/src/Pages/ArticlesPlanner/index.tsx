@@ -1,5 +1,5 @@
 import { DndContext, DragEndEvent, DragStartEvent, UniqueIdentifier } from "@dnd-kit/core";
-import { Col, Row } from "antd";
+import { Col, Collapse, Row } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -27,16 +27,18 @@ const ArticlesPlanner = () => {
         if(keywordSearchJob && keywordSearchJob.keywords) setKeywords(keywordSearchJob.keywords)
     }, [keywordSearchJob])
 
+    const { Panel } = Collapse;
+
     return <>
         <h2>Articles Planner {id}</h2>
-        <Row className="">
-            <Col span={7} style={{border: 'solid 1px #000'}}>
-                <KeywordsList items={keywords}/>
-            </Col>
-            <Col span={17} className="drag-and-drop" style={{border: 'solid 1px #000'}}>
+        <Collapse defaultActiveKey={['1']}>
+            <Panel header="Articles Planning" key="1">
                 <KeywordsDragAndDrop jobId={id} keywords={keywords.filter(keyword => keyword.selected)}/>
-            </Col>
-        </Row>
+            </Panel>
+            <Panel header="Keywords Selections" key="2">
+                <KeywordsList items={keywords}/>
+            </Panel>
+        </Collapse>
     </>;
 }
 

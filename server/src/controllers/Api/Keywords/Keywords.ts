@@ -39,7 +39,8 @@ class Keywords {
                     }).send(res);
                 }
 
-                keyowrd.orderNumber = orderNumber
+                keyowrd.orderNumber = orderNumber;
+                keyowrd.articleId = articleId;
                 keyowrd = await _keywordService.updateKeyword(keyowrd);
             }
             

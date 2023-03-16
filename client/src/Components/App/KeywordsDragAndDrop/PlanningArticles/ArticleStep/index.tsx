@@ -1,4 +1,4 @@
-import { PlusCircleOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { Card, Checkbox, Modal } from "antd";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { useCallback, useEffect, useState } from "react";
@@ -31,6 +31,7 @@ const ArticleStep: React.FC<IArticleStep> = ({article}) => {
         }
         dispatch(createForArticle({articleId:  article.id, name: newKeyword, orderNumber: _keywords.keywords.length+1}))
         setNewKeyword('');
+        setAddModal(false);
     }, [newKeyword, article, _keywords.keywords]);
 
     useEffect(() => {
@@ -52,12 +53,12 @@ const ArticleStep: React.FC<IArticleStep> = ({article}) => {
 
     return (
         <>
-            <Droppable key={article.id} id={article.id.toString()}>
-                <Card
-                    style={{margin: 20, minHeight: 250, textAlign: 'start',}} 
-                    title={article.title}
-                    actions={[<PlusCircleOutlined onClick={() => {setAddModal(true)}} key="addKeyword"/>]}
-                >
+            <Card
+                style={{margin: 20, minHeight: 250, textAlign: 'start',}} 
+                title={article.title}
+                actions={[<PlusCircleOutlined onClick={() => {setAddModal(true)}} key="addKeyword"/>, <Droppable id={article.id.toString()}><DeleteOutlined /></Droppable>]}
+            >
+                <Droppable key={article.id} id={article.id.toString()}>
                     <div style={{minHeight: 150}}>
                         {keywords ? removeDuplicate(keywords, 'id').map(keyword => <div style={{marginBottom: 5}} key={keyword.id}>
                             <Checkbox style={{marginRight: 5}} onChange={(e) => {setMainKeyword(e, keyword)}} key={`check-${keyword.id}`} defaultChecked={keyword.isMain}/>
@@ -65,8 +66,8 @@ const ArticleStep: React.FC<IArticleStep> = ({article}) => {
                         </div>
                         ) : 'Drop here'}
                     </div>
-                </Card>
-            </Droppable>
+                </Droppable>
+            </Card>
             <Modal
                 title="New Keyword"
                 open={addModal}
