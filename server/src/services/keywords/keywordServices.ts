@@ -206,6 +206,38 @@ export class keywordService implements IKeywordService {
         }
     }
 
+    async getKeywordsByArticleId(articleId: number): Promise<Array<IKeyword>> {
+        const getQuery = {
+            name: 'get-keywords-by-article-id',
+            text: `SELECT id, name, similarity, keyword_search_job_id, article_id, selected, is_main, order_number FROM public.keywords WHERE article_id = $1`,
+            values: [articleId],
+        }
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            const keyowrds: Array<IKeyword> = []
+
+            result.rows.forEach(row => {
+                keyowrds.push({
+                    id: row.id,
+                    name: row.name,
+                    similarity: row.similarity,
+                    keywordSearchJobId: row.keyword_search_job_id,
+                    articleId: row.article_id,
+                    selected: row.selected,
+                    isMain: row.is_main,
+                    orderNumber: row.order_number,
+                })
+            });
+
+            return keyowrds.sort((kwA, kwB) => kwA.orderNumber < kwB.orderNumber ? -1 : 1);
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
     async getKeywordsById(id: number): Promise<IKeyword> {
         const getQuery = {
             name: 'get-keywords-by-id',
@@ -245,10 +277,10 @@ export class keywordService implements IKeywordService {
         try {
             result = await Database.sqlToDB(getQuery);
             
-            const keyowrdSearchJons: Array<IKeywordSearchJob> = []
+            const keyowrdSearchJobs: Array<IKeywordSearchJob> = []
 
             result.rows.forEach(row => {
-                keyowrdSearchJons.push({
+                keyowrdSearchJobs.push({
                     id: row.id,
                     createdBy: row.created_by,
                     createdAt: row.created_at,
@@ -257,7 +289,7 @@ export class keywordService implements IKeywordService {
                 })
             });
 
-            return keyowrdSearchJons
+            return keyowrdSearchJobs
         } catch (error) {
             throw new Error(error.message);
         }

@@ -1,20 +1,16 @@
-import { Button, Card, Checkbox, Col, Row, Space, theme } from "antd";
+import { Button, Col, Row, theme } from "antd";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { getCategoryList, selectWputils } from "../../../../features/WPUtils/wputilsSlice";
-import { createNewArticle, updateArticleTitle } from "../../../../features/article/articleSlice";
-import { removeDuplicate } from "../../../../utils/functions";
+import { createNewArticle } from "../../../../features/article/articleSlice";
 import { ISelectOptions } from "../../../CustomSelect/ICustomSelect";
 import CustomSelectGroup from "../../../CustomSelectGroup";
-import Droppable from "../Droppable";
 import IPlanningArticles from "./IPlanningArticles";
 import { INewPlanningArticle } from "../../../../interfaces/models/Article";
 import { ArticleState } from "../../../../interfaces/Enums/States";
 import { toast } from "react-toastify";
 import CustomButton from "../../../CustomButton";
-import IKeyword from "../../../../interfaces/models/Keyword";
-import { CheckboxChangeEvent } from "antd/es/checkbox";
-import { setKeywordAsMain } from "../../../../features/keywordSearchJob/keywordSearchJobSlice"
+import ArticleStep from "./ArticleStep";
 
 const PlanningArticles: React.FC<IPlanningArticles> = ({jobId, articles, keywords}) => {
     const dispatch = useAppDispatch();
@@ -33,33 +29,10 @@ const PlanningArticles: React.FC<IPlanningArticles> = ({jobId, articles, keyword
             article => ({
                 id: article.id,
                 article,
-                component: () => {
-                    const dragged = keywords.filter(keyword => keyword.parent == article.id.toString());
-                    return (
-                        <Droppable key={article.id} id={article.id.toString()}>
-                            <Card
-                                style={{margin: 20, minHeight: 250, textAlign: 'start',}} 
-                                title={article.title}
-                            >
-                                {dragged ? removeDuplicate(dragged, 'id').map(keyword => <div style={{marginBottom: 5}} key={keyword.id}>
-                                    <Checkbox style={{marginRight: 5}} onChange={(e) => {setMainKeyword(e, keyword)}} key={`check-${keyword.id}`} defaultChecked={keyword.isMain}/>
-                                    {keyword.component}
-                                </div>
-                                ) : 'Drop here'}
-                            </Card>
-                        </Droppable>
-                    )
-                }
+                component: () => <ArticleStep article={article} key={article.id}/>
             })
         ))
     }, [articles, keywords]);
-
-    const setMainKeyword = useCallback((event: CheckboxChangeEvent, keyword: IKeyword) => {
-        if(keyword.id) {
-            dispatch(setKeywordAsMain({id: keyword.id.toString(), isMain: event.target.checked}));
-            if(keyword.articleId) dispatch(updateArticleTitle({id: keyword.articleId, title: event.target.checked ? keyword.name: "Titulo no definido"}));
-        }
-    }, []);
 
     const categoryList: Array<ISelectOptions> = useMemo(() => {
         if(statusc === "loading") return []

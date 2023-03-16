@@ -15,5 +15,7 @@ export interface IKeywordService {
 
     getKeywordsByJobId(jobId: number): Promise<Array<IKeyword>>
 
+    getKeywordsByArticleId(jobId: number): Promise<Array<IKeyword>>
+
     updateKeyword(keyword: IKeyword): Promise<IKeyword>
 }

@@ -322,4 +322,10 @@ router.post(
     KeywordsController.setMainKeyword
 );
 
+router.get(
+    '/keywords/getAllByArticleId',
+    Passport.isAuthenticated,
+    KeywordsController.getArticleKeywords
+);
+
 export default router;

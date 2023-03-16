@@ -96,9 +96,11 @@ class Keywords {
             
             const id = req.body.id;
             const articleId = req.body.articleId ? req.body.articleId : null;
+            const orderNumber = req.body.orderNumber ? req.body.orderNumber : null;
 
             let keyowrd: IKeyword = await _keywordService.getKeywordsById(id)
             keyowrd.articleId = articleId;
+            keyowrd.orderNumber = orderNumber;
             keyowrd = await _keywordService.updateKeyword(keyowrd)
 
             return new SuccessResponse('Success', {
@@ -135,6 +137,33 @@ class Keywords {
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
             return new InternalErrorResponse('Keywords Controller Error - selectPotentialKeyword', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
+    public static async getArticleKeywords(req: IRequest, res: IResponse): Promise<any> {
+        try {
+
+            if(!req.query.articleId){
+                return new BadRequestResponse('Error', {
+                    error: "Param articleId are required."
+                }).send(res);
+            }
+           
+            const _keywordService: IKeywordService = new keywordService()
+            const articleId: number = parseInt(req.query.articleId.toString());
+
+            const keywords = await _keywordService.getKeywordsByArticleId(articleId);
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: keywords,
+                error: null
+            }).send(res);
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Keywords Controller Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }

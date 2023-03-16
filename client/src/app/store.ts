@@ -8,6 +8,7 @@ import userSessionReducer from '../features/userSession/userSessionSlice';
 import userRegisterReducer from '../features/userRegister/userRegisterSlice';
 import wpUtilsReducer from '../features/WPUtils/wputilsSlice';
 import keywordSearchJobReducer from '../features/keywordSearchJob/keywordSearchJobSlice';
+import keywordsReducer from '../features/keywords/keywordSlice';
 
 const authMiddleware = (store: any) => (next: any) => (action: any) => {
   if(action.type === "userSession/login/fulfilled"){
@@ -29,6 +30,7 @@ export const store = configureStore({
     userRegister: userRegisterReducer,
     wputils: wpUtilsReducer,
     keywordSearchJob: keywordSearchJobReducer,
+    keywords: keywordsReducer,
   },
   middleware: (getDefaultMiddleware) =>
   getDefaultMiddleware({
