@@ -37,3 +37,16 @@ export async function getKeywordsByArticleId(articleId: number) {
 
   return await fetchData.json();
 }
+
+export async function createKeywordForArticle(articleId: number, name: string, orderNumber: number) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}keywords/createForArticle`, {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({articleId, name, orderNumber})
+  })
+
+  return await fetchData.json();
+}

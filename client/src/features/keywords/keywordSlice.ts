@@ -1,13 +1,14 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import IKeyword from '../../interfaces/models/Keyword';
-import { addRemoveKeywordToArticle, getKeywordsByArticleId, setMainKeyword } from './keywordAPI';
+import { addRemoveKeywordToArticle, createKeywordForArticle, getKeywordsByArticleId, setMainKeyword } from './keywordAPI';
 
 export interface keywordsState {
   keywords: Array<IKeyword>;
   getAllStatus: 'idle' | 'loading' | 'failed';
   relateStatus: 'idle' | 'loading' | 'failed';
   isMainStatus: 'idle' | 'loading' | 'failed';
+  createStatus: 'idle' | 'loading' | 'failed';
 }
 
 const initialState: keywordsState = {
@@ -15,6 +16,7 @@ const initialState: keywordsState = {
   getAllStatus: 'idle',
   relateStatus: 'idle',
   isMainStatus: 'idle',
+  createStatus: "idle",
 };
 
 export const addRemoveKeywordFromArticle = createAsyncThunk(
@@ -46,6 +48,18 @@ export const getAllKeywords = createAsyncThunk(
   async (articleId: number) => {
     try {    
       const result = await getKeywordsByArticleId(articleId);
+      return result.data.response;
+    } catch (error) {
+      console.log(error) 
+    }
+  }
+);
+
+export const createForArticle = createAsyncThunk(
+  'keywords/createForArticle',
+  async ({articleId, name, orderNumber}: {articleId: number, name: string, orderNumber: number}) => {
+    try {    
+      const result = await createKeywordForArticle(articleId, name, orderNumber);
       return result.data.response;
     } catch (error) {
       console.log(error) 
@@ -91,6 +105,16 @@ export const keywordsSlice = createSlice({
       })
       .addCase(getAllKeywords.rejected, (state) => {
         state.getAllStatus = 'failed';
+      })
+      .addCase(createForArticle.pending, (state) => {
+        state.createStatus = 'loading';
+      })
+      .addCase(createForArticle.fulfilled, (state, action: PayloadAction<IKeyword>) => {
+        state.createStatus = 'idle';
+        state.keywords = [...state.keywords, action.payload].sort((kwA, kwB) => !kwA.orderNumber || !kwB.orderNumber ? 1 : (kwA.orderNumber < kwB.orderNumber ? -1 : 1));
+      })
+      .addCase(createForArticle.rejected, (state) => {
+        state.createStatus = 'failed';
       });
   },
 });

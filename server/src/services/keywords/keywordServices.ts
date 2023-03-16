@@ -41,8 +41,8 @@ export class keywordService implements IKeywordService {
         try {
             const createKeywordTmpl = {
                 name: 'create-new-keyword',
-                text: 'INSERT INTO public.keywords(name, similarity, keyword_search_job_id, is_main) VALUES ($1, $2, $3, false) RETURNING id, name, similarity, keyword_search_job_id, article_id, selected, is_main, order_number',
-                values: [keyword.name, keyword.similarity, keyword.keywordSearchJobId],
+                text: 'INSERT INTO public.keywords(name, similarity, keyword_search_job_id, is_main, article_id, order_number) VALUES ($1, $2, $3, false, $4, $5) RETURNING id, name, similarity, keyword_search_job_id, article_id, selected, is_main, order_number',
+                values: [keyword.name, keyword.similarity, keyword.keywordSearchJobId, keyword.articleId, keyword.orderNumber],
             }
 
             let result = null, client = null;

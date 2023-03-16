@@ -500,7 +500,7 @@ CREATE TABLE IF NOT EXISTS public.keywords
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
     name character(100) COLLATE pg_catalog."default",
     similarity integer,
-    keyword_search_job_id integer NOT NULL,
+    keyword_search_job_id integer,
     selected boolean,
     article_id integer,
     is_main boolean,

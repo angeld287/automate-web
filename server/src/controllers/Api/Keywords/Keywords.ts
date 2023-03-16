@@ -13,6 +13,50 @@ import ExpressValidator, { ValidateErrors } from '../../../providers/ExpressVali
 import { keywordService } from '../../../services/keywords/keywordServices';
 
 class Keywords {
+
+    public static async createKeywordForArticle(req: IRequest, res: IResponse): Promise<any> {
+        try {
+
+            if(ValidateErrors.validate(req, res) !== true) return
+
+            const _keywordService: IKeywordService = new keywordService()
+            
+            const articleId = req.body.articleId;
+            const name = req.body.name;
+            const orderNumber = req.body.orderNumber;
+
+            let keyowrd = await _keywordService.getKeywordByName(name)
+            if(keyowrd === false){
+                keyowrd = await _keywordService.createKeyword({
+                    name,
+                    articleId,
+                    orderNumber
+                })
+            }else{
+                if(keyowrd.articleId){
+                    return new BadRequestResponse('Error', {
+                        error: `This keyword is used by article: ${keyowrd.articleId}`
+                    }).send(res);
+                }
+
+                keyowrd.orderNumber = orderNumber
+                keyowrd = await _keywordService.updateKeyword(keyowrd);
+            }
+            
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: keyowrd,
+                error: null
+            }).send(res);
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Keywords Controller Error - selectPotentialKeyword', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
     public static async getSearchJob(req: IRequest, res: IResponse): Promise<any> {
         try {
 

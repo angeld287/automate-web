@@ -328,4 +328,13 @@ router.get(
     KeywordsController.getArticleKeywords
 );
 
+router.post(
+    '/keywords/createForArticle',
+    body('articleId', 'field articleId cannot be blank.').notEmpty(),
+    body('name', 'field name cannot be blank.').notEmpty(),
+    body('orderNumber', 'field orderNumber cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    KeywordsController.createKeywordForArticle
+);
+
 export default router;
