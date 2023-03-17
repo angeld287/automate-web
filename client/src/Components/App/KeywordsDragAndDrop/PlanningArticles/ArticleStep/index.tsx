@@ -67,6 +67,7 @@ const ArticleStep: React.FC<IArticleStep> = ({article}) => {
                     actions={[
                         <PlusCircleOutlined onClick={() => {setAddModal(true)}} key="addKeyword"/>, 
                         <EditOutlined onClick={() => sendToKeywordTranslate()}/>, 
+                        <p>{`${article.category?.charAt(0).toUpperCase()}${article.category?.slice(1)}`}</p>,
                     ]}
                 >
                         <div style={{minHeight: 150, width: '100%', border: 'solif 1px #000'}}>

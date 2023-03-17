@@ -67,7 +67,8 @@ const PlanningArticles: React.FC<IPlanningArticles> = ({jobId, articles, keyword
     return <>
         <Row>
             <Col span={12}><CustomSelectGroup label="" placeholder="Category" onChange={(e) => {setCategory(e)}} items={categoryList} name="category_select" /></Col>
-            <Col span={12}><Button type="primary" onClick={createNewPlanningArticle}>Create New</Button></Col>
+            <Col span={6}><Button type="primary" onClick={createNewPlanningArticle}>Create New</Button></Col>
+            <Col span={6}><h1>{articles.length}</h1></Col>
         </Row>
         <Row>
             <div style={contentStyle}>
