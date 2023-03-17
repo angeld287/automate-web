@@ -1,11 +1,12 @@
-import { DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import { EditOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { Card, Checkbox, Modal } from "antd";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
-import { updateArticleTitle } from "../../../../../features/article/articleSlice";
+import { updateArticleState, updateArticleTitle } from "../../../../../features/article/articleSlice";
 import { getAllKeywords, selectKeywords, setKeywordAsMain, createForArticle } from "../../../../../features/keywords/keywordSlice";
+import { ArticleState } from "../../../../../interfaces/Enums/States";
 import IKeyword from "../../../../../interfaces/models/Keyword";
 import { removeDuplicate, replaceSpace } from "../../../../../utils/functions";
 import CustomInputGroup from "../../../../CustomInputGroup";
@@ -51,23 +52,32 @@ const ArticleStep: React.FC<IArticleStep> = ({article}) => {
         }
     }, []);
 
+    const sendToKeywordTranslate = useCallback(() => {
+        if(keywords.length < 4) return toast("Please add 4 or more keywords.")
+        dispatch(updateArticleState({id: article.id, state: ArticleState.CONTENT_RESEARCH}))
+        toast("Completed!")
+    }, [keywords]);
+
     return (
         <>
-            <Card
-                style={{margin: 20, minHeight: 250, textAlign: 'start',}} 
-                title={article.title}
-                actions={[<PlusCircleOutlined onClick={() => {setAddModal(true)}} key="addKeyword"/>, <Droppable id={article.id.toString()}><DeleteOutlined /></Droppable>]}
-            >
-                <Droppable key={article.id} id={article.id.toString()}>
-                    <div style={{minHeight: 150}}>
-                        {keywords ? removeDuplicate(keywords, 'id').map(keyword => <div style={{marginBottom: 5}} key={keyword.id}>
-                            <Checkbox style={{marginRight: 5}} onChange={(e) => {setMainKeyword(e, keyword)}} key={`check-${keyword.id}`} defaultChecked={keyword.isMain}/>
-                            {keyword.component}
+            <Droppable key={article.id} id={article.id.toString()}>
+                <Card
+                    style={{margin: 20, minHeight: 250, textAlign: 'start',}} 
+                    title={article.title}
+                    actions={[
+                        <PlusCircleOutlined onClick={() => {setAddModal(true)}} key="addKeyword"/>, 
+                        <EditOutlined onClick={() => sendToKeywordTranslate()}/>, 
+                    ]}
+                >
+                        <div style={{minHeight: 150, width: '100%', border: 'solif 1px #000'}}>
+                            {keywords ? removeDuplicate(keywords, 'id').map(keyword => <div style={{marginBottom: 5}} key={keyword.id}>
+                                <Checkbox style={{marginRight: 5}} onChange={(e) => {setMainKeyword(e, keyword)}} key={`check-${keyword.id}`} defaultChecked={keyword.isMain}/>
+                                {keyword.component}
+                            </div>
+                            ) : 'Drop here'}
                         </div>
-                        ) : 'Drop here'}
-                    </div>
-                </Droppable>
-            </Card>
+                </Card>
+            </Droppable>
             <Modal
                 title="New Keyword"
                 open={addModal}

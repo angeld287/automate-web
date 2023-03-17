@@ -6,11 +6,11 @@ import ApiResponse from '../../interfaces/Responses/ApiResponse';
 import { getBearer } from '../autenticate/authenticateAPI';
 import { searchKeywordContent } from '../subtitle/subtitleAPI';
 import { ArticleState as State} from '../../interfaces/Enums/States'
-import { createArticle, createContentForArticle, createPost, editArticleTitle, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
+import { createArticle, createContentForArticle, createPost, editArticleState, editArticleTitle, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
 
 export interface ArticleState {
   article: IArticle;
-  articleState: State; //'draft' | 'created_in_wp' | 'published_in_wp'
+  articleState: State;
   status: 'idle' | 'loading' | 'failed';
   statusKc: 'idle' | 'loading' | 'failed';
   statusTk: 'idle' | 'loading' | 'failed';
@@ -138,6 +138,18 @@ export const updateArticleTitle = createAsyncThunk(
       return result;
     } catch (error) {
       throw new Error('Error in ArticleState at updateArticleTitle')
+    }
+  }
+);
+
+export const updateArticleState = createAsyncThunk(
+  'article/addArticleState',
+  async ({id, state}: {id: number, state: string}) => {
+    try {    
+      const result = await editArticleState(id, state);
+      return result;
+    } catch (error) {
+      throw new Error('Error in ArticleState at updateArticleState')
     }
   }
 );

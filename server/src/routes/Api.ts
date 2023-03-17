@@ -232,6 +232,14 @@ router.post(
     ArticleController.updateArticleTitle
 );
 
+router.post(
+    '/article/updateState',
+    body('id', 'field category cannot be blank.').notEmpty(),
+    body('state', 'field state cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    ArticleController.updateArticleState
+);
+
 router.get(
     '/getArticle',
     Passport.isAuthenticated,

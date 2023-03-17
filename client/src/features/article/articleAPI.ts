@@ -93,3 +93,16 @@ export async function editArticleTitle(id: number, title: string) {
 
   return await fetchData.json();
 }
+
+export async function editArticleState(id: number, state: string) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}article/updateState`, {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({id, state})
+  })
+
+  return await fetchData.json();
+}
