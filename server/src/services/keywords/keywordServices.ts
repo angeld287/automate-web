@@ -79,8 +79,8 @@ export class keywordService implements IKeywordService {
         try {
             const createKeywordTmpl = {
                 name: 'add-remove-keyword-article-relation',
-                text: 'UPDATE public.keywords SET selected=$2, article_id=$1, is_main=$4  WHERE id = $3 RETURNING id, name, similarity, keyword_search_job_id, article_id, selected, is_main, order_number',
-                values: [keyword.articleId, keyword.selected, keyword.id, keyword.isMain],
+                text: 'UPDATE public.keywords SET selected=$2, article_id=$1, is_main=$4, order_number=$5  WHERE id = $3 RETURNING id, name, similarity, keyword_search_job_id, article_id, selected, is_main, order_number',
+                values: [keyword.articleId, keyword.selected, keyword.id, keyword.isMain, keyword.orderNumber],
             }
 
             let result = null, client = null;

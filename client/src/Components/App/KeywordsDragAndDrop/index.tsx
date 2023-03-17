@@ -55,7 +55,7 @@ const KeywordsDragAndDrop: React.FC<IKeywordsDragAndDrop> = (props) => {
     if(keyword){
       keyword.parent = over ? over.id : null;
       setKeywords([...keywords.filter(_keyword => _keyword.id != draggedKeyword), keyword])
-      if(keyword.id) dispatch(addRemoveKeywordFromArticle({id: keyword.id.toString(), articleId: over ? over.id.toString() : null, orderNumber: over ? (keywords.length + 1).toString() : null}))
+      if(keyword.id) dispatch(addRemoveKeywordFromArticle({id: keyword.id.toString(), articleId: over ? over.id.toString() : null, orderNumber: over ? (articleKeyword.keywords.length + 1).toString() : null}))
     }else{
       const aKeyword = articleKeyword.keywords.find(_keyword => `${replaceSpace(_keyword.name)}-${_keyword.id}` === draggedKeyword.toString())
       if(aKeyword){
