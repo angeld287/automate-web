@@ -40,7 +40,9 @@ class Post {
             const title: string = article.title;
             const bodyCategory: string = article.category.trim().toLowerCase();
 
-            if(!article.image || !(article.subtitles.filter(subtitle => !subtitle.image).length > 2)){
+            //!(article.subtitles.filter(subtitle => !subtitle.image).length > 2)
+
+            if(!article.image){
                 return new BadRequestResponse('Error', {
                     error: true,
                     message: 'The article needs at least 3 images.',
