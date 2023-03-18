@@ -108,7 +108,7 @@ class Content {
 
             let wpCategory: ICategoryService = new categoryService();
             const categories = await wpCategory.getList();
-            if(!categories.find(category => category.slug === article.category)){
+            if(!categories.find(category => category.slug === article.category.trim())){
                 return new BadRequestResponse('Error', {
                     error: "This category does not exist on the wordpress site cateogies."
                 }).send(res);
@@ -138,10 +138,8 @@ class Content {
             });
 
             article.createdBy = parseInt(req.session.passport.user.id); 
-
             article = await _articleService.saveArticleAfterTranslateKeywords(article)
             
-
             return new SuccessResponse('Success', {
                 article
             }).send(res);

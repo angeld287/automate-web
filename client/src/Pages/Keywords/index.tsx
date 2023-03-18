@@ -15,6 +15,7 @@ import CustomSelectGroup from "../../Components/CustomSelectGroup";
 import { getCategoryList, selectWputils } from "../../features/WPUtils/wputilsSlice";
 import { ISelectOptions } from "../../Components/CustomSelect/ICustomSelect";
 import CustomLoader from "../../Components/CustomLoader";
+import { getAllKeywords, selectKeywords } from "../../features/keywords/keywordSlice";
 
 
 const Keywords = () => {
@@ -29,18 +30,19 @@ const Keywords = () => {
     const dispatch = useAppDispatch();
     const { article, kewordsTranslated, statusTk} = useAppSelector(selectArticle);
     const { categories, statusc } = useAppSelector(selectWputils);
+    const selectedKeywords = useAppSelector(selectKeywords);
 
     let { id } = useParams();
 
     useEffect(() => {
-        if(id) dispatch(getArticleByInternalId(parseInt(id)))
+        if(id) dispatch(getArticleByInternalId(parseInt(id)));
         dispatch(getCategoryList())
-        
         return () => {}
     }, []);
 
     useEffect(() => {
-        const { subtitles } = article;
+        const { subtitles } = article; 
+
         if(subtitles.length > 0){
             dispatch(setKewordsTranslated(!(subtitles.find(subtitle => !subtitle.translatedName || subtitle.translatedName === ''))))
             setKeyWords(subtitles.map(
@@ -53,14 +55,29 @@ const Keywords = () => {
                 })
             ))
         }else{
+            dispatch(getAllKeywords(parseInt(article.id.toString())));
+        }
+
+        setTitle(article.title)
+    }, [article])
+
+    useEffect(() => {
+        if(selectedKeywords.keywords.length > 0){
+            dispatch(addSubtitles(selectedKeywords.keywords.map( (keyword, index): SubTitleContent =>
+                ({
+                    id: keyword.id ? keyword.id : 0,
+                    name: keyword.name,
+                    translatedName: '',
+                    orderNumber: keyword.orderNumber? keyword.orderNumber : 0,
+                })
+            )))
+        }else{
             dispatch(setKewordsTranslated(false))
             setKeyWords([
                 { label: "Keyword number 1", text: "", id: getHashCode(), orderNumber: 0}
             ])
         }
-
-        setTitle(article.title)
-    }, [article])
+    }, [selectedKeywords.keywords]);
 
     const categoryList: Array<ISelectOptions> = useMemo(() => {
         if(statusc === "loading") return []

@@ -92,7 +92,7 @@ const ContentEditor = () => {
                     size="large"
                     dataSource={article.article.subtitles}
                     renderItem={(item) => {
-                        const contentText = item.content?.filter(paragraph => paragraph.selected).map(paragraph => <p style={{textAlign: 'start'}} key={paragraph.id}>{paragraph.content}</p>)
+                        const contentText = item.content?.filter(paragraph => paragraph.selected).sort((a, b) => (!a.orderNumber || !b.orderNumber) ? 1 : a.orderNumber < b.orderNumber ? -1 : 1).map(paragraph => <p style={{textAlign: 'start'}} key={paragraph.id}>{paragraph.content}</p>)
                         const paragraphLoading = item.content?.filter(paragraph => paragraph.selected).length === 0;
                         const image = item.image ? item.image.source_url : Locals.config().DEFAULT_IMAGE;
                         return (

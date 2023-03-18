@@ -196,7 +196,7 @@ export class articleService implements IArticleService {
                 return false
 
         const getQuery = {
-            name: 'get-article-by-id',
+            name: 'get-article-by-dbid',
             text: `SELECT id, internal_id, TRIM(title) AS title , TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, wp_link, sys_state, job_id FROM public.articles where id = $1`,
             values: [id],
         }
@@ -541,15 +541,17 @@ export class articleService implements IArticleService {
             let getById = await this.getArticleById(internalId);
 
             let savedArticle: INewArticle = null
-            if(getById ===  false) {
+            if(getById === false) {
                 savedArticle = await this.createArticle(article);
                 getById = await this.getArticleById(internalId);
+            }else{
+                savedArticle = getById
             }
-                
+
             //createSubtitle
             let savedSubtitles: Array<SubTitleContent> = []
             await Promise.all(subtitles.map(async (subtitle: SubTitleContent, index) => {
-                subtitle.articleId = savedArticle.id
+                subtitle.articleId = savedArticle.id;
                 savedSubtitles.push(await this.createSubtitle(subtitle));
             }));
 
