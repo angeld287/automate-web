@@ -9,4 +9,5 @@ export interface CustomStepProps extends StepProps {
 export default interface ISearchKeywordStepper extends IModal{
     subtitles: Array<SubTitleContent>;
     onNext: Function;
+    title: string;
 }

@@ -20,6 +20,7 @@ import createContent from '../../../utils/ContentStructure';
 import { replaceSpace } from '../../../utils';
 import { IArticleService } from '../../../interfaces/IArticleService';
 import { articleService } from '../../../services/articleServices/articleServices';
+import { ArticleState } from '../../../interfaces/Enums/States';
 
 class Post {
     public static async create(req: IRequest, res: IResponse): Promise<any> {
@@ -87,6 +88,7 @@ class Post {
                 if(dbArticle !== false){
                     dbArticle.wpId = created.id;
                     dbArticle.wpLink = created.link;
+                    dbArticle.sysState = ArticleState.CREATED_IN_WP;
                     
                     const updateArticle = await _articleService.updateArticle(article)
     

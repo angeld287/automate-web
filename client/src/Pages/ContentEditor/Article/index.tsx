@@ -79,6 +79,9 @@ const ContentEditor = () => {
     if(loading && article.article.subtitles.length === 0) return <CustomLoader/>
 
     return <>
+        <Row style={{margin: 20}}>
+            <h2>{article.article.title}</h2>
+        </Row>
         <Row>
             <Col style={{margin: 10}}><CustomButton disabled={article.article.wpId !== null} onClick={() => { setOpen(true)}}>Edit Content<EditOutlined /></CustomButton></Col>
             <Col style={{margin: 10}}><CustomButton disabled={article.article.wpId !== null || !allSubtitlesCompleted} onClick={() => { openAddContentModal(true); setContentType('introduction');}}>Add Introduction<FileTextOutlined /></CustomButton></Col>
@@ -121,7 +124,7 @@ const ContentEditor = () => {
                                         style={{textAlign: "left"}}
                                         avatar={<Avatar src="https://www.nicepng.com/png/detail/111-1113975_validation-green-check-circle-transparent.png" />}
                                         title={item.name}
-                                        description={`words count: ${item.content?.reduce((a, b) => a + (b.wordsCount ? b.wordsCount : 0), 0)}`}
+                                        description={`words count: ${item.content?.filter(paragraph => paragraph.selected).reduce((a, b) => a + (b.wordsCount ? b.wordsCount : 0), 0)}`}
                                     />
                                     {contentText}
                                 </Skeleton>
@@ -131,7 +134,7 @@ const ContentEditor = () => {
                 />
             </Col>
         </Row>
-        <SearchKeywordsStepper {...{onNext, open, setOpen}} subtitles={article.article.subtitles}/>
+        <SearchKeywordsStepper {...{onNext, open, setOpen}} title={article.article.title} subtitles={article.article.subtitles}/>
         <AddImage 
             open={addImageModal} 
             setOpen={openAddImageModal} 

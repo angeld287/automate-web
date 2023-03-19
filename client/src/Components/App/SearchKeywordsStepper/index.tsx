@@ -8,7 +8,7 @@ import CustomModal from "../../CustomModal";
 import SearchKeyword from "../SearchKeyword";
 import ISearchKeywordsStepper, { CustomStepProps } from "./ISearchKeywordsStepper";
 
-const SearchKeywordsStepper: React.FC<ISearchKeywordsStepper> = ({subtitles, onNext, open, setOpen}) => {
+const SearchKeywordsStepper: React.FC<ISearchKeywordsStepper> = ({title, subtitles, onNext, open, setOpen}) => {
     const [current, setCurrent] = useState(0);
 
     const dispatch = useAppDispatch();
@@ -48,6 +48,7 @@ const SearchKeywordsStepper: React.FC<ISearchKeywordsStepper> = ({subtitles, onN
 
     return (
       <CustomModal {...{open, setOpen}} style={{marginBottom: 20, marginTop: 20}} width="80%" footer={footerOptions}>
+        <div style={{marginBottom: 15}}><h3>{title}</h3></div>
         <Steps
           current={current}
           onChange={onChange}
