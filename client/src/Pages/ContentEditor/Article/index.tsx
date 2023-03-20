@@ -98,6 +98,7 @@ const ContentEditor = () => {
                         const contentText = item.content?.filter(paragraph => paragraph.selected).sort((a, b) => (!a.orderNumber || !b.orderNumber) ? 1 : a.orderNumber < b.orderNumber ? -1 : 1).map(paragraph => <p style={{textAlign: 'start'}} key={paragraph.id}>{paragraph.content}</p>)
                         const paragraphLoading = item.content?.filter(paragraph => paragraph.selected).length === 0;
                         const image = item.image ? item.image.source_url : Locals.config().DEFAULT_IMAGE;
+                        //console.log(item.content?.filter(paragraph => paragraph.selected)[0].content.split(' ').length)
                         return (
                             <List.Item
                                 style={{textAlign: 'right'}}

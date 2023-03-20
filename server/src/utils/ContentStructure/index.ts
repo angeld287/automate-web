@@ -18,7 +18,7 @@ const createContent = (article: INewArticle): string => {
     //const contentTable = createTable(postUrl, article.subtitles);
     //\n
 
-    const body: string = article.subtitles.map(subtitleObj => {
+    const body: string = article.subtitles.sort((a, b) => a.orderNumber < b.orderNumber ? -1 : 1).map(subtitleObj => {
         //Subtitle
         const subtitle: string = createSubtitle(subtitleObj.name.trim())
         //\n\n\n\n
@@ -44,7 +44,7 @@ const createSubtitle = (subtitle: string): string => {
 }
 
 const createParagraph = (paragraphs: Array<IContent>): string => {
-    return paragraphs.sort((a, b) => !a.orderNumber || !b.orderNumber ? 1 : !a.orderNumber < !b.orderNumber ? -1 : 1).map(paragraph => `<p>${paragraph.content}</p>`).join('\n\n\n\n');
+    return paragraphs.sort((a, b) => !a.orderNumber || !b.orderNumber ? 1 : a.orderNumber < b.orderNumber ? -1 : 1).map(paragraph => `<p>${paragraph.content}</p>`).join('\n\n\n\n');
 }
 
 const createTable = (postUrl: string, subtitles: Array<SubTitleContent>): string => {

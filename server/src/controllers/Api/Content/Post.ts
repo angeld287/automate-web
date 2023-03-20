@@ -90,7 +90,7 @@ class Post {
                     dbArticle.wpLink = created.link;
                     dbArticle.sysState = ArticleState.CREATED_IN_WP;
                     
-                    const updateArticle = await _articleService.updateArticle(article)
+                    const updateArticle = await _articleService.updateArticle(dbArticle)
     
                     if(updateArticle !== false){
                         return new SuccessResponse('Success', {
