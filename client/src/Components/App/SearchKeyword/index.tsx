@@ -84,6 +84,16 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
             <Row>
                 <h1>{subtitle?.name}</h1>
             </Row>
+            <Row style={{minHeight: 300, marginBottom: 100}}>
+                <Editor
+                    editorState={editorState}
+                    defaultEditorState={editorState}
+                    onEditorStateChange={setEditorState}
+                    wrapperClassName="wrapper-class"
+                    editorClassName="editor-class"
+                    toolbarClassName="toolbar-class"
+                />
+            </Row>
             <Row style={{marginBottom: 10}}>
                 <List
                     itemLayout="vertical"
@@ -97,16 +107,6 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
                             </Paragraph>
                         </List.Item>
                     )}
-                />
-            </Row>
-            <Row style={{minHeight: 300, marginBottom: 100}}>
-                <Editor
-                    editorState={editorState}
-                    defaultEditorState={editorState}
-                    onEditorStateChange={setEditorState}
-                    wrapperClassName="wrapper-class"
-                    editorClassName="editor-class"
-                    toolbarClassName="toolbar-class"
                 />
             </Row>
         </>
