@@ -5,6 +5,10 @@ export const INTRODUCTION_TOPICS = [
     'A continuación responderemos a preguntas como:',
     'En este artículo sabrás sobre los siguientes temas:',
     'Como temas importantes a tratar en este artículo tenemos:',
+    'Vamos a leer en este artículo consultas como:',
+    'En los siguientes párrafos podrás leer los siguientes temas:',
+    'Las informaciones que conocerás en este artículo serán:',
+    'Te ayudaremos a entender explicando los siguientes temas:',
 ]
 
 export const INTRODUCTION_MOTIVATIONS = [
@@ -17,6 +21,10 @@ export const INTRODUCTION_MOTIVATIONS = [
     'Si estas aquí es porque estás interesado en saber sobre esta consulta. ¡Acompañanos!',
     'Te invitamos a que descubras tus inquietudes!',
     'Si te interesa y necesitas conocer sobre estos tópicos, entonces continua leyendo más abajo.',
+    'Si tu problema está relacionado con estos tópicos, entonces continua leyendo más abajo.',
+    'Siguenos en este artículo y te prometemos que tus dudas serán resueltas.',
+    'No esperes más, aqui encontraras tus respuestas.',
+    'Síguenos en este artículo para que aclares tus dudas.',
 ]
 
 
@@ -30,6 +38,10 @@ export const CONCLUSION_COMMENTS_REQUEST = [
     'Para alguna inquietud que tengas, puedes dejar tu comentario en la parte de abajo.',
     'Para dudas, sugerencias u opiniones puede escribirnos en la parte de comentarios.',
     'Si después de completar el artículo le queda alguna inquietud, entonces puede dejar su comentario.',
+    'Para consultas, favor dirigirse a la sesión de abajo.',
+    'Si quieres comentar algo y si tienes alguna duda puedes escribirlo abajo.',
+    'Si necesitas alguna aclaración, entonces puedes dejarnos un comentario.',
+    'Si tienes alguna duda puedes dejar tu comentario.',
 ]
 
 export const CONCLUSION_FAREWELLS = [
@@ -43,4 +55,8 @@ export const CONCLUSION_FAREWELLS = [
     'Estamos agradecidos por tu presencia.',
     'Gracias por su presencia en nuestro blog!',
     '¡Siempre agradecidos con su visita a nuestro sitio!',
+    'Agradecidos por su presencia, esperamos haberle ayudado.',
+    'Estamos contentos con tu presencia en nuestro blog.',
+    'Haber estado con nosotros en nuestro sitio nos pone contentos, gracias.',
+    '¡Gracias por preferirnos!',
 ]

@@ -37,7 +37,7 @@ export class keywordService implements IKeywordService {
         }
     }
 
-    async createKeyword(keyword: IKeyword): Promise<IKeyword> {
+    async createKeyword(keyword: IKeyword): Promise<IKeyword | false> {
         try {
             const keyowrdName = `${keyword.name.charAt(0).toUpperCase()}${decodeURIComponent(keyword.name.slice(1))}`;
 
@@ -73,7 +73,8 @@ export class keywordService implements IKeywordService {
             return _keyword;
             
         } catch (error) {
-            throw new Error(error.message);
+            console.log(error.message);
+            return false
         }
     }
 
