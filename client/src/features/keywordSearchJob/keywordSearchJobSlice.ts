@@ -90,7 +90,7 @@ export const keywordSearchJobSlice = createSlice({
       .addCase(selectKeyword.fulfilled, (state, action: PayloadAction<IKeyword>) => {
         state.selectStatus = 'idle';
         if(state.keywordSearchJob.keywords)
-          state.keywordSearchJob.keywords = [...state.keywordSearchJob.keywords.filter(keyword => keyword.id !== action.payload.id), action.payload].sort((kwA, kwB) => kwA.similarity < kwB.similarity ? -1 : (kwA.similarity > kwB.similarity ? 1 : kwA.name < kwB.name ? -1 : 1));;
+          state.keywordSearchJob.keywords = [...state.keywordSearchJob.keywords.filter(keyword => keyword.id !== action.payload.id), action.payload].sort((kwA, kwB) => kwA.selected === kwB.selected ? 0 : kwA.selected ? -1 : kwA.similarity < kwB.similarity ? -1 : (kwA.similarity > kwB.similarity ? 1 : kwA.name < kwB.name ? -1 : 1)); 
       })
       .addCase(selectKeyword.rejected, (state) => {
         state.selectStatus = 'failed';

@@ -203,7 +203,7 @@ export class keywordService implements IKeywordService {
                 })
             });
 
-            return keyowrds.sort((kwA, kwB) => kwA.similarity < kwB.similarity ? -1 : (kwA.similarity > kwB.similarity ? 1 : kwA.name < kwB.name ? -1 : 1));
+            return keyowrds.sort((kwA, kwB) =>  kwA.selected === kwB.selected ? 0 : kwA.selected ? -1 : kwA.similarity < kwB.similarity ? -1 : (kwA.similarity > kwB.similarity ? 1 : kwA.name < kwB.name ? -1 : 1));
         } catch (error) {
             throw new Error(error.message);
         }

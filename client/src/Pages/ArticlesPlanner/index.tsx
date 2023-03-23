@@ -1,11 +1,8 @@
-import { DndContext, DragEndEvent, DragStartEvent, UniqueIdentifier } from "@dnd-kit/core";
-import { Col, Collapse, Row } from "antd";
+import { Collapse } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import KeywordsDragAndDrop from "../../Components/App/KeywordsDragAndDrop";
-import Draggable from "../../Components/App/KeywordsDragAndDrop/Draggable";
-import { IDragKeyword } from "../../Components/App/KeywordsDragAndDrop/IKeywordsDragAndDrop";
 import KeywordsList from "../../Components/App/KeywordsList";
 import { getSearchJobDetails, selectKeywordSearchJob } from "../../features/keywordSearchJob/keywordSearchJobSlice";
 import IKeyword from "../../interfaces/models/Keyword";
@@ -13,7 +10,6 @@ import IKeyword from "../../interfaces/models/Keyword";
 const ArticlesPlanner = () => { 
     let { id } = useParams();
     const [keywords, setKeywords] = useState<Array<IKeyword>>([])
-    const [favsKeywords, setFavsKeywords] = useState<Array<IKeyword>>([])
 
     const dispatch = useAppDispatch();
     const { keywordSearchJob } = useAppSelector(selectKeywordSearchJob);
