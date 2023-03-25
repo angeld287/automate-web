@@ -38,13 +38,13 @@ class SearchKeyword {
             const mainKeyword = req.body.mainKeyword;
 
             //google adsense used to get keywords statistic info.
-            let google: IGoogelServices = new googelServices();
-            let googleAds: IGoogelAdsServices = new googelAdsServices();
+            //let google: IGoogelServices = new googelServices();
+            //let googleAds: IGoogelAdsServices = new googelAdsServices();
             //let googlePlans: IGoogleAdsKeywordPlansServices = new googleAdsKeywordPlansServices();
 
             //const token = await google.refreshToken();
         
-            const customers = await googleAds.listAccessibleCustomers(req.headers['google-access-token'].toString());
+            //const customers = await googleAds.listAccessibleCustomers(req.headers['google-access-token'].toString());
             //const keywordPlans = await googlePlans.generateForecastMetrics(req.headers['google-access-token'].toString());
 
             let search: ISearchService = new searchService();
@@ -57,61 +57,61 @@ class SearchKeyword {
                 }
             ]
 
-            //let searchJob: IKeywordSearchJob = await keywordS.createKeywordSearchJob({
-            //    createdBy: req.session.passport.user.id,
-            //    status: `RUNNING`,
-            //    longTailKeyword
-            //} as IKeywordSearchJob)
+            let searchJob: IKeywordSearchJob = await keywordS.createKeywordSearchJob({
+                createdBy: req.session.passport.user.id,
+                status: `RUNNING`,
+                longTailKeyword
+            } as IKeywordSearchJob)
+ 
 
+            const searchJobNode: NodeJob = new NodeJob();
+            searchJobNode.startJob(`JOB-${searchJob.id}`, async () => {
+                try {
+                    console.log('FUNCTION CALLED!')
 
-            //const searchJobNode: NodeJob = new NodeJob();
-            //searchJobNode.startJob(`JOB-${searchJob.id}`, async () => {
-            //    try {
-            //        console.log('FUNCTION CALLED!')
-//
-            //        for (let i = 0; i < keywords.length; i++) {
-            //            let keyword: IKeyword = keywords[i];
-            //            const keywordAlreadyExist: IKeyword | false = await keywordS.getKeywordByName(keyword.name);
-            //            let result = await search.getResultsAndSuggestions(keyword.name);
-            //            result.relatedSearch = result.relatedSearch.filter(related =>  related.name.includes(mainKeyword));
-            //            
-            //            let similaritySum = 0;
-            //            if(keywordAlreadyExist === false && result.searchResult){
-            //                await Promise.all(result.searchResult.map(async (itemResult) => {
-            //                    const similarityResponse = await similarity.checkSimilarity(longTailKeyword, itemResult.title)
-            //                    similaritySum = similaritySum + similarityResponse.similarity;
-            //                    keyword.resultsSimilarity.push({
-            //                        name: itemResult.title,
-            //                        similarity: similarityResponse.similarity,
-            //                        value: similarityResponse.value
-            //                    })
-            //                }))
-            //    
-            //                keyword.similarity = Math.round((similaritySum/10)*100);
-            //            }
-            //            
-            //            keyword.keywordSearchJobId = searchJob.id;
-            //            const othersKeywords = result.relatedSearch.filter(keyword => keywords.filter(globalKeyword => keyword.name.toLowerCase() === globalKeyword.name.toLowerCase()).length === 0).map(keyword => ({...keyword, resultsSimilarity: []}))
-            //
-            //            keywords = [...keywords, ...othersKeywords];
-            //            
-            //            console.log(keyword.name)
-            //            if(keywordAlreadyExist === false){
-            //                const createKeyword = await keywordS.createKeyword(keyword);   
-            //                if(createKeyword !== false) keyword = createKeyword
-            //            }
-            //                
-            //        }
-            //    } catch (error) {
-            //        console.log(error)
-            //    }
-            //})
+                    for (let i = 0; i < keywords.length; i++) {
+                        let keyword: IKeyword = keywords[i];
+                        const keywordAlreadyExist: IKeyword | false = await keywordS.getKeywordByName(keyword.name);
+                        let result = await search.getResultsAndSuggestions(keyword.name);
+                        result.relatedSearch = result.relatedSearch.filter(related =>  related.name.includes(mainKeyword));
+                        
+                        let similaritySum = 0;
+                        if(keywordAlreadyExist === false && result.searchResult){
+                            await Promise.all(result.searchResult.map(async (itemResult) => {
+                                const similarityResponse = await similarity.checkSimilarity(longTailKeyword, itemResult.title)
+                                
+                                similaritySum = similaritySum + (similarityResponse.similarity ? similarityResponse.similarity : 0);
+                                keyword.resultsSimilarity.push({
+                                    name: itemResult.title,
+                                    similarity: similarityResponse.similarity ? similarityResponse.similarity : 0,
+                                    value: similarityResponse.value ? similarityResponse.value : 0
+                                })
+                            }))
+                
+                            keyword.similarity = Math.round((similaritySum/10)*100);
+                        }
+                        
+                        keyword.keywordSearchJobId = searchJob.id;
+                        const othersKeywords = result.relatedSearch.filter(keyword => keywords.filter(globalKeyword => keyword.name.toLowerCase() === globalKeyword.name.toLowerCase()).length === 0).map(keyword => ({...keyword, resultsSimilarity: []}))
+            
+                        keywords = [...keywords, ...othersKeywords];
+                        
+                        console.log(`Name: ${keyword.name} | Exist: ${keywordAlreadyExist ? 'yes' : 'no'}`)
+                        if(keywordAlreadyExist === false){
+                            const createKeyword = await keywordS.createKeyword(keyword);   
+                            if(createKeyword !== false) keyword = createKeyword
+                        }
+                            
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            })
 
             return new SuccessResponse('Success', {
                 success: true,
                 error: null,
-                jobDetails: null,//searchJob
-                customers,
+                jobDetails: searchJob
             }).send(res);
 
         } catch (error) {

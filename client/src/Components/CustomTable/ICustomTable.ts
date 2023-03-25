@@ -1,5 +1,7 @@
 import { ButtonProps } from "antd";
+import { ColumnType } from "antd/es/table";
 import React from "react";
+import { IKeywordsTable } from "../App/KeywordsList/IKeywordsList";
 
 export default interface ICustomTable {
     headers: Array<ITableHeader>;
@@ -13,7 +15,7 @@ export interface IButton extends ButtonProps {
     text: string;
 }
 
-export interface ITableHeader {
+export interface ITableHeader extends ColumnType<IKeywordsTable> {
     name: string;
     sorter: boolean;
 }

@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { getPlanningArticles, selectArticles } from '../../../features/articles/articlesSlice';
 import PlanningArticles from './PlanningArticles';
 import { addRemoveKeywordFromArticle, selectKeywords } from '../../../features/keywords/keywordSlice';
+import { toast } from 'react-toastify';
 
 const KeywordsDragAndDrop: React.FC<IKeywordsDragAndDrop> = (props) => {
   const [draggedKeyword, setDraggedKeyword] = useState<UniqueIdentifier>('');
@@ -26,6 +27,10 @@ const KeywordsDragAndDrop: React.FC<IKeywordsDragAndDrop> = (props) => {
   }, []);
 
   useEffect(() => {
+    if(articleKeyword.errorMessage !== "") toast(articleKeyword.errorMessage)
+  }, [articleKeyword.errorMessage]);
+
+  useEffect(() => {
     setKeywords(props.keywords.map(keyword => ({
             parent: keyword.articleId ? keyword.articleId : null,            
             component: (
@@ -33,7 +38,7 @@ const KeywordsDragAndDrop: React.FC<IKeywordsDragAndDrop> = (props) => {
             ),
             ...keyword
         })))
-}, [props.keywords])
+  }, [props.keywords])
 
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>

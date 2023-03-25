@@ -1,6 +1,7 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Checkbox, Spin } from "antd";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
+import { ColumnFilterItem } from "antd/es/table/interface";
 import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { selectKeyword, selectKeywordSearchJob } from "../../../features/keywordSearchJob/keywordSearchJobSlice";
@@ -8,7 +9,9 @@ import IKeyword from "../../../interfaces/models/Keyword";
 import { getGoogleSearchUrl, replaceSpace } from "../../../utils/functions";
 import CustomButton from "../../CustomButton";
 import CustomTable from "../../CustomTable/CustomTable";
+import { ITableHeader } from "../../CustomTable/ICustomTable";
 import Draggable from "../KeywordsDragAndDrop/Draggable";
+import { removeDuplicate } from '../../../utils/functions';
 import IKeywordsList, { IKeywordsTable } from "./IKeywordsList"
 
 const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
@@ -46,7 +49,8 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
                     acciones: [
                         //{ id: `search-action-${item.id}`, color: 'blue', icon: SearchOutlined, onclick: () => { console.log('sss') }, text: "" },
                     ],
-                    id: `${replaceSpace(item.name)}-${item.id}`
+                    id: `${replaceSpace(item.name)}-${item.id}`,
+                    dataName: item.name
                 })))
             }
         } catch (error) {
@@ -54,9 +58,28 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
         }
     }, [items]);
     
-    const _headers = useMemo(() => [
-        {name: 'Keyword', sorter: false},
-    ], []);
+    const _headers = useMemo((): Array<ITableHeader> => {
+        
+        const filterList: Array<ColumnFilterItem> = [];
+
+        items.forEach(item => {
+            item.name.split(" ").forEach(word => {
+                if(word !== '' && word.length > 3) filterList.push({text: word, value: word.toLowerCase()})
+            });
+        });
+
+        return [
+            {
+                filterMode: "tree",
+                name: 'Keyword', 
+                sorter: false, 
+                filterSearch: true,
+                filters: removeDuplicate(filterList, 'value'),
+                onFilter: (value: string | number | boolean, record: IKeywordsTable) => record.dataName.includes(value.toString()),
+    
+            },
+        ]
+    }, [items]);
     return <>
         <CustomTable headers={_headers} items={kewords} />
     </>

@@ -8,4 +8,5 @@ export interface IKeywordsTable {
     keyword: string | React.ReactNode;
     acciones?: Array<any>;
     id: string;
+    dataName: string;
 }

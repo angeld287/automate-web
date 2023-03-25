@@ -12,6 +12,7 @@ export const INTRODUCTION_TOPICS = [
     'Mas abajo usted podra leer sobre los siguientes temas:',
     'En los siguientes tópicos podrá leer informaciones como:',
     'Para responder tus inquietudes con respecto a este contexto, mostraremos los siguientes temas:',
+    'Acontinuacion veras contenido como:',
 ]
 
 export const INTRODUCTION_MOTIVATIONS = [
@@ -31,6 +32,7 @@ export const INTRODUCTION_MOTIVATIONS = [
     'Siguenos para esta excelente nutrición de contenido.',
     'Tomate unos minutos para que puedas conocer algo nuevo este día.',
     'Te invitamos a que te nutras con nuestro contenido.',
+    'Si buscas respuestas sobre este tema, entonces quédate aquí!',
 ]
 
 
@@ -51,6 +53,7 @@ export const CONCLUSION_COMMENTS_REQUEST = [
     'Para dudas y comentarios, en la parte de abajo puede escribirnos.',
     'Para recomendaciones o dudas, escríbenos un comentario, ¡te esperamos!',
     'Para aquellas dudas que pueda tener, puede escribirnos un comentario.',
+    'Déjanos tu pregunta o comentario y estaremos atentos con tus dudas.',
 ]
 
 export const CONCLUSION_FAREWELLS = [
@@ -71,4 +74,5 @@ export const CONCLUSION_FAREWELLS = [
     'Estamos complacidos con su presencia.',
     'Tu presencia en este sitio nos hace alegres, gracias!',
     'Nuestro sitio web lo estara esperando para cuando quiera volver. Gracias!',
+    'Agradecemos tu presencia en nuestro blog!',
 ]

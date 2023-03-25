@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import IKeyword from '../../interfaces/models/Keyword';
+import ApiResponse from '../../interfaces/Responses/ApiResponse';
 import { addRemoveKeywordToArticle, createKeywordForArticle, getKeywordsByArticleId, setMainKeyword } from './keywordAPI';
 
 export interface keywordsState {
@@ -9,6 +10,7 @@ export interface keywordsState {
   relateStatus: 'idle' | 'loading' | 'failed';
   isMainStatus: 'idle' | 'loading' | 'failed';
   createStatus: 'idle' | 'loading' | 'failed';
+  errorMessage: string;
 }
 
 const initialState: keywordsState = {
@@ -17,6 +19,7 @@ const initialState: keywordsState = {
   relateStatus: 'idle',
   isMainStatus: 'idle',
   createStatus: "idle",
+  errorMessage: "",
 };
 
 export const addRemoveKeywordFromArticle = createAsyncThunk(
@@ -60,7 +63,7 @@ export const createForArticle = createAsyncThunk(
   async ({articleId, name, orderNumber}: {articleId: number, name: string, orderNumber: number}) => {
     try {    
       const result = await createKeywordForArticle(articleId, name, orderNumber);
-      return result.data.response;
+      return result;
     } catch (error) {
       console.log(error) 
     }
@@ -70,7 +73,11 @@ export const createForArticle = createAsyncThunk(
 export const keywordsSlice = createSlice({
   name: 'keywords',
   initialState,
-  reducers: {},
+  reducers: {
+    clearErrorMessage: (state) => {
+      state.errorMessage = ""
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(addRemoveKeywordFromArticle.pending, (state) => {
@@ -109,9 +116,14 @@ export const keywordsSlice = createSlice({
       .addCase(createForArticle.pending, (state) => {
         state.createStatus = 'loading';
       })
-      .addCase(createForArticle.fulfilled, (state, action: PayloadAction<IKeyword>) => {
+      .addCase(createForArticle.fulfilled, (state, action: PayloadAction<ApiResponse>) => {
         state.createStatus = 'idle';
-        state.keywords = [...state.keywords, action.payload].sort((kwA, kwB) => !kwA.orderNumber || !kwB.orderNumber ? 1 : (kwA.orderNumber < kwB.orderNumber ? -1 : 1));
+        if(action.payload.data.error){
+          state.errorMessage = action.payload.data.error
+        }else{
+          state.keywords = [...state.keywords, action.payload.data.response].sort((kwA, kwB) => !kwA.orderNumber || !kwB.orderNumber ? 1 : (kwA.orderNumber < kwB.orderNumber ? -1 : 1));
+        }
+        
       })
       .addCase(createForArticle.rejected, (state) => {
         state.createStatus = 'failed';
@@ -119,7 +131,7 @@ export const keywordsSlice = createSlice({
   },
 });
 
-export const { } = keywordsSlice.actions;
+export const { clearErrorMessage } = keywordsSlice.actions;
 
 export const selectKeywords = (state: RootState) => state.keywords;
 
