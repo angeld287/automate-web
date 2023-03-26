@@ -23,7 +23,7 @@ const createContent = (article: INewArticle): string => {
         const subtitle: string = createSubtitle(subtitleObj.name.trim())
         //\n\n\n\n
         //Subtitle Image (if have)
-        const image: string = subtitleObj.image ? `${createImageConteiner(subtitleObj.image.source_url.trim(), subtitleObj.name.trim())}\n\n\n\n` : "";
+        const image: string = subtitleObj.image ? `${createMainImage(subtitleObj.image.title.trim(),  subtitleObj.image.source_url.trim())}\n\n\n\n` : "";
         //\n\n\n\n
         //Paragraph
         const paragraph: string = createParagraph(subtitleObj.content.filter(content => content.selected))
@@ -66,5 +66,7 @@ const createSpacer = (): string => {
 const createMainImage = (title: string, image: string): string => {
     return `<div class=\"wp-block-image\"><figure class=\"aligncenter size-full\"><img loading=\"lazy\" width=\"590\" height=\"350\" src=\"${image}\" alt=\"${title}\" class=\"wp-image-442\" srcset=\"${image} 590w, ${image.replace('.webp', '')}-300x178.webp 300w\" sizes=\"(max-width: 590px) 100vw, 590px\" /><figcaption>${title}</figcaption></figure></div>`
 }
+
+
 
 export default createContent;

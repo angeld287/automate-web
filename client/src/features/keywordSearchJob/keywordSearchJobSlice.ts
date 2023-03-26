@@ -69,7 +69,11 @@ export const keywordSearchJobSlice = createSlice({
       })
       .addCase(getAllJobs.fulfilled, (state, action: PayloadAction<Array<IKeywordSearchJob>>) => {
         state.status = 'idle';
-        state.AllJobs = action.payload;
+        state.AllJobs = action.payload.sort((a,b) => {
+          const createAtA: any = a.createdAt ? new Date(a.createdAt) : 0;
+          const createAtB: any = b.createdAt ? new Date(b.createdAt) : 0;
+          return (a.createdAt && b.createdAt) ? createAtB - createAtA : 1
+        });
       })
       .addCase(getAllJobs.rejected, (state) => {
         state.status = 'failed';
