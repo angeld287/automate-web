@@ -14,6 +14,8 @@ import categoryService from "../../../services/wordpress/categoryServices";
 import IContent from "../../../interfaces/models/Content";
 import { Languages } from "../../../interfaces/Enums/Languages";
 import { ITranslateItem } from "../../../interfaces/Utils";
+import textAnalyticsServices from "../../../services/azure/textAnalyticsServices";
+import ITextAnalyticsServices from "../../../interfaces/ITextAnalyticsServices";
 
 class Content {
 
@@ -389,6 +391,40 @@ class Content {
         } catch (error) {
             console.log(error)
         }
+    }
+
+
+    static async transcribeContent(req: IRequest, res: IResponse, next: INext): Promise<any> {
+        try {
+
+            const errors = new ExpressValidator().validator(req);
+
+            if (!errors.isEmpty()) {
+                return new BadRequestResponse('Error', {
+                    errors: errors.array()
+                }).send(res);
+            }
+
+            let contents: Array<IContent> = req.body.contents;
+
+            let textAnalytics: ITextAnalyticsServices = new textAnalyticsServices();
+
+            const result = await textAnalytics.getExtractiveSummarization(contents)
+
+            console.log(result)
+
+            return new SuccessResponse('Success', {
+                content: null,
+                result
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Validation Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+
     }
 }
 

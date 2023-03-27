@@ -81,6 +81,10 @@ class Locals {
         const GOOGLE_ADS_API_URL = "https://googleads.googleapis.com/"
         const GOOGLE_ADS_TOKEN_PROGRAMADOR = process.env.GOOGLE_ADS_TOKEN_PROGRAMADOR || "";
 
+        //Azure Text Analytics
+        const AZURE_TEXT_ANALYTICS_API = "https://paragraph-summary.cognitiveservices.azure.com/"
+        const AZURE_TEXT_ANALYTICS_KEY = process.env.AZURE_TEXT_ANALYTICS_KEY || "";
+
 
         return {
             WP_DOMAIN,
@@ -135,6 +139,9 @@ class Locals {
 
             TWINWORD_API_ENDPOINT,
             TWINWORD_API_KEY,
+
+            AZURE_TEXT_ANALYTICS_API,
+            AZURE_TEXT_ANALYTICS_KEY,
         }
     }
 

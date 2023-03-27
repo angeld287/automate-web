@@ -134,6 +134,13 @@ router.post(
 );
 
 router.post(
+    '/content/transcribe',
+    body('contents', 'field contents cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    ContentController.transcribeContent
+);
+
+router.post(
     '/createPost',
     body('article', 'field article cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
