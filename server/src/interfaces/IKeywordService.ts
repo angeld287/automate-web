@@ -3,6 +3,8 @@ import IKeyword, { IKeywordSearchJob } from "./models/Keyword";
 export interface IKeywordService {
     createKeywordSearchJob(job: IKeywordSearchJob): Promise<IKeywordSearchJob>
 
+    updateKeywordSearchJob(job: IKeywordSearchJob): Promise<IKeywordSearchJob>
+
     createKeyword(keyword: IKeyword): Promise<IKeyword | false>
 
     getKeywordByName(name: string): Promise<IKeyword | false>

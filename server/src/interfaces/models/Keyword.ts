@@ -24,4 +24,6 @@ export interface IKeywordSearchJob {
     keywords?: Array<IKeyword>;
     createdBy: string;
     createdAt?: string;
+    deletedBy?: string;
+    deleted?: boolean;
 }

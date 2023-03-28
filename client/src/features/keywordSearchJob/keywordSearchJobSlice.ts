@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import IKeyword, { IKeywordSearchJob } from '../../interfaces/models/Keyword';
-import { getAllSearchJobs, getSearchJob, selectPotentialKeyword } from './keywordSearchJobAPI';
+import { deleteKeywordSearchJob, getAllSearchJobs, getSearchJob, selectPotentialKeyword } from './keywordSearchJobAPI';
 
 export interface keywordSearchJobState {
   keywordSearchJob: IKeywordSearchJob;
@@ -51,6 +51,18 @@ export const selectKeyword = createAsyncThunk(
   async ({id, selected}: {id: number, selected: boolean}) => {
     try {    
       const result = await selectPotentialKeyword(id, selected);
+      return result.data.response;
+    } catch (error) {
+      console.log(error) 
+    }
+  }
+);
+
+export const deleteJob = createAsyncThunk(
+  'keywordSearchJob/deleteJob',
+  async (id: number) => {
+    try {    
+      const result = await deleteKeywordSearchJob(id);
       return result.data.response;
     } catch (error) {
       console.log(error) 

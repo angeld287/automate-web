@@ -8,7 +8,7 @@ export class keywordService implements IKeywordService {
         try {
             const createKeywordSearchJobTmpl = {
                 name: 'create-new-keyword_search_job',
-                text: 'INSERT INTO public.keyword_search_job(created_by, long_tail_keyword) VALUES ($1, $2) RETURNING id, created_by, long_tail_keyword',
+                text: 'INSERT INTO public.keyword_search_job(created_by, long_tail_keyword) VALUES ($1, $2) RETURNING id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status, long_tail_keyword',
                 values: [job.createdBy, job.longTailKeyword],
             }
 
@@ -28,6 +28,41 @@ export class keywordService implements IKeywordService {
                 id: result.rows[0].id,
                 createdBy: result.rows[0].created_by,
                 longTailKeyword: result.rows[0].long_tail_keyword,
+                deleted: result.rows[0].deleted,
+            }
+            
+            return _job;
+            
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async updateKeywordSearchJob(job: IKeywordSearchJob): Promise<IKeywordSearchJob> {
+        try {
+            const updateKeywordSearchJobTmpl = {
+                name: 'update-new-keyword_search_job',
+                text: 'UPDATE public.keyword_search_job SET deleted=$1, deleted_by=$2, status=$3 WHERE id = $4 RETURNING id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status, long_tail_keyword',
+                values: [job.deleted, job.deletedBy, job.status, job.id],
+            }
+
+            let result = null, client = null;
+
+            client = await Database.getTransaction();
+
+            try {
+                result = await Database.sqlExecSingleRow(client, updateKeywordSearchJobTmpl);
+                await Database.commit(client);
+            } catch (error) {
+                await Database.rollback(client);
+                throw new Error(error);
+            }
+
+            let _job: IKeywordSearchJob = {
+                id: result.rows[0].id,
+                createdBy: result.rows[0].created_by,
+                longTailKeyword: result.rows[0].long_tail_keyword,
+                deleted: result.rows[0].deleted,
             }
             
             return _job;
@@ -168,7 +203,8 @@ export class keywordService implements IKeywordService {
                 createdBy: result.rows[0].created_by,
                 status: result.rows[0].status,
                 uniqueName: result.rows[0].unique_name,
-                keywords
+                keywords,
+                deleted: result.rows[0].deleted,
             }
 
             return job;
@@ -289,6 +325,7 @@ export class keywordService implements IKeywordService {
                     createdAt: row.created_at,
                     status: row.status,
                     longTailKeyword: row.long_tail_keyword,
+                    deleted: result.row.deleted,
                 })
             });
 

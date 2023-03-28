@@ -6,7 +6,7 @@
 
 import { BadRequestResponse, InternalErrorResponse, SuccessResponse } from '../../../core/ApiResponse';
 import { IKeywordService } from '../../../interfaces/IKeywordService';
-import IKeyword from '../../../interfaces/models/Keyword';
+import IKeyword, { IKeywordSearchJob } from '../../../interfaces/models/Keyword';
 import { IRequest, IResponse } from '../../../interfaces/vendors';
 import Log from '../../../middlewares/Log';
 import ExpressValidator, { ValidateErrors } from '../../../providers/ExpressValidation';
@@ -181,7 +181,7 @@ class Keywords {
             }).send(res);
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('Keywords Controller Error - selectPotentialKeyword', {
+            return new InternalErrorResponse('Keywords Controller Error - setMainKeyword', {
                 error: 'Internal Server Error',
             }).send(res);
         }

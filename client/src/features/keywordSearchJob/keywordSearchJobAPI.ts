@@ -36,3 +36,16 @@ export async function selectPotentialKeyword(id: number, selected: boolean) {
 
   return await fetchData.json();
 }
+
+export async function deleteKeywordSearchJob(id: number) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}keywordsSearchJob/delete`, {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({id})
+  })
+
+  return await fetchData.json();
+}

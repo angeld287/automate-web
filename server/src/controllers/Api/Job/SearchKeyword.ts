@@ -14,7 +14,7 @@ import ITextSimilarityServices from '../../../interfaces/ITextSimilarityServices
 import IKeyword, { IKeywordSearchJob } from '../../../interfaces/models/Keyword';
 import { IRequest, IResponse } from '../../../interfaces/vendors';
 import Log from '../../../middlewares/Log';
-import ExpressValidator from '../../../providers/ExpressValidation';
+import ExpressValidator, { ValidateErrors } from '../../../providers/ExpressValidation';
 import NodeJob from '../../../providers/NodeJob';
 import googleAdsKeywordPlansServices from '../../../services/google/googleAdsKeywordPlansServices';
 import googelAdsServices from '../../../services/google/googleAdsServices';
@@ -174,6 +174,39 @@ class SearchKeyword {
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
             return new InternalErrorResponse('SearchKeyword Job Controller Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
+    public static async deleteKeywordSearchJob(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            if(ValidateErrors.validate(req, res) !== true) return
+
+            const _keywordService: IKeywordService = new keywordService()
+            
+            const id = req.body.jobId;
+
+            let keyowrdSJ = await _keywordService.getKeywordSearchJob(id)
+
+            if(keyowrdSJ === false){
+                return new BadRequestResponse('Error', {
+                    error: "The keyword search job does not exist."
+                }).send(res);
+            }else{
+                keyowrdSJ.deleted = true;
+                keyowrdSJ = await _keywordService.updateKeywordSearchJob(keyowrdSJ)
+            }
+            
+            return new SuccessResponse('Success', {
+                success: true,
+                response: keyowrdSJ,
+                error: null
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Keywords Controller Error - delleteKeywordSearchJob', {
                 error: 'Internal Server Error',
             }).send(res);
         }

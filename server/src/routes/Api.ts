@@ -301,6 +301,13 @@ router.post(
     SearchKeywordController.getJobDetails
 );
 
+router.post(
+    '/keywordsSearchJob/delete',
+    body('jobId', 'field jobId cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    SearchKeywordController.deleteKeywordSearchJob
+);
+
 router.get(
     '/keywords/getSearchJob',
     Passport.isAuthenticated,
