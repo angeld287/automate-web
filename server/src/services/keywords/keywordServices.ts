@@ -325,7 +325,7 @@ export class keywordService implements IKeywordService {
                     createdAt: row.created_at,
                     status: row.status,
                     longTailKeyword: row.long_tail_keyword,
-                    deleted: result.row.deleted,
+                    deleted: row.deleted,
                 })
             });
 
