@@ -39,13 +39,12 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
         try {
             if (items !== undefined) {
                 setKeywords(items.map((item): IKeywordsTable => ({
-                    keyword: <>
-                        <Checkbox onChange={(e) => {onChecked(item, e)}} key={item.id} defaultChecked={item.selected}>
-                            {item.similarity}
-                        </Checkbox>
-                        | <a target={"_blank"} href={getGoogleSearchUrl(item.name)}>{item.name}</a>
+                    selected: <>
+                        <Checkbox onChange={(e) => {onChecked(item, e)}} key={item.id} defaultChecked={item.selected}></Checkbox>
                         {kwLoading === item.id && <Spin size="small" style={{marginLeft: 10}} />}
                     </>,
+                    similarity: item.similarity,
+                    keyword: <a target={"_blank"} href={getGoogleSearchUrl(item.name)}>{item.name}</a>,
                     acciones: [
                         //{ id: `search-action-${item.id}`, color: 'blue', icon: SearchOutlined, onclick: () => { console.log('sss') }, text: "" },
                     ],
@@ -69,6 +68,17 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
         });
 
         return [
+            {
+                
+                name: 'Selected', 
+                sorter: false, 
+                width: 100
+            },
+            {
+                name: 'Similarity', 
+                sorter: false, 
+                width: 100
+            },
             {
                 filterMode: "tree",
                 name: 'Keyword', 

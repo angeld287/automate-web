@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import IPagination from '../../interfaces/IPagination';
 import { IArticle } from '../../interfaces/models/Article';
+import { removeDuplicate } from '../../utils/functions';
 import { getArticlesFromDb, getPlanningArticlesFromDb } from './articlesAPI';
 
 export interface ArticlesState {
@@ -66,7 +67,7 @@ export const articlesSlice = createSlice({
         if(action.payload.articles !== false){
           state.page = parseInt(action.payload.page)
           state.size = parseInt(action.payload.size)
-          state.articles = [...state.articles, ...action.payload.articles];//.sort((a, b) => (Number(new Date(a.createAt)) - Number(new Date(b.createAt))))
+          state.articles = removeDuplicate([...state.articles, ...action.payload.articles], 'id');//.sort((a, b) => (Number(new Date(a.createAt)) - Number(new Date(b.createAt))))
         }else{
           state.hasMore = false;
         }

@@ -13,13 +13,10 @@ const CustomTable: React.FC<ICustomTable> = ({ headers, items, getItemsNextToken
     const _headers = useMemo(() => headers.map(header => {
         if (header.name !== 'Acciones') {
             return ({ 
-                    onFilter: header.onFilter,
-                    filters: header.filters,
-                    filterSearch: header.filterSearch,
                     title: header.name, 
                     dataIndex: header.name.toLowerCase(), 
                     key: header.name.toLowerCase(), 
-                    sorter: header.sorter 
+                    ...header
                 })
         } else {
             return ({

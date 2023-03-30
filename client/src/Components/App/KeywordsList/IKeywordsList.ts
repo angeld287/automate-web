@@ -5,6 +5,8 @@ export default interface IKeywordsList {
 }
 
 export interface IKeywordsTable {
+    selected?: string | React.ReactNode;
+    similarity?: number;
     keyword: string | React.ReactNode;
     acciones?: Array<any>;
     id: string;
