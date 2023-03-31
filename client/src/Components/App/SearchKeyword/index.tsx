@@ -18,6 +18,7 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
     const [editorState, setEditorState] = useState(
         () => EditorState.createEmpty(),
     );
+    const [hasSearchedContent, setHasSearchedContent] = useState(false)
 
     useEffect(() => {
         return () => {
@@ -49,6 +50,20 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
     }, [subtitle])
 
     useEffect(() => {
+        setHasSearchedContent(() => {
+            if(_subtitle.subtitle.content) {
+                if(_subtitle.subtitle.content.filter(text => !text.selected).length > 0){
+                    return true
+                }else{
+                    return false
+                }
+            }else{
+                return false
+            }
+        });
+    }, [_subtitle.subtitle.content]);
+
+    useEffect(() => {
         const selectedContent = _subtitle.subtitle.content ? _subtitle.subtitle.content?.filter(cont => cont.selected).sort((cA, cB) => (cA.orderNumber && cB.orderNumber ? cA.orderNumber < cB.orderNumber ? -1 : 1 : -1)) : [];
         const stringContent: string = `<p>${selectedContent.map(content => content.content).join("</p><p>")}</p>`
         setEditorState(() => 
@@ -58,8 +73,11 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
                 )
             )
         )
-        
-        if(_subtitle.subtitle.content && _subtitle.subtitle.content.length === 0) dispatch(getKeywordContent(_subtitle.subtitle));
+    }, [_subtitle.subtitle]);
+
+    const searchContent = useCallback(() => {
+        console.log(_subtitle.subtitle.content)
+        if(_subtitle.subtitle.content && _subtitle.subtitle.content.filter(content => !content.selected).length === 0) dispatch(getKeywordContent(_subtitle.subtitle));
     }, [_subtitle.subtitle]);
 
     const copyContent = (content: string) => {
@@ -94,21 +112,28 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
                     toolbarClassName="toolbar-class"
                 />
             </Row>
-            <Row style={{marginBottom: 10}}>
-                <List
-                    itemLayout="vertical"
-                    header={<div><FileTextOutlined/> Searched Content</div>}
-                    bordered
-                    dataSource={_subtitle.subtitle.content?.filter(cont => !cont.selected)}
-                    renderItem={(item: IContent) => (
-                        <List.Item actions={actionsList(item)}>
-                            <Paragraph>
-                                {item.content}
-                            </Paragraph>
-                        </List.Item>
-                    )}
-                />
-            </Row>
+            {hasSearchedContent &&
+                <Row style={{marginBottom: 10}}>
+                    <List
+                        itemLayout="vertical"
+                        header={<div><FileTextOutlined/> Searched Content</div>}
+                        bordered
+                        dataSource={_subtitle.subtitle.content?.filter(cont => !cont.selected)}
+                        renderItem={(item: IContent) => (
+                            <List.Item actions={actionsList(item)}>
+                                <Paragraph>
+                                    {item.content}
+                                </Paragraph>
+                            </List.Item>
+                        )}
+                    />   
+                </Row>
+            }
+            {!hasSearchedContent &&
+                <Row style={{marginBottom: 10}}>
+                    <CustomButton onClick={() => searchContent()}>Search Content</CustomButton> 
+                </Row>
+            }
         </>
     )
 }

@@ -55,7 +55,7 @@ const SearchKeywordsStepper: React.FC<ISearchKeywordsStepper> = ({title, subtitl
           items={stepsItems}
         />
         <Divider />
-        <div style={{minHeight: '600px'}}>
+        <div style={{minHeight: '450px'}}>
           {currentStep}
         </div>
       </CustomModal>
