@@ -21,7 +21,7 @@ const initialState: ArticlesState = {
   status: 'idle',
   statusPA: 'idle',
   page: 0,
-  size: 5,
+  size: 200,
   hasMore: true,
 };
 

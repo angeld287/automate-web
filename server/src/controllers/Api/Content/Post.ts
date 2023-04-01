@@ -17,7 +17,7 @@ import CategoryService from '../../../services/wordpress/categoryServices';
 import { INewArticle } from '../../../interfaces/Content/Article';
 import Category from '../../../interfaces/models/Category';
 import createContent from '../../../utils/ContentStructure';
-import { replaceSpace } from '../../../utils';
+import { removeAccentMark, replaceSpace } from '../../../utils';
 import { IArticleService } from '../../../interfaces/IArticleService';
 import { articleService } from '../../../services/articleServices/articleServices';
 import { ArticleState } from '../../../interfaces/Enums/States';
@@ -39,7 +39,7 @@ class Post {
 
             let article: INewArticle = req.body.article as INewArticle;
             const title: string = article.title;
-            const bodyCategory: string = article.category.trim().toLowerCase();
+            const bodyCategory: string = removeAccentMark(article.category.trim().toLowerCase());
 
             //!(article.subtitles.filter(subtitle => !subtitle.image).length > 2)
 
@@ -60,8 +60,8 @@ class Post {
             }else{
                 article = articleExist
             }
-            
-            const category: Category = (await categoryService.getList()).find(category => category.name.toLowerCase() === bodyCategory)
+
+            const category: Category = (await categoryService.getList()).find(category => removeAccentMark(category.name.toLowerCase()) === bodyCategory)
 
             if (!category){
                 return new BadRequestResponse('Error', {
