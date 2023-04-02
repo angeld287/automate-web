@@ -78,13 +78,13 @@ class SearchKeyword {
                         let similaritySum = 0;
                         if(keywordAlreadyExist === false && result.searchResult){
                             await Promise.all(result.searchResult.map(async (itemResult) => {
-                                const similarityResponse = await similarity.checkSimilarity(longTailKeyword, itemResult.title)
+                                //const similarityResponse = await similarity.checkSimilarity(longTailKeyword, itemResult.title)
                                 
-                                similaritySum = similaritySum + (similarityResponse.similarity ? similarityResponse.similarity : 0);
+                                similaritySum = 0; //similaritySum + (similarityResponse.similarity ? similarityResponse.similarity : 0);
                                 keyword.resultsSimilarity.push({
                                     name: itemResult.title,
-                                    similarity: similarityResponse.similarity ? similarityResponse.similarity : 0,
-                                    value: similarityResponse.value ? similarityResponse.value : 0
+                                    similarity: 0, //similarityResponse.similarity ? similarityResponse.similarity : 0,
+                                    value: 0//similarityResponse.value ? similarityResponse.value : 0
                                 })
                             }))
                 
