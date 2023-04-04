@@ -39,6 +39,7 @@
     "lusca": "^1.7.0",
     "node-fetch": "^2.6.8",
     "node-schedule": "^2.1.1",
+    "openai": "^3.2.1",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",

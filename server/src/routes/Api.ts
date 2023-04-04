@@ -359,4 +359,13 @@ router.post(
     KeywordsController.createKeywordForArticle
 );
 
+router.post(
+    '/openai/createImage',
+    body('text', 'field text cannot be blank.').notEmpty(),
+    body('type', 'field type cannot be blank.').notEmpty(),
+    body('relatedId', 'field relatedId cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    MediaController.openaiCreateImage
+);
+
 export default router;

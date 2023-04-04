@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import Media, { DbMedia } from '../../interfaces/models/Media';
 import { getBearer } from '../autenticate/authenticateAPI';
-import { addMediaToWordpress, updateMediaData } from './mediaAPI';
+import { addMediaToWordpress, addMediaToWordpressOpenAI, updateMediaData } from './mediaAPI';
 
 export interface MediaState {
   media: DbMedia;
@@ -23,6 +23,22 @@ export const createMedia = createAsyncThunk(
   async ({title, imageAddress, type, relatedId}: {title: string, imageAddress: string, type: string, relatedId: number}) => {
     const token = getBearer()
     const response = await addMediaToWordpress(imageAddress, title, type, relatedId, token);
+    await updateMediaData({
+      alt_text: title,
+      title: title,
+      caption: title,
+      description: title,
+      id: response.data.response.wpId
+    }, token);
+    return response.data.response;
+  }
+);
+
+export const createMediaOpenAI = createAsyncThunk(
+  'media/createOpenAI',
+  async ({title, type, relatedId}: {title: string, type: string, relatedId: number}) => {
+    const token = getBearer()
+    const response = await addMediaToWordpressOpenAI(title, type, relatedId, token);
     await updateMediaData({
       alt_text: title,
       title: title,
@@ -67,6 +83,16 @@ export const mediaSlice = createSlice({
         state.media = {...action.payload}
       })
       .addCase(createMedia.rejected, (state) => {
+        state.status = 'failed';
+      })
+      .addCase(createMediaOpenAI.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(createMediaOpenAI.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.media = {...action.payload}
+      })
+      .addCase(createMediaOpenAI.rejected, (state) => {
         state.status = 'failed';
       })
       .addCase(updateMedia.pending, (state) => {

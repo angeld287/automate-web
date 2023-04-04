@@ -4,7 +4,7 @@ import { Editor } from "react-draft-wysiwyg";
 import { ContentState, convertFromHTML, convertToRaw, EditorState, RawDraftContentBlock } from "draft-js";
 import React, { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { createMedia, selectMedia } from "../../../features/media/mediaSlice";
+import { createMedia, createMediaOpenAI, selectMedia } from "../../../features/media/mediaSlice";
 import { Languages } from "../../../interfaces/Enums/Languages";
 import IContent from "../../../interfaces/models/Content";
 import { isValidImageUrl, isValidUrl } from "../../../utils/functions";
@@ -12,6 +12,7 @@ import CustomModal from "../../CustomModal";
 import IAddIntroAndConclusion from "./IAddIntroAndConclusion";
 import Locals from "../../../config/Locals";
 import { createArticleIntroAndConclusion } from "../../../features/article/articleSlice";
+import CustomButton from "../../CustomButton";
 
 const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({open, setOpen, type, title, articleId, relatedId, image, contents}) => {
     //const [url, setUrl] = useState('');
@@ -80,6 +81,14 @@ const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({open, setOpen,
         dispatch(createArticleIntroAndConclusion(paragraph))
         setOpen(false);
     },[paragraph])
+
+    const openAICreateImage = useCallback(() => {
+        if(title){
+            dispatch(createMediaOpenAI({title, type: 'article', relatedId}))
+        }else{
+            return setError('Please add a Title.')
+        }
+    }, []);
     
     return (
         <CustomModal title={`Complete the article ${type} for Article: ${title}`} {...{open, setOpen}} onOk={addContent} width="90%" >
@@ -101,6 +110,9 @@ const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({open, setOpen,
                             onChange={() => {setError(undefined)}}
                             onSearch={searchImage}
                         />
+                    </Row>
+                    <Row>
+                        <CustomButton onClick={() => openAICreateImage()} loading={media.status === 'loading'} style={{marginTop: 10}}>Create Image With AI</CustomButton>
                     </Row>
                 </Col>}
                 <Col style={{marginLeft: 10, minHeight: 300, marginBottom: 100}} sm={type === 'introduction' ? 14 : undefined}>

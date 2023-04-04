@@ -85,6 +85,8 @@ class Locals {
         const AZURE_TEXT_ANALYTICS_API = "https://paragraph-summary.cognitiveservices.azure.com/"
         const AZURE_TEXT_ANALYTICS_KEY = process.env.AZURE_TEXT_ANALYTICS_KEY || "";
 
+        //Open AI API Key
+        const OPEN_AI_API_KEY = process.env.OPEN_AI_API_KEY || "";
 
         return {
             WP_DOMAIN,
@@ -142,6 +144,8 @@ class Locals {
 
             AZURE_TEXT_ANALYTICS_API,
             AZURE_TEXT_ANALYTICS_KEY,
+
+            OPEN_AI_API_KEY,
         }
     }
 
