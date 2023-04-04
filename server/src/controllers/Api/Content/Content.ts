@@ -1,4 +1,4 @@
-import { AuthFailureResponse, BadRequestResponse, InternalErrorResponse, SuccessResponse } from "../../../core/ApiResponse";
+import { BadRequestResponse, InternalErrorResponse, SuccessResponse } from "../../../core/ApiResponse";
 import { INewArticle, SubTitleContent } from "../../../interfaces/Content/Article";
 import { IArticleService } from "../../../interfaces/IArticleService";
 import { ISearchService } from "../../../interfaces/ISearchService";
@@ -16,6 +16,8 @@ import { Languages } from "../../../interfaces/Enums/Languages";
 import { ITranslateItem } from "../../../interfaces/Utils";
 import textAnalyticsServices from "../../../services/azure/textAnalyticsServices";
 import ITextAnalyticsServices from "../../../interfaces/ITextAnalyticsServices";
+import openaiServices from "../../../services/openai/openaiServices";
+import IOpenaiServices from "../../../interfaces/IOpenaiServices";
 
 class Content {
 
@@ -416,6 +418,36 @@ class Content {
             return new SuccessResponse('Success', {
                 content: null,
                 result
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Validation Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+
+    }
+
+    static async createArticleWithOpenAI(req: IRequest, res: IResponse, next: INext): Promise<any> {
+        try {
+
+            const errors = new ExpressValidator().validator(req);
+
+            if (!errors.isEmpty()) {
+                return new BadRequestResponse('Error', {
+                    errors: errors.array()
+                }).send(res);
+            }
+
+            let text = req.body.text;
+
+            let openService: IOpenaiServices = new openaiServices();
+
+            const result = await openService.createNewChat(text)
+
+            return new SuccessResponse('Success', {
+                response: result,
             }).send(res);
 
         } catch (error) {
