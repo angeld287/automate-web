@@ -371,6 +371,9 @@ router.post(
 router.post(
     '/openai/createArticle',
     body('text', 'field text cannot be blank.').notEmpty(),
+    body('keywordId', 'field keywordId cannot be blank.').notEmpty(),
+    body('jobId', 'field jobId cannot be blank.').notEmpty(),
+    body('category', 'field category cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     ContentController.createArticleWithOpenAI
 );

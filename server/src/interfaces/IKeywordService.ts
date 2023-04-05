@@ -13,7 +13,7 @@ export interface IKeywordService {
 
     getAllKeywordSearchJobs(userId: number): Promise<Array<IKeywordSearchJob>>
 
-    getKeywordsById(jobId: number): Promise<IKeyword>
+    getKeywordsById(id: number): Promise<IKeyword>
 
     getKeywordsByJobId(jobId: number): Promise<Array<IKeyword>>
 

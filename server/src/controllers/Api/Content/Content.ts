@@ -18,6 +18,10 @@ import textAnalyticsServices from "../../../services/azure/textAnalyticsServices
 import ITextAnalyticsServices from "../../../interfaces/ITextAnalyticsServices";
 import openaiServices from "../../../services/openai/openaiServices";
 import IOpenaiServices from "../../../interfaces/IOpenaiServices";
+import { IKeywordService } from "../../../interfaces/IKeywordService";
+import { keywordService } from "../../../services/keywords/keywordServices";
+import IKeyword from "../../../interfaces/models/Keyword";
+import { ArticleState } from "../../../interfaces/Enums/States";
 
 class Content {
 
@@ -440,14 +444,50 @@ class Content {
                 }).send(res);
             }
 
-            let text = req.body.text;
+            const { text, keywordId, jobId, category } = req.body;
 
             let openService: IOpenaiServices = new openaiServices();
+            let translate: ITranslateService = new translateService();
+            let _articleService: IArticleService = new articleService();
+            let _keywordService: IKeywordService = new keywordService()
+            const englishKeyword = await translate.perform(text, 'es', 'en');
+            let result = null
+            
+            const userId = req.session.passport.user.id;
 
-            const result = await openService.createNewChat(text)
+            if (englishKeyword.success) {
+
+                const enTitle = englishKeyword.body[0]['translations'][0].text
+
+                let article: INewArticle = {
+                    title: text,
+                    category,
+                    subtitles: [],
+                    sysState: ArticleState.AI_CONTENT_RESEARCH,
+                    translatedTitle: enTitle,
+                    createdBy: parseInt(userId),
+                    createdAt: (new Date()).toString(),
+                    jobId
+                }
+                
+                article = await _articleService.createArticle(article);
+
+                const keyowrd: IKeyword = await _keywordService.getKeywordsById(keywordId)
+                keyowrd.articleId = article.id
+                await _keywordService.updateKeyword(keyowrd);
+                
+                const chatRequest = `create an article on '${enTitle}' with 500 words, with 5 subtitles and with a conclusion`;
+                result = await openService.createNewChat(chatRequest);
+
+            }else{
+                Log.error(`Internal Server Error: error in title translation process - ${englishKeyword.errorDetails}`);
+                return new InternalErrorResponse('Validation Error', {
+                    error: `Internal Server Error: error in title translation process - ${englishKeyword.errorDetails}`,
+                }).send(res);
+            }
 
             return new SuccessResponse('Success', {
-                response: result,
+                response: result.choices[0].message.content.split('\n\n'),
             }).send(res);
 
         } catch (error) {
