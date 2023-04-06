@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import PropTypes from 'prop-types';
 import { Table, Space } from 'antd';
 
 import CustomButton from '../CustomButton';
 import ICustomTable from './ICustomTable';
-import { ICustomButton } from '../CustomButton/ICustomButton'
+import { IAction } from '../App/KeywordsList/IKeywordsList';
+import CustomSelect from '../CustomSelect';
 
 const CustomTable: React.FC<ICustomTable> = ({ headers, items, getItemsNextToken, itemsLoading }) => {
     const [index, setIndex] = useState(1)
     const [loading, setLoading] = useState(false)
 
     const _headers = useMemo(() => headers.map(header => {
-        if (header.name !== 'Acciones') {
+        if (header.name !== 'Actions') {
             return ({ 
                     title: header.name, 
                     dataIndex: header.name.toLowerCase(), 
@@ -23,8 +23,11 @@ const CustomTable: React.FC<ICustomTable> = ({ headers, items, getItemsNextToken
                 title: header.name,
                 key: header.name.toLowerCase(),
                 dataIndex: header.name.toLowerCase(),
-                render: (btns: Array<ICustomButton>) => (
-                    <Space size="middle">{btns.map(btn => <CustomButton key={btn.id} {...btn} >{btn.text}</CustomButton>)}</Space>
+                render: (actions: Array<IAction>) => (
+                    <Space size="middle">{actions.map(action => action.type === "button" ? 
+                            <CustomButton key={action.component._key} {...action.component} >{action.component.text}</CustomButton> 
+                            : <CustomSelect placeholder="Category" key={action.component._key} {...action.component}/>
+                    )}</Space>
                 ),
             })
         }

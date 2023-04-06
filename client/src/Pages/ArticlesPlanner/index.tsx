@@ -28,11 +28,11 @@ const ArticlesPlanner = () => {
     return <>
         <h2>Articles Planner {id}</h2>
         <Collapse defaultActiveKey={['1']}>
-            <Panel header="Articles Planning" key="1">
-                <KeywordsDragAndDrop jobId={id} keywords={keywords.filter(keyword => keyword.selected)}/>
-            </Panel>
-            <Panel header="Keywords Selections" key="2">
+            <Panel header="Keywords Selections" key="1">
                 <KeywordsList items={keywords}/>
+            </Panel>
+            <Panel header="Articles Planning" key="2">
+                <KeywordsDragAndDrop jobId={id} keywords={keywords.filter(keyword => keyword.selected)}/>
             </Panel>
         </Collapse>
     </>;
