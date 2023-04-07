@@ -22,6 +22,7 @@ import { IKeywordService } from "../../../interfaces/IKeywordService";
 import { keywordService } from "../../../services/keywords/keywordServices";
 import IKeyword from "../../../interfaces/models/Keyword";
 import { ArticleState } from "../../../interfaces/Enums/States";
+import NodeJob from "../../../providers/NodeJob";
 
 class Content {
 
@@ -440,7 +441,8 @@ class Content {
 
             if (!errors.isEmpty()) {
                 return new BadRequestResponse('Error', {
-                    errors: errors.array()
+                    errors: errors.array(),
+                    created: false
                 }).send(res);
             }
 
@@ -449,9 +451,11 @@ class Content {
             let openService: IOpenaiServices = new openaiServices();
             let translate: ITranslateService = new translateService();
             let _articleService: IArticleService = new articleService();
-            let _keywordService: IKeywordService = new keywordService()
+            let _keywordService: IKeywordService = new keywordService();
+            
             const englishKeyword = await translate.perform(text, 'es', 'en');
             let result = null
+            let keyword: IKeyword = null
             
             const userId = req.session.passport.user.id;
 
@@ -472,28 +476,50 @@ class Content {
                 
                 article = await _articleService.createArticle(article);
 
-                const keyowrd: IKeyword = await _keywordService.getKeywordsById(keywordId)
-                keyowrd.articleId = article.id
-                await _keywordService.updateKeyword(keyowrd);
+                keyword = await _keywordService.getKeywordsById(keywordId)
+                keyword.articleId = article.id
+                keyword = await _keywordService.updateKeyword(keyword);
                 
-                const chatRequest = `create an article on '${enTitle}' with 500 words, with 5 subtitles and with a conclusion`;
-                result = await openService.createNewChat(chatRequest);
+                const createAIArticleJob: NodeJob = new NodeJob();
+
+                createAIArticleJob.startJob(`createAIArticleJob-${article.id}`, async () => {
+                    try {
+                        const chatRequest = `create an article on '${enTitle}' with 500 words, with 5 subtitles and with a conclusion`;
+                        result = await openService.createNewChat(chatRequest);
+
+                        const splittedArticle = result.choices[0].message.content.split('\n\n')
+                        await Promise.all(splittedArticle.map(async (text: string, index: number) => {
+                            _articleService.createContentForArticle({
+                                content: text,
+                                contentLanguage: 'en',
+                                selected: false,
+                                articleId: article.id,
+                                wordsCount: text.split(" ").length,
+                            })
+                        }));
+                    } catch (error) {
+                        console.log(error)
+                    }
+                })
 
             }else{
                 Log.error(`Internal Server Error: error in title translation process - ${englishKeyword.errorDetails}`);
                 return new InternalErrorResponse('Validation Error', {
                     error: `Internal Server Error: error in title translation process - ${englishKeyword.errorDetails}`,
+                    created: false,
                 }).send(res);
             }
 
             return new SuccessResponse('Success', {
-                response: result.choices[0].message.content.split('\n\n'),
+                created: true,
+                keyword
             }).send(res);
 
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
             return new InternalErrorResponse('Validation Error', {
                 error: 'Internal Server Error',
+                created: false,
             }).send(res);
         }
 

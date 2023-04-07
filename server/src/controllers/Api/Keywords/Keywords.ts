@@ -187,6 +187,32 @@ class Keywords {
         }
     }
 
+    public static async updateKeywordCategory(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            if(ValidateErrors.validate(req, res) !== true) return
+
+            const _keywordService: IKeywordService = new keywordService()
+            
+            const id = req.body.id;
+            const category: string = req.body.category;
+
+            let keyowrd: IKeyword = await _keywordService.getKeywordsById(id)
+            keyowrd.category = category.toLowerCase();
+            keyowrd = await _keywordService.updateKeyword(keyowrd)
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: keyowrd,
+                error: null
+            }).send(res);
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Keywords Controller Error - setMainKeyword', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
     public static async getArticleKeywords(req: IRequest, res: IResponse): Promise<any> {
         try {
 

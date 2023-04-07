@@ -9,5 +9,5 @@ export default interface Content {
     subtitleId?: number;
     articleId?: number;
     deleted?: boolean;
-    type?: 'paragraph' | 'introduction' | 'conclusion';
+    type?: 'paragraph' | 'introduction' | 'conclusion' | 'subtitle';
 }

@@ -2,9 +2,9 @@ import { FileTextOutlined } from "@ant-design/icons";
 import { Checkbox, Spin } from "antd";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { ColumnFilterItem } from "antd/es/table/interface";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { selectKeyword, selectKeywordSearchJob } from "../../../features/keywordSearchJob/keywordSearchJobSlice";
+import { openAICreateArticle, selectKeyword, selectKeywordSearchJob, setKeywordCategory } from "../../../features/keywordSearchJob/keywordSearchJobSlice";
 import IKeyword from "../../../interfaces/models/Keyword";
 import { getGoogleSearchUrl, replaceSpace } from "../../../utils/functions";
 import CustomTable from "../../CustomTable/CustomTable";
@@ -15,10 +15,10 @@ import { getCategoryList, selectWputils } from "../../../features/WPUtils/wputil
 import { ISelectOptions } from "../../CustomSelect/ICustomSelect";
 
 const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
-    const [kewords, setKeywords] = useState<Array<IKeywordsTable>>([])
+    const [keywords, setKeywords] = useState<Array<IKeywordsTable>>([])
     const [kwLoading, setKwloading] = useState<number>(0)
     const dispatch = useAppDispatch();
-    const {selectStatus} = useAppSelector(selectKeywordSearchJob);
+    const {selectStatus, AICreateStatus} = useAppSelector(selectKeywordSearchJob);
     const { categories, statusc } = useAppSelector(selectWputils);
 
     useEffect(() => {
@@ -36,6 +36,18 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
         }
     }
 
+    const updateCategory = useCallback((value: string, keyword: IKeyword) => {
+        if(keyword.id)
+            dispatch(setKeywordCategory({id: keyword.id.toString(), category: value}))
+    }, []);
+
+    const createArticle = useCallback((item: IKeyword) => {
+        if(item.id && item.keywordSearchJobId && item.category){
+            setKwloading(item.id)
+            dispatch(openAICreateArticle({text: item.name, keywordId: item.id, jobId: item.keywordSearchJobId, category: item.category}))
+        }
+    }, [])
+
     const categoryList: Array<ISelectOptions> = useMemo(() => {
         if(statusc === "loading") return []
         return categories.map(category => ({id: category.slug, name: category.name }))
@@ -44,6 +56,10 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
     useEffect(() => {
         if(selectStatus === 'idle') setKwloading(0)
     }, [selectStatus]);
+
+    useEffect(() => {
+        if(AICreateStatus === 'idle') setKwloading(0)
+    }, [AICreateStatus]);
 
     useEffect(() => {
         try {
@@ -55,10 +71,10 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
                     </>,
                     similarity: item.similarity,
                     keyword: <a target={"_blank"} href={getGoogleSearchUrl(item.name)}>{item.name}</a>,
-                    actions: [
-                        { type: "select", component: {_key: `category-select-${item.id}`, name: `category-select-${item.id}`, items: categoryList} },
-                        { type: "button", component: { _key: `create-article-ai-${item.id}`,id: `create-article-ai-${item.id}`, color: 'blue', icon: <FileTextOutlined />, onClick: () => { console.log('sss') }, text: "" } },
-                    ],
+                    actions: item.selected ? [
+                        { type: "select", component: { _key: `category-select-${item.id}`, name: `category-select-${item.id}`, items: categoryList, disabled: item.articleId !== null, onChange: (value: string) => updateCategory(value, item), defaultValue: item.category} },
+                        { type: "button", component: { _key: `create-article-ai-${item.id}`,id: `create-article-ai-${item.id}`, color: 'blue', icon: <FileTextOutlined />, onClick: () => createArticle(item), text: "", disabled: item.articleId !== null, loading: (kwLoading === item.id && AICreateStatus === 'loading') } },
+                    ] : [],
                     id: `${replaceSpace(item.name)}-${item.id}`,
                     dataName: item.name
                 })))
@@ -80,7 +96,6 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
 
         return [
             {
-                
                 name: 'Selected', 
                 sorter: false, 
                 width: 100
@@ -97,8 +112,7 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
                 filterSearch: true,
                 filters: removeDuplicate(filterList, 'value'),
                 onFilter: (value: string | number | boolean, record: IKeywordsTable) => record.dataName.includes(value.toString()),
-                width: 800
-    
+                width: 600
             },
             {
                 name: 'Actions', 
@@ -108,7 +122,7 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
         ]
     }, [items]);
     return <>
-        <CustomTable headers={_headers} items={kewords} />
+        <CustomTable headers={_headers} items={keywords} />
     </>
 }
 

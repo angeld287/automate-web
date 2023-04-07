@@ -8,6 +8,7 @@ export default interface IKeyword {
     articleId?: number;
     isMain?: boolean;
     orderNumber?: number;
+    category?: string;
 }
 
 export interface IResultTitleSimilarity {

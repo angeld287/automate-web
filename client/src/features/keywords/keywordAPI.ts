@@ -26,6 +26,19 @@ export async function setMainKeyword(id: string, isMain: boolean) {
   return await fetchData.json();
 }
 
+export async function updateKeywordCategory(id: string, category: string) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}keywords/updateCategory`, {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({id, category})
+  })
+
+  return await fetchData.json();
+}
+
 export async function getKeywordsByArticleId(articleId: number) {
   const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}keywords/getAllByArticleId?articleId=${articleId}`, {
     method: "GET",
@@ -49,4 +62,17 @@ export async function createKeywordForArticle(articleId: number, name: string, o
   })
 
   return await fetchData.json();
+}
+
+export async function createArticleFromKeyword(text: string, keywordId: number, jobId: number, category: string, token: string) {
+  const result = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}openai/createArticle`, {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token
+    },
+    body: JSON.stringify({text, keywordId, jobId, category})
+  })
+  return result.json()
 }

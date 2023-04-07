@@ -351,6 +351,12 @@ router.get(
 );
 
 router.post(
+    '/keywords/updateCategory',
+    Passport.isAuthenticated,
+    KeywordsController.updateKeywordCategory
+);
+
+router.post(
     '/keywords/createForArticle',
     body('articleId', 'field articleId cannot be blank.').notEmpty(),
     body('name', 'field name cannot be blank.').notEmpty(),

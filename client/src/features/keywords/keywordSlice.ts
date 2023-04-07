@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import IKeyword from '../../interfaces/models/Keyword';
 import ApiResponse from '../../interfaces/Responses/ApiResponse';
-import { addRemoveKeywordToArticle, createKeywordForArticle, getKeywordsByArticleId, setMainKeyword } from './keywordAPI';
+import { addRemoveKeywordToArticle,  createKeywordForArticle, getKeywordsByArticleId, setMainKeyword } from './keywordAPI';
 
 export interface keywordsState {
   keywords: Array<IKeyword>;
@@ -103,7 +103,8 @@ export const keywordsSlice = createSlice({
       })
       .addCase(setKeywordAsMain.rejected, (state) => {
         state.isMainStatus = 'failed';
-      }).addCase(getAllKeywords.pending, (state) => {
+      })
+      .addCase(getAllKeywords.pending, (state) => {
         state.getAllStatus = 'loading';
       })
       .addCase(getAllKeywords.fulfilled, (state, action: PayloadAction<Array<IKeyword>>) => {

@@ -505,6 +505,7 @@ CREATE TABLE IF NOT EXISTS public.keywords
     article_id integer,
     is_main boolean,
     order_number integer,
+    category character(50) COLLATE pg_catalog."default",
     CONSTRAINT keywords_pkey PRIMARY KEY (id),
     CONSTRAINT keywords_article_fkey FOREIGN KEY (article_id)
         REFERENCES public.articles (id) MATCH SIMPLE
