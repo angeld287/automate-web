@@ -301,6 +301,25 @@ export class articleService implements IArticleService {
         }
     }
 
+    async getAIResearchedArticles(userId: number): Promise<Array<INewArticle> | false> {
+        const getQuery = {
+            name: 'get-researched-articles',
+            text: `SELECT  id,
+                        TRIM(title) as title, 
+                        TRIM(translated_title) as translated_title, 
+                        category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id
+                    FROM public.articles WHERE created_by = $1 AND deleted IS NOT true AND sys_state = '${ArticleState.AI_CONTENT_RESEARCH}';
+                `,
+            values: [userId],
+        }
+
+        try {
+            return await this.queryArticles(getQuery);
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
     async queryArticles(query: Query): Promise<Array<INewArticle> | false> {
         let result = null;
         try {

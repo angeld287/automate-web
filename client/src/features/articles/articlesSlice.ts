@@ -3,7 +3,7 @@ import { RootState } from '../../app/store';
 import IPagination from '../../interfaces/IPagination';
 import { IArticle } from '../../interfaces/models/Article';
 import { removeDuplicate } from '../../utils/functions';
-import { getArticlesFromDb, getPlanningArticlesFromDb } from './articlesAPI';
+import { getAIResearchedArticlesFromDb, getArticlesFromDb, getPlanningArticlesFromDb } from './articlesAPI';
 
 export interface ArticlesState {
   articles: Array<IArticle>;
@@ -42,6 +42,18 @@ export const getPlanningArticles = createAsyncThunk(
   async (jobId: number) => {
     try {    
       const result = await getPlanningArticlesFromDb(jobId);
+      return result.data.response;
+    } catch (error) {
+      console.log(error) 
+    }
+  }
+);
+
+export const getAIResearchedArticles = createAsyncThunk(
+  'articles/getAIResearched',
+  async () => {
+    try {    
+      const result = await getAIResearchedArticlesFromDb();
       return result.data.response;
     } catch (error) {
       console.log(error) 

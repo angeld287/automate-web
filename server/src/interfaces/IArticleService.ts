@@ -20,6 +20,8 @@ export interface IArticleService {
 
     getPlanningArticles(jobId: number, userId: number): Promise<Array<INewArticle> | false>
 
+    getAIResearchedArticles(userId: number): Promise<Array<INewArticle> | false>
+
     getSubtitleById(subtitleId: number): Promise<SubTitleContent | false>
 
     createContentForArticle(content: IContent): Promise<IContent>;

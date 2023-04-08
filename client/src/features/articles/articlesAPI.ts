@@ -25,3 +25,16 @@ export async function getPlanningArticlesFromDb(jobId: number) {
 
   return await fetchData.json();
 }
+
+export async function getAIResearchedArticlesFromDb() {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}getAIResearchedArticles`, {
+    method: "GET",
+    credentials: 'include',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  })
+
+  return await fetchData.json();
+}

@@ -265,6 +265,12 @@ router.get(
     ArticleController.getPlanningArticles
 );
 
+router.get(
+    '/getAIResearchedArticles',
+    Passport.isAuthenticated,
+    ArticleController.getAIResearchedArticles
+);
+
 router.post(
     '/createArticleContent',
     body('content', 'field content cannot be blank.').notEmpty(),
