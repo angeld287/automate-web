@@ -8,8 +8,10 @@ import { getAIResearchedArticlesFromDb, getArticlesFromDb, getPlanningArticlesFr
 export interface ArticlesState {
   articles: Array<IArticle>;
   planningArticles: Array<IArticle>;
+  AIArticles: Array<IArticle>;
   status: 'idle' | 'loading' | 'failed';
   statusPA: 'idle' | 'loading' | 'failed';
+  statusAI: 'idle' | 'loading' | 'failed';
   page: number;
   size: number;
   hasMore: boolean;
@@ -18,8 +20,10 @@ export interface ArticlesState {
 const initialState: ArticlesState = {
   articles: [],
   planningArticles: [],
+  AIArticles: [],
   status: 'idle',
   statusPA: 'idle',
+  statusAI: 'idle',
   page: 0,
   size: 200,
   hasMore: true,
@@ -96,6 +100,16 @@ export const articlesSlice = createSlice({
       })
       .addCase(getPlanningArticles.rejected, (state) => {
         state.statusPA = 'failed';
+      })
+      .addCase(getAIResearchedArticles.pending, (state) => {
+        state.statusAI = 'loading';
+      })
+      .addCase(getAIResearchedArticles.fulfilled, (state, action: PayloadAction<Array<IArticle> | false>) => {
+        state.statusAI = 'idle';
+        state.AIArticles = action.payload !== false ? action.payload : [];
+      })
+      .addCase(getAIResearchedArticles.rejected, (state) => {
+        state.statusAI = 'failed';
       });
   },
 });

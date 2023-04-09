@@ -484,6 +484,7 @@ class Content {
 
                 createAIArticleJob.startJob(`createAIArticleJob-${article.id}`, async () => {
                     try {
+                        console.log(`CREATE AI ARTICLE JOB STARTED! - ${text}`)
                         const chatRequest = `create an article on '${enTitle}' with 500 words, with 5 subtitles and with a conclusion`;
                         result = await openService.createNewChat(chatRequest);
 
@@ -495,8 +496,11 @@ class Content {
                                 selected: false,
                                 articleId: article.id,
                                 wordsCount: text.split(" ").length,
+                                orderNumber: index,
                             })
                         }));
+
+                        console.log(`THE JOB HAS BEEN FINISHED!`)
                     } catch (error) {
                         console.log(error)
                     }
@@ -520,6 +524,30 @@ class Content {
             return new InternalErrorResponse('Validation Error', {
                 error: 'Internal Server Error',
                 created: false,
+            }).send(res);
+        }
+
+    }
+
+    static async createSubtitle(req: IRequest, res: IResponse, next: INext): Promise<any> {
+        try {
+
+            const errors = new ExpressValidator().validator(req);
+
+            if (!errors.isEmpty()) {
+                return new BadRequestResponse('Error', {
+                    errors: errors.array()
+                }).send(res);
+            }
+
+            return new SuccessResponse('Success', {
+                content: null,
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Validation Error', {
+                error: 'Internal Server Error',
             }).send(res);
         }
 

@@ -11,6 +11,7 @@ import IContent from "../../../interfaces/models/Content";
 import CustomButton from "../../CustomButton";
 import { CopyOutlined, FileTextOutlined, LinkOutlined, TranslationOutlined } from "@ant-design/icons";
 import { Languages } from "../../../interfaces/Enums/Languages";
+import { copyContent } from "../../../utils/functions";
 
 const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
     const dispatch = useAppDispatch();
@@ -79,10 +80,6 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
         console.log(_subtitle.subtitle.content)
         if(_subtitle.subtitle.content && _subtitle.subtitle.content.filter(content => !content.selected).length === 0) dispatch(getKeywordContent(_subtitle.subtitle));
     }, [_subtitle.subtitle]);
-
-    const copyContent = (content: string) => {
-        navigator.clipboard.writeText(content);
-    }
 
     const actionsList = useCallback((item: IContent): Array<ReactNode> => {
         return [

@@ -200,7 +200,9 @@ export const articleSlice = createSlice({
       .addCase(getArticleByInternalId.fulfilled, (state, action: PayloadAction<IArticle>) => {
         state.status = 'idle';
         const subs = [...action.payload.subtitles];
+        const content = action.payload.contents ? [...action.payload.contents] : [];
         state.article = action.payload;
+        state.article.contents = content.sort((a, b) => (a.orderNumber && b.orderNumber) ? (a.orderNumber < b.orderNumber ? -1 : 1) : 1);
         state.article.subtitles = subs.sort((subA, subB) => (subA.orderNumber < subB.orderNumber ? -1 : 1))
         state.articleState = action.payload.wpLink ? State.CREATED_IN_WP : State.DRAFT
       })

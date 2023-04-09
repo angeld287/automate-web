@@ -8,5 +8,5 @@ export default interface Content {
     contentLanguage: string;
     subtitleId?: number;
     articleId?: number;
-    type?: 'paragraph' | 'introduction' | 'conclusion';
+    type?: 'paragraph' | 'introduction' | 'conclusion' | 'subtitle';
 }

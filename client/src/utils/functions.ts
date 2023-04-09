@@ -52,3 +52,7 @@ export const removeDuplicate = (items: Array<any>, filterProperty: string): Arra
 export const isValidImageUrl = (urlString: string) => {
   return(urlString.match(/\.(jpeg|jpg|gif|png|webp)$/) != null);
 }
+
+export const copyContent = (content: string) => {
+  navigator.clipboard.writeText(content);
+}
