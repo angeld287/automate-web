@@ -209,6 +209,21 @@ router.post(
     ArticleController.createSubtitle
 );
 
+router.post(
+    '/subtitle/create/en',
+    body('name', 'field name cannot be blank.').notEmpty(),
+    body('articleId', 'field articleId cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    ArticleController.createEnSubtitle
+);
+
+router.post(
+    '/subtitle/createContent/en',
+    body('content', 'field content cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    ArticleController.createEnContentForSubtitle
+);
+
 
 router.post(
     '/createArticle',
@@ -245,6 +260,13 @@ router.post(
     body('state', 'field state cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     ArticleController.updateArticleState
+);
+
+router.post(
+    '/article/createContent/en',
+    body('content', 'field content cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    ArticleController.createEnContentForArticle
 );
 
 router.get(

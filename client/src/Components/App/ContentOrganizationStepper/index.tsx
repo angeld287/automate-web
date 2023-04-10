@@ -1,7 +1,8 @@
 import { Divider, Steps } from "antd";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { getArticleByInternalId, selectArticle } from "../../../features/article/articleSlice";
+import { getArticleByInternalId, selectArticle, updateArticleState } from "../../../features/article/articleSlice";
+import { ArticleState } from "../../../interfaces/Enums/States";
 import CustomButton from "../../CustomButton";
 import CustomLoader from "../../CustomLoader";
 import CustomModal from "../../CustomModal";
@@ -20,11 +21,18 @@ const ContentOrganizationStepper: React.FC<IContentOrganizationStepper> = ({open
             dispatch(getArticleByInternalId(article.internalId));
     }, [article]);
 
+    const finishContentOrganization = useCallback(() => {
+        if(article)
+            dispatch(updateArticleState({id: article.id, state: ArticleState.CONTENT_RESEARCH}))
+        
+        setOpen(false)
+    }, [article]);
+
     const footerOptions = useMemo(() => [
-      //<CustomButton key="back_btn-1" loading={createUpdateStatus === 'loading'} onClick={saveContentKeyword}>Save</CustomButton>,
+      <CustomButton key="finish_btn-1" disabled={db.article.subtitles.length < 4} onClick={() => finishContentOrganization() }>Finish Process</CustomButton>,
       //<CustomButton key="back_btn-2" disabled={current === 0} type="primary" danger>Back</CustomButton>,
       //<CustomButton key="next_btn-3" type="primary">Next</CustomButton>,
-    ], [])
+    ], [db.article])
 
     const stepsItems: Array<CustomStepProps> = useMemo((): Array<CustomStepProps> =>  [
         { 

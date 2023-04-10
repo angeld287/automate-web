@@ -106,3 +106,42 @@ export async function editArticleState(id: number, state: string) {
 
   return await fetchData.json();
 }
+
+export async function createEnSubtitle(name: string, articleId: number) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}subtitle/create/en`, {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({name, articleId})
+  })
+
+  return await fetchData.json();
+}
+
+export async function createEnContent(content: Array<IContent>) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}subtitle/createContent/en`, {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({content})
+  })
+
+  return await fetchData.json();
+}
+
+export async function createEnContentForArticle(content: Array<IContent>) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}article/createContent/en`, {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({content})
+  })
+
+  return await fetchData.json();
+}

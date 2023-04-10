@@ -528,30 +528,6 @@ class Content {
         }
 
     }
-
-    static async createSubtitle(req: IRequest, res: IResponse, next: INext): Promise<any> {
-        try {
-
-            const errors = new ExpressValidator().validator(req);
-
-            if (!errors.isEmpty()) {
-                return new BadRequestResponse('Error', {
-                    errors: errors.array()
-                }).send(res);
-            }
-
-            return new SuccessResponse('Success', {
-                content: null,
-            }).send(res);
-
-        } catch (error) {
-            Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('Validation Error', {
-                error: 'Internal Server Error',
-            }).send(res);
-        }
-
-    }
 }
 
 export default Content;

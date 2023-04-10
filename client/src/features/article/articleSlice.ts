@@ -6,7 +6,7 @@ import ApiResponse from '../../interfaces/Responses/ApiResponse';
 import { getBearer } from '../autenticate/authenticateAPI';
 import { searchKeywordContent } from '../subtitle/subtitleAPI';
 import { ArticleState as State} from '../../interfaces/Enums/States'
-import { createArticle, createContentForArticle, createPost, editArticleState, editArticleTitle, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
+import { createArticle, createContentForArticle, createEnContent, createEnContentForArticle, createEnSubtitle, createPost, editArticleState, editArticleTitle, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
 
 export interface ArticleState {
   article: IArticle;
@@ -17,6 +17,7 @@ export interface ArticleState {
   statusCC: 'idle' | 'loading' | 'failed';
   statusCP: 'idle' | 'loading' | 'failed';
   statusCA: 'idle' | 'loading' | 'failed';
+  statusSubEn: 'idle' | 'loading' | 'failed';
   kewordsTranslated: boolean;
   error: string | false;
 }
@@ -39,6 +40,7 @@ const initialState: ArticleState = {
   statusCC: 'idle',
   statusCP: 'idle',
   statusCA: 'idle',
+  statusSubEn: 'idle',
   error: false,
   kewordsTranslated: false,
 };
@@ -154,6 +156,42 @@ export const updateArticleState = createAsyncThunk(
   }
 );
 
+export const createSubtitleEn = createAsyncThunk(
+  'article/createSubtitleEn',
+  async ({name, articleId}: {name: string, articleId: number}) => {
+    try {    
+      const result = await createEnSubtitle(name, articleId);
+      return result.data.response;
+    } catch (error) {
+      throw new Error('Error in ArticleState at createSubtitleEn')
+    }
+  }
+);
+
+export const createSubtitleContent = createAsyncThunk(
+  'article/createSubtitleContent',
+  async (contents: IContent[]) => {
+    try {    
+      const result = await createEnContent(contents);
+      return result.data.response;
+    } catch (error) {
+      throw new Error('Error in ArticleState at createSubtitleEn')
+    }
+  }
+);
+
+export const createArticleContent = createAsyncThunk(
+  'article/createArticleContent',
+  async (contents: IContent[]) => {
+    try {    
+      const result = await createEnContentForArticle(contents);
+      return result.data.response;
+    } catch (error) {
+      throw new Error('Error in ArticleState at createArticleContent')
+    }
+  }
+);
+
 
 export const articleSlice = createSlice({
   name: 'article',
@@ -229,6 +267,16 @@ export const articleSlice = createSlice({
       })
       .addCase(createArticleIntroAndConclusion.rejected, (state) => {
         state.statusCC = 'failed';
+      })
+      .addCase(createSubtitleEn.pending, (state) => {
+        state.statusSubEn = 'loading';
+      })
+      .addCase(createSubtitleEn.fulfilled, (state, action: PayloadAction<SubTitleContent>) => {
+        state.statusSubEn = 'idle';
+        state.article.subtitles = [...state.article.subtitles, action.payload];
+      })
+      .addCase(createSubtitleEn.rejected, (state) => {
+        state.statusSubEn = 'failed';
       })
       .addCase(createWpPost.pending, (state) => {
         state.statusCP = 'loading';

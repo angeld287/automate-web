@@ -13,6 +13,8 @@ import { Editor } from "react-draft-wysiwyg";
 import { ContentState, convertFromHTML, convertToRaw, EditorState, RawDraftContentBlock } from "draft-js";
 import { toast } from "react-toastify";
 import { Languages } from "../../../../interfaces/Enums/Languages";
+import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
+import { createArticleContent, createSubtitleContent, createSubtitleEn, selectArticle } from "../../../../features/article/articleSlice"
 
 const ArticleContent: React.FC<IArticleContent> = ({article}) => {
     const { Paragraph } = Typography;
@@ -25,21 +27,30 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
         () => EditorState.createEmpty(),
     );
 
+    const dispatch = useAppDispatch();
+    const { statusSubEn } = useAppSelector(selectArticle);
+
     useEffect(() => {
         const blocks = convertToRaw(editorState.getCurrentContent()).blocks;
         
         const finalContents: Array<IContent> = blocks.map((block: RawDraftContentBlock, index): IContent => {
-            return ({
+            const content: IContent = {
                 content: block.text,
                 orderNumber: (index + 1),
                 contentLanguage: Languages.SPANISH,
                 selected: true,
-                articleId: article?.id,
                 wordsCount: block.text.split(" ").length,
-                type,
-            })
-        }).filter(block => block.content !== "");
+                type
+            };
 
+            if(type === 'subtitle') {
+                content.subtitleId = parseInt(subtitle);
+            }else{
+                content.articleId = article?.internalId;
+            }
+
+            return content
+        }).filter(block => block.content !== "");
         setParagraphs(finalContents);
     }, [editorState, article?.id, type]);
 
@@ -47,16 +58,30 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
         return [
             <p>Words Count: {item.content.split(" ").length}</p>,
             <CustomButton onClick={() => copyContent(item.content)}><CopyOutlined /></CustomButton>,
-            <CustomButton onDoubleClick={() => {setSubtitle(item.content); setOpenSubModal(true)}} onClick={() => addSubtitles(item.content) }><PlusOutlined /></CustomButton>,
+            <CustomButton loading={statusSubEn === "loading"} onDoubleClick={() => {setSubtitle(item.content); setOpenSubModal(true)}} onClick={() => addSubtitle(item.content) }><PlusOutlined /></CustomButton>,
             //<TranslationOutlined />,
         ]
     }, []);
 
-    const addSubtitles = useCallback((text: string) => {
+    const addSubtitle = useCallback((text: string) => {
         if(text.length > 99) return toast('This title exceeds the size limit!')
+        if(article)
+            dispatch(createSubtitleEn({
+                articleId: article.internalId,
+                name: text,
+            }));
 
         setOpenSubModal(false);
-    }, [])
+    }, [article])
+
+    const createParagraph = useCallback(() => {
+        if(type === 'subtitle') {
+            dispatch(createSubtitleContent(paragraphs));
+        }else{
+            dispatch(createArticleContent(paragraphs));
+        }
+        setOpen(false);
+    }, [paragraphs, type]);
 
     const typeOptions: ISelectOptions[] = useMemo(() => [
         {id: 'subtitle', name: "Subtitle"},
@@ -85,7 +110,7 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
                 )}
             />   
         </Row>
-        <CustomModal {...{open, setOpen}} width="60%">
+        <CustomModal {...{open, setOpen}} width="60%" onOk={() => createParagraph()}>
             <Divider />
                 <Row>
                     <Col span={4} style={{margin: 10}}><CustomSelect name="text-type" items={typeOptions} onChange={(value) => setType(value)} placeholder="Paragraph Type"></CustomSelect></Col>
@@ -101,10 +126,9 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
                         />
                     </Col>
                 </Row>
-                
             <Divider />
         </CustomModal>
-        <CustomModal {...{open: openSubModal, setOpen: setOpenSubModal}} width="60%" onOk={() => addSubtitles(subtitle)}>
+        <CustomModal {...{open: openSubModal, setOpen: setOpenSubModal}} width="60%" onOk={() => addSubtitle(subtitle)}>
             <Divider />
             <Row>
                 <Col span={20} style={{margin: 10}}><CustomInput defaultValue={subtitle} value={subtitle} dataTestId="test-id-subtitle" label="Add Subtitle" onChange={(e) => setSubtitle(e.target.value)} placeholder="Paragraph Type"></CustomInput></Col>

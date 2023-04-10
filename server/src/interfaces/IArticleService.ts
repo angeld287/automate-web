@@ -24,6 +24,8 @@ export interface IArticleService {
 
     getSubtitleById(subtitleId: number): Promise<SubTitleContent | false>
 
+    getSubtitlesByArticleId(articleId: number): Promise<Array<SubTitleContent>>;
+
     createContentForArticle(content: IContent): Promise<IContent>;
 
     createContentForSubtitle(content: IContent): Promise<IContent>;

@@ -19,7 +19,7 @@ const Home = () => {
     const {articles, AIArticles, statusAI, page, size, status, hasMore} = useAppSelector(selectArticles);
 
     const onClickEdit = (article: IArticle) => {
-        navigate(`/keywords/${article.internalId}`);
+        navigate(`/content-editor/${article.internalId}`);
     }
 
     const goToPrepareContent = (article: IArticle) => {
