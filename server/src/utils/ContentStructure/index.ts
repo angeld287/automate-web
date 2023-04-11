@@ -12,7 +12,7 @@ const createContent = (article: INewArticle): string => {
     //Space Block
     //\n\n\n\n
     //Introduction
-    const intro: string = createParagraph(article.contents.filter(content => content.type.trim() === 'introduction'))
+    const intro: string = createParagraph(article.contents.filter(content => content.type && content.type.trim() === 'introduction'))
     //\n\n\n\n
     //Table Content
     //const contentTable = createTable(postUrl, article.subtitles);
@@ -33,7 +33,7 @@ const createContent = (article: INewArticle): string => {
     }).join('');
 
     //Conclusion Paragraph
-    const conclusion: string = createParagraph(article.contents.filter(content => content.type.trim() === 'conclusion'))
+    const conclusion: string = createParagraph(article.contents.filter(content => content.type && content.type.trim() === 'conclusion'))
     //\n\n\n\n
     //goodbyes and thanks
     return `\n${mainImage}\n\n\n\n${space}\n\n\n\n${intro}\n\n\n\n${body}${space}\n\n\n\n${conclusion}`;

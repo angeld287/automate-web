@@ -21,7 +21,7 @@ import { ArticleState } from "../../../interfaces/Enums/States";
 
 const ContentEditor = () => {
 
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
     const [addImageModal, openAddImageModal] = useState(false);
     const [addContentModal, openAddContentModal] = useState(false);
     const [selectedItem, setSelectedItem] = useState<SubTitleContent>();

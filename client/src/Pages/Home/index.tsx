@@ -16,7 +16,7 @@ const Home = () => {
     const [ openModal, setOpenModal ] = useState(false);
     const [ article, setAricle ] = useState<IArticle>();
 
-    const {articles, AIArticles, statusAI, page, size, status, hasMore} = useAppSelector(selectArticles);
+    const {articles, AIArticles, statusAI, page, size, status} = useAppSelector(selectArticles);
 
     const onClickEdit = (article: IArticle) => {
         navigate(`/content-editor/${article.internalId}`);
@@ -43,7 +43,7 @@ const Home = () => {
                     <DraftArticles {...{actions: aiArticlesActions, hasMore: false, status: statusAI, articles: AIArticles, getArticles: getAIResearchedArticles(), getNextArticles: getAIResearchedArticles()}}/>
                 </Col>
                 <Col span={12} className="home-draft-list">
-                    <DraftArticles {...{actions: articlesActions, hasMore, status, articles, getArticles: getArticles({page, size}), getNextArticles: getArticles({page: (page+size), size})}}/>
+                    <DraftArticles {...{actions: articlesActions, hasMore: false, status, articles, getArticles: getArticles({page, size}), getNextArticles: getArticles({page: (page+size), size})}}/>
                 </Col>
             </Row>
             <ContentOrganizationStepper {...{open: openModal, setOpen: setOpenModal, article}}/>

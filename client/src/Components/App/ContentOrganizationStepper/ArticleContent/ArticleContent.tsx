@@ -45,6 +45,7 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
 
             if(type === 'subtitle') {
                 content.subtitleId = parseInt(subtitle);
+                content.type = "paragraph";
             }else{
                 content.articleId = article?.internalId;
             }

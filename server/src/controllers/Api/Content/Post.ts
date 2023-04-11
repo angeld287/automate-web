@@ -38,11 +38,9 @@ class Post {
             let categoryService: ICategoryService = new CategoryService();
 
             let article: INewArticle = req.body.article as INewArticle;
-            const title: string = article.title;
             const bodyCategory: string = removeAccentMark(article.category.trim().toLowerCase());
 
             //!(article.subtitles.filter(subtitle => !subtitle.image).length > 2)
-
             if(!article.image){
                 return new BadRequestResponse('Error', {
                     error: true,

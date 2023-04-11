@@ -86,7 +86,7 @@ class Article {
             }
 
             const translatedName = await translate.perform(name, 'en', 'es');
-            const exisitingSubtitles = await contentService.getSubtitlesByArticleId(articleId);
+            const exisitingSubtitles = await contentService.getSubtitlesByArticleId(article.id);
             const orderNumber = exisitingSubtitles.length;
 
             const subtitle = await contentService.createSubtitle({
