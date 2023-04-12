@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { Languages } from "../../../../interfaces/Enums/Languages";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { createArticleContent, createSubtitleContent, createSubtitleEn, selectArticle } from "../../../../features/article/articleSlice"
+import { SubTitleContent } from "../../../../interfaces/models/Article";
 
 const ArticleContent: React.FC<IArticleContent> = ({article}) => {
     const { Paragraph } = Typography;
@@ -55,14 +56,31 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
         setParagraphs(finalContents);
     }, [editorState, article?.id, type]);
 
+    const addedSubtitle = useCallback((item: IContent, subtitles?: Array<SubTitleContent>) => {
+        return subtitles ? subtitles.find(sub => sub.translatedName === item.content) ? true : false : false
+    }, []);
+
+    const subtitleWithContent = useCallback((item: IContent, subtitles?: Array<SubTitleContent>) => {
+        if(subtitles){
+            const sub = subtitles.find(sub => sub.translatedName === item.content);
+            if(sub && sub.content && sub.content.length){
+                return sub.content.length > 0
+            }else{
+                return false
+            }
+        }else{
+            return false
+        }
+    }, []);
+
     const actionsList = useCallback((item: IContent): Array<ReactNode> => {
         return [
             <p>Words Count: {item.content.split(" ").length}</p>,
-            <CustomButton onClick={() => copyContent(item.content)}><CopyOutlined /></CustomButton>,
-            <CustomButton loading={statusSubEn === "loading"} onDoubleClick={() => {setSubtitle(item.content); setOpenSubModal(true)}} onClick={() => addSubtitle(item.content) }><PlusOutlined /></CustomButton>,
+            <CustomButton disabled={addedSubtitle(item, article?.subtitles)} onClick={() => copyContent(item.content)}><CopyOutlined /></CustomButton>,
+            <CustomButton loading={statusSubEn === "loading"} disabled={addedSubtitle(item, article?.subtitles)} onDoubleClick={() => {setSubtitle(item.content); setOpenSubModal(true)}} onClick={() => addSubtitle(item.content) }><PlusOutlined /></CustomButton>,
             //<TranslationOutlined />,
         ]
-    }, []);
+    }, [article?.subtitles]);
 
     const addSubtitle = useCallback((text: string) => {
         if(text.length > 99) return toast('This title exceeds the size limit!')
@@ -103,7 +121,7 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
                 bordered
                 dataSource={article?.contents}
                 renderItem={(item: IContent) => (
-                    <List.Item actions={actionsList(item)}>
+                    <List.Item actions={actionsList(item)} style={{border: `solid 1px ${addedSubtitle(item, article?.subtitles) ? subtitleWithContent(item, article?.subtitles) ? 'blue' : 'red' : 'white'}`}}>
                         <Paragraph>
                             {item.content}
                         </Paragraph>
