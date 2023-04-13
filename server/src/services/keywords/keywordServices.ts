@@ -78,8 +78,8 @@ export class keywordService implements IKeywordService {
 
             const createKeywordTmpl = {
                 name: 'create-new-keyword',
-                text: 'INSERT INTO public.keywords(name, similarity, keyword_search_job_id, is_main, article_id, order_number, category) VALUES ($1, $2, $3, false, $4, $5, $6) RETURNING id, name, similarity, keyword_search_job_id, article_id, selected, is_main, order_number, category',
-                values: [keyowrdName, keyword.similarity, keyword.keywordSearchJobId, keyword.articleId, keyword.orderNumber, keyword.category],
+                text: 'INSERT INTO public.keywords(name, similarity, keyword_search_job_id, is_main, article_id, order_number, category, created_manually) VALUES ($1, $2, $3, false, $4, $5, $6, $7) RETURNING id, name, similarity, keyword_search_job_id, article_id, selected, is_main, order_number, category, created_manually',
+                values: [keyowrdName, keyword.similarity, keyword.keywordSearchJobId, keyword.articleId, keyword.orderNumber, keyword.category, keyword.createdManually],
             }
 
             let result = null, client = null;
@@ -104,6 +104,7 @@ export class keywordService implements IKeywordService {
                 isMain: result.rows[0].is_main,
                 orderNumber: result.rows[0].order_number,
                 category: result.rows[0].category,
+                createdManually: result.rows[0].created_manually,
             }
             
             return _keyword;
@@ -118,7 +119,7 @@ export class keywordService implements IKeywordService {
         try {
             const createKeywordTmpl = {
                 name: 'add-remove-keyword-article-relation',
-                text: 'UPDATE public.keywords SET selected=$2, article_id=$1, is_main=$4, order_number=$5, category=$6  WHERE id = $3 RETURNING id, name, similarity, keyword_search_job_id, article_id, selected, is_main, order_number, category',
+                text: 'UPDATE public.keywords SET selected=$2, article_id=$1, is_main=$4, order_number=$5, category=$6  WHERE id = $3 RETURNING id, name, similarity, keyword_search_job_id, article_id, selected, is_main, order_number, category, created_manually',
                 values: [keyword.articleId, keyword.selected, keyword.id, keyword.isMain, keyword.orderNumber, keyword.category],
             }
 
@@ -144,6 +145,7 @@ export class keywordService implements IKeywordService {
                 isMain: result.rows[0].is_main,
                 orderNumber: result.rows[0].order_number,
                 category: result.rows[0].category,
+                createdManually: result.rows[0].created_manually,
             }
             
             return _keyword;
@@ -156,7 +158,7 @@ export class keywordService implements IKeywordService {
     async getKeywordByName(name: string): Promise<IKeyword | false> {
         const getQuery = {
             name: 'get-keyword-by-name',
-            text: `SELECT id, name, similarity, keyword_search_job_id, article_id, selected, is_main, order_number, category FROM public.keywords where name = $1`,
+            text: `SELECT id, name, similarity, keyword_search_job_id, article_id, selected, is_main, order_number, category, created_manually FROM public.keywords where name = $1`,
             values: [name],
         }
 
@@ -177,6 +179,7 @@ export class keywordService implements IKeywordService {
                 isMain: result.rows[0].is_main,
                 orderNumber: result.rows[0].order_number,
                 category: result.rows[0].category,
+                createdManually: result.rows[0].created_manually,
             }
 
             return keyword;
@@ -219,7 +222,7 @@ export class keywordService implements IKeywordService {
     async getKeywordsByJobId(jobId: number): Promise<Array<IKeyword>> {
         const getQuery = {
             name: 'get-keywords-by-job-id',
-            text: `SELECT id, name, similarity, keyword_search_job_id, article_id, selected, is_main, order_number, category FROM public.keywords WHERE keyword_search_job_id = $1`,
+            text: `SELECT id, name, similarity, keyword_search_job_id, article_id, selected, is_main, order_number, category, created_manually FROM public.keywords WHERE keyword_search_job_id = $1`,
             values: [jobId],
         }
 
@@ -240,6 +243,7 @@ export class keywordService implements IKeywordService {
                     isMain: row.is_main,
                     orderNumber: row.order_number,
                     category: row.category,
+                    createdManually: row.created_manually,
                 })
             });
 
@@ -252,7 +256,7 @@ export class keywordService implements IKeywordService {
     async getKeywordsByArticleId(articleId: number): Promise<Array<IKeyword>> {
         const getQuery = {
             name: 'get-keywords-by-article-id',
-            text: `SELECT id, name, similarity, keyword_search_job_id, article_id, selected, is_main, order_number, category FROM public.keywords WHERE article_id = $1`,
+            text: `SELECT id, name, similarity, keyword_search_job_id, article_id, selected, is_main, order_number, category, created_manually FROM public.keywords WHERE article_id = $1`,
             values: [articleId],
         }
 
@@ -273,6 +277,7 @@ export class keywordService implements IKeywordService {
                     isMain: row.is_main,
                     orderNumber: row.order_number,
                     category: row.category,
+                    createdManually: row.created_manually,
                 })
             });
 
@@ -285,7 +290,7 @@ export class keywordService implements IKeywordService {
     async getKeywordsById(id: number): Promise<IKeyword> {
         const getQuery = {
             name: 'get-keywords-by-id',
-            text: `SELECT id, name, similarity, keyword_search_job_id, article_id, selected, is_main, order_number, category FROM public.keywords WHERE id = $1`,
+            text: `SELECT id, name, similarity, keyword_search_job_id, article_id, selected, is_main, order_number, category, created_manually FROM public.keywords WHERE id = $1`,
             values: [id],
         }
 

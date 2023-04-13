@@ -26,6 +26,19 @@ export async function setMainKeyword(id: string, isMain: boolean) {
   return await fetchData.json();
 }
 
+export async function createKeyword(name: string, jobId: string) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}keywords/createManual`, {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({name, keywordSearchJobId: jobId})
+  })
+
+  return await fetchData.json();
+}
+
 export async function updateKeywordCategory(id: string, category: string) {
   const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}keywords/updateCategory`, {
     method: "POST",

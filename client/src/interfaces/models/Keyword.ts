@@ -9,6 +9,7 @@ export default interface IKeyword {
     isMain?: boolean;
     orderNumber?: number;
     category?: string;
+    createdManually?: boolean;
 }
 
 export interface IResultTitleSimilarity {

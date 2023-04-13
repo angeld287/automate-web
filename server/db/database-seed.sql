@@ -504,6 +504,7 @@ CREATE TABLE IF NOT EXISTS public.keywords
     selected boolean,
     article_id integer,
     is_main boolean,
+    created_manually boolean,
     order_number integer,
     category character(50) COLLATE pg_catalog."default",
     CONSTRAINT keywords_pkey PRIMARY KEY (id),

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import IKeyword, { IKeywordSearchJob } from '../../interfaces/models/Keyword';
 import { getBearer } from '../autenticate/authenticateAPI';
-import { createArticleFromKeyword, updateKeywordCategory } from '../keywords/keywordAPI';
+import { createArticleFromKeyword, createKeyword, updateKeywordCategory } from '../keywords/keywordAPI';
 import { deleteKeywordSearchJob, getAllSearchJobs, getSearchJob, selectPotentialKeyword } from './keywordSearchJobAPI';
 
 export interface keywordSearchJobState {
@@ -99,6 +99,18 @@ export const openAICreateArticle = createAsyncThunk(
   }
 );
 
+export const createKeywordManually = createAsyncThunk(
+  'keywords/createKeywordManually',
+  async ({name, jobId}: {name: string, jobId: string}) => {
+    try {
+      const result = await createKeyword(name, jobId);
+      return result.data.response;
+    } catch (error) {
+      throw new Error('Error in ArticleState at createKeywordManually')
+    }
+  }
+);
+
 export const keywordSearchJobSlice = createSlice({
   name: 'keywordSearchJob',
   initialState,
@@ -136,6 +148,10 @@ export const keywordSearchJobSlice = createSlice({
         state.selectStatus = 'idle';
         if(state.keywordSearchJob.keywords)
           state.keywordSearchJob.keywords = [...state.keywordSearchJob.keywords.filter(keyword => keyword.id !== action.payload.id), action.payload].sort((kwA, kwB) => kwA.similarity < kwB.similarity ? -1 : (kwA.similarity > kwB.similarity ? 1 : kwA.name < kwB.name ? -1 : 1)); 
+      })
+      .addCase(createKeywordManually.fulfilled, (state, action: PayloadAction<IKeyword>) => {
+        if(state.keywordSearchJob.keywords)
+          state.keywordSearchJob.keywords = [...state.keywordSearchJob.keywords, action.payload].sort((kwA, kwB) => kwA.similarity < kwB.similarity ? -1 : (kwA.similarity > kwB.similarity ? 1 : kwA.name < kwB.name ? -1 : 1)); 
       })
       .addCase(selectKeyword.rejected, (state) => {
         state.selectStatus = 'failed';

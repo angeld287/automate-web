@@ -1,20 +1,23 @@
-import { MenuUnfoldOutlined, PicRightOutlined } from "@ant-design/icons";
+import { MenuUnfoldOutlined, PicRightOutlined, RollbackOutlined } from "@ant-design/icons";
 import { Col, Row } from "antd";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import ContentOrganizationStepper from "../../Components/App/ContentOrganizationStepper";
 import DraftArticles from "../../Components/App/DraftArticles";
 import { IArticlesActions } from "../../Components/App/DraftArticles/IDraftArticles";
 import { getAIResearchedArticles, getArticles, selectArticles } from "../../features/articles/articlesSlice";
+import { updateArticleState } from "../../features/article/articleSlice";
 import { IArticle } from "../../interfaces/models/Article";
 import "./home.css"
+import { ArticleState } from "../../interfaces/Enums/States";
 
 const Home = () => {
 
     const navigate = useNavigate()
     const [ openModal, setOpenModal ] = useState(false);
     const [ article, setAricle ] = useState<IArticle>();
+    const dispatch = useAppDispatch();
 
     const {articles, AIArticles, statusAI, page, size, status} = useAppSelector(selectArticles);
 
@@ -27,13 +30,19 @@ const Home = () => {
         setAricle(article)
     }
 
+    const getArticleBack = useCallback((article: IArticle) => {
+        if(article)
+            dispatch(updateArticleState({id: article.id, state: ArticleState.KEYWORD_PLANNING}));
+    }, []);
+
     const articlesActions: IArticlesActions[] = [
         {icon: <PicRightOutlined />, _key: "draft_edit_btn", onClick: onClickEdit}
     ]
 
-    const aiArticlesActions: IArticlesActions[] = [
+    const aiArticlesActions: IArticlesActions[] = useMemo(() => [
+        {icon: <RollbackOutlined />, _key: "get_article_back_btn", onClick: getArticleBack},
         {icon: <MenuUnfoldOutlined />, _key: "prepare_content_btn", onClick: goToPrepareContent}
-    ]
+    ], []);
 
       
     return (

@@ -58,6 +58,42 @@ class Keywords {
         }
     }
 
+    public static async createManually(req: IRequest, res: IResponse): Promise<any> {
+        try {
+
+            if(ValidateErrors.validate(req, res) !== true) return
+
+            const _keywordService: IKeywordService = new keywordService()
+            
+            const { name, keywordSearchJobId} = req.body;
+
+            let keyowrd = await _keywordService.getKeywordByName(name)
+            if(keyowrd === false){
+                keyowrd = await _keywordService.createKeyword({
+                    name,
+                    createdManually: true,
+                    keywordSearchJobId
+                })
+            }else{
+                return new BadRequestResponse('Error', {
+                    error: `This keyword is used by article: ${keyowrd.articleId}`
+                }).send(res);
+            }
+            
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: keyowrd,
+                error: null
+            }).send(res);
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Keywords Controller Error - selectPotentialKeyword', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
     public static async getSearchJob(req: IRequest, res: IResponse): Promise<any> {
         try {
 

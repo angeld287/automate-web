@@ -336,6 +336,14 @@ router.post(
     SearchKeywordController.deleteKeywordSearchJob
 );
 
+router.post(
+    '/keywords/createManual',
+    body('name', 'field name cannot be blank.').notEmpty(),
+    body('keywordSearchJobId', 'field keywordSearchJobId cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    KeywordsController.createManually
+);
+
 router.get(
     '/keywords/getSearchJob',
     Passport.isAuthenticated,
