@@ -28,4 +28,5 @@ export interface IKeywordSearchJob {
     createdAt?: string;
     deletedBy?: string;
     deleted?: boolean;
+    mainKeywords?: string;
 }

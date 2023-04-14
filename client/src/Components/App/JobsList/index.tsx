@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Card, List } from 'antd';
+import { Card, List, Row, Space, Tag } from 'antd';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { getAllJobs, selectKeywordSearchJob } from '../../../features/keywordSearchJob/keywordSearchJobSlice';
 import moment from 'moment';
@@ -33,7 +33,12 @@ const JobsList: React.FC = () => {
                     title={moment(item.createdAt).fromNow()}
                     actions={[<OrderedListOutlined onClick={() => {onClickEdit(item.id)}} key="keywords" />, <DeleteOutlined />]}
                 >
-                    {item.longTailKeyword}
+                    <Row>{item.longTailKeyword}</Row>
+                    <Row>
+                        <Space size={[0, 8]} wrap>
+                            {item.mainKeywords?.split(",").map(keyword => <Tag color="#87d068">{keyword}</Tag>)}
+                        </Space>
+                    </Row>
                 </Card>
             </List.Item>
           )}

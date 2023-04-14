@@ -35,7 +35,7 @@ class SearchKeyword {
             }
 
             const longTailKeyword = req.body.longTailKeyword;
-            const mainKeyword = req.body.mainKeyword;
+            const mainKeywords: Array<string> = req.body.mainKeywords;
 
             //google adsense used to get keywords statistic info.
             //let google: IGoogelServices = new googelServices();
@@ -60,21 +60,33 @@ class SearchKeyword {
             let searchJob: IKeywordSearchJob = await keywordS.createKeywordSearchJob({
                 createdBy: req.session.passport.user.id,
                 status: `RUNNING`,
-                longTailKeyword
+                longTailKeyword,
+                mainKeywords: mainKeywords.join(","),
             } as IKeywordSearchJob)
- 
 
             const searchJobNode: NodeJob = new NodeJob();
             searchJobNode.startJob(`JOB-${searchJob.id}`, async () => {
                 try {
                     console.log('FUNCTION CALLED!')
-
+    
                     for (let i = 0; i < keywords.length; i++) {
                         let keyword: IKeyword = keywords[i];
                         const keywordAlreadyExist: IKeyword | false = await keywordS.getKeywordByName(keyword.name);
                         let result = await search.getResultsAndSuggestions(keyword.name);
-                        result.relatedSearch = result.relatedSearch.filter(related =>  related.name.includes(mainKeyword));
-                        
+    
+                        result.relatedSearch = result.relatedSearch.filter(related => {
+                            const checkKeywordsResult = []
+                            mainKeywords.forEach(keyword => {
+                                checkKeywordsResult.push(related.name.toLowerCase().includes(keyword));
+                                //if(keyword === 'almendra'){
+                                //    console.log('include: ', related.name.toLowerCase().includes(keyword))
+                                //    console.log('name: ', related.name, " - ", keyword)
+                                //}
+                            });
+                            //console.log('checkKeywordsResult: ', checkKeywordsResult)
+                            return checkKeywordsResult.filter(record => record === false).length === 0
+                        });
+
                         let similaritySum = 0;
                         if(keywordAlreadyExist === false && result.searchResult){
                             await Promise.all(result.searchResult.map(async (itemResult) => {
@@ -85,7 +97,7 @@ class SearchKeyword {
                                     name: itemResult.title,
                                     similarity: 0, //similarityResponse.similarity ? similarityResponse.similarity : 0,
                                     value: 0//similarityResponse.value ? similarityResponse.value : 0
-                                })
+                                });
                             }))
                 
                             keyword.similarity = Math.round((similaritySum/10)*100);
@@ -97,12 +109,14 @@ class SearchKeyword {
                         keywords = [...keywords, ...othersKeywords];
                         
                         console.log(`Name: ${keyword.name} | Exist: ${keywordAlreadyExist ? 'yes' : 'no'}`)
-                        if(keywordAlreadyExist === false){
-                            const createKeyword = await keywordS.createKeyword(keyword);   
-                            if(createKeyword !== false) keyword = createKeyword
-                        }
+                       if(keywordAlreadyExist === false){
+                           const createKeyword = await keywordS.createKeyword(keyword);   
+                           if(createKeyword !== false) keyword = createKeyword
+                       }
                             
                     }
+
+                    console.log('KEYWORD SEARCH JOB HAS END!')
                 } catch (error) {
                     console.log(error)
                 }

@@ -457,6 +457,7 @@ CREATE TABLE IF NOT EXISTS public.keyword_search_job
     created_at timestamp with time zone NOT NULL,
     deleted_at timestamp with time zone,
     long_tail_keyword character(100) COLLATE pg_catalog."default",
+    main_keywords character(50) COLLATE pg_catalog."default",
     CONSTRAINT keyword_search_job_pkey PRIMARY KEY (id),
     CONSTRAINT keyword_search_job_created_by_fkey FOREIGN KEY (created_by)
         REFERENCES public.users (id) MATCH SIMPLE

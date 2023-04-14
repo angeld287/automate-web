@@ -1,4 +1,4 @@
-import { FileTextOutlined } from "@ant-design/icons";
+import { CopyOutlined, FileTextOutlined } from "@ant-design/icons";
 import { Checkbox, Spin } from "antd";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { ColumnFilterItem } from "antd/es/table/interface";
@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { openAICreateArticle, selectKeyword, selectKeywordSearchJob, setKeywordCategory } from "../../../features/keywordSearchJob/keywordSearchJobSlice";
 import IKeyword from "../../../interfaces/models/Keyword";
-import { getGoogleSearchUrl, replaceSpace } from "../../../utils/functions";
+import { copyContent, getGoogleSearchUrl, replaceSpace } from "../../../utils/functions";
 import CustomTable from "../../CustomTable/CustomTable";
 import { ITableHeader } from "../../CustomTable/ICustomTable";
 import { removeDuplicate } from '../../../utils/functions';
@@ -74,7 +74,9 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
                     actions: item.selected ? [
                         { type: "select", component: { _key: `category-select-${item.id}`, name: `category-select-${item.id}`, items: categoryList, disabled: item.articleId !== null, onChange: (value: string) => updateCategory(value, item), defaultValue: item.category} },
                         { type: "button", component: { _key: `create-article-ai-${item.id}`,id: `create-article-ai-${item.id}`, color: 'blue', icon: <FileTextOutlined />, onClick: () => createArticle(item), text: "", disabled: item.articleId !== null, loading: (kwLoading === item.id && AICreateStatus === 'loading') } },
-                    ] : [],
+                    ] : [
+                        { type: "button", component: { _key: `copy-keyword-${item.id}`,id: `copy-keyword-${item.id}`, color: 'blue', icon: <CopyOutlined />, onClick: () => copyContent(item.name.trim()), text: "",} },
+                    ],
                     id: `${replaceSpace(item.name)}-${item.id}`,
                     dataName: item.name
                 })))

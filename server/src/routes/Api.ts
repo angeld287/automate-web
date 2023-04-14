@@ -310,7 +310,7 @@ router.post(
 router.post(
     '/keywordsSearchJob/start',
     body('longTailKeyword', 'field longTailKeyword cannot be blank.').notEmpty(),
-    body('mainKeyword', 'field mainKeyword cannot be blank.').notEmpty(),
+    body('mainKeywords', 'field mainKeywords cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     SearchKeywordController.startJob
 );

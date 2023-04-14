@@ -11,11 +11,13 @@ import { updateArticleState } from "../../features/article/articleSlice";
 import { IArticle } from "../../interfaces/models/Article";
 import "./home.css"
 import { ArticleState } from "../../interfaces/Enums/States";
+import CustomModal from "../../Components/CustomModal";
 
 const Home = () => {
 
     const navigate = useNavigate()
     const [ openModal, setOpenModal ] = useState(false);
+    const [ confirmGoBack, setConfirmGoBack ] = useState(false);
     const [ article, setAricle ] = useState<IArticle>();
     const dispatch = useAppDispatch();
 
@@ -30,7 +32,12 @@ const Home = () => {
         setAricle(article)
     }
 
-    const getArticleBack = useCallback((article: IArticle) => {
+    const confirmGetBack = (article: IArticle) => {
+        setConfirmGoBack(true)
+        setAricle(article)
+    }
+
+    const getArticleBack = useCallback((article?: IArticle) => {
         if(article)
             dispatch(updateArticleState({id: article.id, state: ArticleState.KEYWORD_PLANNING}));
     }, []);
@@ -40,7 +47,7 @@ const Home = () => {
     ]
 
     const aiArticlesActions: IArticlesActions[] = useMemo(() => [
-        {icon: <RollbackOutlined />, _key: "get_article_back_btn", onClick: getArticleBack},
+        {icon: <RollbackOutlined />, _key: "get_article_back_btn", onClick: confirmGetBack},
         {icon: <MenuUnfoldOutlined />, _key: "prepare_content_btn", onClick: goToPrepareContent}
     ], []);
 
@@ -56,6 +63,7 @@ const Home = () => {
                 </Col>
             </Row>
             <ContentOrganizationStepper {...{open: openModal, setOpen: setOpenModal, article}}/>
+            <CustomModal title="Are you sure you want to send this article back?" open={confirmGoBack} setOpen={setConfirmGoBack} onOk={() => getArticleBack(article)}/>
         </>
     );
 }

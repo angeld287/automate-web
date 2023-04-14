@@ -8,8 +8,8 @@ export class keywordService implements IKeywordService {
         try {
             const createKeywordSearchJobTmpl = {
                 name: 'create-new-keyword_search_job',
-                text: 'INSERT INTO public.keyword_search_job(created_by, long_tail_keyword) VALUES ($1, $2) RETURNING id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status, long_tail_keyword',
-                values: [job.createdBy, job.longTailKeyword],
+                text: 'INSERT INTO public.keyword_search_job(created_by, long_tail_keyword, main_keywords) VALUES ($1, $2, $3) RETURNING id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status, long_tail_keyword, main_keywords',
+                values: [job.createdBy, job.longTailKeyword, job.mainKeywords],
             }
 
             let result = null, client = null;
@@ -29,6 +29,7 @@ export class keywordService implements IKeywordService {
                 createdBy: result.rows[0].created_by,
                 longTailKeyword: result.rows[0].long_tail_keyword,
                 deleted: result.rows[0].deleted,
+                mainKeywords: result.rows[0].main_keywords,
             }
             
             return _job;
@@ -42,7 +43,7 @@ export class keywordService implements IKeywordService {
         try {
             const updateKeywordSearchJobTmpl = {
                 name: 'update-new-keyword_search_job',
-                text: 'UPDATE public.keyword_search_job SET deleted=$1, deleted_by=$2, status=$3 WHERE id = $4 RETURNING id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status, long_tail_keyword',
+                text: 'UPDATE public.keyword_search_job SET deleted=$1, deleted_by=$2, status=$3 WHERE id = $4 RETURNING id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status, long_tail_keyword, main_keywords',
                 values: [job.deleted, job.deletedBy, job.status, job.id],
             }
 
@@ -63,6 +64,7 @@ export class keywordService implements IKeywordService {
                 createdBy: result.rows[0].created_by,
                 longTailKeyword: result.rows[0].long_tail_keyword,
                 deleted: result.rows[0].deleted,
+                mainKeywords: result.rows[0].main_keywords,
             }
             
             return _job;
@@ -191,7 +193,7 @@ export class keywordService implements IKeywordService {
     async getKeywordSearchJob(jobId: number): Promise<IKeywordSearchJob | false> {
         const getQuery = {
             name: 'get-keyword-search-job-by-id',
-            text: `SELECT id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status FROM public.keyword_search_job WHERE id = $1`,
+            text: `SELECT id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status, main_keywords FROM public.keyword_search_job WHERE id = $1`,
             values: [jobId],
         }
 
@@ -211,6 +213,7 @@ export class keywordService implements IKeywordService {
                 uniqueName: result.rows[0].unique_name,
                 keywords,
                 deleted: result.rows[0].deleted,
+                mainKeywords: result.rows[0].main_keywords,
             }
 
             return job;
@@ -319,7 +322,7 @@ export class keywordService implements IKeywordService {
     async getAllKeywordSearchJobs(userId: number): Promise<Array<IKeywordSearchJob>> {
         const getQuery = {
             name: 'get-all-keywords-search-jobs',
-            text: `SELECT id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status, long_tail_keyword FROM public.keyword_search_job WHERE created_by = $1`,
+            text: `SELECT id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status, long_tail_keyword, main_keywords FROM public.keyword_search_job WHERE created_by = $1`,
             values: [userId],
         }
 
@@ -337,6 +340,7 @@ export class keywordService implements IKeywordService {
                     status: row.status,
                     longTailKeyword: row.long_tail_keyword,
                     deleted: row.deleted,
+                    mainKeywords: row.main_keywords,
                 })
             });
 
