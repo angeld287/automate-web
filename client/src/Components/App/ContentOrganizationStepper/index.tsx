@@ -29,7 +29,7 @@ const ContentOrganizationStepper: React.FC<IContentOrganizationStepper> = ({open
     }, [article]);
 
     const footerOptions = useMemo(() => [
-      <CustomButton key="finish_btn-1" disabled={db.article.subtitles.length < 4} onClick={() => finishContentOrganization() }>Finish Process</CustomButton>,
+      <CustomButton key="finish_btn-1" disabled={db.article.subtitles.length < 2} onClick={() => finishContentOrganization() }>Finish Process</CustomButton>,
       //<CustomButton key="back_btn-2" disabled={current === 0} type="primary" danger>Back</CustomButton>,
       //<CustomButton key="next_btn-3" type="primary">Next</CustomButton>,
     ], [db.article])

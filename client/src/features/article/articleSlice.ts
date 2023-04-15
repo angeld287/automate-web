@@ -7,6 +7,7 @@ import { getBearer } from '../autenticate/authenticateAPI';
 import { searchKeywordContent } from '../subtitle/subtitleAPI';
 import { ArticleState as State} from '../../interfaces/Enums/States'
 import { createArticle, createContentForArticle, createEnContent, createEnContentForArticle, createEnSubtitle, createPost, editArticleState, editArticleTitle, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
+import Content from '../../interfaces/models/Content';
 
 export interface ArticleState {
   article: IArticle;
@@ -277,6 +278,14 @@ export const articleSlice = createSlice({
       })
       .addCase(createSubtitleEn.rejected, (state) => {
         state.statusSubEn = 'failed';
+      })
+      .addCase(createSubtitleContent.fulfilled, (state, action: PayloadAction<Content[]>) => {
+        const subtitleId = action.payload[0].subtitleId
+        const subTitle = state.article.subtitles.find(subtitle => subtitle.id === subtitleId);
+        if(subTitle){
+          subTitle.content = action.payload;
+          state.article.subtitles = [...state.article.subtitles.filter(subtitle => subtitle.id !== subtitleId), subTitle];
+        }
       })
       .addCase(createWpPost.pending, (state) => {
         state.statusCP = 'loading';
