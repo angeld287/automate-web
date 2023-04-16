@@ -59,7 +59,10 @@ class Post {
                 article = articleExist
             }
 
-            const category: Category = (await categoryService.getList()).find(category => removeAccentMark(category.name.toLowerCase()) === bodyCategory)
+            const category: Category = (await categoryService.getList()).find(category => {
+                console.log(removeAccentMark(category.name.toLowerCase()), bodyCategory)
+                return removeAccentMark(category.name.toLowerCase()) === bodyCategory
+            })
 
             if (!category){
                 return new BadRequestResponse('Error', {

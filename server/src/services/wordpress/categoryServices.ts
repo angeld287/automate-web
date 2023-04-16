@@ -6,8 +6,15 @@ import { axios, fetch } from "../../utils";
 export default class categoryService implements ICategoryService {
 
     async getList(): Promise<Array<Category>> {
-        const response = await fetch(`${Locals.config().wordpressUrl}categories`);
-        return response.body
+        let response = await fetch(`${Locals.config().wordpressUrl}categories`);
+        let resultList = response.body
+        let page = 2;
+        while(response.body.length === 10){
+            response = await fetch(`${Locals.config().wordpressUrl}categories?page=${page}`);
+            page++;
+            resultList = [...resultList, ...response.body]
+        }
+        return resultList;
     }
 
     async create(category: Category, token: string): Promise<any> {
