@@ -1,4 +1,4 @@
-import { CopyOutlined, FileAddOutlined, PlusOutlined, SelectOutlined } from "@ant-design/icons";
+import { CopyOutlined, FileAddOutlined, PlusOutlined, SelectOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { Col, Divider, List, Row, Typography } from "antd";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import IContent from "../../../../interfaces/models/Content";
@@ -60,6 +60,10 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
         return subtitles ? subtitles.find(sub => sub.translatedName === item.content) ? true : false : false
     }, []);
 
+    const addedIntroConclusion = useCallback((type: "introduction" | "conclusion") => {
+        return article?.contents?.find(content => content.type?.trim() === type) !== undefined
+    }, [article?.contents]);
+
     const subtitleWithContent = useCallback((item: IContent, subtitles?: Array<SubTitleContent>) => {
         if(subtitles){
             const sub = subtitles.find(sub => sub.translatedName === item.content);
@@ -78,9 +82,55 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
             <p>Words Count: {item.content.split(" ").length}</p>,
             <CustomButton disabled={addedSubtitle(item, article?.subtitles)} onClick={() => copyContent(item.content)}><CopyOutlined /></CustomButton>,
             <CustomButton loading={statusSubEn === "loading"} disabled={addedSubtitle(item, article?.subtitles)} onDoubleClick={() => {setSubtitle(item.content); setOpenSubModal(true)}} onClick={() => addSubtitle(item.content) }><PlusOutlined /></CustomButton>,
+            <CustomButton hidden={!addedSubtitle(item, article?.subtitles)} disabled={subtitleWithContent(item, article?.subtitles)} onClick={() => addSubtitleContent(item, article?.subtitles)}><UnorderedListOutlined /></CustomButton>,
             //<TranslationOutlined />,
         ]
     }, [article?.subtitles]);
+
+    const addSubtitleContent = useCallback(async (item: IContent, subtitles?: Array<SubTitleContent>) => {
+        const texts = await navigator.clipboard.readText();
+        if(article?.contents?.find(content => content.content === texts)){
+            toast("You are adding a possible plagiarism")
+        }
+
+        if(subtitles){
+            const subTitle = subtitles.find(sub => sub.translatedName === item.content)
+            if(subTitle){
+                const contents = texts.split(/\n/).filter(text => text !== "").map((text, index): IContent => ({
+                    content: text,
+                    orderNumber: (index + 1),
+                    contentLanguage: Languages.SPANISH,
+                    selected: true,
+                    wordsCount: text.split(" ").length,
+                    subtitleId: subTitle.id,
+                    type: 'paragraph'
+                }) );
+                dispatch(createSubtitleContent(contents));
+            }
+        }
+            
+    }, [article?.contents]);
+
+    const addIntroConclusion = useCallback(async (type: "introduction" | "conclusion" ) => {
+        const texts = await navigator.clipboard.readText();
+        if(article?.contents?.find(content => content.content === texts)){
+            toast("You are adding a possible plagiarism")
+        }
+
+        if(article){
+            const contents = texts.split(/\n/).filter(text => text !== "").map((text, index): IContent => ({
+                content: text,
+                orderNumber: (index + 1),
+                contentLanguage: Languages.SPANISH,
+                selected: true,
+                wordsCount: text.split(" ").length,
+                articleId: article.internalId,
+                type
+            }));
+            dispatch(createArticleContent(contents));
+        }
+            
+    }, [article]);
 
     const addSubtitle = useCallback((text: string) => {
         if(text.length > 99) return toast('This title exceeds the size limit!')
@@ -113,6 +163,8 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
     return (<>
         <Row>
             <Col style={{margin: 10}}><CustomButton onClick={() => { setOpen(true)}}>Add Content<FileAddOutlined /></CustomButton></Col>
+            <Col style={{margin: 10}}><CustomButton disabled={addedIntroConclusion("introduction")} onClick={() => { addIntroConclusion("introduction")}}>Add Introduction</CustomButton></Col>
+            <Col style={{margin: 10}}><CustomButton disabled={addedIntroConclusion("conclusion")} onClick={() => { addIntroConclusion("conclusion")}}>Add Conclusion</CustomButton></Col>
         </Row>
         <Row style={{marginBottom: 10, maxHeight: 600, overflowY: 'scroll'}}>
             <List
