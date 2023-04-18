@@ -1,5 +1,5 @@
 import { CopyOutlined, FileAddOutlined, PlusOutlined, SelectOutlined, UnorderedListOutlined } from "@ant-design/icons";
-import { Col, Divider, List, Row, Typography } from "antd";
+import { Checkbox, Col, Divider, List, Row, Typography } from "antd";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import IContent from "../../../../interfaces/models/Content";
 import { copyContent } from "../../../../utils/functions";
@@ -23,6 +23,7 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
     const [ openSubModal, setOpenSubModal] = useState(false);
     const [ type, setType ] = useState<'paragraph' | 'introduction' | 'conclusion' | 'subtitle'>('subtitle');
     const [ subtitle, setSubtitle ] = useState('');
+    const [ selectedContent, setSelectedContent ] = useState(['']);
     const [paragraphs, setParagraphs] = useState<Array<IContent>>([])
     const [editorState, setEditorState] = useState(
         () => EditorState.createEmpty(),
@@ -77,15 +78,28 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
         }
     }, []);
 
+    const setSelectedParagraph = useCallback((selected: boolean, item: IContent) => {
+        if(selected){
+            setSelectedContent(prev => {
+                return [...prev, item.content]
+            }) 
+        }else{
+            setSelectedContent(prev => {
+                return [...prev.filter(content => content !== item.content)]
+            })
+        }
+    }, []);
+
     const actionsList = useCallback((item: IContent): Array<ReactNode> => {
         return [
+            <Col style={{margin: 10}}><Checkbox checked={selectedContent.find(text => item.content === text) !== undefined} onChange={(e) => setSelectedParagraph(e.target.checked, item)}></Checkbox></Col>,
             <p>Words Count: {item.content.split(" ").length}</p>,
             <CustomButton disabled={addedSubtitle(item, article?.subtitles)} onClick={() => copyContent(item.content)}><CopyOutlined /></CustomButton>,
             <CustomButton loading={statusSubEn === "loading"} disabled={addedSubtitle(item, article?.subtitles)} onDoubleClick={() => {setSubtitle(item.content); setOpenSubModal(true)}} onClick={() => addSubtitle(item.content) }><PlusOutlined /></CustomButton>,
             <CustomButton hidden={!addedSubtitle(item, article?.subtitles)} disabled={subtitleWithContent(item, article?.subtitles)} onClick={() => addSubtitleContent(item, article?.subtitles)}><UnorderedListOutlined /></CustomButton>,
             //<TranslationOutlined />,
         ]
-    }, [article?.subtitles]);
+    }, [article?.subtitles, selectedContent]);
 
     const addSubtitleContent = useCallback(async (item: IContent, subtitles?: Array<SubTitleContent>) => {
         const texts = await navigator.clipboard.readText();
@@ -152,6 +166,11 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
         setOpen(false);
     }, [paragraphs, type]);
 
+    const copySelectedContent = useCallback(() => {
+        navigator.clipboard.writeText(selectedContent.join("\r\n"))
+        setSelectedContent([""])
+    }, [selectedContent]);
+
     const typeOptions: ISelectOptions[] = useMemo(() => [
         {id: 'subtitle', name: "Subtitle"},
         {id: 'introduction', name: "Introduction"},
@@ -165,6 +184,7 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
             <Col style={{margin: 10}}><CustomButton onClick={() => { setOpen(true)}}>Add Content<FileAddOutlined /></CustomButton></Col>
             <Col style={{margin: 10}}><CustomButton disabled={addedIntroConclusion("introduction")} onClick={() => { addIntroConclusion("introduction")}}>Add Introduction</CustomButton></Col>
             <Col style={{margin: 10}}><CustomButton disabled={addedIntroConclusion("conclusion")} onClick={() => { addIntroConclusion("conclusion")}}>Add Conclusion</CustomButton></Col>
+            <Col style={{margin: 10}}><CustomButton onClick={() => { copySelectedContent()}}>Copy Contents</CustomButton></Col>
         </Row>
         <Row style={{marginBottom: 10, maxHeight: 600, overflowY: 'scroll'}}>
             <List
