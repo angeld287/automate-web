@@ -23,6 +23,8 @@ import { keywordService } from "../../../services/keywords/keywordServices";
 import IKeyword from "../../../interfaces/models/Keyword";
 import { ArticleState } from "../../../interfaces/Enums/States";
 import NodeJob from "../../../providers/NodeJob";
+import { isValidImageUrl, isValidUrl } from "../../../utils";
+import { GoogleMedia } from "../../../interfaces/models/Media";
 
 class Content {
 
@@ -524,6 +526,43 @@ class Content {
             return new InternalErrorResponse('Validation Error', {
                 error: 'Internal Server Error',
                 created: false,
+            }).send(res);
+        }
+
+    }
+
+    static async searchImages(req: IRequest, res: IResponse, next: INext): Promise<any> {
+        try {
+
+            const errors = new ExpressValidator().validator(req);
+
+            if (!errors.isEmpty()) {
+                return new BadRequestResponse('Error', {
+                    errors: errors.array()
+                }).send(res);
+            }
+
+            let search: ISearchService = new searchService();
+            const { keyword, index } = req.body;
+            let page = index ? index : "1";
+            let images: Array<GoogleMedia> = await search.searchImages(page, keyword);
+            let validImages = images.filter(image => isValidUrl(image.link) && isValidImageUrl(image.link));
+            
+            while (validImages.length < 10) {
+                page = (parseInt(page) + 10).toString();
+                images = await search.searchImages(page, keyword);
+                validImages = [...validImages, ...images.filter(image => isValidUrl(image.link) && isValidImageUrl(image.link))];
+            }
+
+            return new SuccessResponse('Success', {
+                response: validImages,
+                page
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Validation Error', {
+                error: 'Internal Server Error',
             }).send(res);
         }
 

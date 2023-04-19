@@ -1,5 +1,6 @@
 import { ISearchService } from "../../interfaces/ISearchService";
 import IKeyword from "../../interfaces/models/Keyword";
+import { GoogleMedia } from "../../interfaces/models/Media";
 import Paragraph, { SeekerScenario } from "../../interfaces/models/Paragraph";
 import { IResultsAndSuggestions, IKeywordPotential } from "../../interfaces/response/ISearchKeyword";
 import Locals from "../../providers/Locals";
@@ -37,6 +38,20 @@ export class searchService implements ISearchService {
             //console.log(paragraphs.filter(para => para.scenario.foundInCase !== 4))
 
             return paragraphs;
+        } catch (error) {
+            throw new Error("Error in search service: " + JSON.stringify(error));
+        }
+    }
+
+    async searchImages(index: string, keyword: string): Promise<Array<GoogleMedia>> {
+        try {
+
+            const response = await axios({ url: `${Locals.config().SEARCH_ENGINE_URL}&num=${Locals.config().GOOGLE_RESULTS_QUANTITY}&start=${index}&q=${encodeURIComponent(keyword)}&searchType=image` })
+            if (!response.success) {
+                return response;
+            }
+
+            return response.body.items.map((item): GoogleMedia => ({link: item.link, thumbnailLink: item.image.thumbnailLink}));
         } catch (error) {
             throw new Error("Error in search service: " + JSON.stringify(error));
         }

@@ -19,6 +19,20 @@ const removeDuplicate = (items: Array<any>, filterProperty: string): Array<any> 
     return items.filter((item, index) => !ids.includes(item[filterProperty], index + 1))
 }
 
+export const isValidUrl = (urlString: string) => {
+  var urlPattern = new RegExp('^(https?:\\/\\/)?'+ // validate protocol
+  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // validate domain name
+  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // validate OR ip (v4) address
+  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // validate port and path
+  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // validate query string
+  '(\\#[-a-z\\d_]*)?$','i'); // validate fragment locator
+  return !!urlPattern.test(urlString);
+}
+
+export const isValidImageUrl = (urlString: string) => {
+  return(urlString.match(/\.(jpeg|jpg|gif|png|webp)$/) != null);
+}
+
 export const replaceSpace = (text: string): string => text.replace(/(?: )/g, '_')
 export const replaceSpaceForPlus = (text: string): string => text.replace(/(?: )/g, '+')
 export const replacePlusForSpace = (text: string): string => text.replace(/(?:\+)/g, ' ')

@@ -40,3 +40,15 @@ export async function addMediaToWordpressOpenAI(text: string, type: string, rela
   })
   return result.json()
 }
+
+export async function searchImages(keyword: string, index?: string) {
+  const result = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}searchImages`, {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({keyword, index})
+  })
+  return result.json()
+}

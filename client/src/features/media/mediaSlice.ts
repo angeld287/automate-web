@@ -1,20 +1,25 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import Media, { DbMedia } from '../../interfaces/models/Media';
+import Media, { DbMedia, GoogleMedia } from '../../interfaces/models/Media';
 import { getBearer } from '../autenticate/authenticateAPI';
-import { addMediaToWordpress, addMediaToWordpressOpenAI, updateMediaData } from './mediaAPI';
+import { addMediaToWordpress, addMediaToWordpressOpenAI, searchImages, updateMediaData } from './mediaAPI';
 
 export interface MediaState {
   media: DbMedia;
+  googleResults: Array<GoogleMedia>;
   status: 'idle' | 'loading' | 'failed';
+  gstatus: 'idle' | 'loading' | 'failed';
   uStatus: 'idle' | 'loading' | 'failed';
+  gindex?: string;
 }
 
 const initialState: MediaState = {
   media: {
     wpId: '0'
   },
+  googleResults: [],
   status: 'idle',
+  gstatus: 'idle',
   uStatus: 'idle',
 };
 
@@ -65,12 +70,21 @@ export const updateMedia = createAsyncThunk(
   }
 );
 
+export const searchGoogleImages = createAsyncThunk(
+  'media/searchImage',
+  async ({keyword, index}:{keyword: string, index?: string}) => {
+    const result = await searchImages(keyword, index);
+    return result.data;
+  }
+);
+
 export const mediaSlice = createSlice({
   name: 'media',
   initialState,
   reducers: {
-    increment: (state) => {
-      
+    clearGoogleResults: (state) => {
+      state.googleResults = []
+      state.gindex = undefined;
     },
   },
   extraReducers: (builder) => {
@@ -104,11 +118,22 @@ export const mediaSlice = createSlice({
       })
       .addCase(updateMedia.rejected, (state) => {
         state.uStatus = 'failed';
+      })
+      .addCase(searchGoogleImages.pending, (state) => {
+        state.gstatus = 'loading';
+      })
+      .addCase(searchGoogleImages.fulfilled, (state, action) => {
+        state.gstatus = 'idle';
+        state.googleResults = state.gindex ? [...state.googleResults, ...action.payload.response] : action.payload.response
+        state.gindex = action.payload.page
+      })
+      .addCase(searchGoogleImages.rejected, (state) => {
+        state.gstatus = 'failed';
       });
   },
 });
 
-export const { increment } = mediaSlice.actions;
+export const { clearGoogleResults } = mediaSlice.actions;
 
 export const selectMedia = (state: RootState) => state.media;
 

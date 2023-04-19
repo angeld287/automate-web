@@ -34,3 +34,8 @@ export interface DbMedia extends Media{
     articleId?: number;
     deleted?: boolean;
 }
+
+export interface GoogleMedia {
+    link: string;
+    thumbnailLink: string;
+}

@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import SearchKeywordsStepper from "../../../Components/App/SearchKeywordsStepper";
 import CustomLoader from "../../../Components/CustomLoader";
 import CustomButton from "../../../Components/CustomButton";
-import { ContainerOutlined, EditOutlined, FileAddOutlined, FileImageOutlined, FileTextOutlined } from "@ant-design/icons";
+import { ContainerOutlined, EditOutlined, FileAddOutlined, FileImageOutlined, FileTextOutlined, GoogleOutlined } from "@ant-design/icons";
 import AddImage from "../../../Components/App/AddImage";
 import './article.css'
 import { SubTitleContent } from "../../../interfaces/models/Article";
@@ -17,12 +17,14 @@ import AddIntroAndConclusion from "../../../Components/App/AddIntroAndConclusion
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ArticleState } from "../../../interfaces/Enums/States";
+import SearchGoogleImage from "../../../Components/App/SearchGoogleImage";
 
 
 const ContentEditor = () => {
 
     const [open, setOpen] = useState(false);
     const [addImageModal, openAddImageModal] = useState(false);
+    const [searchImageModal, openSearchImageModal] = useState(false);
     const [addContentModal, openAddContentModal] = useState(false);
     const [selectedItem, setSelectedItem] = useState<SubTitleContent>();
     const [imageType, setImageType ] = useState<'subtitle' | 'article'>('subtitle');
@@ -32,7 +34,7 @@ const ContentEditor = () => {
     let { id } = useParams();
     const article = useAppSelector(selectArticle);
     const dispatch = useAppDispatch();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     
     useEffect(() => {
         if(article.article.id === 0 && id) dispatch(getArticleByInternalId(parseInt(id)))
@@ -53,7 +55,7 @@ const ContentEditor = () => {
     }, [media]);
 
     useEffect(() => {
-        if(article.error !== false) toast(article.error)
+        if(article.error !== false) toast(article.error);
     }, [article.error]);
 
     useEffect(() => {
@@ -106,6 +108,7 @@ const ContentEditor = () => {
                                 actions={
                                 !paragraphLoading
                                     ? [
+                                        <CustomButton loading={media.media.subtitleId === item.id && media.status === 'loading'} onClick={(e) => { openSearchImageModal(true); setSelectedItem(item); setImageType('subtitle')}}><GoogleOutlined /></CustomButton>,
                                         <CustomButton loading={media.media.subtitleId === item.id && media.status === 'loading'} onClick={(e) => { openAddImageModal(true); setSelectedItem(item); setImageType('subtitle')}}><FileImageOutlined /></CustomButton>,
                                     ]
                                     : undefined
@@ -141,6 +144,13 @@ const ContentEditor = () => {
             setOpen={openAddImageModal} 
             title={selectedItem? selectedItem.name: ""} 
             type={imageType} 
+            relatedId={selectedItem ? selectedItem.id: 0}
+        />
+        <SearchGoogleImage
+            open={searchImageModal} 
+            setOpen={openSearchImageModal} 
+            title={selectedItem ? selectedItem.name: ""} 
+            type={imageType}
             relatedId={selectedItem ? selectedItem.id: 0}
         />
         <AddIntroAndConclusion

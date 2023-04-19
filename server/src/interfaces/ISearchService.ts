@@ -6,4 +6,6 @@ export interface ISearchService {
 
     getResultsAndSuggestions(keyword: string): Promise<IResultsAndSuggestions>;
 
+    searchImages(index: string, keyword: string): Promise<Array<any>>;
+
 }

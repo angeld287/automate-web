@@ -127,6 +127,13 @@ router.post(
 );
 
 router.post(
+    '/searchImages',
+    body('keyword', 'field keyword cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    ContentController.searchImages
+);
+
+router.post(
     '/translateParagraphs',
     body('article', 'field article cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
