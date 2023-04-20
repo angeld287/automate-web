@@ -1,4 +1,4 @@
-import { CloseCircleOutlined } from "@ant-design/icons";
+import { CloseCircleOutlined, GoogleOutlined } from "@ant-design/icons";
 import { Col, Input, Row, Tag } from "antd";
 import { Editor } from "react-draft-wysiwyg";
 import { ContentState, convertFromHTML, convertToRaw, EditorState, RawDraftContentBlock } from "draft-js";
@@ -14,7 +14,7 @@ import Locals from "../../../config/Locals";
 import { createArticleIntroAndConclusion } from "../../../features/article/articleSlice";
 import CustomButton from "../../CustomButton";
 
-const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({open, setOpen, type, title, articleId, relatedId, image, contents}) => {
+const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({article, setSelectedItem, setImageType, openImageSearch, open, setOpen, type}) => {
     //const [url, setUrl] = useState('');
     const [error, setError] = useState<undefined | string>(undefined);
     const [paragraph, setParagraph] = useState<Array<IContent>>([])
@@ -24,6 +24,11 @@ const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({open, setOpen,
 
     const dispatch = useAppDispatch();
     const media = useAppSelector(selectMedia);
+
+    const { title, contents } = article;
+    const articleId = article.internalId;
+    const relatedId = article.id;
+    const image = article.image?.source_url
 
     useEffect(() => {
         const blocks = convertToRaw(editorState.getCurrentContent()).blocks;
@@ -113,6 +118,7 @@ const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({open, setOpen,
                     </Row>
                     <Row>
                         <CustomButton onClick={() => openAICreateImage()} loading={media.status === 'loading'} style={{marginTop: 10}}>Create Image With AI</CustomButton>
+                        <CustomButton onClick={() => {openImageSearch(true); setImageType("article"); setSelectedItem(article)}} loading={media.status === 'loading'} style={{marginTop: 10, marginLeft: 10}}><GoogleOutlined/></CustomButton>
                     </Row>
                 </Col>}
                 <Col style={{marginLeft: 10, minHeight: 300, marginBottom: 100}} sm={type === 'introduction' ? 14 : undefined}>

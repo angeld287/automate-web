@@ -63,7 +63,7 @@ const Home = () => {
                 </Col>
             </Row>
             <ContentOrganizationStepper {...{open: openModal, setOpen: setOpenModal, article}}/>
-            <CustomModal title="Are you sure you want to send this article back?" open={confirmGoBack} setOpen={setConfirmGoBack} onOk={() => getArticleBack(article)}/>
+            <CustomModal title="Are you sure you want to send this article back?" open={confirmGoBack} setOpen={setConfirmGoBack} onOk={() => {getArticleBack(article); setConfirmGoBack(false)}}/>
         </>
     );
 }

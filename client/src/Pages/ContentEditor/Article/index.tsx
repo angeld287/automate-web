@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Avatar, Col, List, Row, Skeleton } from "antd";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { createWpPost, getArticleByInternalId, selectArticle, setErrorFalse } from "../../../features/article/articleSlice"
+import { createWpPost, getArticleByInternalId, selectArticle, setErrorFalse, updateArticleImage } from "../../../features/article/articleSlice"
 import { useNavigate, useParams } from "react-router-dom";
 import SearchKeywordsStepper from "../../../Components/App/SearchKeywordsStepper";
 import CustomLoader from "../../../Components/CustomLoader";
@@ -26,7 +26,7 @@ const ContentEditor = () => {
     const [addImageModal, openAddImageModal] = useState(false);
     const [searchImageModal, openSearchImageModal] = useState(false);
     const [addContentModal, openAddContentModal] = useState(false);
-    const [selectedItem, setSelectedItem] = useState<SubTitleContent>();
+    const [selectedItem, setSelectedItem] = useState<any>();
     const [imageType, setImageType ] = useState<'subtitle' | 'article'>('subtitle');
     const [contentType, setContentType ] = useState<'introduction' | 'conclusion'>('introduction');
     const media = useAppSelector(selectMedia);
@@ -46,11 +46,16 @@ const ContentEditor = () => {
     }, [open, id]);
 
     useEffect(() => {
-        let currentSubtitle = article.article.subtitles.find(subtitle => subtitle.id === media.media.subtitleId)
-        if(currentSubtitle) {
-            currentSubtitle = {...currentSubtitle, image: media.media};
-            dispatch(updateSubtitle(currentSubtitle));
-            openAddImageModal(false)
+        console.log(media.media)
+        if(media.media.subtitleId){
+            let currentSubtitle = article.article.subtitles.find(subtitle => subtitle.id === media.media.subtitleId)
+            if(currentSubtitle) {
+                currentSubtitle = {...currentSubtitle, image: media.media};
+                dispatch(updateSubtitle(currentSubtitle));
+                openAddImageModal(false)
+            }
+        }else {
+            dispatch(updateArticleImage(media.media));
         }
     }, [media]);
 
@@ -154,14 +159,14 @@ const ContentEditor = () => {
             relatedId={selectedItem ? selectedItem.id: 0}
         />
         <AddIntroAndConclusion
+            setSelectedItem={setSelectedItem}
+            setImageType={setImageType}
+            imageSearch={searchImageModal}
+            openImageSearch={openSearchImageModal}
             open={addContentModal} 
             setOpen={openAddContentModal} 
-            title={article.article.title}
-            articleId={article.article.internalId}
-            relatedId={article.article.id}
             type={contentType}
-            image={article.article.image?.source_url}
-            contents={article.article.contents}
+            article={article.article}
         />
     </>;
 }

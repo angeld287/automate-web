@@ -8,6 +8,7 @@ import { searchKeywordContent } from '../subtitle/subtitleAPI';
 import { ArticleState as State} from '../../interfaces/Enums/States'
 import { createArticle, createContentForArticle, createEnContent, createEnContentForArticle, createEnSubtitle, createPost, editArticleState, editArticleTitle, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
 import Content from '../../interfaces/models/Content';
+import { DbMedia } from '../../interfaces/models/Media';
 
 export interface ArticleState {
   article: IArticle;
@@ -209,6 +210,9 @@ export const articleSlice = createSlice({
       _subtitles[_subtitles.findIndex(subtitle => action.payload.id === subtitle.id)] = action.payload
       state.article.subtitles = _subtitles
     },
+    updateArticleImage: (state, action: PayloadAction<DbMedia>) => {
+      state.article.image = action.payload
+    },
     addTitle: (state, action: PayloadAction<string>) => {
       state.article.title = action.payload
     },
@@ -314,7 +318,7 @@ export const articleSlice = createSlice({
   },
 });
 
-export const { setErrorFalse, updateSubtitle, setKewordsTranslated, addCategory, addTitle, addSubtitles, setArticleInititalState } = articleSlice.actions;
+export const { updateArticleImage, setErrorFalse, updateSubtitle, setKewordsTranslated, addCategory, addTitle, addSubtitles, setArticleInititalState } = articleSlice.actions;
 
 export const selectArticle = (state: RootState) => state.article;
 
