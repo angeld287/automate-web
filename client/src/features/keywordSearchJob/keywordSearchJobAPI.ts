@@ -1,5 +1,19 @@
 import Locals from "../../config/Locals";
 
+
+export async function startNewJob(longTailKeyword: string, mainKeywords: Array<string>) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}keywordsSearchJob/start`, {
+    method: "GET",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({longTailKeyword, mainKeywords})
+  })
+
+  return await fetchData.json();
+}
+
 export async function getAllSearchJobs() {
   const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}keywords/getAllSearchJobs`, {
     method: "GET",

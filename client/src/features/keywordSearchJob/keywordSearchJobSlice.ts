@@ -3,7 +3,7 @@ import { RootState } from '../../app/store';
 import IKeyword, { IKeywordSearchJob } from '../../interfaces/models/Keyword';
 import { getBearer } from '../autenticate/authenticateAPI';
 import { createArticleFromKeyword, createKeyword, updateKeywordCategory } from '../keywords/keywordAPI';
-import { deleteKeywordSearchJob, getAllSearchJobs, getSearchJob, selectPotentialKeyword } from './keywordSearchJobAPI';
+import { deleteKeywordSearchJob, getAllSearchJobs, getSearchJob, selectPotentialKeyword, startNewJob } from './keywordSearchJobAPI';
 
 export interface keywordSearchJobState {
   keywordSearchJob: IKeywordSearchJob;
@@ -25,6 +25,18 @@ const initialState: keywordSearchJobState = {
   AllJobs: [],
   AICreateStatus: 'idle',
 };
+
+export const startKeywordsSearchJob = createAsyncThunk(
+  'keywordSearchJob/start',
+  async ({longTailKeyword, mainKeywords}: {longTailKeyword: string, mainKeywords: Array<string>}) => {
+    try {    
+      const result = await startNewJob(longTailKeyword, mainKeywords);
+      return result.data.response;
+    } catch (error) {
+      console.log(error) 
+    }
+  }
+);
 
 export const getAllJobs = createAsyncThunk(
   'keywordSearchJob/getAll',
@@ -123,6 +135,13 @@ export const keywordSearchJobSlice = createSlice({
       .addCase(getAllJobs.fulfilled, (state, action: PayloadAction<Array<IKeywordSearchJob>>) => {
         state.status = 'idle';
         state.AllJobs = action.payload.sort((a,b) => {
+          const createAtA: any = a.createdAt ? new Date(a.createdAt) : 0;
+          const createAtB: any = b.createdAt ? new Date(b.createdAt) : 0;
+          return (a.createdAt && b.createdAt) ? createAtB - createAtA : 1
+        });
+      })
+      .addCase(startKeywordsSearchJob.fulfilled, (state, action: PayloadAction<IKeywordSearchJob>) => {
+        state.AllJobs = [...state.AllJobs, action.payload].sort((a,b) => {
           const createAtA: any = a.createdAt ? new Date(a.createdAt) : 0;
           const createAtB: any = b.createdAt ? new Date(b.createdAt) : 0;
           return (a.createdAt && b.createdAt) ? createAtB - createAtA : 1
