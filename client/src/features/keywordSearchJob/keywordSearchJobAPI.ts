@@ -3,7 +3,7 @@ import Locals from "../../config/Locals";
 
 export async function startNewJob(longTailKeyword: string, mainKeywords: Array<string>) {
   const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}keywordsSearchJob/start`, {
-    method: "GET",
+    method: "POST",
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json'

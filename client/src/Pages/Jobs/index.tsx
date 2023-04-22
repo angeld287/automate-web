@@ -25,7 +25,7 @@ const Jobs = () => {
                 </Col>
             </Row>
             <CustomModal {...{open, setOpen}} title="Create new Job" width={800} onOk={() => {
-                dispatch(startKeywordsSearchJob({longTailKeyword, mainKeywords: mainKeywords.map(key => key.label)}));
+                dispatch(startKeywordsSearchJob({longTailKeyword, mainKeywords: mainKeywords.map(keyword => keyword.label)}));
                 setOpen(false)
             }}>
                 <CustomInputGroup value={longTailKeyword} defaultValue={longTailKeyword} onChange={(e) => setLongTailKeyword(e.target.value)} label="Long Tail Keyword"></CustomInputGroup>

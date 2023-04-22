@@ -31,7 +31,7 @@ export const startKeywordsSearchJob = createAsyncThunk(
   async ({longTailKeyword, mainKeywords}: {longTailKeyword: string, mainKeywords: Array<string>}) => {
     try {    
       const result = await startNewJob(longTailKeyword, mainKeywords);
-      return result.data.response;
+      return result.data.jobDetails;
     } catch (error) {
       console.log(error) 
     }

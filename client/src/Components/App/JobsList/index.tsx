@@ -27,8 +27,9 @@ const JobsList: React.FC = () => {
           }}
           dataSource={AllJobs}
           renderItem={(item) => (
-            <List.Item>
+            <List.Item key={item.id}>
                 <Card 
+                    key={item.id}
                     style={{width: 220}} 
                     title={moment(item.createdAt).fromNow()}
                     actions={[<OrderedListOutlined onClick={() => {onClickEdit(item.id)}} key="keywords" />, <DeleteOutlined />]}
@@ -36,7 +37,7 @@ const JobsList: React.FC = () => {
                     <Row>{item.longTailKeyword}</Row>
                     <Row>
                         <Space size={[0, 8]} wrap>
-                            {item.mainKeywords?.split(",").map(keyword => <Tag color="#87d068">{keyword}</Tag>)}
+                            {item.mainKeywords?.split(",").map(keyword => <Tag color="#87d068" key={keyword}>{keyword}</Tag>)}
                         </Space>
                     </Row>
                 </Card>
