@@ -1,5 +1,5 @@
 import { CloseCircleOutlined, SearchOutlined, SelectOutlined } from "@ant-design/icons";
-import { Card, Checkbox, Col, Divider, List, Row, Skeleton, Tag } from "antd";
+import { Card, Checkbox, Col, Divider, List, Radio, Row, Skeleton, Switch, Tag } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { clearGoogleResults, createMedia, createMediaOpenAI, searchGoogleImages, selectMedia } from "../../../features/media/mediaSlice";
@@ -17,6 +17,7 @@ const { Text } = Typography;
 const SearchGoogleImage: React.FC<ISearchGoogleImage> = ({open, setOpen, title, type, relatedId}) => {
     const [url, setUrl] = useState('');
     const [imageTitle, setTitle] = useState('');
+    const [fullImage, setFullImage] = useState(false);
     const [error, setError] = useState<undefined | string>(undefined);
     const dispatch = useAppDispatch();
     const media = useAppSelector(selectMedia);
@@ -55,8 +56,9 @@ const SearchGoogleImage: React.FC<ISearchGoogleImage> = ({open, setOpen, title, 
     return (
         <CustomModal width={'80%'} title="Choose the preferred image" {...{open, setOpen}} confirmLoading={media.gstatus === 'loading'}>
             <Row>
-                <Col span={22}><CustomInput style={{marginTop: 5}} value={imageTitle} defaultValue={imageTitle} onChange={(e) => {e.preventDefault(); setTitle(e.target.value)}} placeholder="Image title" dataTestId="imput-image-title" label="Image title"/></Col>
+                <Col span={20}><CustomInput style={{marginTop: 5}} value={imageTitle} defaultValue={imageTitle} onChange={(e) => {e.preventDefault(); setTitle(e.target.value)}} placeholder="Image title" dataTestId="imput-image-title" label="Image title"/></Col>
                 <Col><CustomButton style={{marginLeft: 5, marginTop: 9}} onClick={() => searchImages()}><SearchOutlined /></CustomButton></Col>
+                <Col><Switch style={{marginLeft: 5, marginTop: 14}} onClick={() => setFullImage(true)}></Switch></Col>
             </Row>
             <Row>
                 <div id="scrollableDiv" style={{
@@ -75,23 +77,46 @@ const SearchGoogleImage: React.FC<ISearchGoogleImage> = ({open, setOpen, title, 
                         endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
                         scrollableTarget="scrollableDiv"
                     >
-                        <List
-                            loading={media.gstatus === 'loading'}
-                            className="draft-articles-list"
-                            itemLayout="horizontal"
-                            dataSource={media.googleResults}
-                            renderItem={(image) => (
-                                <List.Item>
-                                    <Card
-                                        onDoubleClick={() => uploadImage(image.link)}
-                                        //actions={[<SelectOutlined />]}
-                                        key={image.link}
-                                        //style={{ marginTop: 10 }}
-                                        cover={<img src={image.link}/>}
-                                    />
-                                </List.Item>
-                            )}
-                        />
+                        {fullImage &&
+                            <List
+                                loading={media.gstatus === 'loading'}
+                                className="draft-articles-list"
+                                itemLayout="horizontal"
+                                dataSource={media.googleResults}
+                                renderItem={(image) => (
+                                    <List.Item>
+                                        <Card
+                                            onDoubleClick={() => uploadImage(image.link)}
+                                            //actions={[<SelectOutlined />]}
+                                            key={image.link}
+                                            //style={{ marginTop: 10 }}
+                                            cover={<img src={image.link}/>}
+                                        />
+                                    </List.Item>
+                                )}
+                            />
+                        }
+                        {!fullImage &&
+                            <List
+                                grid={{
+                                    gutter: 16
+                                }}
+                                dataSource={media.googleResults}
+                                renderItem={(item) => (
+                                    <List.Item key={item.link}>
+                                        <Card 
+                                            onDoubleClick={() => uploadImage(item.link)}
+                                            key={item.link}
+                                            style={{width: 220}} 
+                                            cover={<img src={item.thumbnailLink}/>}
+                                            //actions={[<OrderedListOutlined onClick={() => {onClickEdit(item.id)}} key="keywords" />, <DeleteOutlined />]}
+                                        >
+                                        </Card>
+                                    </List.Item>
+                                )}
+                                />
+                        }
+                        
                     </InfiniteScroll>
                 </div>
             </Row>
