@@ -80,7 +80,7 @@ export class articleService implements IArticleService {
                     articleId: row.articles_id,
                     content: contents.filter(content => content.contentLanguage === Languages.SPANISH),
                     enContent: contents.filter(content => content.contentLanguage === Languages.ENGLISH),
-                    image: media[0],
+                    images: media,
                 })
             }));
 
@@ -378,7 +378,7 @@ export class articleService implements IArticleService {
                 translatedName: result.rows[0].translated_name,
                 content: contents.filter(content => content.contentLanguage === Languages.SPANISH),
                 enContent: contents.filter(content => content.contentLanguage === Languages.ENGLISH),
-                image: media[0]
+                images: media
             }
 
             return subtitle;

@@ -52,3 +52,15 @@ export async function searchImages(keyword: string, index?: string) {
   })
   return result.json()
 }
+
+export async function deleteImages(id: string) {
+  const result = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}deleteImage`, {
+    method: "DELETE",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({id})
+  })
+  return result.json()
+}

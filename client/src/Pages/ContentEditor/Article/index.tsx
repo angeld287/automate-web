@@ -9,16 +9,15 @@ import CustomButton from "../../../Components/CustomButton";
 import { ContainerOutlined, EditOutlined, FileAddOutlined, FileImageOutlined, FileTextOutlined, GoogleOutlined } from "@ant-design/icons";
 import AddImage from "../../../Components/App/AddImage";
 import './article.css'
-import { SubTitleContent } from "../../../interfaces/models/Article";
 import Locals from "../../../config/Locals";
-import { selectMedia } from "../../../features/media/mediaSlice";
+import { deleteWpImage, selectMedia } from "../../../features/media/mediaSlice";
 import { updateSubtitle } from "../../../features/article/articleSlice";
 import AddIntroAndConclusion from "../../../Components/App/AddIntroAndConclusion";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ArticleState } from "../../../interfaces/Enums/States";
 import SearchGoogleImage from "../../../Components/App/SearchGoogleImage";
-
+import CustomModal from "../../../Components/CustomModal";
 
 const ContentEditor = () => {
 
@@ -26,6 +25,8 @@ const ContentEditor = () => {
     const [addImageModal, openAddImageModal] = useState(false);
     const [searchImageModal, openSearchImageModal] = useState(false);
     const [addContentModal, openAddContentModal] = useState(false);
+    const [deleteModal, openDeleteModal] = useState(false);
+    const [currentImageId, setCurrentImageId] = useState("");
     const [selectedItem, setSelectedItem] = useState<any>();
     const [imageType, setImageType ] = useState<'subtitle' | 'article'>('subtitle');
     const [contentType, setContentType ] = useState<'introduction' | 'conclusion'>('introduction');
@@ -46,11 +47,10 @@ const ContentEditor = () => {
     }, [open, id]);
 
     useEffect(() => {
-        console.log(media.media)
         if(media.media.subtitleId){
             let currentSubtitle = article.article.subtitles.find(subtitle => subtitle.id === media.media.subtitleId)
             if(currentSubtitle) {
-                currentSubtitle = {...currentSubtitle, image: media.media};
+                currentSubtitle = {...currentSubtitle, images: currentSubtitle.images ? [...currentSubtitle.images, media.media] : [media.media]};
                 dispatch(updateSubtitle(currentSubtitle));
                 openAddImageModal(false)
             }
@@ -81,7 +81,15 @@ const ContentEditor = () => {
     const publishWpPost = useCallback(() => {
         dispatch(setErrorFalse());
         dispatch(createWpPost(article.article));
-    }, [article.article])
+    }, [article.article]);
+
+    const deleteImage = useCallback(() => {   
+        if(currentImageId !== ""){
+            dispatch(deleteWpImage(currentImageId));
+            setCurrentImageId("");
+            openDeleteModal(false);
+        }
+    }, [currentImageId])
 
     if(loading && article.article.subtitles.length === 0) return <CustomLoader/>
 
@@ -104,7 +112,7 @@ const ContentEditor = () => {
                     renderItem={(item) => {
                         const contentText = item.content?.filter(paragraph => paragraph.selected).sort((a, b) => (!a.orderNumber || !b.orderNumber) ? 1 : a.orderNumber < b.orderNumber ? -1 : 1).map(paragraph => <p style={{textAlign: 'start'}} key={paragraph.id}>{paragraph.content}</p>)
                         const paragraphLoading = item.content?.filter(paragraph => paragraph.selected).length === 0;
-                        const image = item.image ? item.image.source_url : Locals.config().DEFAULT_IMAGE;
+                        const images = item.images ? item.images : [{source_url: Locals.config().DEFAULT_IMAGE, id: 0}];
                         //console.log(item.content?.filter(paragraph => paragraph.selected)[0].content.split(' ').length)
                         return (
                             <List.Item
@@ -120,11 +128,19 @@ const ContentEditor = () => {
                                 }
                                 extra={
                                 !paragraphLoading && (
-                                    <img
+                                    images.map(image => <div style={{marginTop: 5}} key={image.source_url} onDoubleClick={() => {
+                                            if(image.id){
+                                                openDeleteModal(true); 
+                                                setCurrentImageId(image.id.toString());
+                                            }
+                                        }}>
+                                        <img
+                                        key={image.source_url}
                                         width={272}
                                         alt="logo"
-                                        src={image}
+                                        src={image.source_url}
                                     />
+                                    </div>)
                                 )
                                 }
                             >
@@ -168,6 +184,7 @@ const ContentEditor = () => {
             type={contentType}
             article={article.article}
         />
+        <CustomModal open={deleteModal} setOpen={openDeleteModal} title="Are you sure you want to delete the iamge?" onOk={() => deleteImage()}></CustomModal>
     </>;
 }
 

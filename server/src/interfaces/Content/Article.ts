@@ -33,7 +33,7 @@ export interface SubTitleContent {
     content?: Array<IContent>;
     enContent?: Array<IContent>;
     translatedContent?: string;
-    image?: DbMedia
+    images?: Array<DbMedia>;
     error?: boolean | ProcessError
 }
 

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import Media, { DbMedia, GoogleMedia } from '../../interfaces/models/Media';
 import { getBearer } from '../autenticate/authenticateAPI';
-import { addMediaToWordpress, addMediaToWordpressOpenAI, searchImages, updateMediaData } from './mediaAPI';
+import { addMediaToWordpress, addMediaToWordpressOpenAI, deleteImages, searchImages, updateMediaData } from './mediaAPI';
 
 export interface MediaState {
   media: DbMedia;
@@ -74,6 +74,14 @@ export const searchGoogleImages = createAsyncThunk(
   'media/searchImage',
   async ({keyword, index}:{keyword: string, index?: string}) => {
     const result = await searchImages(keyword, index);
+    return result.data;
+  }
+);
+
+export const deleteWpImage = createAsyncThunk(
+  'media/deleteImage',
+  async (id: string) => {
+    const result = await deleteImages(id);
     return result.data;
   }
 );

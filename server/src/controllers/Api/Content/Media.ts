@@ -50,10 +50,10 @@ class Media {
             if(type === 'subtitle') {
                 const subtitleImages = await articleServices.getMediaBySubtitleId(relatedId);
 
-                await Promise.all(subtitleImages.map(async (image) => {
-                    await articleServices.deleteMedia(parseInt(image.id), parseInt(req.session.passport.user.id));
-                    await _mediaService.delete(parseInt(image.wpId), req.headers.authorization)
-                }))
+                //await Promise.all(subtitleImages.map(async (image) => {
+                //    await articleServices.deleteMedia(parseInt(image.id), parseInt(req.session.passport.user.id));
+                //    await _mediaService.delete(parseInt(image.wpId), req.headers.authorization)
+                //}))
                 
                 dbMedia = await articleServices.createMediaForSubtitle({
                     source_url: media.source_url,
@@ -136,9 +136,11 @@ class Media {
             }
 
             let _mediaService: IMediaService = new mediaService();
-            const id = req.body.id
+            const articleServices: IArticleService = new articleService();
+            const id = req.body.id;
 
-            const media: IMediaServiceResponse = (await _mediaService.delete(id, req.headers.authorization))
+            const media = await articleServices.deleteMedia(parseInt(id), parseInt(req.session.passport.user.id));
+            const WPmedia: IMediaServiceResponse = (await _mediaService.delete(parseInt(media.wpId), req.headers.authorization))
 
             return new SuccessResponse('Success', {
                 success: true,
