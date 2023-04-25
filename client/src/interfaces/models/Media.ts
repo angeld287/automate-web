@@ -33,6 +33,7 @@ export interface DbMedia extends Media{
     subtitleId?: number;
     articleId?: number;
     deleted?: boolean;
+    orderNumber?: string;
 }
 
 export interface GoogleMedia {

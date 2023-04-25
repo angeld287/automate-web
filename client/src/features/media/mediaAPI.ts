@@ -2,7 +2,7 @@ import Locals from "../../config/Locals";
 import Media from "../../interfaces/models/Media";
 
 // A mock function to mimic making an async request for data
-export async function addMediaToWordpress(imageAddress: string, title: string, type: string, relatedId: number, token: string) {
+export async function addMediaToWordpress(imageAddress: string, title: string, type: string, relatedId: number, orderNumber: string, token: string) {
   const result = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}uploadImage`, {
     method: "POST",
     credentials: 'include',
@@ -10,7 +10,7 @@ export async function addMediaToWordpress(imageAddress: string, title: string, t
       'Content-Type': 'application/json',
       'Authorization': token
     },
-    body: JSON.stringify({imageAddress, title, type, relatedId})
+    body: JSON.stringify({imageAddress, title, type, relatedId, orderNumber})
   })
   return result.json()
 }

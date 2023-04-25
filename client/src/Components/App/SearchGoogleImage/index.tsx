@@ -1,20 +1,17 @@
-import { CloseCircleOutlined, SearchOutlined, SelectOutlined } from "@ant-design/icons";
-import { Card, Checkbox, Col, Divider, List, Radio, Row, Skeleton, Switch, Tag } from "antd";
+import { CloseCircleOutlined, SearchOutlined } from "@ant-design/icons";
+import { Card, Col, Divider, List, Row, Skeleton, Switch, Tag } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { clearGoogleResults, createMedia, createMediaOpenAI, searchGoogleImages, selectMedia } from "../../../features/media/mediaSlice";
+import { clearGoogleResults, createMedia, searchGoogleImages, selectMedia } from "../../../features/media/mediaSlice";
 import { isValidImageUrl, isValidUrl } from "../../../utils/functions";
 import CustomInput from "../../CustomInput";
 import CustomModal from "../../CustomModal";
 import ISearchGoogleImage from "./ISearchGoogleImage";
-import { Typography } from 'antd';
 import CustomButton from "../../CustomButton";
 import InfiniteScroll from "react-infinite-scroll-component";
+import CustomInputGroup from "../../CustomInputGroup";
 
-const { Text } = Typography;
-
-
-const SearchGoogleImage: React.FC<ISearchGoogleImage> = ({open, setOpen, title, type, relatedId}) => {
+const SearchGoogleImage: React.FC<ISearchGoogleImage> = ({open, setOpen, title, type, relatedId, setOrderNumber, orderNumber}) => {
     const [url, setUrl] = useState('');
     const [imageTitle, setTitle] = useState('');
     const [fullImage, setFullImage] = useState(false);
@@ -22,9 +19,8 @@ const SearchGoogleImage: React.FC<ISearchGoogleImage> = ({open, setOpen, title, 
     const dispatch = useAppDispatch();
     const media = useAppSelector(selectMedia);
     
-
     useEffect(() => {
-        return () => setUrl('')
+        return () => setUrl('');
     }, [])
 
     useEffect(() => {
@@ -44,7 +40,7 @@ const SearchGoogleImage: React.FC<ISearchGoogleImage> = ({open, setOpen, title, 
         if(link === ''){
             return setError('Please provide an image url.')
         }
-        dispatch(createMedia({imageAddress: link, title: imageTitle, type, relatedId}))
+        dispatch(createMedia({imageAddress: link, title: imageTitle, type, relatedId, orderNumber}))
         setOpen(false)
     }, [relatedId, imageTitle]);
 
@@ -109,7 +105,7 @@ const SearchGoogleImage: React.FC<ISearchGoogleImage> = ({open, setOpen, title, 
                                             key={item.link}
                                             style={{width: 220}} 
                                             cover={<img src={item.thumbnailLink}/>}
-                                            //actions={[<OrderedListOutlined onClick={() => {onClickEdit(item.id)}} key="keywords" />, <DeleteOutlined />]}
+                                            actions={[<CustomInputGroup key="order" label="" defaultValue={orderNumber} value={orderNumber} onChange={(e) => setOrderNumber(e.target.value)} />]}
                                         >
                                         </Card>
                                     </List.Item>

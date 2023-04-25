@@ -76,7 +76,7 @@ const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({article, setSe
         }
 
         setError(undefined)
-        dispatch(createMedia({imageAddress: url, title: title ? title : "", type: 'article', relatedId}))
+        dispatch(createMedia({imageAddress: url, title: title ? title : "", type: 'article', relatedId, orderNumber: ""}))
     } , [title, relatedId])
 
     const addContent = useCallback(() => {

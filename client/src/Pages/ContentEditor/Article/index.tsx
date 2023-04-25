@@ -31,6 +31,7 @@ const ContentEditor = () => {
     const [imageType, setImageType ] = useState<'subtitle' | 'article'>('subtitle');
     const [contentType, setContentType ] = useState<'introduction' | 'conclusion'>('introduction');
     const media = useAppSelector(selectMedia);
+    const [orderNumber, setOrderNumber] = useState<string>("")
 
     let { id } = useParams();
     const article = useAppSelector(selectArticle);
@@ -113,7 +114,6 @@ const ContentEditor = () => {
                         const contentText = item.content?.filter(paragraph => paragraph.selected).sort((a, b) => (!a.orderNumber || !b.orderNumber) ? 1 : a.orderNumber < b.orderNumber ? -1 : 1).map(paragraph => <p style={{textAlign: 'start'}} key={paragraph.id}>{paragraph.content}</p>)
                         const paragraphLoading = item.content?.filter(paragraph => paragraph.selected).length === 0;
                         const images = item.images ? item.images : [{source_url: Locals.config().DEFAULT_IMAGE, id: 0}];
-                        //console.log(item.content?.filter(paragraph => paragraph.selected)[0].content.split(' ').length)
                         return (
                             <List.Item
                                 style={{textAlign: 'right'}}
@@ -168,6 +168,7 @@ const ContentEditor = () => {
             relatedId={selectedItem ? selectedItem.id: 0}
         />
         <SearchGoogleImage
+            {...{orderNumber, setOrderNumber}}
             open={searchImageModal} 
             setOpen={openSearchImageModal} 
             title={selectedItem ? selectedItem.name: ""} 
