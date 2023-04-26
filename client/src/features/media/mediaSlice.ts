@@ -94,6 +94,11 @@ export const mediaSlice = createSlice({
       state.googleResults = []
       state.gindex = undefined;
     },
+    clearMedia: (state) => {
+      state.media = {
+        wpId: '0'
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -141,7 +146,7 @@ export const mediaSlice = createSlice({
   },
 });
 
-export const { clearGoogleResults } = mediaSlice.actions;
+export const { clearGoogleResults, clearMedia } = mediaSlice.actions;
 
 export const selectMedia = (state: RootState) => state.media;
 

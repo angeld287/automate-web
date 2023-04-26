@@ -10,7 +10,7 @@ import { ContainerOutlined, EditOutlined, FileAddOutlined, FileImageOutlined, Fi
 import AddImage from "../../../Components/App/AddImage";
 import './article.css'
 import Locals from "../../../config/Locals";
-import { deleteWpImage, selectMedia } from "../../../features/media/mediaSlice";
+import { clearMedia, deleteWpImage, selectMedia } from "../../../features/media/mediaSlice";
 import { updateSubtitle } from "../../../features/article/articleSlice";
 import AddIntroAndConclusion from "../../../Components/App/AddIntroAndConclusion";
 import { toast } from 'react-toastify';
@@ -31,7 +31,6 @@ const ContentEditor = () => {
     const [imageType, setImageType ] = useState<'subtitle' | 'article'>('subtitle');
     const [contentType, setContentType ] = useState<'introduction' | 'conclusion'>('introduction');
     const media = useAppSelector(selectMedia);
-    const [orderNumber, setOrderNumber] = useState<string>("")
 
     let { id } = useParams();
     const article = useAppSelector(selectArticle);
@@ -54,6 +53,7 @@ const ContentEditor = () => {
                 currentSubtitle = {...currentSubtitle, images: currentSubtitle.images ? [...currentSubtitle.images, media.media] : [media.media]};
                 dispatch(updateSubtitle(currentSubtitle));
                 openAddImageModal(false)
+                dispatch(clearMedia());
             }
         }else {
             dispatch(updateArticleImage(media.media));
@@ -168,7 +168,6 @@ const ContentEditor = () => {
             relatedId={selectedItem ? selectedItem.id: 0}
         />
         <SearchGoogleImage
-            {...{orderNumber, setOrderNumber}}
             open={searchImageModal} 
             setOpen={openSearchImageModal} 
             title={selectedItem ? selectedItem.name: ""} 

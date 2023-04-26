@@ -11,13 +11,14 @@ import CustomButton from "../../CustomButton";
 import InfiniteScroll from "react-infinite-scroll-component";
 import CustomInputGroup from "../../CustomInputGroup";
 
-const SearchGoogleImage: React.FC<ISearchGoogleImage> = ({open, setOpen, title, type, relatedId, setOrderNumber, orderNumber}) => {
+const SearchGoogleImage: React.FC<ISearchGoogleImage> = ({open, setOpen, title, type, relatedId}) => {
     const [url, setUrl] = useState('');
     const [imageTitle, setTitle] = useState('');
     const [fullImage, setFullImage] = useState(false);
     const [error, setError] = useState<undefined | string>(undefined);
     const dispatch = useAppDispatch();
     const media = useAppSelector(selectMedia);
+    const [orderNumber, setOrderNumber] = useState<string>("")
     
     useEffect(() => {
         return () => setUrl('');
@@ -40,9 +41,15 @@ const SearchGoogleImage: React.FC<ISearchGoogleImage> = ({open, setOpen, title, 
         if(link === ''){
             return setError('Please provide an image url.')
         }
+
+        if(orderNumber === ''){
+            return setError('Please provide an order number.')
+        }
+
         dispatch(createMedia({imageAddress: link, title: imageTitle, type, relatedId, orderNumber}))
-        setOpen(false)
-    }, [relatedId, imageTitle]);
+        setOpen(false);
+        setOrderNumber("");
+    }, [relatedId, imageTitle, orderNumber]);
 
     const searchImages = useCallback(() => {
         dispatch(clearGoogleResults())
@@ -52,7 +59,7 @@ const SearchGoogleImage: React.FC<ISearchGoogleImage> = ({open, setOpen, title, 
     return (
         <CustomModal width={'80%'} title="Choose the preferred image" {...{open, setOpen}} confirmLoading={media.gstatus === 'loading'}>
             <Row>
-                <Col span={20}><CustomInput style={{marginTop: 5}} value={imageTitle} defaultValue={imageTitle} onChange={(e) => {e.preventDefault(); setTitle(e.target.value)}} placeholder="Image title" dataTestId="imput-image-title" label="Image title"/></Col>
+                <Col span={20}><CustomInput onPressEnter={() => searchImages()} style={{marginTop: 5}} value={imageTitle} defaultValue={imageTitle} onChange={(e) => {e.preventDefault(); setTitle(e.target.value)}} placeholder="Image title" dataTestId="imput-image-title" label="Image title"/></Col>
                 <Col><CustomButton style={{marginLeft: 5, marginTop: 9}} onClick={() => searchImages()}><SearchOutlined /></CustomButton></Col>
                 <Col><Switch style={{marginLeft: 5, marginTop: 14}} onClick={() => setFullImage(true)}></Switch></Col>
             </Row>
