@@ -42,9 +42,9 @@ const SearchGoogleImage: React.FC<ISearchGoogleImage> = ({open, setOpen, title, 
             return setError('Please provide an image url.')
         }
 
-        if(orderNumber === ''){
-            return setError('Please provide an order number.')
-        }
+        //if(orderNumber === ''){
+        //    return setError('Please provide an order number.')
+        //}
 
         dispatch(createMedia({imageAddress: link, title: imageTitle, type, relatedId, orderNumber}))
         setOpen(false);

@@ -776,8 +776,8 @@ export class articleService implements IArticleService {
     async createMediaForArticle(media: DbMedia): Promise<DbMedia> {
         const createArticleImage = {
             name: 'create-article-image',
-            text: 'INSERT INTO public.media(source_url, wp_id, article_id, title) VALUES ($1, $2, $3, $4) RETURNING id, TRIM(source_url) AS source_url, wp_id, article_id, title;',
-            values: [media.source_url, media.wpId, media.articleId, media.title],
+            text: 'INSERT INTO public.media(source_url, wp_id, article_id, title, order_number) VALUES ($1, $2, $3, $4, $5) RETURNING id, TRIM(source_url) AS source_url, wp_id, article_id, title, order_number;',
+            values: [media.source_url, media.wpId, media.articleId, media.title, media.orderNumber],
         }
 
         return await this.createMedia(createArticleImage);
@@ -786,8 +786,8 @@ export class articleService implements IArticleService {
     async createMediaForSubtitle(media: DbMedia): Promise<DbMedia> {
         const createSubtitleImage = {
             name: 'create-subtitle-image',
-            text: 'INSERT INTO public.media(source_url, wp_id, subtitle_id, title) VALUES ($1, $2, $3, $4) RETURNING id, TRIM(source_url) AS source_url, wp_id, subtitle_id, title;',
-            values: [media.source_url, media.wpId, media.subtitleId, media.title],
+            text: 'INSERT INTO public.media(source_url, wp_id, subtitle_id, title, order_number) VALUES ($1, $2, $3, $4, $5) RETURNING id, TRIM(source_url) AS source_url, wp_id, subtitle_id, title, order_number;',
+            values: [media.source_url, media.wpId, media.subtitleId, media.title, media.orderNumber],
         }
 
         return await this.createMedia(createSubtitleImage);
@@ -813,6 +813,7 @@ export class articleService implements IArticleService {
                 wpId: result.rows[0].wp_id,
                 subtitleId: result.rows[0].subtitle_id,
                 title: result.rows[0].title,
+                orderNumber: result.rows[0].order_number,
             }
             
             return _media;
@@ -825,7 +826,7 @@ export class articleService implements IArticleService {
         const getQuery = {
             name: 'get-media-by-subtitle',
             text:  `
-                SELECT id, source_url, wp_id, subtitle_id, title 
+                SELECT id, source_url, wp_id, subtitle_id, title, order_number
                 FROM public.media 
                 WHERE deleted IS NOT true AND subtitle_id = $1;
             `,
@@ -848,6 +849,7 @@ export class articleService implements IArticleService {
                     wpId: row.wp_id,
                     subtitleId: row.subtitle_id,
                     title: row.title,
+                    orderNumber: row.order_number,
                 })
             });
             return media;
@@ -860,7 +862,7 @@ export class articleService implements IArticleService {
         const getQuery = {
             name: 'get-media-by-article',
             text:  `
-                SELECT id, source_url, wp_id, article_id, title 
+                SELECT id, source_url, wp_id, article_id, title, order_number
                 FROM public.media 
                 WHERE deleted IS NOT true AND article_id = $1;
             `,
@@ -883,6 +885,7 @@ export class articleService implements IArticleService {
                     wpId: row.wp_id,
                     articleId: row.article_id,
                     title: row.title,
+                    orderNumber: row.order_number
                 })
             });
             return media;
@@ -895,7 +898,7 @@ export class articleService implements IArticleService {
         try {
             const updateMedia = {
                 name: 'update-image',
-                text: 'UPDATE public.media SET title=$1 WHERE id = $2 RETURNING id, TRIM(source_url) AS source_url, wp_id, subtitle_id, title;',
+                text: 'UPDATE public.media SET title=$1 WHERE id = $2 RETURNING id, TRIM(source_url) AS source_url, wp_id, subtitle_id, title, order_number;',
                 values: [media.title, media.id],
             }
 
@@ -917,6 +920,7 @@ export class articleService implements IArticleService {
                 wpId: result.rows[0].wp_id,
                 subtitleId: result.rows[0].subtitle_id,
                 title: result.rows[0].title,
+                orderNumber: result.rows[0].order_number
             }
             
             return _media;
@@ -929,7 +933,7 @@ export class articleService implements IArticleService {
         try {
             const updateMedia = {
                 name: 'delete-image',
-                text: 'UPDATE public.media SET deleted=true, deleted_by=$1 WHERE id = $2 RETURNING id, TRIM(source_url) AS source_url, wp_id, subtitle_id, title;',
+                text: 'UPDATE public.media SET deleted=true, deleted_by=$1 WHERE id = $2 RETURNING id, TRIM(source_url) AS source_url, wp_id, subtitle_id, title, order_number;',
                 values: [userId, id],
             }
 
@@ -951,6 +955,7 @@ export class articleService implements IArticleService {
                 wpId: result.rows[0].wp_id,
                 subtitleId: result.rows[0].subtitle_id,
                 title: result.rows[0].title,
+                orderNumber: result.rows[0].order_number
             }
             
             return _media;

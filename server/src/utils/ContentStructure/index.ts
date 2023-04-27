@@ -1,5 +1,6 @@
 import { INewArticle, SubTitleContent } from '../../interfaces/Content/Article';
 import IContent from '../../interfaces/models/Content';
+import { DbMedia } from '../../interfaces/models/Media';
 import Locals from '../../providers/Locals';
 
 const createContent = (article: INewArticle): string => {
@@ -26,10 +27,10 @@ const createContent = (article: INewArticle): string => {
         const image: string = subtitleObj.images ? `${createMainImage(subtitleObj.images[0].title.trim(),  subtitleObj.images[0].source_url.trim())}\n\n\n\n` : "";
         //\n\n\n\n
         //Paragraph
-        const paragraph: string = createParagraph(subtitleObj.content.filter(content => content.selected))
+        const paragraph: string = createParagraph(subtitleObj.content.filter(content => content.selected), subtitleObj.images.length === 1 ? undefined : subtitleObj.images)
         //\n\n\n\n
 
-        return `${space}${subtitle}\n\n\n\n${image}${paragraph}\n\n\n\n`
+        return `${space}${subtitle}\n\n\n\n${subtitleObj.images.length === 1 ? image : ""}${paragraph}\n\n\n\n`
     }).join('');
 
     //Conclusion Paragraph
@@ -43,8 +44,21 @@ const createSubtitle = (subtitle: string): string => {
     return `<h2><span class=\"ez-toc-section\" id=\"${subtitle.replace(" ", "-")}\"></span>${subtitle}<span class=\"ez-toc-section-end\"></span></h2>`
 }
 
-const createParagraph = (paragraphs: Array<IContent>): string => {
-    return paragraphs.sort((a, b) => !a.orderNumber || !b.orderNumber ? 1 : a.orderNumber < b.orderNumber ? -1 : 1).map(paragraph => `<p>${paragraph.content}</p>`).join('\n\n\n\n');
+const createParagraph = (paragraphs: Array<IContent>, images?: Array<DbMedia>): string => {
+    return paragraphs.sort((a, b) => !a.orderNumber || !b.orderNumber ? 1 : a.orderNumber < b.orderNumber ? -1 : 1).map(paragraph => {
+
+        if(images === undefined){
+            return `<p>${paragraph.content}</p>`
+        }
+
+        const image = images.find(img => img.orderNumber.toString() === paragraph.orderNumber.toString());
+        if(image){
+            return `<p>${paragraph.content}</p>\n\n\n\n${createMainImage(image.title.trim(), image.source_url.trim())}`;
+        }else{
+            return `<p>${paragraph.content}</p>`;
+        }
+        
+    }).join('\n\n\n\n');
 }
 
 const createTable = (postUrl: string, subtitles: Array<SubTitleContent>): string => {

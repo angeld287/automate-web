@@ -32,7 +32,7 @@ class Media {
 
             let _mediaService: IMediaService = new mediaService();
             const articleServices: IArticleService = new articleService();
-            const {imageAddress, title, type, relatedId} = req.body;
+            const {imageAddress, title, type, relatedId, orderNumber} = req.body;
 
             //const imageIsFine = await _mediaService.imageHaveCorrectSize(imageAddress);
             //
@@ -48,18 +48,13 @@ class Media {
             
             let dbMedia: DbMedia = null;
             if(type === 'subtitle') {
-                const subtitleImages = await articleServices.getMediaBySubtitleId(relatedId);
-
-                //await Promise.all(subtitleImages.map(async (image) => {
-                //    await articleServices.deleteMedia(parseInt(image.id), parseInt(req.session.passport.user.id));
-                //    await _mediaService.delete(parseInt(image.wpId), req.headers.authorization)
-                //}))
                 
                 dbMedia = await articleServices.createMediaForSubtitle({
                     source_url: media.source_url,
                     title,
                     wpId: media.id,
                     subtitleId: relatedId,
+                    orderNumber
                 });
             }else if(type === 'article'){
                 const articleImages = await articleServices.getMediaByArticleId(relatedId);

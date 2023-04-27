@@ -408,6 +408,7 @@ CREATE TABLE IF NOT EXISTS public.media
     subtitle_id integer,
     title character(100) COLLATE pg_catalog."default" NOT NULL,
     type character(13) COLLATE pg_catalog."default",
+    order_number integer,
     CONSTRAINT media_pkey PRIMARY KEY (id),
     CONSTRAINT media_articles_fkey FOREIGN KEY (article_id)
         REFERENCES public.articles (id) MATCH SIMPLE
