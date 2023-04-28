@@ -3,12 +3,13 @@ import { RootState } from '../../app/store';
 import IPagination from '../../interfaces/IPagination';
 import { IArticle } from '../../interfaces/models/Article';
 import { removeDuplicate } from '../../utils/functions';
-import { getAIResearchedArticlesFromDb, getArticlesFromDb, getPlanningArticlesFromDb } from './articlesAPI';
+import { getAIResearchedArticlesFromDb, getArticlesFromDb, getPlanningArticlesFromDb, getWpCreatedArticlesFromDb } from './articlesAPI';
 
 export interface ArticlesState {
   articles: Array<IArticle>;
   planningArticles: Array<IArticle>;
   AIArticles: Array<IArticle>;
+  WPArticles: Array<IArticle>;
   status: 'idle' | 'loading' | 'failed';
   statusPA: 'idle' | 'loading' | 'failed';
   statusAI: 'idle' | 'loading' | 'failed';
@@ -21,6 +22,7 @@ const initialState: ArticlesState = {
   articles: [],
   planningArticles: [],
   AIArticles: [],
+  WPArticles: [],
   status: 'idle',
   statusPA: 'idle',
   statusAI: 'idle',
@@ -58,6 +60,18 @@ export const getAIResearchedArticles = createAsyncThunk(
   async () => {
     try {    
       const result = await getAIResearchedArticlesFromDb();
+      return result.data.response;
+    } catch (error) {
+      console.log(error) 
+    }
+  }
+);
+
+export const getWpCreatedArticles = createAsyncThunk(
+  'articles/getCreated',
+  async () => {
+    try {    
+      const result = await getWpCreatedArticlesFromDb();
       return result.data.response;
     } catch (error) {
       console.log(error) 
@@ -110,6 +124,9 @@ export const articlesSlice = createSlice({
       })
       .addCase(getAIResearchedArticles.rejected, (state) => {
         state.statusAI = 'failed';
+      })
+      .addCase(getWpCreatedArticles.fulfilled, (state, action: PayloadAction<Array<IArticle> | false>) => {
+        state.WPArticles = action.payload !== false ? action.payload : [];
       });
   },
 });

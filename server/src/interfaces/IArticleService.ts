@@ -22,6 +22,8 @@ export interface IArticleService {
 
     getAIResearchedArticles(userId: number): Promise<Array<INewArticle> | false>
 
+    getCreatedArticles(userId: number): Promise<Array<INewArticle> | false>
+
     getSubtitleById(subtitleId: number): Promise<SubTitleContent | false>
 
     getSubtitlesByArticleId(articleId: number): Promise<Array<SubTitleContent>>;

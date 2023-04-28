@@ -1,12 +1,12 @@
 import { MenuUnfoldOutlined, PicRightOutlined, RollbackOutlined } from "@ant-design/icons";
-import { Col, Row } from "antd";
+import { Col, Row, Tabs } from "antd";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import ContentOrganizationStepper from "../../Components/App/ContentOrganizationStepper";
 import DraftArticles from "../../Components/App/DraftArticles";
 import { IArticlesActions } from "../../Components/App/DraftArticles/IDraftArticles";
-import { getAIResearchedArticles, getArticles, selectArticles } from "../../features/articles/articlesSlice";
+import { getAIResearchedArticles, getArticles, getWpCreatedArticles, selectArticles } from "../../features/articles/articlesSlice";
 import { updateArticleState } from "../../features/article/articleSlice";
 import { IArticle } from "../../interfaces/models/Article";
 import "./home.css"
@@ -21,7 +21,7 @@ const Home = () => {
     const [ article, setAricle ] = useState<IArticle>();
     const dispatch = useAppDispatch();
 
-    const {articles, AIArticles, statusAI, page, size, status} = useAppSelector(selectArticles);
+    const {articles, AIArticles, statusAI, page, size, status, WPArticles} = useAppSelector(selectArticles);
 
     const onClickEdit = (article: IArticle) => {
         navigate(`/content-editor/${article.internalId}`);
@@ -54,14 +54,27 @@ const Home = () => {
       
     return (
         <>
-            <Row className="rows">
-                <Col span={12} className="ai-list">
-                    <DraftArticles {...{actions: aiArticlesActions, hasMore: false, status: statusAI, articles: AIArticles, getArticles: getAIResearchedArticles(), getNextArticles: getAIResearchedArticles()}}/>
-                </Col>
-                <Col span={12} className="home-draft-list">
-                    <DraftArticles {...{actions: articlesActions, hasMore: false, status, articles, getArticles: getArticles({page, size}), getNextArticles: getArticles({page: (page+size), size})}}/>
-                </Col>
-            </Row>
+            <Tabs
+                defaultActiveKey="1"
+                tabPosition="left"
+                //style={{ height: 220 }}
+                items={[
+                    {
+                        label: `Researched Articles`,
+                        key: '1',
+                        children: <DraftArticles {...{actions: aiArticlesActions, hasMore: false, status: statusAI, articles: AIArticles, getArticles: getAIResearchedArticles(), getNextArticles: getAIResearchedArticles()}}/>,
+                    },
+                    {
+                        label: `Content Organized Articles`,
+                        key: '2',
+                        children: <DraftArticles {...{actions: articlesActions, hasMore: false, status, articles, getArticles: getArticles({page, size}), getNextArticles: getArticles({page: (page+size), size})}}/>,
+                    },{
+                        label: `Wp Created Articles`,
+                        key: '3',
+                        children: <DraftArticles {...{actions: [], hasMore: false, status: statusAI, articles: WPArticles, getArticles: getWpCreatedArticles(), getNextArticles: getWpCreatedArticles()}}/>,
+                    },
+                ]}
+            />
             <ContentOrganizationStepper {...{open: openModal, setOpen: setOpenModal, article}}/>
             <CustomModal title="Are you sure you want to send this article back?" open={confirmGoBack} setOpen={setConfirmGoBack} onOk={() => {getArticleBack(article); setConfirmGoBack(false)}}/>
         </>

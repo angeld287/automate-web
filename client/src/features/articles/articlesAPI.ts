@@ -38,3 +38,16 @@ export async function getAIResearchedArticlesFromDb() {
 
   return await fetchData.json();
 }
+
+export async function getWpCreatedArticlesFromDb() {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}getWpCreatedArticles`, {
+    method: "GET",
+    credentials: 'include',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  })
+
+  return await fetchData.json();
+}

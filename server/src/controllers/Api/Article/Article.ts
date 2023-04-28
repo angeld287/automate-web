@@ -260,6 +260,28 @@ class Article {
         }
     }
 
+    public static async getWpCreatedArticles(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            let _articleService: IArticleService = new articleService();
+
+            const userId = parseInt(req.session.passport.user.id);
+
+            const articles: Array<INewArticle> | false = await _articleService.getCreatedArticles(userId)
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: articles,
+                error: null
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('getWpCreatedArticles - Article Controller Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
     public static async getArticles(req: IRequest, res: IResponse): Promise<any> {
         try {
             if(!req.query.page || !req.query.size){

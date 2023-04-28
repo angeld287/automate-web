@@ -301,6 +301,12 @@ router.get(
     ArticleController.getAIResearchedArticles
 );
 
+router.get(
+    '/getWpCreatedArticles',
+    Passport.isAuthenticated,
+    ArticleController.getWpCreatedArticles
+);
+
 router.post(
     '/createArticleContent',
     body('content', 'field content cannot be blank.').notEmpty(),
