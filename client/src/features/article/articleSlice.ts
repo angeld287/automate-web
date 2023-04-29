@@ -291,6 +291,10 @@ export const articleSlice = createSlice({
           state.article.subtitles = [...state.article.subtitles.filter(subtitle => subtitle.id !== subtitleId), subTitle];
         }
       })
+      .addCase(createArticleContent.fulfilled, (state, action: PayloadAction<Content[]>) => {
+        if(state.article.contents)
+          state.article.contents = [...state.article.contents, ...action.payload];
+      })
       .addCase(createWpPost.pending, (state) => {
         state.statusCP = 'loading';
       })

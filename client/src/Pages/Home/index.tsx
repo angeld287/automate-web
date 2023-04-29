@@ -54,9 +54,17 @@ const Home = () => {
       
     return (
         <>
+            <Row>
+                Total Articles: {AIArticles.length + articles.length + WPArticles.length}
+            </Row>
             <Tabs
                 defaultActiveKey="1"
                 tabPosition="left"
+                onChange={(e) => {
+                    dispatch(getAIResearchedArticles())
+                    dispatch(getArticles({page, size}))
+                    dispatch(getWpCreatedArticles())
+                }}
                 //style={{ height: 220 }}
                 items={[
                     {

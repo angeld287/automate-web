@@ -184,7 +184,7 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
             <Col style={{margin: 10}}><CustomButton onClick={() => { setOpen(true)}}>Add Content<FileAddOutlined /></CustomButton></Col>
             <Col style={{margin: 10}}><CustomButton disabled={addedIntroConclusion("introduction")} onClick={() => { addIntroConclusion("introduction")}}>Add Introduction</CustomButton></Col>
             <Col style={{margin: 10}}><CustomButton disabled={addedIntroConclusion("conclusion")} onClick={() => { addIntroConclusion("conclusion")}}>Add Conclusion</CustomButton></Col>
-            <Col style={{margin: 10}}><CustomButton onClick={() => { copySelectedContent()}}>Copy Contents</CustomButton></Col>
+            <Col style={{margin: 10}}><CustomButton type="primary" danger onClick={() => { copySelectedContent()}}>Copy Contents</CustomButton></Col>
         </Row>
         <Row style={{marginBottom: 10, maxHeight: 600, overflowY: 'scroll'}}>
             <List
