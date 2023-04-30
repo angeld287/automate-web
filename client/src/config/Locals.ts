@@ -15,8 +15,8 @@ class Locals {
     public static config(): any {
 
         //wordpress site configuration
-        const wordpressDomain = "elaceite.de"
-        const WP_JSON_URL = `https://${wordpressDomain}/wp-json`
+        const WP_DOMAIN = "elaceite.de"
+        const WP_JSON_URL = `https://${WP_DOMAIN}/wp-json`
         const WP_API_BASE_URL = `${WP_JSON_URL}/wp/v2/`
         
 
@@ -34,6 +34,8 @@ class Locals {
             TOCKEN_URL,
             WS_BACKEND_BASE_URL,
             DEFAULT_IMAGE,
+
+            WP_DOMAIN
         }
     }
 

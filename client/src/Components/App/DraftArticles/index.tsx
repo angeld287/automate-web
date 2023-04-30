@@ -5,6 +5,8 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import IDraftArticles from "./IDraftArticles";
 import moment from 'moment'
 import CustomButton from "../../CustomButton";
+import { generateArticleLink, replaceSpace } from "../../../utils/functions";
+import Locals from "../../../config/Locals";
 
 const DraftArticles: React.FC<IDraftArticles> = ({actions, hasMore, status, articles, getArticles, getNextArticles}) => {
 
@@ -40,9 +42,13 @@ const DraftArticles: React.FC<IDraftArticles> = ({actions, hasMore, status, arti
                         >
                             <Skeleton avatar title={false} loading={false} active>
                                 <List.Item.Meta
-                                avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                                title={<a href="https://ant.design">{item.title}</a>}
-                                //description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                                    //avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
+                                    title={<div style={{textAlign: 'left'}}>
+                                        <Typography.Text>{generateArticleLink(item)}</Typography.Text>
+                                    </div>}
+                                    description={<div style={{textAlign: 'left'}}>
+                                        <Typography.Text italic disabled >{item.title}</Typography.Text>
+                                    </div>}
                                 />
                                 <Typography.Text italic>{moment(item.createdAt).fromNow()}</Typography.Text>
                             </Skeleton>

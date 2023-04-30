@@ -1,3 +1,6 @@
+import Locals from "../config/Locals";
+import { IArticle } from "../interfaces/models/Article";
+
 export const getHashCode = () => {
     const textList = [
       'blue',
@@ -55,4 +58,18 @@ export const isValidImageUrl = (urlString: string) => {
 
 export const copyContent = (content: string) => {
   navigator.clipboard.writeText(content);
+}
+
+export const generateArticleLink = (article: IArticle) => {
+  let title = article.title.toLowerCase().trim();
+  const splitedTitle = title.split(" ");
+
+  if(splitedTitle[0] === "el" && splitedTitle[1] === "aceite" && splitedTitle[2] === "de" && splitedTitle[3] === article.category?.trim().toLowerCase()){
+    title = title.replace(`el aceite de ${article.category.trim().toLowerCase()}`, '')
+  }
+
+  if(splitedTitle[0] === "aceite" && splitedTitle[1] === "de" && splitedTitle[2] === article.category?.trim().toLowerCase()){
+    title = title.replace(`aceite de ${article.category.trim().toLowerCase()}`, '')
+  }
+  return `https://${Locals.config().WP_DOMAIN}/${article.category?.trim()}/${replaceSpace(title[title.length-1] === "?" ? title.slice(0, -1) : title)}`
 }

@@ -110,7 +110,7 @@ export const articlesSlice = createSlice({
       })
       .addCase(getPlanningArticles.fulfilled, (state, action: PayloadAction<Array<IArticle> | false>) => {
         state.statusPA = 'idle';
-        state.planningArticles = action.payload !== false ? action.payload : [];
+        state.planningArticles = action.payload !== false ? action.payload.sort((a, b) => a.category && b.category ? b.category > a.category ? -1 : 1 : 1) : [];
       })
       .addCase(getPlanningArticles.rejected, (state) => {
         state.statusPA = 'failed';
@@ -120,13 +120,13 @@ export const articlesSlice = createSlice({
       })
       .addCase(getAIResearchedArticles.fulfilled, (state, action: PayloadAction<Array<IArticle> | false>) => {
         state.statusAI = 'idle';
-        state.AIArticles = action.payload !== false ? action.payload : [];
+        state.AIArticles = action.payload !== false ? action.payload.sort((a, b) => a.category && b.category ? b.category > a.category ? -1 : 1 : 1) : [];
       })
       .addCase(getAIResearchedArticles.rejected, (state) => {
         state.statusAI = 'failed';
       })
       .addCase(getWpCreatedArticles.fulfilled, (state, action: PayloadAction<Array<IArticle> | false>) => {
-        state.WPArticles = action.payload !== false ? action.payload : [];
+        state.WPArticles = action.payload !== false ? action.payload.sort((a, b) => a.category && b.category ? b.category > a.category ? -1 : 1 : 1) : [];
       });
   },
 });
