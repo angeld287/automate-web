@@ -7,6 +7,7 @@ import moment from 'moment'
 import CustomButton from "../../CustomButton";
 import { generateArticleLink, replaceSpace } from "../../../utils/functions";
 import Locals from "../../../config/Locals";
+import { categoryColors } from "../../../utils/constants";
 
 const DraftArticles: React.FC<IDraftArticles> = ({actions, hasMore, status, articles, getArticles, getNextArticles}) => {
 
@@ -36,24 +37,33 @@ const DraftArticles: React.FC<IDraftArticles> = ({actions, hasMore, status, arti
                     className="draft-articles-list"
                     itemLayout="horizontal"
                     dataSource={articles}
-                    renderItem={(item) => (
-                        <List.Item
-                            actions={actions?.map(action => <CustomButton onClick={() => action.onClick(item)} key={action._key}>{action.icon}</CustomButton>)}
-                        >
-                            <Skeleton avatar title={false} loading={false} active>
-                                <List.Item.Meta
-                                    //avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                                    title={<div style={{textAlign: 'left'}}>
-                                        <Typography.Text>{generateArticleLink(item)}</Typography.Text>
-                                    </div>}
-                                    description={<div style={{textAlign: 'left'}}>
-                                        <Typography.Text italic disabled >{item.title}</Typography.Text>
-                                    </div>}
-                                />
-                                <Typography.Text italic>{moment(item.createdAt).fromNow()}</Typography.Text>
-                            </Skeleton>
-                        </List.Item>
-                    )}
+                    renderItem={(item) => {
+                        const color = categoryColors.find(category => item.category?.trim() === category.name);
+                        return (
+                            <List.Item
+                                style={{
+                                    borderBottomColor: color ? color.colorCode : '#000',
+                                    borderBottomWidth: 2,
+                                    marginBottom: 30,
+    
+                                }}
+                                actions={actions?.map(action => <CustomButton onClick={() => action.onClick(item)} key={action._key}>{action.icon}</CustomButton>)}
+                            >
+                                <Skeleton avatar title={false} loading={false} active>
+                                    <List.Item.Meta
+                                        //avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
+                                        title={<div style={{textAlign: 'left'}}>
+                                            <Typography.Text>{generateArticleLink(item)}</Typography.Text>
+                                        </div>}
+                                        description={<div style={{textAlign: 'left'}}>
+                                            <Typography.Text italic>{item.title}</Typography.Text>
+                                        </div>}
+                                    />
+                                    <Typography.Text italic>{moment(item.createdAt).fromNow()}</Typography.Text>
+                                </Skeleton>
+                            </List.Item>
+                        )
+                    }}
                 />
             </InfiniteScroll>
         </div>

@@ -1,4 +1,4 @@
-import { MenuUnfoldOutlined, PicRightOutlined, RollbackOutlined } from "@ant-design/icons";
+import { CopyOutlined, GooglePlusOutlined, MenuUnfoldOutlined, PicRightOutlined, RollbackOutlined } from "@ant-design/icons";
 import { Col, Row, Tabs } from "antd";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +12,7 @@ import { IArticle } from "../../interfaces/models/Article";
 import "./home.css"
 import { ArticleState } from "../../interfaces/Enums/States";
 import CustomModal from "../../Components/CustomModal";
+import { generateArticleLink } from "../../utils/functions";
 
 const Home = () => {
 
@@ -42,8 +43,23 @@ const Home = () => {
             dispatch(updateArticleState({id: article.id, state: ArticleState.KEYWORD_PLANNING}));
     }, []);
 
+    const setArticleCrawled = useCallback((article?: IArticle) => {
+        if(article)
+            dispatch(updateArticleState({id: article.id, state: ArticleState.GOOGLE_CRAWLED}))
+    }, [])
+
+    const copyArticleSlut = useCallback((article: IArticle) => {
+        const slut = generateArticleLink(article);
+        navigator.clipboard.writeText(slut)
+    }, [])
+
     const articlesActions: IArticlesActions[] = [
         {icon: <PicRightOutlined />, _key: "draft_edit_btn", onClick: onClickEdit}
+    ];
+
+    const wpArticlesActions: IArticlesActions[] = [
+        {icon: <GooglePlusOutlined />, _key: "wp-g-crewled_btn", onClick: setArticleCrawled},
+        {icon: <CopyOutlined />, _key: "wp-copy-link_btn", onClick: copyArticleSlut}
     ]
 
     const aiArticlesActions: IArticlesActions[] = useMemo(() => [
@@ -79,7 +95,7 @@ const Home = () => {
                     },{
                         label: `Wp Created Articles`,
                         key: '3',
-                        children: <DraftArticles {...{actions: [], hasMore: false, status: statusAI, articles: WPArticles, getArticles: getWpCreatedArticles(), getNextArticles: getWpCreatedArticles()}}/>,
+                        children: <DraftArticles {...{actions: wpArticlesActions, hasMore: false, status: statusAI, articles: WPArticles, getArticles: getWpCreatedArticles(), getNextArticles: getWpCreatedArticles()}}/>,
                     },
                 ]}
             />
