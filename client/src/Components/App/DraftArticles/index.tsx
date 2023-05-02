@@ -43,7 +43,9 @@ const DraftArticles: React.FC<IDraftArticles> = ({actions, hasMore, status, arti
                             <List.Item
                                 style={{
                                     borderBottomColor: color ? color.colorCode : '#000',
+                                    borderLeftColor: color ? color.colorCode : '#000',
                                     borderBottomWidth: 2,
+                                    borderLeftWidth: 2,
                                     marginBottom: 30,
     
                                 }}

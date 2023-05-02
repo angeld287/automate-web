@@ -59,7 +59,16 @@ class Post {
                 article = articleExist
             }
 
-            const category: Category = (await categoryService.getList()).find(category => {
+            const categories = await categoryService.getList();
+            
+            if(categories === false){
+                return new BadRequestResponse('Error', {
+                    error: true,
+                    message: 'There are no categories in the db.',
+                }).send(res);
+            }
+
+            const category: Category = categories.find(category => {
                 console.log(removeAccentMark(category.name.toLowerCase()), bodyCategory)
                 return removeAccentMark(category.name.toLowerCase()) === bodyCategory
             })

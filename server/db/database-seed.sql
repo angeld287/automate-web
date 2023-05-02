@@ -544,3 +544,25 @@ CREATE INDEX IF NOT EXISTS fki_keywords_article_fkey
     ON public.keywords USING btree
     (article_id ASC NULLS LAST)
     TABLESPACE pg_default;
+
+
+
+-- Table: public.categories
+
+-- DROP TABLE IF EXISTS public.categories;
+
+CREATE TABLE IF NOT EXISTS public.categories
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    name character(50) COLLATE pg_catalog."default",
+    wp_id integer,
+    
+    CONSTRAINT categories_pkey PRIMARY KEY (id),
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.categories
+    OWNER to admin;

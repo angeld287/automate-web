@@ -119,7 +119,7 @@ class Content {
 
             let wpCategory: ICategoryService = new categoryService();
             const categories = await wpCategory.getList();
-            if(!categories.find(category => category.slug === article.category.trim())){
+            if(categories !== false && !categories.find(category => category.slug === article.category.trim())){
                 return new BadRequestResponse('Error', {
                     error: "This category does not exist on the wordpress site cateogies."
                 }).send(res);
