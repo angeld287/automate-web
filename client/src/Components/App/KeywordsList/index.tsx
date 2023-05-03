@@ -50,7 +50,7 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
 
     const categoryList: Array<ISelectOptions> = useMemo(() => {
         if(statusc === "loading") return []
-        return categories.map(category => ({id: category.slug, name: category.name }))
+        return categories.map(category => ({id: category.name, name: category.name }))
     }, [categories, statusc]);
 
     useEffect(() => {
@@ -64,22 +64,24 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
     useEffect(() => {
         try {
             if (items !== undefined) {
-                setKeywords(items.map((item): IKeywordsTable => ({
-                    selected: <>
-                        <Checkbox onChange={(e) => {onChecked(item, e)}} key={item.id} defaultChecked={item.selected}></Checkbox>
-                        {kwLoading === item.id && <Spin size="small" style={{marginLeft: 10}} />}
-                    </>,
-                    similarity: item.similarity,
-                    keyword: <a target={"_blank"} href={getGoogleSearchUrl(item.name)}>{item.name}</a>,
-                    actions: item.selected ? [
-                        { type: "select", component: { _key: `category-select-${item.id}`, name: `category-select-${item.id}`, items: categoryList, disabled: item.articleId !== null, onChange: (value: string) => updateCategory(value, item), defaultValue: item.category} },
-                        { type: "button", component: { _key: `create-article-ai-${item.id}`,id: `create-article-ai-${item.id}`, color: 'blue', icon: <FileTextOutlined />, onClick: () => createArticle(item), text: "", disabled: item.articleId !== null, loading: (kwLoading === item.id && AICreateStatus === 'loading') } },
-                    ] : [
-                        { type: "button", component: { _key: `copy-keyword-${item.id}`,id: `copy-keyword-${item.id}`, color: 'blue', icon: <CopyOutlined />, onClick: () => copyContent(item.name.trim()), text: "",} },
-                    ],
-                    id: `${replaceSpace(item.name)}-${item.id}`,
-                    dataName: item.name
-                })))
+                setKeywords(items.map((item): IKeywordsTable => {
+                    return ({
+                        selected: <>
+                            <Checkbox onChange={(e) => {onChecked(item, e)}} key={item.id} defaultChecked={item.selected}></Checkbox>
+                            {kwLoading === item.id && <Spin size="small" style={{marginLeft: 10}} />}
+                        </>,
+                        similarity: item.similarity,
+                        keyword: <a target={"_blank"} href={getGoogleSearchUrl(item.name)}>{item.name}</a>,
+                        actions: item.selected ? [
+                            { type: "select", component: { _key: `category-select-${item.id}`, name: `category-select-${item.id}`, items: categoryList, disabled: item.articleId !== null, onChange: (value: string) => updateCategory(value, item), defaultValue: item.category} },
+                            { type: "button", component: { _key: `create-article-ai-${item.id}`,id: `create-article-ai-${item.id}`, color: 'blue', icon: <FileTextOutlined />, onClick: () => createArticle(item), text: "", disabled: item.articleId !== null, loading: (kwLoading === item.id && AICreateStatus === 'loading') } },
+                        ] : [
+                            { type: "button", component: { _key: `copy-keyword-${item.id}`,id: `copy-keyword-${item.id}`, color: 'blue', icon: <CopyOutlined />, onClick: () => copyContent(item.name.trim()), text: "",} },
+                        ],
+                        id: `${replaceSpace(item.name)}-${item.id}`,
+                        dataName: item.name
+                    })
+                }))
             }
         } catch (error) {
             throw new Error('KeywordsList - setKeywords')

@@ -8,6 +8,6 @@ export interface ICustomSelect extends SelectProps {
 }
 
 export interface ISelectOptions {
-    id: string;
+    id?: string;
     name: string;
 }

@@ -38,7 +38,7 @@ export default class categoryService implements ICategoryService {
             result.rows.forEach(row => {
                 categories.push({
                     id: row.id,
-                    name: row.name,
+                    name: row.name.trim(),
                     wpId: row.wp_id,
                 })
             });

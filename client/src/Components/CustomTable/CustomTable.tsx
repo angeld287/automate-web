@@ -24,9 +24,11 @@ const CustomTable: React.FC<ICustomTable> = ({ headers, items, getItemsNextToken
                 key: header.name.toLowerCase(),
                 dataIndex: header.name.toLowerCase(),
                 render: (actions: Array<IAction>) => (
-                    <Space size="middle">{actions.map(action => action.type === "button" ? 
-                            <CustomButton key={action.component._key} {...action.component} >{action.component.text}</CustomButton> 
-                            : <CustomSelect placeholder="Category" key={action.component._key} {...action.component}/>
+                    <Space size="middle">{actions.map(action => {
+                        return action.type === "button" ? 
+                        <CustomButton key={action.component._key} {...action.component} >{action.component.text}</CustomButton> 
+                        : <CustomSelect placeholder="Category" key={action.component._key} {...action.component}/>
+                    }
                     )}</Space>
                 ),
             })
