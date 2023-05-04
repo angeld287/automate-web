@@ -566,3 +566,46 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.categories
     OWNER to admin;
+
+
+-- Table: public.sites
+
+-- DROP TABLE IF EXISTS public.sites;
+
+CREATE TABLE IF NOT EXISTS public.sites
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    name character(20) COLLATE pg_catalog."default",
+    domain character(20) COLLATE pg_catalog."default",
+    created_by integer,
+    created_at timestamp with time zone,
+    deleted boolean,
+    deleted_by integer,
+    deleted_at timestamp with time zone,
+    CONSTRAINT sites_pkey PRIMARY KEY (id),
+    CONSTRAINT sites_created_by_fkey FOREIGN KEY (created_by)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT sites_deleted_by_fkey FOREIGN KEY (deleted_by)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.sites
+    OWNER to admin;
+
+-- Trigger: set_timestamp_to_created_at
+
+-- DROP TRIGGER IF EXISTS set_timestamp_to_created_at ON public.sites;
+
+CREATE TRIGGER set_timestamp_to_created_at
+    AFTER INSERT
+    ON public.sites
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.trigger_set_timestamp();

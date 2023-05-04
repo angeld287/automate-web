@@ -36,7 +36,7 @@ const PlanningArticles: React.FC<IPlanningArticles> = ({jobId, articles, keyword
 
     const categoryList: Array<ISelectOptions> = useMemo(() => {
         if(statusc === "loading") return []
-        return categories.map(category => ({id: category.slug, name: category.name }))
+        return categories.map(category => ({id: category.name, name: category.name }))
     }, [categories, statusc]);
 
     const contentStyle: React.CSSProperties = {
