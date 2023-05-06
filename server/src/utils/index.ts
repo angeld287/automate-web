@@ -5,6 +5,8 @@ import { downloadImage } from "./http"
 import { _sharp } from "./sharp"
 import { _imagesize  } from "./imagesize"
 import { addMedia  } from "./wpapi"
+import { INewArticle } from "../interfaces/Content/Article"
+import Locals from "../providers/Locals"
 
 const delay = (delayInms) => {
     return new Promise(resolve => {
@@ -37,5 +39,23 @@ export const replaceSpace = (text: string): string => text.replace(/(?: )/g, '_'
 export const replaceSpaceForPlus = (text: string): string => text.replace(/(?: )/g, '+')
 export const replacePlusForSpace = (text: string): string => text.replace(/(?:\+)/g, ' ')
 export const removeAccentMark = (text: string): string => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+
+export const generateArticleSlug = (article: INewArticle) => {
+  let title = article.title.toLowerCase().trim();
+  const splitedTitle = title.split(" ");
+
+  if(splitedTitle[0] === "el" && splitedTitle[1] === "aceite" && splitedTitle[2] === "de" && splitedTitle[3] === article.category?.trim().toLowerCase()){
+    title = title.replace(`el aceite de ${article.category.trim().toLowerCase()}`, '')
+  }
+
+  if(splitedTitle[0] === "aceite" && splitedTitle[1] === "de" && splitedTitle[2] === article.category?.trim().toLowerCase()){
+    title = title.replace(`aceite de ${article.category.trim().toLowerCase()}`, '')
+  }
+  return `${article.category?.trim()}/${replaceSpace(title[title.length-1] === "?" ? title.slice(0, -1) : title)}`
+}
+
+export const generateArticleLink = (article: INewArticle) => {
+  return `https://${Locals.config().WP_DOMAIN}/${generateArticleSlug(article)}`
+}
 
 export { removeDuplicate, _fetch as fetch, _axios as axios, delay, readFileSync, createWriteStream, downloadImage, _sharp as sharp, _imagesize as imagesize, addMedia };

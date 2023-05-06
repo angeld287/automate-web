@@ -1,5 +1,5 @@
 import ITextAnalyticsServices from "../../interfaces/ITextAnalyticsServices";
-import { AnalyzeBatchAction } from "@azure/ai-text-analytics";
+//import { AnalyzeBatchAction } from "@azure/ai-text-analytics";
 import AzureAiTextAnalytics from "../../providers/AzureAiTextAnalytics";
 import IContent from "../../interfaces/models/Content";
 
@@ -9,14 +9,14 @@ export default class textAnalyticsServices implements ITextAnalyticsServices {
         try {
             const documents: Array<string> = contents.map(content => content.content)
             const client = new AzureAiTextAnalytics();
-            const actions: Array<AnalyzeBatchAction> = [
-                {
-                    kind: 'ExtractiveSummarization',
-                    maxSentenceCount: 2,
-                }
-            ];
+            //const actions: Array<AnalyzeBatchAction> = [
+            //    {
+            //        kind: 'ExtractiveSummarization',
+            //        maxSentenceCount: 2,
+            //    }
+            //];
 
-            const poller = await client.analysis.beginAnalyzeBatch(actions, documents, "es");
+            const poller = null; //await client.analysis.beginAnalyzeBatch(actions, documents, "es");
             const results = await poller.pollUntilDone();
 
             const response = []

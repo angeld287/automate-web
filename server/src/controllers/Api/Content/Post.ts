@@ -11,13 +11,12 @@ import Log from '../../../middlewares/Log';
 import ExpressValidator from '../../../providers/ExpressValidation';
 import PostService from '../../../services/wordpress/postService';
 import IPost from "../../../interfaces/models/Post"
-import Locals from '../../../providers/Locals';
 import { ICategoryService } from '../../../interfaces/wordpress/ICategoryService';
 import CategoryService from '../../../services/wordpress/categoryServices';
 import { INewArticle } from '../../../interfaces/Content/Article';
 import Category from '../../../interfaces/models/Category';
 import createContent from '../../../utils/ContentStructure';
-import { removeAccentMark, replaceSpace } from '../../../utils';
+import { generateArticleSlug, removeAccentMark } from '../../../utils';
 import { IArticleService } from '../../../interfaces/IArticleService';
 import { articleService } from '../../../services/articleServices/articleServices';
 import { ArticleState } from '../../../interfaces/Enums/States';
@@ -82,7 +81,7 @@ class Post {
 
             const content: string = createContent(article);
             const post: IPost = {
-                slug: replaceSpace(article.title),
+                slug: generateArticleSlug(article),
                 status: "draft",
                 title: article.title,
                 content: content,
