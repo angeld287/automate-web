@@ -277,6 +277,13 @@ router.post(
     ArticleController.createEnContentForArticle
 );
 
+router.post(
+    '/article/getImages',
+    body('articleId', 'field articleId cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    MediaController.getArticleMedia
+);
+
 router.get(
     '/getArticle',
     Passport.isAuthenticated,

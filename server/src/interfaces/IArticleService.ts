@@ -57,4 +57,6 @@ export interface IArticleService {
     updateMedia(media: DbMedia): Promise<DbMedia>;
 
     deleteMedia(id: number, userId: number): Promise<DbMedia>;
+
+    getAllArticleMedia(articleId: number): Promise<Array<DbMedia>>
 }

@@ -982,4 +982,42 @@ export class articleService implements IArticleService {
             throw new Error(error.message);
         }
     }
+
+    async getAllArticleMedia(articleId: number): Promise<Array<DbMedia>> {
+        const getQuery = {
+            name: 'get-medias-by-article-id',
+            text:  `
+                SELECT id, wp_id, deleted, article_id, subtitle_id, title, source_url
+                FROM public.media
+                WHERE article_id = $1 or subtitle_id in (select id from public.subtitles where articles_id = $1 and deleted is not true);
+            `,
+            values: [articleId]
+        };
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            if (result.rows.length === 0)
+                return []
+            
+            const contents: Array<DbMedia> = []
+
+            result.rows.forEach(row => {
+                contents.push({
+                    id: row.id,
+                    source_url: row.source_url,
+                    title: row.title,
+                    wpId: row.wp_id,
+                    deleted: row.deleted,
+                    subtitleId: row.subtitle_id,
+                    articleId: row.article_id,
+
+                })
+            });
+            return contents;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
 }

@@ -171,6 +171,13 @@ class Media {
 
             const media: IMedia = (await _mediaService.create(text, imageFromOpenAI.data[0].url, req.headers.authorization)).media
             
+            if(media.source_url === undefined){
+                Log.error(`Internal Server Error, WP Authentication error` + media);
+                return new BadRequestResponse('Error', {
+                    error: 'WP Authentication error, please log in the session again.'
+                }).send(res);
+            }
+            
             let dbMedia: DbMedia = null;
             
             if(type === 'subtitle') {
@@ -212,6 +219,35 @@ class Media {
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
             return new InternalErrorResponse('Update Media Controller Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
+    public static async getArticleMedia(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            const errors = new ExpressValidator().validator(req);
+
+            if (!errors.isEmpty()) {
+                return new BadRequestResponse('Error', {
+                    errors: errors.array()
+                }).send(res);
+            }
+
+            const { articleId } = req.body
+
+            const articleServices: IArticleService = new articleService();
+            const mediaList = await articleServices.getAllArticleMedia(parseInt(articleId))
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: mediaList,
+                error: null
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('get Category List Controller Error', {
                 error: 'Internal Server Error',
             }).send(res);
         }
