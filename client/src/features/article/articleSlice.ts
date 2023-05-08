@@ -6,9 +6,10 @@ import ApiResponse from '../../interfaces/Responses/ApiResponse';
 import { getBearer } from '../autenticate/authenticateAPI';
 import { searchKeywordContent } from '../subtitle/subtitleAPI';
 import { ArticleState as State} from '../../interfaces/Enums/States'
-import { createArticle, createContentForArticle, createEnContent, createEnContentForArticle, createEnSubtitle, createPost, editArticleState, editArticleTitle, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
+import { createArticle, createContentForArticle, createEnContent, createEnContentForArticle, createEnSubtitle, createPost, editArticleState, editArticleTitle, getAllArticleMedia, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
 import Content from '../../interfaces/models/Content';
 import { DbMedia } from '../../interfaces/models/Media';
+import { updateMediaData } from '../media/mediaAPI';
 
 export interface ArticleState {
   article: IArticle;
@@ -190,6 +191,31 @@ export const createArticleContent = createAsyncThunk(
       return result.data.response;
     } catch (error) {
       throw new Error('Error in ArticleState at createArticleContent')
+    }
+  }
+);
+
+export const updateArticleMedia = createAsyncThunk(
+  'article/updateArticleMedia',
+  async (article: IArticle) => {
+    try {    
+      const allMedia: Array<DbMedia> = (await getAllArticleMedia(article)).data.response;
+
+      if(article.wpId){
+        const bearer = getBearer();
+
+        await Promise.all(allMedia.map(async (media, index) => {
+          const title = media.title?.trim();
+          if(article.wpId) await updateMediaData({alt_text: title, title: title, caption: title, description: `${title} - ${article.wpId.toString()}`, id: media.wpId}, bearer)
+        }));
+
+        return true
+      } else {
+        return true;
+      }      
+      
+    } catch (error) {
+      throw new Error('Error in ArticleState at updateArticleMedia')
     }
   }
 );

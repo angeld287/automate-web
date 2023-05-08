@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Avatar, Col, List, Row, Skeleton } from "antd";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { createWpPost, getArticleByInternalId, selectArticle, setErrorFalse, updateArticleImage } from "../../../features/article/articleSlice"
+import { createWpPost, getArticleByInternalId, selectArticle, setErrorFalse, updateArticleImage, updateArticleMedia } from "../../../features/article/articleSlice"
 import { useNavigate, useParams } from "react-router-dom";
 import SearchKeywordsStepper from "../../../Components/App/SearchKeywordsStepper";
 import CustomLoader from "../../../Components/CustomLoader";
@@ -65,8 +65,11 @@ const ContentEditor = () => {
     }, [article.error]);
 
     useEffect(() => {
-        if(article.articleState === ArticleState.CREATED_IN_WP) navigate('/');
-    }, [article.articleState]);
+        if(article.articleState === ArticleState.CREATED_IN_WP) {
+            dispatch(updateArticleMedia(article.article));
+            navigate('/');
+        }
+    }, [article]);
 
     //useEffect(() => {
     //    console.log(article.status)

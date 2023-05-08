@@ -68,7 +68,6 @@ class Post {
             }
 
             const category: Category = categories.find(category => {
-                console.log(removeAccentMark(category.name.toLowerCase()), bodyCategory)
                 return removeAccentMark(category.name.toLowerCase()) === bodyCategory
             })
 
@@ -103,7 +102,7 @@ class Post {
     
                     if(updateArticle !== false){
                         return new SuccessResponse('Success', {
-                            article,
+                            article: dbArticle,
                             success: true,
                             error: null
                         }).send(res);

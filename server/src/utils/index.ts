@@ -51,11 +51,11 @@ export const generateArticleSlug = (article: INewArticle) => {
   if(splitedTitle[0] === "aceite" && splitedTitle[1] === "de" && splitedTitle[2] === article.category?.trim().toLowerCase()){
     title = title.replace(`aceite de ${article.category.trim().toLowerCase()}`, '')
   }
-  return `${article.category?.trim()}/${replaceSpace(title[title.length-1] === "?" ? title.slice(0, -1) : title)}`
+  return `${replaceSpace(title[title.length-1] === "?" ? title.slice(0, -1) : title)}`
 }
 
 export const generateArticleLink = (article: INewArticle) => {
-  return `https://${Locals.config().WP_DOMAIN}/${generateArticleSlug(article)}`
+  return `https://${Locals.config().WP_DOMAIN}/${article.category?.trim()}/${generateArticleSlug(article)}`
 }
 
 export { removeDuplicate, _fetch as fetch, _axios as axios, delay, readFileSync, createWriteStream, downloadImage, _sharp as sharp, _imagesize as imagesize, addMedia };

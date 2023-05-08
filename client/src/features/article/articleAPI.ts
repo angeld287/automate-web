@@ -107,6 +107,19 @@ export async function editArticleState(id: number, state: string) {
   return await fetchData.json();
 }
 
+export async function getAllArticleMedia(article: IArticle) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}article/getImages`, {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({articleId: article.id})
+  })
+
+  return await fetchData.json();
+}
+
 export async function createEnSubtitle(name: string, articleId: number) {
   const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}subtitle/create/en`, {
     method: "POST",

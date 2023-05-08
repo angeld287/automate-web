@@ -24,7 +24,7 @@ const createContent = (article: INewArticle): string => {
         const subtitle: string = createSubtitle(subtitleObj.name.trim())
         //\n\n\n\n
         //Subtitle Image (if have)
-        const image: string = subtitleObj.images ? `${createMainImage(subtitleObj.images[0].title.trim(),  subtitleObj.images[0].source_url.trim())}\n\n\n\n` : "";
+        const image: string = subtitleObj.images && subtitleObj.images.length > 0 ? `${createMainImage(subtitleObj.images[0].title.trim(),  subtitleObj.images[0].source_url.trim())}\n\n\n\n` : "";
         //\n\n\n\n
         //Paragraph
         const paragraph: string = createParagraph(subtitleObj.content.filter(content => content.selected), subtitleObj.images.length === 1 ? undefined : subtitleObj.images)
