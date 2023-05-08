@@ -11,7 +11,7 @@ import CustomTable from "../../CustomTable/CustomTable";
 import { ITableHeader } from "../../CustomTable/ICustomTable";
 import { removeDuplicate } from '../../../utils/functions';
 import IKeywordsList, { IKeywordsTable } from "./IKeywordsList"
-import { getCategoryList, selectWputils } from "../../../features/WPUtils/wputilsSlice";
+import { getCategoryList, selectCategoriesUtils } from "../../../features/categories/categoriesSlice";
 import { ISelectOptions } from "../../CustomSelect/ICustomSelect";
 
 const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
@@ -19,7 +19,7 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
     const [kwLoading, setKwloading] = useState<number>(0)
     const dispatch = useAppDispatch();
     const {selectStatus, AICreateStatus} = useAppSelector(selectKeywordSearchJob);
-    const { categories, statusc } = useAppSelector(selectWputils);
+    const { categories, statusc } = useAppSelector(selectCategoriesUtils);
 
     useEffect(() => {
         dispatch(getCategoryList())

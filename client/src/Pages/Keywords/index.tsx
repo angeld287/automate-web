@@ -12,7 +12,7 @@ import CustomInput from "../../Components/CustomInput";
 import CustomButton from "../../Components/CustomButton"
 import CustomInputGroup from "../../Components/CustomInputGroup";
 import CustomSelectGroup from "../../Components/CustomSelectGroup";
-import { getCategoryList, selectWputils } from "../../features/WPUtils/wputilsSlice";
+import { getCategoryList, selectCategoriesUtils } from "../../features/categories/categoriesSlice";
 import { ISelectOptions } from "../../Components/CustomSelect/ICustomSelect";
 import CustomLoader from "../../Components/CustomLoader";
 import { getAllKeywords, selectKeywords } from "../../features/keywords/keywordSlice";
@@ -29,7 +29,7 @@ const Keywords = () => {
     const navigate = useNavigate()
     const dispatch = useAppDispatch();
     const { article, kewordsTranslated, statusTk} = useAppSelector(selectArticle);
-    const { categories, statusc } = useAppSelector(selectWputils);
+    const { categories, statusc } = useAppSelector(selectCategoriesUtils);
     const selectedKeywords = useAppSelector(selectKeywords);
 
     let { id } = useParams();

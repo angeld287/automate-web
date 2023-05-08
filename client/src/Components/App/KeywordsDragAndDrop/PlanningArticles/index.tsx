@@ -1,7 +1,7 @@
 import { Button, Col, Row, theme } from "antd";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
-import { getCategoryList, selectWputils } from "../../../../features/WPUtils/wputilsSlice";
+import { getCategoryList, selectCategoriesUtils } from "../../../../features/categories/categoriesSlice";
 import { createNewArticle } from "../../../../features/article/articleSlice";
 import { ISelectOptions } from "../../../CustomSelect/ICustomSelect";
 import CustomSelectGroup from "../../../CustomSelectGroup";
@@ -14,7 +14,7 @@ import ArticleStep from "./ArticleStep";
 
 const PlanningArticles: React.FC<IPlanningArticles> = ({jobId, articles, keywords}) => {
     const dispatch = useAppDispatch();
-    const { categories, statusc } = useAppSelector(selectWputils);
+    const { categories, statusc } = useAppSelector(selectCategoriesUtils);
     const [category, setCategory] = useState('');
     const { token } = theme.useToken();
     const [currentArticle, setCurrentArticle] = useState<number>(0)

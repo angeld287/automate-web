@@ -7,6 +7,8 @@ import {
 } from "react-router-dom";
 import Menu from "../Components/Menu";
 import ArticlesPlanner from "../Pages/ArticlesPlanner";
+import Categories from "../Pages/Categories";
+import CategoryArticles from "../Pages/Categories/CategoryArticles";
 import ContentEditor from "../Pages/ContentEditor/Article";
 import Home from "../Pages/Home";
 import Jobs from "../Pages/Jobs";
@@ -21,6 +23,8 @@ const Routes = ({activeSession}: IRoutes) => {
       <div>
         <Menu/>
         <Switch>
+          <Route path="/category/:category/articles" element={<Protected {...{activeSession}}><CategoryArticles/></Protected>}/>
+          <Route path="/category" element={<Protected {...{activeSession}}><Categories/></Protected>}/>
           <Route path="/posts" element={<Protected {...{activeSession}}><Posts/></Protected>}/>
           <Route path="/result-review" element={<Protected {...{activeSession}}><ResultReview/></Protected>}/>
           <Route path="/content-editor/:id" element={<Protected {...{activeSession}}><ContentEditor/></Protected>}/>

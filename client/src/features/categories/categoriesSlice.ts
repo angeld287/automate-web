@@ -1,32 +1,32 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import ICategory from '../../interfaces/models/Category';
-import { getCategories } from './wputilsAPI';
+import { getCategories } from './categoriesAPI';
 
-export interface WPUtilsState {
+export interface CategoriesState {
   categories: Array<ICategory>;
   statusc: 'idle' | 'loading' | 'failed';
 }
 
-const initialState: WPUtilsState = {
+const initialState: CategoriesState = {
   categories: [],
   statusc: 'loading',
 };
 
 export const getCategoryList = createAsyncThunk(
-  'wputils/getCategories',
+  'categories/getCategories',
   async () => {
     try {
       const response = await getCategories();
       return response.data.response;
     } catch (error) {
-      return new Error('Error in WPUtilsState at getCategoryList.')
+      return new Error('Error in CategoriesState at getCategoryList.')
     }
   }
 );
 
-export const wputilsSlice = createSlice({
-  name: 'wputils',
+export const categoriesSlice = createSlice({
+  name: 'categories',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -44,8 +44,7 @@ export const wputilsSlice = createSlice({
   },
 });
 
-//export const { } = wputilsSlice.actions;
+//export const { } = categoriesSlice.actions;
 
-export const selectWputils = (state: RootState) => state.wputils;
-
-export default wputilsSlice.reducer;
+export const selectCategoriesUtils = (state: RootState) => state.categories;
+export default categoriesSlice.reducer;

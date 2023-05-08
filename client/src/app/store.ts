@@ -6,7 +6,7 @@ import articlesReducer from '../features/articles/articlesSlice';
 import subtitleReducer from '../features/subtitle/subtitleSlice';
 import userSessionReducer from '../features/userSession/userSessionSlice';
 import userRegisterReducer from '../features/userRegister/userRegisterSlice';
-import wpUtilsReducer from '../features/WPUtils/wputilsSlice';
+import categoriesReducer from '../features/categories/categoriesSlice';
 import keywordSearchJobReducer from '../features/keywordSearchJob/keywordSearchJobSlice';
 import keywordsReducer from '../features/keywords/keywordSlice';
 
@@ -28,7 +28,7 @@ export const store = configureStore({
     subtitle: subtitleReducer,
     userSession: userSessionReducer,
     userRegister: userRegisterReducer,
-    wputils: wpUtilsReducer,
+    categories: categoriesReducer,
     keywordSearchJob: keywordSearchJobReducer,
     keywords: keywordsReducer,
   },
