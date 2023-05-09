@@ -18,6 +18,8 @@ export interface IArticleService {
 
     getPlanningArticle(jobId: number, userId: number): Promise<INewArticle | false>
 
+    getArticlesByCategory(category: string): Promise<Array<INewArticle> | false>
+
     getPlanningArticles(jobId: number, userId: number): Promise<Array<INewArticle> | false>
 
     getAIResearchedArticles(userId: number): Promise<Array<INewArticle> | false>

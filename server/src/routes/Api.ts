@@ -297,6 +297,12 @@ router.get(
 );
 
 router.get(
+    '/getArticlesByCategory',
+    Passport.isAuthenticated,
+    ArticleController.getArticlesByCategory
+);
+
+router.get(
     '/getPlanningArticles',
     Passport.isAuthenticated,
     ArticleController.getPlanningArticles

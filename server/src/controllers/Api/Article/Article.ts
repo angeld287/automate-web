@@ -209,6 +209,34 @@ class Article {
         }
     }
 
+    public static async getArticlesByCategory(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            if(!req.query.category){
+                return new BadRequestResponse('Error', {
+                    error: "Param category are required."
+                }).send(res);
+            }
+            
+            let _articleService: IArticleService = new articleService();
+
+            const category = req.query.category;
+
+            const articles: Array<INewArticle> | false = await _articleService.getArticlesByCategory(category.toString());
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: articles,
+                error: null
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('getArticlesByCategory - Article Controller Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
     public static async getPlanningArticles(req: IRequest, res: IResponse): Promise<any> {
         try {
             if(!req.query.id){

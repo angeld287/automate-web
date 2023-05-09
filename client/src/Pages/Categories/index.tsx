@@ -5,19 +5,20 @@ import { DeleteOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { getAllJobs, selectKeywordSearchJob } from '../../features/keywordSearchJob/keywordSearchJobSlice';
+import { selectCategoriesUtils, getCategoryList } from '../../features/categories/categoriesSlice';
 
 const JobsList: React.FC = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate()
-    const { AllJobs } = useAppSelector(selectKeywordSearchJob);
+    const { categories, statusc } = useAppSelector(selectCategoriesUtils);
 
     useEffect(() => {
-        if(AllJobs.length === 0) dispatch(getAllJobs());
+        if(categories.length === 0) dispatch(getCategoryList());
         return () => {}
     },[]);
 
-    const onClickEdit = (jobId: number | undefined) => {
-        navigate(`/jobs/${jobId}`);
+    const goToCateoryArticles = (category: string | undefined) => {
+        navigate(`/category/${category}/articles`);
     }
 
     return (
@@ -26,19 +27,18 @@ const JobsList: React.FC = () => {
                 grid={{
                     gutter: 16
                 }}
-                dataSource={AllJobs}
+                dataSource={categories}
                 renderItem={(item) => (
                     <List.Item key={item.id}>
                         <Card 
                             key={item.id}
                             style={{width: 220}} 
-                            title={moment(item.createdAt).fromNow()}
-                            actions={[<OrderedListOutlined onClick={() => {onClickEdit(item.id)}} key="keywords" />, <DeleteOutlined />]}
+                            title={item.name.toUpperCase()}
+                            actions={[<OrderedListOutlined onClick={() => {goToCateoryArticles(item.name)}} key="keywords" />, <DeleteOutlined />]}
                         >
-                            <Row>{item.longTailKeyword}</Row>
                             <Row>
                                 <Space size={[0, 8]} wrap>
-                                    {item.mainKeywords?.split(",").map(keyword => <Tag color="#87d068" key={keyword}>{keyword}</Tag>)}
+                                    <Tag color="#87d068" key="number_of_items">Number of Items</Tag>
                                 </Space>
                             </Row>
                         </Card>

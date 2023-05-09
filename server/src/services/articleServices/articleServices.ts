@@ -282,6 +282,25 @@ export class articleService implements IArticleService {
         }
     }
 
+    async getArticlesByCategory(category: string): Promise<Array<INewArticle> | false> {
+        const getQuery = {
+            name: 'get-planning-articles',
+            text: `SELECT  id,
+                        TRIM(title) as title, 
+                        TRIM(translated_title) as translated_title, 
+                        category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id
+                    FROM public.articles WHERE deleted IS NOT true AND category = $1;
+                `,
+            values: [category],
+        }
+
+        try {
+            return await this.queryArticles(getQuery);
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
     async getPlanningArticles(jobId: number, userId: number): Promise<Array<INewArticle> | false> {
         const getQuery = {
             name: 'get-planning-articles',

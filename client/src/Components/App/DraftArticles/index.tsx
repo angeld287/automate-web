@@ -1,4 +1,4 @@
-import { Avatar, Divider, List, Row, Skeleton, Typography } from "antd";
+import { Avatar, Divider, List, Row, Skeleton, Space, Tag, Typography } from "antd";
 import React, { useEffect } from "react";
 import { useAppDispatch } from "../../../app/hooks";
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -8,6 +8,7 @@ import CustomButton from "../../CustomButton";
 import { generateArticleLink, replaceSpace } from "../../../utils/functions";
 import Locals from "../../../config/Locals";
 import { categoryColors } from "../../../utils/constants";
+import { ArticleState } from "../../../interfaces/Enums/States";
 
 const DraftArticles: React.FC<IDraftArticles> = ({actions, hasMore, status, articles, getArticles, getNextArticles}) => {
 
@@ -39,6 +40,9 @@ const DraftArticles: React.FC<IDraftArticles> = ({actions, hasMore, status, arti
                     dataSource={articles}
                     renderItem={(item) => {
                         const color = categoryColors.find(category => item.category?.trim() === category.name);
+                        const TagColorState = (item.sysState?.trim() === ArticleState.AI_CONTENT_RESEARCH) ? "#f50" : 
+                                                ((item.sysState?.trim() === ArticleState.CONTENT_RESEARCH) ? "#cd201f" :
+                                                    ((item.sysState?.trim() === ArticleState.CREATED_IN_WP) ? "#108ee9" : "#87d068"))
                         return (
                             <List.Item
                                 style={{
@@ -58,7 +62,7 @@ const DraftArticles: React.FC<IDraftArticles> = ({actions, hasMore, status, arti
                                             <Typography.Text>{generateArticleLink(item)}</Typography.Text>
                                         </div>}
                                         description={<div style={{textAlign: 'left'}}>
-                                            <Typography.Text italic>{item.title}</Typography.Text>
+                                            <Typography.Text italic>{item.title}</Typography.Text><Space><Tag style={{marginLeft: 10}} color={TagColorState}>{item.sysState}</Tag></Space>
                                         </div>}
                                     />
                                     <Typography.Text italic>{moment(item.createdAt).fromNow()}</Typography.Text>

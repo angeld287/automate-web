@@ -3,13 +3,14 @@ import { RootState } from '../../app/store';
 import IPagination from '../../interfaces/IPagination';
 import { IArticle } from '../../interfaces/models/Article';
 import { removeDuplicate } from '../../utils/functions';
-import { getAIResearchedArticlesFromDb, getArticlesFromDb, getPlanningArticlesFromDb, getWpCreatedArticlesFromDb } from './articlesAPI';
+import { getAIResearchedArticlesFromDb, getAllArticlesByCategory, getArticlesFromDb, getPlanningArticlesFromDb, getWpCreatedArticlesFromDb } from './articlesAPI';
 
 export interface ArticlesState {
   articles: Array<IArticle>;
   planningArticles: Array<IArticle>;
   AIArticles: Array<IArticle>;
   WPArticles: Array<IArticle>;
+  CategoryArticles: Array<IArticle>;
   status: 'idle' | 'loading' | 'failed';
   statusPA: 'idle' | 'loading' | 'failed';
   statusAI: 'idle' | 'loading' | 'failed';
@@ -23,6 +24,7 @@ const initialState: ArticlesState = {
   planningArticles: [],
   AIArticles: [],
   WPArticles: [],
+  CategoryArticles: [],
   status: 'idle',
   statusPA: 'idle',
   statusAI: 'idle',
@@ -36,6 +38,18 @@ export const getArticles = createAsyncThunk(
   async ({page, size}: IPagination) => {
     try {    
       const result = await getArticlesFromDb(page, size);
+      return result.data.response;
+    } catch (error) {
+      console.log(error) 
+    }
+  }
+);
+
+export const getArticlesByCategory = createAsyncThunk(
+  'articles/getArticlesByCategory',
+  async (category: string) => {
+    try {    
+      const result = await getAllArticlesByCategory(category);
       return result.data.response;
     } catch (error) {
       console.log(error) 
@@ -127,6 +141,9 @@ export const articlesSlice = createSlice({
       })
       .addCase(getWpCreatedArticles.fulfilled, (state, action: PayloadAction<Array<IArticle> | false>) => {
         state.WPArticles = action.payload !== false ? action.payload.sort((a, b) => a.category && b.category ? b.category > a.category ? -1 : 1 : 1) : [];
+      })
+      .addCase(getArticlesByCategory.fulfilled, (state, action: PayloadAction<Array<IArticle> | false>) => {
+        state.CategoryArticles = action.payload !== false ? action.payload.sort((a, b) => a.category && b.category ? b.category > a.category ? -1 : 1 : 1) : [];
       });
   },
 });
