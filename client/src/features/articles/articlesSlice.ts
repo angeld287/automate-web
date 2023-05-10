@@ -143,7 +143,7 @@ export const articlesSlice = createSlice({
         state.WPArticles = action.payload !== false ? action.payload.sort((a, b) => a.category && b.category ? b.category > a.category ? -1 : 1 : 1) : [];
       })
       .addCase(getArticlesByCategory.fulfilled, (state, action: PayloadAction<Array<IArticle> | false>) => {
-        state.CategoryArticles = action.payload !== false ? action.payload.sort((a, b) => a.category && b.category ? b.category > a.category ? -1 : 1 : 1) : [];
+        state.CategoryArticles = action.payload !== false ? action.payload.sort((a, b) => a.title && b.title ? b.title > a.title ? -1 : 1 : 1) : [];
       });
   },
 });

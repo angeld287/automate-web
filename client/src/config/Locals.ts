@@ -16,7 +16,8 @@ class Locals {
 
         //wordpress site configuration
         const WP_DOMAIN = "elaceite.de"
-        const WP_JSON_URL = `https://${WP_DOMAIN}/wp-json`
+        const WP_URL = `https://${WP_DOMAIN}/`
+        const WP_JSON_URL = `${WP_URL}wp-json`
         const WP_API_BASE_URL = `${WP_JSON_URL}/wp/v2/`
         
 
@@ -28,7 +29,7 @@ class Locals {
         
 
         return {
-
+            WP_URL,
             WP_JSON_URL,
             WP_API_BASE_URL,
             TOCKEN_URL,

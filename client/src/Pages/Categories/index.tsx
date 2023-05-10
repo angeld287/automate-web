@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { Card, List, Row, Space, Tag } from 'antd';
 import moment from 'moment';
-import { DeleteOutlined, OrderedListOutlined } from '@ant-design/icons';
+import { DeleteOutlined, LinkOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { getAllJobs, selectKeywordSearchJob } from '../../features/keywordSearchJob/keywordSearchJobSlice';
 import { selectCategoriesUtils, getCategoryList } from '../../features/categories/categoriesSlice';
+import Locals from '../../config/Locals';
 
 const JobsList: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -21,6 +22,7 @@ const JobsList: React.FC = () => {
         navigate(`/category/${category}/articles`);
     }
 
+
     return (
         <Row>
             <List
@@ -34,7 +36,7 @@ const JobsList: React.FC = () => {
                             key={item.id}
                             style={{width: 220}} 
                             title={item.name.toUpperCase()}
-                            actions={[<OrderedListOutlined onClick={() => {goToCateoryArticles(item.name)}} key="keywords" />, <DeleteOutlined />]}
+                            actions={[<OrderedListOutlined onClick={() => {goToCateoryArticles(item.name)}} key="keywords" />, <a target='blank' href={`${Locals.config().WP_URL}${item.name}`}><LinkOutlined/></a>]}
                         >
                             <Row>
                                 <Space size={[0, 8]} wrap>
