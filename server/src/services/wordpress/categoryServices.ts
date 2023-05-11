@@ -1,8 +1,11 @@
+import { INewArticle } from "../../interfaces/Content/Article";
+import { IArticleService } from "../../interfaces/IArticleService";
 import Category from "../../interfaces/models/Category";
 import { ICategoryService } from "../../interfaces/wordpress/ICategoryService";
 import Database from "../../providers/Database";
 import Locals from "../../providers/Locals";
 import { axios, fetch } from "../../utils";
+import { articleService } from "../articleServices/articleServices";
 
 export default class categoryService implements ICategoryService {
 
@@ -34,14 +37,19 @@ export default class categoryService implements ICategoryService {
                 return false
 
             const categories: Array<Category> = []
-        
-            result.rows.forEach(row => {
+
+            await Promise.all(result.rows.map(async (row, index) => {
+                let _articleService: IArticleService = new articleService();
+                const articles: false | Array<INewArticle> = await _articleService.getArticlesByCategory(row.name.trim());
+                
                 categories.push({
                     id: row.id,
                     name: row.name.trim(),
                     wpId: row.wp_id,
+                    count: articles !== false ? articles.length : 0
                 })
-            });
+            }));
+
 
             return categories;
         } catch (error) {

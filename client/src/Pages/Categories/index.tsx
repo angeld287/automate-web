@@ -40,7 +40,7 @@ const JobsList: React.FC = () => {
                         >
                             <Row>
                                 <Space size={[0, 8]} wrap>
-                                    <Tag color="#87d068" key="number_of_items">Number of Items</Tag>
+                                    <Tag color="#87d068" key="number_of_items"><h2>{item.count} Articles</h2></Tag>
                                 </Space>
                             </Row>
                         </Card>

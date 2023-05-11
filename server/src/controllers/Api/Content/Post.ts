@@ -70,7 +70,7 @@ class Post {
             const category: Category = categories.find(category => {
                 return removeAccentMark(category.name.toLowerCase()) === bodyCategory
             })
-
+            
             if (!category){
                 return new BadRequestResponse('Error', {
                     error: true,
@@ -84,7 +84,7 @@ class Post {
                 status: "draft",
                 title: article.title,
                 content: content,
-                categories: [category.id],
+                categories: [category.wpId],
             };
 
             const created = await postService.createNf(post, req.headers.authorization)
