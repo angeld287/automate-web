@@ -190,7 +190,6 @@ router.get(
 router.post(
     '/addCategory',
     body('name', 'field name cannot be blank.').notEmpty(),
-    body('description', 'field description cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     Categoryontroller.create
 );

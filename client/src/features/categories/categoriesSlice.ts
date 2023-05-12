@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import ICategory from '../../interfaces/models/Category';
-import { getCategories } from './categoriesAPI';
+import { addCategory, getCategories } from './categoriesAPI';
+import { getBearer } from '../autenticate/authenticateAPI';
 
 export interface CategoriesState {
   categories: Array<ICategory>;
@@ -25,6 +26,19 @@ export const getCategoryList = createAsyncThunk(
   }
 );
 
+export const createCategory = createAsyncThunk(
+  'categories/addCategory',
+  async (category: ICategory) => {
+    try {
+      const token = await getBearer()
+      const response = await addCategory(category, token);
+      return response.data.response;
+    } catch (error) {
+      return new Error('Error in CategoriesState at addCategory.')
+    }
+  }
+);
+
 export const categoriesSlice = createSlice({
   name: 'categories',
   initialState,
@@ -40,6 +54,9 @@ export const categoriesSlice = createSlice({
       })
       .addCase(getCategoryList.rejected, (state) => {
         state.statusc = 'failed';
+      })
+      .addCase(createCategory.fulfilled, (state, action) => {
+        state.categories = [...state.categories, action.payload];
       });
   },
 });

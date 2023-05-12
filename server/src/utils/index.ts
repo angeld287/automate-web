@@ -51,7 +51,7 @@ export const generateArticleSlug = (article: INewArticle) => {
   if(splitedTitle[0] === "aceite" && splitedTitle[1] === "de" && splitedTitle[2] === article.category?.trim().toLowerCase()){
     title = title.replace(`aceite de ${article.category.trim().toLowerCase()}`, '')
   }
-  return `${replaceSpace(title[title.length-1] === "?" ? title.slice(0, -1) : title)}`
+  return `${replaceSpace(title[title.length-1] === "?" ? title.trim().slice(0, -1) : title.trim())}`
 }
 
 export const generateArticleLink = (article: INewArticle) => {

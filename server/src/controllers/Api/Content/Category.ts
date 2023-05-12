@@ -25,14 +25,21 @@ class Category {
 
             let _categoryService: ICategoryService = new categoryService();
             const name = req.body.name
-            const description = req.body.description
+            //const description = req.body.description
             let category: ICategory = {
                 name,
-                description,
+                //description,
                 slug: name.replace(" ", "_").toLowerCase(),
             };
 
             category = await _categoryService.createNF(category, req.headers.authorization)
+
+            category = await _categoryService.createCategory({
+                name: name,
+                wpId: category.id,
+                slug: category.slug
+            })
+            
 
             return new SuccessResponse('Success', {
                 success: true,

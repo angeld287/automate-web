@@ -9,5 +9,7 @@ export interface ICategoryService {
     
     createNF(category: Category, token: string): Promise<Category>;
 
+    createCategory(category: Category): Promise<Category>;
+
     update(category: Category, token: string): Promise<Category>;
 }
