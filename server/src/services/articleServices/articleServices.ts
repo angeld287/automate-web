@@ -54,7 +54,7 @@ export class articleService implements IArticleService {
                         TRIM(translated_name) as translated_name,
                         articles_id, order_number
                     FROM public.subtitles
-                    WHERE articles_id = $1
+                    WHERE articles_id = $1 AND deleted is not true
                 `,
             values: [articleId],
         }
@@ -166,6 +166,44 @@ export class articleService implements IArticleService {
             }
             
             return _article;
+            
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async updateSubtitle(subtitle: SubTitleContent): Promise<SubTitleContent | false> {
+        try {
+            const updateSubtitle = {
+                name: 'update-subtitle',
+                text: 'UPDATE public.subtitles SET subtitles_name=$1, translated_name=$2, order_number=$3, deleted=$4, WHERE id = $5 RETURNING id, subtitles_name, translated_name, articles_id, order_number, deleted, deleted_by, deleted_at',
+                values: [subtitle.name, subtitle.translatedName, subtitle.orderNumber, subtitle.deleted, , subtitle.id],
+            }
+
+            let result = null, client = null;
+
+            client = await Database.getTransaction();
+
+            try {
+                result = await Database.sqlExecSingleRow(client, updateSubtitle);
+                await Database.commit(client);
+            } catch (error) {
+                await Database.rollback(client);
+                throw new Error(error);
+            }
+
+            let _subtitle: SubTitleContent = {
+                id: result.rows[0].id,
+                name: result.rows[0].subtitles_name,
+                translatedName: result.rows[0].translated_name,
+                articleId: result.rows[0].articles_id,
+                orderNumber: result.rows[0].order_number,
+                deleted: result.rows[0].deleted,
+                deletedBy: result.rows[0].deleted_by,
+                deletedAt: result.rows[0].deleted_at,
+            }
+            
+            return _subtitle;
             
         } catch (error) {
             throw new Error(error.message);

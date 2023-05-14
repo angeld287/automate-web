@@ -291,9 +291,16 @@ CREATE TABLE IF NOT EXISTS public.subtitles
     translated_name character(100) COLLATE pg_catalog."default",
     articles_id integer NOT NULL,
     order_number integer,
+    deleted boolean,
+    deleted_by integer,
+    deleted_at timestamp with time zone,
     CONSTRAINT subtitles_pkey PRIMARY KEY (id),
     CONSTRAINT subtitles_articles_fkey FOREIGN KEY (articles_id)
         REFERENCES public.articles (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT subtitles_deleted_by_fkey FOREIGN KEY (deleted_by)
+        REFERENCES public.users (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
@@ -313,6 +320,15 @@ CREATE INDEX IF NOT EXISTS fki_subtitles_articles_fkey
     (articles_id ASC NULLS LAST)
     TABLESPACE pg_default;
 
+-- Trigger: set_timestamp_to_deleted_at_subtitles
+
+-- DROP TRIGGER IF EXISTS set_timestamp_to_deleted_at_subtitles ON public.subtitles;
+
+CREATE TRIGGER set_timestamp_to_deleted_at_subtitles
+    BEFORE UPDATE OF deleted
+    ON public.subtitles
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.trigger_set_timestamp_deleted_at();
 
 
 

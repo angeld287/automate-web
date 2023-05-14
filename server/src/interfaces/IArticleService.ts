@@ -6,6 +6,8 @@ export interface IArticleService {
 
     createSubtitle(subtitle: SubTitleContent): Promise<SubTitleContent>
 
+    updateSubtitle(subtitle: SubTitleContent): Promise<SubTitleContent | false>
+
     createArticle(article: INewArticle): Promise<INewArticle>
 
     updateArticle(article: INewArticle): Promise<INewArticle | false>

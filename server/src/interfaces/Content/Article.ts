@@ -34,7 +34,10 @@ export interface SubTitleContent {
     enContent?: Array<IContent>;
     translatedContent?: string;
     images?: Array<DbMedia>;
-    error?: boolean | ProcessError
+    error?: boolean | ProcessError;
+    deleted?: boolean;
+    deletedBy?: number;
+    deletedAt?: string;
 }
 
 export interface ProcessError {
