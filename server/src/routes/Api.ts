@@ -231,6 +231,13 @@ router.post(
     ArticleController.createEnContentForSubtitle
 );
 
+router.post(
+    '/subtitle/delete',
+    body('id', 'field id cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    ArticleController.deleteSubtitle
+);
+
 
 router.post(
     '/createArticle',

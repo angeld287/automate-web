@@ -580,7 +580,7 @@ class Article {
             }).send(res);
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('Keywords Controller Error - selectPotentialKeyword', {
+            return new InternalErrorResponse('Keywords Controller Error - updateArticleTitle', {
                 error: 'Internal Server Error',
             }).send(res);
         }
@@ -613,7 +613,39 @@ class Article {
             }).send(res);
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('Keywords Controller Error - selectPotentialKeyword', {
+            return new InternalErrorResponse('Keywords Controller Error - updateArticleState', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
+    public static async deleteSubtitle(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            if(ValidateErrors.validate(req, res) !== true) return
+
+            let _articleService: IArticleService = new articleService();
+            
+            const id = req.body.id;
+
+            let subtitle = await _articleService.getSubtitleById(id);
+
+            if(subtitle === false){
+                return new BadRequestResponse('Error', {
+                    error: "Subtitle not found."
+                }).send(res);
+            }
+            
+            subtitle.deleted = true;
+            subtitle = await _articleService.updateSubtitle(subtitle);
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: subtitle,
+                error: null
+            }).send(res);
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Keywords Controller Error - deleteSubtitle', {
                 error: 'Internal Server Error',
             }).send(res);
         }

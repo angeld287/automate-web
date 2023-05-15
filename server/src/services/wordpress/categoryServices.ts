@@ -109,7 +109,7 @@ export default class categoryService implements ICategoryService {
         try {
             const createSubtitle = {
                 name: 'create-new-category',
-                text: 'INSERT INTO public.categories(name, wp_id) VALUES (?, ?) RETURNING name, wp_id;',
+                text: 'INSERT INTO public.categories(name, wp_id) VALUES ($1, $2) RETURNING name, wp_id;',
                 values: [category.name, category.wpId],
             }
 
