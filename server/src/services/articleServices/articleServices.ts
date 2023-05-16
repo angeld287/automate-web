@@ -176,8 +176,8 @@ export class articleService implements IArticleService {
         try {
             const updateSubtitle = {
                 name: 'update-subtitle',
-                text: 'UPDATE public.subtitles SET subtitles_name=$1, translated_name=$2, order_number=$3, deleted=$4, WHERE id = $5 RETURNING id, subtitles_name, translated_name, articles_id, order_number, deleted, deleted_by, deleted_at',
-                values: [subtitle.name, subtitle.translatedName, subtitle.orderNumber, subtitle.deleted, , subtitle.id],
+                text: 'UPDATE public.subtitles SET subtitles_name=$1, translated_name=$2, order_number=$3, deleted=$4 WHERE id = $5 RETURNING id, subtitles_name, translated_name, articles_id, order_number, deleted, deleted_by, deleted_at',
+                values: [subtitle.name, subtitle.translatedName, subtitle.orderNumber, subtitle.deleted, subtitle.id],
             }
 
             let result = null, client = null;

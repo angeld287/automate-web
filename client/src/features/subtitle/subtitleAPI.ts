@@ -39,3 +39,16 @@ export async function searchSubtitle(subtitle: SubTitleContent) {
 
   return await fetchData.json();
 }
+
+export async function deleteSubtitle(id: number) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}subtitle/delete`, {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({id})
+  })
+
+  return await fetchData.json();
+}

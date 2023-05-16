@@ -1,4 +1,4 @@
-import { CopyOutlined, FileAddOutlined, PlusOutlined, SelectOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import { CopyOutlined, DeleteOutlined, FileAddOutlined, PlusOutlined, SelectOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { Checkbox, Col, Divider, List, Row, Typography } from "antd";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import IContent from "../../../../interfaces/models/Content";
@@ -14,7 +14,7 @@ import { ContentState, convertFromHTML, convertToRaw, EditorState, RawDraftConte
 import { toast } from "react-toastify";
 import { Languages } from "../../../../interfaces/Enums/Languages";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
-import { createArticleContent, createSubtitleContent, createSubtitleEn, selectArticle } from "../../../../features/article/articleSlice"
+import { createArticleContent, createSubtitleContent, createSubtitleEn, deleteArticleSubtitle, selectArticle } from "../../../../features/article/articleSlice"
 import { SubTitleContent } from "../../../../interfaces/models/Article";
 
 const ArticleContent: React.FC<IArticleContent> = ({article}) => {
@@ -97,6 +97,7 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
             <CustomButton disabled={addedSubtitle(item, article?.subtitles)} onClick={() => copyContent(item.content)}><CopyOutlined /></CustomButton>,
             <CustomButton loading={statusSubEn === "loading"} disabled={addedSubtitle(item, article?.subtitles)} onDoubleClick={() => {setSubtitle(item.content); setOpenSubModal(true)}} onClick={() => addSubtitle(item.content) }><PlusOutlined /></CustomButton>,
             <CustomButton hidden={!addedSubtitle(item, article?.subtitles)} disabled={subtitleWithContent(item, article?.subtitles)} onClick={() => addSubtitleContent(item, article?.subtitles)}><UnorderedListOutlined /></CustomButton>,
+            <CustomButton hidden={!addedSubtitle(item, article?.subtitles)} disabled={subtitleWithContent(item, article?.subtitles)} onClick={() => deleteSubtitle(item, article?.subtitles)}><DeleteOutlined /></CustomButton>,
             //<TranslationOutlined />,
         ]
     }, [article?.subtitles, selectedContent]);
@@ -124,6 +125,15 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
         }
             
     }, [article?.contents]);
+
+
+    const deleteSubtitle = useCallback((item: IContent, subtitles?: Array<SubTitleContent>) => {
+        if(subtitles){
+            const subTitle = subtitles.find(sub => sub.translatedName === item.content)
+            if(subTitle)
+                dispatch(deleteArticleSubtitle(subTitle.id));
+        }
+    }, []);
 
     const addIntroConclusion = useCallback(async (type: "introduction" | "conclusion" ) => {
         const texts = await navigator.clipboard.readText();

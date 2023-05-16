@@ -4,7 +4,7 @@ import { IArticle, INewPlanningArticle, SubTitleContent } from '../../interfaces
 import IContent from '../../interfaces/models/Content';
 import ApiResponse from '../../interfaces/Responses/ApiResponse';
 import { getBearer } from '../autenticate/authenticateAPI';
-import { searchKeywordContent } from '../subtitle/subtitleAPI';
+import { deleteSubtitle, searchKeywordContent } from '../subtitle/subtitleAPI';
 import { ArticleState as State} from '../../interfaces/Enums/States'
 import { createArticle, createContentForArticle, createEnContent, createEnContentForArticle, createEnSubtitle, createPost, editArticleState, editArticleTitle, getAllArticleMedia, getArticleById, getTranslatedKeywords, searchKeywordsContent } from './articleAPI';
 import Content from '../../interfaces/models/Content';
@@ -171,6 +171,18 @@ export const createSubtitleEn = createAsyncThunk(
   }
 );
 
+export const deleteArticleSubtitle = createAsyncThunk(
+  'article/deleteSubtitle',
+  async (id: number) => {
+    try {    
+      const result = await deleteSubtitle(id);
+      return result.data.response;
+    } catch (error) {
+      throw new Error('Error in ArticleState at deleteArticleSubtitle')
+    }
+  }
+);
+
 export const createSubtitleContent = createAsyncThunk(
   'article/createSubtitleContent',
   async (contents: IContent[]) => {
@@ -305,6 +317,9 @@ export const articleSlice = createSlice({
       .addCase(createSubtitleEn.fulfilled, (state, action: PayloadAction<SubTitleContent>) => {
         state.statusSubEn = 'idle';
         state.article.subtitles = [...state.article.subtitles, action.payload];
+      })
+      .addCase(deleteArticleSubtitle.fulfilled, (state, action: PayloadAction<SubTitleContent>) => {
+        state.article.subtitles = state.article.subtitles.filter(subtitle => subtitle.id !== action.payload.id);
       })
       .addCase(createSubtitleEn.rejected, (state) => {
         state.statusSubEn = 'failed';
