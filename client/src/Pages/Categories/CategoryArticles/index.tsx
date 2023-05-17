@@ -1,4 +1,4 @@
-import { CopyOutlined, GooglePlusOutlined, MenuUnfoldOutlined, PicRightOutlined, RollbackOutlined } from "@ant-design/icons";
+import { CopyOutlined, DeleteOutlined, GooglePlusOutlined, MenuUnfoldOutlined, PicRightOutlined, RollbackOutlined } from "@ant-design/icons";
 import { Col, Row, Tabs } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,12 +10,14 @@ import { IArticle } from "../../../interfaces/models/Article";
 import CustomLoader from "../../../Components/CustomLoader";
 import ContentOrganizationStepper from "../../../Components/App/ContentOrganizationStepper";
 import { ArticleState } from "../../../interfaces/Enums/States";
+import CustomModal from "../../../Components/CustomModal";
+import { updateArticleState } from "../../../features/article/articleSlice";
 
 const CategoryArticles = () => {
 
     const navigate = useNavigate()
     const [ openModal, setOpenModal ] = useState(false);
-    const [ confirmGoBack, setConfirmGoBack ] = useState(false);
+    const [ discardModal, setDiscardModal ] = useState(false);
     const [ article, setAricle ] = useState<IArticle>();
     const dispatch = useAppDispatch();
 
@@ -47,10 +49,28 @@ const CategoryArticles = () => {
         if(article.sysState?.trim() !== ArticleState.CREATED_IN_WP) return null
     }
 
+    
+    const setDiscardArticle = useCallback((article: IArticle) => {
+        if(article.sysState?.trim() === ArticleState.DISCARDED) return null
+
+        setDiscardModal(true);
+        setAricle(article);
+    }, []);
+
+    const discardArticle = useCallback(() => {
+        if(article)
+            dispatch(updateArticleState({id: article.id, state: ArticleState.DISCARDED}))
+        
+        setAricle(undefined);
+        setDiscardModal(false);
+
+    }, [article]);
+
     const articlesActions: IArticlesActions[] = [
         {icon: <><MenuUnfoldOutlined style={{ fontSize: '16px', color: '#f50' }} /> Organize Content</>, _key: "prepare_content_btn", onClick: goToPrepareContent},
         {icon: <><PicRightOutlined style={{ fontSize: '16px', color: '#cd201f' }} /> Add Images</>, _key: "add_images_btn", onClick: onClickEdit},
         {icon: <><GooglePlusOutlined style={{ fontSize: '16px', color: '#108ee9' }} /> Google Craw </> , _key: "set_craweled_btn", onClick: setArticleCrawled},
+        {icon: <><DeleteOutlined style={{ fontSize: '16px', color: '#108ee9' }} /> Discard </> , _key: "set_discard_btn", onClick: setDiscardArticle},
     ];
 
     if(category === undefined) return <CustomLoader/>;
@@ -61,6 +81,8 @@ const CategoryArticles = () => {
                 <DraftArticles {...{actions: articlesActions, hasMore: false, status: 'idle', articles: CategoryArticles, getArticles: getArticlesByCategory(category), getNextArticles: getArticlesByCategory(category)}}/>
             </Col>
             <ContentOrganizationStepper {...{open: openModal, setOpen: setOpenModal, article}}/>
+            <CustomModal onOk={discardArticle} {...{open: discardModal, setOpen: setDiscardModal, title: "Are you sure you wants to discard the article?"}}>
+            </CustomModal>
         </Row>
     );
 }

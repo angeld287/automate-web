@@ -6,4 +6,5 @@ export enum ArticleState {
     CREATED_IN_WP = "CREATED_IN_WP",
     DRAFT = "DRAFT",
     GOOGLE_CRAWLED = "G_CRAWLED",
+    DISCARDED = "DISCARDED",
 }

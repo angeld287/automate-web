@@ -50,13 +50,13 @@ export const categoriesSlice = createSlice({
       })
       .addCase(getCategoryList.fulfilled, (state, action) => {
         state.statusc = 'idle';
-        state.categories = action.payload
+        state.categories = action.payload.sort((a: ICategory, b: ICategory) => b.name > a.name ? -1 : 1); //.filter((category: ICategory) => category.count ? category.count > 20 : false);
       })
       .addCase(getCategoryList.rejected, (state) => {
         state.statusc = 'failed';
       })
       .addCase(createCategory.fulfilled, (state, action) => {
-        state.categories = [...state.categories, action.payload];
+        state.categories = [...state.categories, action.payload].sort((a: ICategory, b: ICategory) => b.name > a.name ? -1 : 1);
       });
   },
 });
