@@ -34,8 +34,8 @@ const CategoryArticles = () => {
         if(article.sysState?.trim() !== ArticleState.CONTENT_RESEARCH){
             return null
         }
-
-        navigate(`/content-editor/${article.internalId}`);
+        window.open(`${window.location.href.replace(window.location.pathname, '')}/content-editor/${article.internalId}`, '_blank');
+        //navigate(`/content-editor/${article.internalId}`);
     }
 
     const goToPrepareContent = (article: IArticle) => {

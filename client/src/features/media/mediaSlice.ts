@@ -74,7 +74,7 @@ export const searchGoogleImages = createAsyncThunk(
   'media/searchImage',
   async ({keyword, index}:{keyword: string, index?: string}) => {
     const result = await searchImages(keyword, index);
-    return result.data;
+    return result;
   }
 );
 
@@ -137,8 +137,8 @@ export const mediaSlice = createSlice({
       })
       .addCase(searchGoogleImages.fulfilled, (state, action) => {
         state.gstatus = 'idle';
-        state.googleResults = state.gindex ? [...state.googleResults, ...action.payload.response] : action.payload.response
-        state.gindex = action.payload.page
+        state.googleResults = action.payload.message === 'Success' ? (state.gindex ? [...state.googleResults, ...action.payload.data.response] : action.payload.data.response) : state.googleResults
+        state.gindex = action.payload.data.page
       })
       .addCase(searchGoogleImages.rejected, (state) => {
         state.gstatus = 'failed';
