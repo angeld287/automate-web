@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import DraftArticles from "../../../Components/App/DraftArticles";
 import { IArticlesActions } from "../../../Components/App/DraftArticles/IDraftArticles";
-import { getArticlesByCategory, selectArticles } from "../../../features/articles/articlesSlice";
+import { getArticlesByCategory, selectArticles, updateCategoryArticle } from "../../../features/articles/articlesSlice";
 import { IArticle } from "../../../interfaces/models/Article";
 import CustomLoader from "../../../Components/CustomLoader";
 import ContentOrganizationStepper from "../../../Components/App/ContentOrganizationStepper";
@@ -58,12 +58,13 @@ const CategoryArticles = () => {
     }, []);
 
     const discardArticle = useCallback(() => {
-        if(article)
+        if(article){
             dispatch(updateArticleState({id: article.id, state: ArticleState.DISCARDED}))
-        
+            article.sysState = ArticleState.DISCARDED;
+            dispatch(updateCategoryArticle(article));
+        }
         setAricle(undefined);
         setDiscardModal(false);
-
     }, [article]);
 
     const articlesActions: IArticlesActions[] = [

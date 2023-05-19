@@ -20,7 +20,7 @@ const Jobs = () => {
                 <Col style={{margin: 10}}><CustomButton onClick={() => { setOpen(true)}}>Create New Job</CustomButton></Col>
             </Row>
             <Row className="rows">
-                <Col span={22} className="job-list">
+                <Col span={24} className="job-list">
                     <JobsList/>
                 </Col>
             </Row>

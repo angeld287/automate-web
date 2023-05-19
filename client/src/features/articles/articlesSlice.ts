@@ -99,6 +99,12 @@ export const articlesSlice = createSlice({
   reducers: {
     resetArticlesList: (state) => {
       state.articles = []
+    },
+    updateCategoryArticle: (state, action: PayloadAction<IArticle>) => {
+      state.CategoryArticles = [...state.CategoryArticles.filter(article => article.id !== action.payload.id), action.payload];
+    },
+    removeCategoryArticle: (state, action: PayloadAction<IArticle>) => {
+      state.CategoryArticles = state.CategoryArticles.filter(article => article.id !== action.payload.id)
     }
   },
   extraReducers: (builder) => {
@@ -148,7 +154,7 @@ export const articlesSlice = createSlice({
   },
 });
 
-export const { resetArticlesList } = articlesSlice.actions;
+export const { resetArticlesList, updateCategoryArticle, removeCategoryArticle } = articlesSlice.actions;
 
 export const selectArticles = (state: RootState) => state.articles;
 
