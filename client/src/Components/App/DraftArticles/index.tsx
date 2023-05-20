@@ -42,7 +42,8 @@ const DraftArticles: React.FC<IDraftArticles> = ({actions, hasMore, status, arti
                         const color = categoryColors.find(category => item.category?.trim() === category.name);
                         const TagColorState = (item.sysState?.trim() === ArticleState.AI_CONTENT_RESEARCH) ? "#f50" : 
                                                 ((item.sysState?.trim() === ArticleState.CONTENT_RESEARCH) ? "#cd201f" :
-                                                    ((item.sysState?.trim() === ArticleState.CREATED_IN_WP) ? "#108ee9" : "#87d068"))
+                                                    ((item.sysState?.trim() === ArticleState.CREATED_IN_WP) ? "#108ee9" : 
+                                                    ( (item.sysState?.trim() === ArticleState.DISCARDED) ? "purple" : "#87d068")))
                         return (
                             <List.Item
                                 style={{

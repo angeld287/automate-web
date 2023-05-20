@@ -71,7 +71,7 @@ const CategoryArticles = () => {
         {icon: <><MenuUnfoldOutlined style={{ fontSize: '16px', color: '#f50' }} /> Organize Content</>, _key: "prepare_content_btn", onClick: goToPrepareContent},
         {icon: <><PicRightOutlined style={{ fontSize: '16px', color: '#cd201f' }} /> Add Images</>, _key: "add_images_btn", onClick: onClickEdit},
         {icon: <><GooglePlusOutlined style={{ fontSize: '16px', color: '#108ee9' }} /> Google Craw </> , _key: "set_craweled_btn", onClick: setArticleCrawled},
-        {icon: <><DeleteOutlined style={{ fontSize: '16px', color: '#108ee9' }} /> Discard </> , _key: "set_discard_btn", onClick: setDiscardArticle},
+        {icon: <><DeleteOutlined style={{ fontSize: '16px', color: 'purple' }} /> Discard </> , _key: "set_discard_btn", onClick: setDiscardArticle},
     ];
 
     if(category === undefined) return <CustomLoader/>;
