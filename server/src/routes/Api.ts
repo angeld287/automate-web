@@ -20,6 +20,7 @@ import Categoryontroller from '../controllers/Api/Content/Category';
 import ArticleController from '../controllers/Api/Article/Article';
 import SearchKeywordController from '../controllers/Api/Job/SearchKeyword';
 import KeywordsController from '../controllers/Api/Keywords/Keywords';
+import ConfigurationsController from '../controllers/Api/Configurations/Configurations';
 
 const router = Router();
 
@@ -452,5 +453,25 @@ router.post(
     Passport.isAuthenticated,
     ContentController.createArticleWithOpenAI
 );
+
+
+
+// CONFIRGURATIONS APIS ROUTES
+router.post(
+    '/site/create',
+    body('name', 'field name cannot be blank.').notEmpty(),
+    body('domain', 'field domain cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    ConfigurationsController.createSite
+);
+
+router.post(
+    '/site/update',
+    body('name', 'field name cannot be blank.').notEmpty(),
+    body('domain', 'field domain cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    ConfigurationsController.updateSite
+);
+
 
 export default router;

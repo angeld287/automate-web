@@ -37,7 +37,7 @@ export class sitesService implements ISitesService {
         }
     }
 
-    async updateArticle(site: ISite): Promise<ISite | false> {
+    async updateSite(site: ISite): Promise<ISite | false> {
         try {
             const updateSite = {
                 name: 'update-site',
@@ -57,14 +57,14 @@ export class sitesService implements ISitesService {
                 throw new Error(error);
             }
 
-            let _article: ISite = {
+            let _site: ISite = {
                 id: result.rows[0].id,
                 name: result.rows[0].name,
                 domain: result.rows[0].domain,
                 createdBy: result.rows[0].created_by,
             }
             
-            return _article;
+            return _site;
             
         } catch (error) {
             throw new Error(error.message);
@@ -96,6 +96,34 @@ export class sitesService implements ISitesService {
                 })
             });
             return contents;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async getSiteById(id: number): Promise<ISite | false> {
+        const getQuery = {
+            name: 'get-site-by-id',
+            text:  `SELECT name, domain, created_by FROM public.sites where id = $1;`,
+            values: [id]
+        };
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            if (result.rows.length === 0)
+                return false
+            
+            let _site: ISite = {
+                id: result.rows[0].id,
+                name: result.rows[0].name,
+                domain: result.rows[0].domain,
+                createdBy: result.rows[0].created_by,
+            }
+            
+            return _site;
+            
         } catch (error) {
             throw new Error(error.message);
         }

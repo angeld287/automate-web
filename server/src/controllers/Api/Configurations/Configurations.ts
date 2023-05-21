@@ -1,0 +1,135 @@
+/**
+ * Get the html body of a web page
+ *
+ * @author Angel Angeles <aangeles@litystyles.com>
+ */
+
+import { BadRequestResponse, InternalErrorResponse, SuccessResponse } from '../../../core/ApiResponse';
+import { IKeywordService } from '../../../interfaces/IKeywordService';
+import ISitesService from '../../../interfaces/ISitesService';
+import { IRequest, IResponse } from '../../../interfaces/vendors';
+import Log from '../../../middlewares/Log';
+import ExpressValidator, { ValidateErrors } from '../../../providers/ExpressValidation';
+import NodeJob from '../../../providers/NodeJob';
+import { keywordService } from '../../../services/keywords/keywordServices';
+import { sitesService } from '../../../services/sitesServices/sitesServices';
+
+class Configurations {
+
+    public static async createSite(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            const errors = new ExpressValidator().validator(req);
+
+            if (!errors.isEmpty()) {
+                return new BadRequestResponse('Error', {
+                    errors: errors.array()
+                }).send(res);
+            }
+
+            const { name, domain } = req.body;
+            const userId = req.session.passport.user.id;
+            
+            const siteService: ISitesService = new sitesService();
+
+            const site = siteService.createSite({
+                name,
+                domain,
+                createdBy: parseInt(userId),
+            });
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: site,
+                error: null,
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('SearchKeyword Job Controller Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
+    public static async updateSite(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            const errors = new ExpressValidator().validator(req);
+
+            if (!errors.isEmpty()) {
+                return new BadRequestResponse('Error', {
+                    errors: errors.array()
+                }).send(res);
+            }
+
+            const { id, name, domain } = req.body.id;
+            const userId = req.session.passport.user.id;
+            
+            const siteService: ISitesService = new sitesService();
+
+            let site = await siteService.getSiteById(id);
+
+            if(site === false){
+                return new BadRequestResponse('Error', {
+                    error: "The site does not exist."
+                }).send(res);
+            }
+
+            if(site.createdBy !== parseInt(userId)){
+                return new BadRequestResponse('Error', {
+                    error: "You are not the site owner."
+                }).send(res);
+            }
+
+            site.domain = domain;
+            site.name = name;
+            site = await siteService.updateSite(site);
+
+            return new SuccessResponse('Success', {
+                success: true,
+                error: null,
+                response: site
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('SearchKeyword Job Controller Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
+    public static async deleteKeywordSearchJob(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            if(ValidateErrors.validate(req, res) !== true) return
+
+            const _keywordService: IKeywordService = new keywordService()
+            
+            const id = req.body.jobId;
+
+            let keyowrdSJ = await _keywordService.getKeywordSearchJob(id)
+
+            if(keyowrdSJ === false){
+                return new BadRequestResponse('Error', {
+                    error: "The keyword search job does not exist."
+                }).send(res);
+            }else{
+                keyowrdSJ.deleted = true;
+                keyowrdSJ = await _keywordService.updateKeywordSearchJob(keyowrdSJ)
+            }
+            
+            return new SuccessResponse('Success', {
+                success: true,
+                response: keyowrdSJ,
+                error: null
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Keywords Controller Error - delleteKeywordSearchJob', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+}
+
+export default Configurations;
