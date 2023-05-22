@@ -473,5 +473,11 @@ router.post(
     ConfigurationsController.updateSite
 );
 
+router.get(
+    '/site/getAll',
+    Passport.isAuthenticated,
+    ConfigurationsController.getOwnerSiteList
+);
+
 
 export default router;

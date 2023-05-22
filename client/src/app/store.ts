@@ -9,6 +9,7 @@ import userRegisterReducer from '../features/userRegister/userRegisterSlice';
 import categoriesReducer from '../features/categories/categoriesSlice';
 import keywordSearchJobReducer from '../features/keywordSearchJob/keywordSearchJobSlice';
 import keywordsReducer from '../features/keywords/keywordSlice';
+import configurationsReducer from '../features/configurations/configurationsSlice';
 
 const authMiddleware = (store: any) => (next: any) => (action: any) => {
   if(action.type === "userSession/login/fulfilled"){
@@ -31,6 +32,7 @@ export const store = configureStore({
     categories: categoriesReducer,
     keywordSearchJob: keywordSearchJobReducer,
     keywords: keywordsReducer,
+    configurations: configurationsReducer,
   },
   middleware: (getDefaultMiddleware) =>
   getDefaultMiddleware({

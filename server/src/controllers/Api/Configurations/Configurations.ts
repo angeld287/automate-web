@@ -5,13 +5,10 @@
  */
 
 import { BadRequestResponse, InternalErrorResponse, SuccessResponse } from '../../../core/ApiResponse';
-import { IKeywordService } from '../../../interfaces/IKeywordService';
 import ISitesService from '../../../interfaces/ISitesService';
 import { IRequest, IResponse } from '../../../interfaces/vendors';
 import Log from '../../../middlewares/Log';
 import ExpressValidator, { ValidateErrors } from '../../../providers/ExpressValidation';
-import NodeJob from '../../../providers/NodeJob';
-import { keywordService } from '../../../services/keywords/keywordServices';
 import { sitesService } from '../../../services/sitesServices/sitesServices';
 
 class Configurations {
@@ -45,7 +42,7 @@ class Configurations {
 
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('SearchKeyword Job Controller Error', {
+            return new InternalErrorResponse('Configurations Controller Error - createSite', {
                 error: 'Internal Server Error',
             }).send(res);
         }
@@ -92,40 +89,30 @@ class Configurations {
 
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('SearchKeyword Job Controller Error', {
+            return new InternalErrorResponse('Configurations Controller Error - updateSite', {
                 error: 'Internal Server Error',
             }).send(res);
         }
     }
 
-    public static async deleteKeywordSearchJob(req: IRequest, res: IResponse): Promise<any> {
+    public static async getOwnerSiteList(req: IRequest, res: IResponse): Promise<any> {
         try {
             if(ValidateErrors.validate(req, res) !== true) return
 
-            const _keywordService: IKeywordService = new keywordService()
-            
-            const id = req.body.jobId;
+            const siteService: ISitesService = new sitesService();
+            const userId = req.session.passport.user.id;
 
-            let keyowrdSJ = await _keywordService.getKeywordSearchJob(id)
-
-            if(keyowrdSJ === false){
-                return new BadRequestResponse('Error', {
-                    error: "The keyword search job does not exist."
-                }).send(res);
-            }else{
-                keyowrdSJ.deleted = true;
-                keyowrdSJ = await _keywordService.updateKeywordSearchJob(keyowrdSJ)
-            }
+            let sites = await siteService.getSiteListByOwner(parseInt(userId))
             
             return new SuccessResponse('Success', {
                 success: true,
-                response: keyowrdSJ,
+                response: sites,
                 error: null
             }).send(res);
 
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
-            return new InternalErrorResponse('Keywords Controller Error - delleteKeywordSearchJob', {
+            return new InternalErrorResponse('Configurations Controller Error - getOwnerSiteList', {
                 error: 'Internal Server Error',
             }).send(res);
         }
