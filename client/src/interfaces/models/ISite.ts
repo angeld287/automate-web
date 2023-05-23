@@ -3,4 +3,5 @@ export default interface ISite {
     name: string;
     domain: string;
     createdBy: number;
+    selected: boolean;
 }

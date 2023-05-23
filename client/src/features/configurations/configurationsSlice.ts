@@ -11,7 +11,7 @@ export interface ConfigurationsState {
 
 const initialState: ConfigurationsState = {
   sites: [],
-  status: 'loading',
+  status: 'idle',
 };
 
 export const getSiteList = createAsyncThunk(

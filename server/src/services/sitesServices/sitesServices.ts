@@ -25,8 +25,8 @@ export class sitesService implements ISitesService {
 
             let _subtitle: ISite = {
                 id: result.rows[0].id,
-                name: result.rows[0].name,
-                domain: result.rows[0].domain,
+                name: result.rows[0].name.trim(),
+                domain: result.rows[0].domain.trim(),
                 createdBy: result.rows[0].created_by,
             }
             
@@ -59,8 +59,8 @@ export class sitesService implements ISitesService {
 
             let _site: ISite = {
                 id: result.rows[0].id,
-                name: result.rows[0].name,
-                domain: result.rows[0].domain,
+                name: result.rows[0].name.trim(),
+                domain: result.rows[0].domain.trim(),
                 createdBy: result.rows[0].created_by,
             }
             
@@ -74,7 +74,7 @@ export class sitesService implements ISitesService {
     async getSiteListByOwner(userId: number): Promise<Array<ISite>> {
         const getQuery = {
             name: 'get-sites-by-owner',
-            text:  `SELECT name, domain, created_by FROM public.sites where created_by = $1;`,
+            text:  `SELECT id, name, domain, created_by FROM public.sites where created_by = $1;`,
             values: [userId]
         };
 
@@ -90,8 +90,8 @@ export class sitesService implements ISitesService {
             result.rows.forEach(row => {
                 contents.push({
                     id: row.id,
-                    name: row.name,
-                    domain: row.domain,
+                    name: row.name.trim(),
+                    domain: row.domain.trim(),
                     createdBy: row.created_by,
                 })
             });
@@ -117,8 +117,8 @@ export class sitesService implements ISitesService {
             
             let _site: ISite = {
                 id: result.rows[0].id,
-                name: result.rows[0].name,
-                domain: result.rows[0].domain,
+                name: result.rows[0].name.trim(),
+                domain: result.rows[0].domain.trim(),
                 createdBy: result.rows[0].created_by,
             }
             
