@@ -461,16 +461,25 @@ router.post(
     '/site/create',
     body('name', 'field name cannot be blank.').notEmpty(),
     body('domain', 'field domain cannot be blank.').notEmpty(),
+    body('selected', 'field selected cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     ConfigurationsController.createSite
 );
 
 router.post(
     '/site/update',
+    body('id', 'field id cannot be blank.').notEmpty(),
     body('name', 'field name cannot be blank.').notEmpty(),
     body('domain', 'field domain cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     ConfigurationsController.updateSite
+);
+
+router.post(
+    '/site/setSelectedSite',
+    body('id', 'field id cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    ConfigurationsController.setSelectedSite
 );
 
 router.get(
@@ -478,6 +487,8 @@ router.get(
     Passport.isAuthenticated,
     ConfigurationsController.getOwnerSiteList
 );
+
+
 
 
 export default router;

@@ -23,7 +23,7 @@ class Configurations {
                 }).send(res);
             }
 
-            const { name, domain } = req.body;
+            const { name, domain, selected } = req.body;
             const userId = req.session.passport.user.id;
             
             const siteService: ISitesService = new sitesService();
@@ -32,6 +32,7 @@ class Configurations {
                 name,
                 domain,
                 createdBy: parseInt(userId),
+                selected,
             });
 
             return new SuccessResponse('Success', {
@@ -80,6 +81,62 @@ class Configurations {
             site.domain = domain;
             site.name = name;
             site = await siteService.updateSite(site);
+
+            return new SuccessResponse('Success', {
+                success: true,
+                error: null,
+                response: site
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Configurations Controller Error - updateSite', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
+    public static async setSelectedSite(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            const errors = new ExpressValidator().validator(req);
+
+            if (!errors.isEmpty()) {
+                return new BadRequestResponse('Error', {
+                    errors: errors.array()
+                }).send(res);
+            }
+
+            const { id } = req.body.id;
+            const userId = req.session.passport.user.id;
+            
+            const siteService: ISitesService = new sitesService();
+
+            let site = await siteService.getSiteById(id);
+
+            if(site === false){
+                return new BadRequestResponse('Error', {
+                    error: "The site does not exist."
+                }).send(res);
+            }
+
+            if(site.createdBy !== parseInt(userId)){
+                return new BadRequestResponse('Error', {
+                    error: "You are not the site owner."
+                }).send(res);
+            }
+
+            site.selected
+            site = await siteService.updateSite(site);
+
+            const otherSites = (await siteService.getSiteListByOwner(parseInt(userId))).filter(_site => {
+                if(site !== false)
+                    return _site.id !== site.id
+            })
+
+            await Promise.all(otherSites.map(async (otherSite, index) => {
+                otherSite.selected = false;
+                await siteService.updateSite(otherSite);
+            }));
 
             return new SuccessResponse('Success', {
                 success: true,

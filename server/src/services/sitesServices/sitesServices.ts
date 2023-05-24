@@ -7,8 +7,8 @@ export class sitesService implements ISitesService {
         try {
             const createSite = {
                 name: 'create-new-site',
-                text: 'INSERT INTO public.sites(name, domain, created_by) VALUES ($1, $2, $3) RETURNING name, domain, created_by;',
-                values: [site.name, site.domain, site.createdBy],
+                text: 'INSERT INTO public.sites(name, domain, created_by, selected) VALUES ($1, $2, $3, $4) RETURNING name, domain, created_by, selected;',
+                values: [site.name, site.domain, site.createdBy, site.selected],
             }
 
             let result = null, client = null;
@@ -28,6 +28,7 @@ export class sitesService implements ISitesService {
                 name: result.rows[0].name.trim(),
                 domain: result.rows[0].domain.trim(),
                 createdBy: result.rows[0].created_by,
+                selected: result.rows[0].selected,
             }
             
             return _subtitle;
@@ -41,8 +42,8 @@ export class sitesService implements ISitesService {
         try {
             const updateSite = {
                 name: 'update-site',
-                text: 'UPDATE public.sites SET name=$1, domain=$2 WHERE id = $3 RETURNING name, domain, created_by;',
-                values: [site.name, site.domain, site.id],
+                text: 'UPDATE public.sites SET name=$1, domain=$2, selected=$4 WHERE id = $3 RETURNING name, domain, created_by, selected;',
+                values: [site.name, site.domain, site.id, site.selected],
             }
 
             let result = null, client = null;
@@ -62,6 +63,7 @@ export class sitesService implements ISitesService {
                 name: result.rows[0].name.trim(),
                 domain: result.rows[0].domain.trim(),
                 createdBy: result.rows[0].created_by,
+                selected: result.rows[0].selected,
             }
             
             return _site;
@@ -74,7 +76,7 @@ export class sitesService implements ISitesService {
     async getSiteListByOwner(userId: number): Promise<Array<ISite>> {
         const getQuery = {
             name: 'get-sites-by-owner',
-            text:  `SELECT id, name, domain, created_by FROM public.sites where created_by = $1;`,
+            text:  `SELECT id, name, domain, created_by, selected FROM public.sites where created_by = $1;`,
             values: [userId]
         };
 
@@ -93,6 +95,7 @@ export class sitesService implements ISitesService {
                     name: row.name.trim(),
                     domain: row.domain.trim(),
                     createdBy: row.created_by,
+                    selected: row.selected,
                 })
             });
             return contents;
@@ -104,7 +107,7 @@ export class sitesService implements ISitesService {
     async getSiteById(id: number): Promise<ISite | false> {
         const getQuery = {
             name: 'get-site-by-id',
-            text:  `SELECT name, domain, created_by FROM public.sites where id = $1;`,
+            text:  `SELECT name, domain, created_by, selected FROM public.sites where id = $1;`,
             values: [id]
         };
 
@@ -120,6 +123,7 @@ export class sitesService implements ISitesService {
                 name: result.rows[0].name.trim(),
                 domain: result.rows[0].domain.trim(),
                 createdBy: result.rows[0].created_by,
+                selected: result.rows[0].selected
             }
             
             return _site;

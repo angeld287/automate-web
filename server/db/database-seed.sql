@@ -598,6 +598,7 @@ CREATE TABLE IF NOT EXISTS public.sites
     deleted boolean,
     deleted_by integer,
     deleted_at timestamp with time zone,
+    selected boolean,
     CONSTRAINT sites_pkey PRIMARY KEY (id),
     CONSTRAINT sites_created_by_fkey FOREIGN KEY (created_by)
         REFERENCES public.users (id) MATCH SIMPLE
