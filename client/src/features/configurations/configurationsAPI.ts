@@ -27,3 +27,17 @@ export async function addSite(site: ISite, token: string) {
   const result = await response.json();
   return result;
 }
+
+export async function setSelectedSite(id: number, token: string) {
+  const response = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}site/setSelectedSite`, {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token
+    },
+    body: JSON.stringify({id})
+  })
+  const result = await response.json();
+  return result;
+}

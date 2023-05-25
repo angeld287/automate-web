@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { addSite, getSites } from './configurationsAPI';
+import { addSite, getSites, setSelectedSite } from './configurationsAPI';
 import { getBearer } from '../autenticate/authenticateAPI';
 import ISite from '../../interfaces/models/ISite';
 
@@ -30,11 +30,24 @@ export const createSite = createAsyncThunk(
   'configurations/addSite',
   async (site: ISite) => {
     try {
-      const token = await getBearer()
+      const token = await getBearer();
       const response = await addSite(site, token);
       return response.data.response;
     } catch (error) {
       return new Error('Error in ConfigurationsState at createSite.')
+    }
+  }
+);
+
+export const setDefeaultSite = createAsyncThunk(
+  'configurations/setDefeaultSite',
+  async (id: number) => {
+    try {
+      const token = await getBearer();
+      const response = await setSelectedSite(id, token);
+      return response.data.response;
+    } catch (error) {
+      return new Error('Error in ConfigurationsState at setDefeaultSite.')
     }
   }
 );

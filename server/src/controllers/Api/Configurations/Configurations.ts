@@ -59,7 +59,7 @@ class Configurations {
                 }).send(res);
             }
 
-            const { id, name, domain } = req.body.id;
+            const { id, name, domain } = req.body;
             const userId = req.session.passport.user.id;
             
             const siteService: ISitesService = new sitesService();
@@ -106,7 +106,7 @@ class Configurations {
                 }).send(res);
             }
 
-            const { id } = req.body.id;
+            const { id } = req.body;
             const userId = req.session.passport.user.id;
             
             const siteService: ISitesService = new sitesService();
@@ -125,9 +125,8 @@ class Configurations {
                 }).send(res);
             }
 
-            site.selected
+            site.selected = true
             site = await siteService.updateSite(site);
-
             const otherSites = (await siteService.getSiteListByOwner(parseInt(userId))).filter(_site => {
                 if(site !== false)
                     return _site.id !== site.id

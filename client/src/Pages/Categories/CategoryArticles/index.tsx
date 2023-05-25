@@ -47,6 +47,8 @@ const CategoryArticles = () => {
 
     const setArticleCrawled = (article: IArticle) => {
         if(article.sysState?.trim() !== ArticleState.CREATED_IN_WP) return null
+        
+        dispatch(updateArticleState({id: article.id, state: ArticleState.GOOGLE_CRAWLED}))
     }
 
     

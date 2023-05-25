@@ -42,8 +42,8 @@ export class sitesService implements ISitesService {
         try {
             const updateSite = {
                 name: 'update-site',
-                text: 'UPDATE public.sites SET name=$1, domain=$2, selected=$4 WHERE id = $3 RETURNING name, domain, created_by, selected;',
-                values: [site.name, site.domain, site.id, site.selected],
+                text: 'UPDATE public.sites SET name=$1, domain=$2, selected=$3 WHERE id = $4 RETURNING name, domain, created_by, selected, id',
+                values: [site.name, site.domain, site.selected, site.id],
             }
 
             let result = null, client = null;
@@ -107,7 +107,7 @@ export class sitesService implements ISitesService {
     async getSiteById(id: number): Promise<ISite | false> {
         const getQuery = {
             name: 'get-site-by-id',
-            text:  `SELECT name, domain, created_by, selected FROM public.sites where id = $1;`,
+            text:  `SELECT id, name, domain, created_by, selected FROM public.sites where id = $1;`,
             values: [id]
         };
 

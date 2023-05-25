@@ -7,7 +7,7 @@ import { logoutAsync } from '../../features/userSession/asyncThunks';
 import './menu.css'
 import { LogoutOutlined } from '@ant-design/icons';
 import { resetArticlesList } from '../../features/articles/articlesSlice';
-import { selectSitesUtils } from '../../features/configurations/configurationsSlice';
+import { selectSitesUtils, setDefeaultSite } from '../../features/configurations/configurationsSlice';
 import { getSiteList } from '../../features/configurations/configurationsSlice';
 import { ISelectOptions } from '../CustomSelect/ICustomSelect';
 import ISite from '../../interfaces/models/ISite';
@@ -55,16 +55,23 @@ const Menu: React.FC = () => {
     
   ], []);
 
-  const items2: MenuProps['items'] = useMemo(() => [
-    {
-      label:<Col><CustomSelect name="site" defaultValue={defaultSite?.id} items={siteList} placeholder="Choose One Site"></CustomSelect></Col>,
-      key: 'site',
-    },
-    {
-      label: <CustomButton onClick={logOut}><LogoutOutlined /> LogOut</CustomButton>,
-      key: 'lgout',
-    },
-  ], [siteList]);
+  const setSelectedSite = useCallback((e: any) => {
+    dispatch(setDefeaultSite(parseInt(e)))
+  }, []);
+
+  const items2: MenuProps['items'] = useMemo(() => {
+    if(defaultSite && defaultSite.id)
+      return [
+        {
+          label:<Col><CustomSelect name="site" defaultValue={defaultSite?.id?.toString()} items={siteList} onChange={(e) => setSelectedSite(e)} placeholder="Choose One Site"></CustomSelect></Col>,
+          key: 'site',
+        },
+        {
+          label: <CustomButton onClick={logOut}><LogoutOutlined /> LogOut</CustomButton>,
+          key: 'lgout',
+        },
+      ]
+  }, [siteList, defaultSite]);
 
   const onClick: MenuProps['onClick'] = useCallback((e: any) => {
     setCurrent(e.key);
