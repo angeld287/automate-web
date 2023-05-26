@@ -11,6 +11,8 @@ export interface MediaState {
   gstatus: 'idle' | 'loading' | 'failed';
   uStatus: 'idle' | 'loading' | 'failed';
   gindex?: string;
+  cmError: boolean;
+  cmErrorMessage: string;
 }
 
 const initialState: MediaState = {
@@ -21,6 +23,8 @@ const initialState: MediaState = {
   status: 'idle',
   gstatus: 'idle',
   uStatus: 'idle',
+  cmError: false,
+  cmErrorMessage: '',
 };
 
 export const createMedia = createAsyncThunk(
@@ -28,14 +32,18 @@ export const createMedia = createAsyncThunk(
   async ({title, imageAddress, type, relatedId, orderNumber}: {title: string, imageAddress: string, type: string, relatedId: number, orderNumber: string}) => {
     const token = getBearer()
     const response = await addMediaToWordpress(imageAddress, title, type, relatedId, orderNumber, token);
-    await updateMediaData({
-      alt_text: title,
-      title: title,
-      caption: title,
-      description: title,
-      id: response.data.response.wpId
-    }, token);
-    return response.data.response;
+
+    if(response.data.response){
+      await updateMediaData({
+        alt_text: title,
+        title: title,
+        caption: title,
+        description: title,
+        id: response.data.response.wpId
+      }, token);
+    }
+
+    return response.data;
   }
 );
 
@@ -44,13 +52,17 @@ export const createMediaOpenAI = createAsyncThunk(
   async ({title, type, relatedId}: {title: string, type: string, relatedId: number}) => {
     const token = getBearer()
     const response = await addMediaToWordpressOpenAI(title, type, relatedId, token);
-    await updateMediaData({
-      alt_text: title,
-      title: title,
-      caption: title,
-      description: title,
-      id: response.data.response.wpId
-    }, token);
+
+    if(response.data.response){
+      await updateMediaData({
+        alt_text: title,
+        title: title,
+        caption: title,
+        description: title,
+        id: response.data.response.wpId
+      }, token);
+    }
+
     return response.data.response;
   }
 );
@@ -99,6 +111,10 @@ export const mediaSlice = createSlice({
         wpId: '0'
       }
     },
+    clearMediaError: (state) => {
+      state.cmError = false;
+      state.cmErrorMessage = "";
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -107,7 +123,17 @@ export const mediaSlice = createSlice({
       })
       .addCase(createMedia.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.media = {...action.payload}
+
+        if(action.payload.response){
+          state.media = {...action.payload.response}
+        }else if(action.payload.error){
+          state.cmError = true;
+          state.cmErrorMessage = action.payload.error;
+        }else if(action.payload.errors){
+          state.cmError = true;
+          state.cmErrorMessage = action.payload.errors[0].message;
+        }
+        
       })
       .addCase(createMedia.rejected, (state) => {
         state.status = 'failed';
@@ -146,7 +172,7 @@ export const mediaSlice = createSlice({
   },
 });
 
-export const { clearGoogleResults, clearMedia } = mediaSlice.actions;
+export const { clearGoogleResults, clearMedia, clearMediaError } = mediaSlice.actions;
 
 export const selectMedia = (state: RootState) => state.media;
 

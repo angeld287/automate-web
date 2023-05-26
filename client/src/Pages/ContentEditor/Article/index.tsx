@@ -10,7 +10,7 @@ import { ContainerOutlined, EditOutlined, FileAddOutlined, FileImageOutlined, Fi
 import AddImage from "../../../Components/App/AddImage";
 import './article.css'
 import Locals from "../../../config/Locals";
-import { clearMedia, deleteWpImage, selectMedia } from "../../../features/media/mediaSlice";
+import { clearMedia, clearMediaError, deleteWpImage, selectMedia } from "../../../features/media/mediaSlice";
 import { updateSubtitle } from "../../../features/article/articleSlice";
 import AddIntroAndConclusion from "../../../Components/App/AddIntroAndConclusion";
 import { toast } from 'react-toastify';
@@ -58,6 +58,12 @@ const ContentEditor = () => {
         }else {
             dispatch(updateArticleImage(media.media));
         }
+
+        if(media.cmError){
+            toast(media.cmErrorMessage);
+            dispatch(clearMediaError());
+        }
+
     }, [media]);
 
     useEffect(() => {
