@@ -45,6 +45,9 @@ export const setDefeaultSite = createAsyncThunk(
     try {
       const token = await getBearer();
       const response = await setSelectedSite(id, token);
+      if(response.data.response){
+        localStorage.setItem('default-site', id.toString());
+      }
       return response.data.response;
     } catch (error) {
       return new Error('Error in ConfigurationsState at setDefeaultSite.')

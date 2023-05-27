@@ -5,7 +5,7 @@ import { Menu as AntDMenu } from 'antd';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { logoutAsync } from '../../features/userSession/asyncThunks';
 import './menu.css'
-import { LogoutOutlined } from '@ant-design/icons';
+import { LogoutOutlined, ToolOutlined } from '@ant-design/icons';
 import { resetArticlesList } from '../../features/articles/articlesSlice';
 import { selectSitesUtils, setDefeaultSite } from '../../features/configurations/configurationsSlice';
 import { getSiteList } from '../../features/configurations/configurationsSlice';
@@ -65,6 +65,10 @@ const Menu: React.FC = () => {
         {
           label:<Col><CustomSelect name="site" defaultValue={defaultSite?.id?.toString()} items={siteList} onChange={(e) => setSelectedSite(e)} placeholder="Choose One Site"></CustomSelect></Col>,
           key: 'site',
+        },
+        {
+          label: <Link to="/config"><CustomButton onClick={() => {}}><ToolOutlined /> Config</CustomButton></Link>,
+          key: 'config',
         },
         {
           label: <CustomButton onClick={logOut}><LogoutOutlined /> LogOut</CustomButton>,
