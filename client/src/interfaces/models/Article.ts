@@ -22,6 +22,7 @@ export interface IArticle {
     deletedAt?: string;
     deletedBy?: number;
     jobId?: number;
+    siteId: number;
 }
 
 export interface INewPlanningArticle {

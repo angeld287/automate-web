@@ -12,15 +12,15 @@ export interface IArticleService {
 
     updateArticle(article: INewArticle): Promise<INewArticle | false>
 
-    getArticles(page: number, size: number, userId: number): Promise<Array<INewArticle> | false>
+    getArticles(page: number, size: number, userId: number, siteId: number): Promise<Array<INewArticle> | false>
 
     getArticleById(articleId: number): Promise<INewArticle | false>
     
     getArticleByDbId(articleId: number): Promise<INewArticle | false>
 
-    getPlanningArticle(jobId: number, userId: number): Promise<INewArticle | false>
+    getPlanningArticle(jobId: number, userId: number, siteId: number): Promise<INewArticle | false>
 
-    getArticlesByCategory(category: string): Promise<Array<INewArticle> | false>
+    getArticlesByCategory(category: string, siteId: number): Promise<Array<INewArticle> | false>
 
     getPlanningArticles(jobId: number, userId: number): Promise<Array<INewArticle> | false>
 

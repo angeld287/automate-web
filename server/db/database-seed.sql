@@ -212,6 +212,7 @@ CREATE TABLE IF NOT EXISTS public.articles
     wp_link character(100) COLLATE pg_catalog."default",
     sys_state character(15) COLLATE pg_catalog."default",
     job_id integer,
+    site_id integer NOT NULL,
     CONSTRAINT articles_pkey PRIMARY KEY (id),
     CONSTRAINT articles_created_by_fkey FOREIGN KEY (created_by)
         REFERENCES public.users (id) MATCH SIMPLE
@@ -223,6 +224,10 @@ CREATE TABLE IF NOT EXISTS public.articles
         ON DELETE NO ACTION,
     CONSTRAINT articles_keyword_search_job_fkey FOREIGN KEY (job_id)
         REFERENCES public.keyword_search_job (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT articles_sites_fkey FOREIGN KEY (site_id)
+        REFERENCES public.sites (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
@@ -276,8 +281,7 @@ CREATE TRIGGER set_timestamp_to_deleted_at
     BEFORE UPDATE OF deleted
     ON public.articles
     FOR EACH ROW
-    EXECUTE PROCEDURE public.trigger_set_timestamp_deleted_at();
-    
+    EXECUTE PROCEDURE public.trigger_set_timestamp_deleted_at();    
 
 
 -- Table: public.subtitles

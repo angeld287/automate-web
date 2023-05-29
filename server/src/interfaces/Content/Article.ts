@@ -22,6 +22,7 @@ export interface INewArticle {
     deletedBy?: number;
     deletedAt?: string;
     jobId?: number;
+    siteId: number;
 }
 
 export interface SubTitleContent {

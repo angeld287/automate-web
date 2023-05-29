@@ -95,8 +95,8 @@ export class articleService implements IArticleService {
         try {
             const createArticle = {
                 name: 'create-new-article',
-                text: 'INSERT INTO public.articles(title, translated_title, category, created_by, sys_state, job_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING internal_id, id, TRIM(title) AS title, TRIM(translated_title) AS translated_title, category, created_by, created_at, sys_state, job_id',
-                values: [article.title, article.translatedTitle, article.category, article.createdBy, article.sysState, article.jobId],
+                text: 'INSERT INTO public.articles(title, translated_title, category, created_by, sys_state, job_id, site_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING internal_id, id, TRIM(title) AS title, TRIM(translated_title) AS translated_title, category, created_by, created_at, sys_state, job_id, site_id',
+                values: [article.title, article.translatedTitle, article.category, article.createdBy, article.sysState, article.jobId, article.siteId],
             }
 
             let result = null, client = null;
@@ -122,6 +122,7 @@ export class articleService implements IArticleService {
                 translatedTitle: result.rows[0].translated_title,
                 createdBy: result.rows[0].created_by,
                 createdAt: result.rows[0].created_at,
+                siteId: result.rows[0].site_id
             }
             
             return _article;
@@ -135,7 +136,7 @@ export class articleService implements IArticleService {
         try {
             const createArticle = {
                 name: 'update-article',
-                text: 'UPDATE public.articles SET title=$2, category=$3, wp_id=$4, wp_link=$5, sys_state=$6 WHERE internal_id = $1 RETURNING internal_id, id, TRIM(title) AS title, TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, sys_state, job_id',
+                text: 'UPDATE public.articles SET title=$2, category=$3, wp_id=$4, wp_link=$5, sys_state=$6 WHERE internal_id = $1 RETURNING internal_id, id, TRIM(title) AS title, TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, sys_state, job_id, site_id',
                 values: [article.internalId, article.title, article.category, article.wpId, article.wpLink, article.sysState],
             }
 
@@ -163,6 +164,7 @@ export class articleService implements IArticleService {
                 translatedTitle: result.rows[0].translated_title,
                 createdBy: result.rows[0].created_by,
                 createdAt: result.rows[0].created_at,
+                siteId: result.rows[0].site_id
             }
             
             return _article;
@@ -217,7 +219,7 @@ export class articleService implements IArticleService {
 
         const getQuery = {
             name: 'get-article-by-id',
-            text: `SELECT id, internal_id, TRIM(title) AS title , TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, wp_link, sys_state, job_id FROM public.articles where internal_id = $1`,
+            text: `SELECT id, internal_id, TRIM(title) AS title , TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, wp_link, sys_state, job_id, site_id FROM public.articles where internal_id = $1`,
             values: [articleId],
         }
 
@@ -235,7 +237,7 @@ export class articleService implements IArticleService {
 
         const getQuery = {
             name: 'get-article-by-dbid',
-            text: `SELECT id, internal_id, TRIM(title) AS title , TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, wp_link, sys_state, job_id FROM public.articles where id = $1`,
+            text: `SELECT id, internal_id, TRIM(title) AS title , TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, wp_link, sys_state, job_id, site_id FROM public.articles where id = $1`,
             values: [id],
         }
 
@@ -246,15 +248,15 @@ export class articleService implements IArticleService {
         }
     }
 
-    async getPlanningArticle(jobId: number, userId: number): Promise<INewArticle | false> {
+    async getPlanningArticle(jobId: number, userId: number, siteId: number): Promise<INewArticle | false> {
 
         if (!jobId)
                 return false
 
         const getQuery = {
             name: 'get-planning-article',
-            text: `SELECT id, internal_id, TRIM(title) AS title , TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, wp_link, sys_state, job_id FROM public.articles WHERE sys_state = ${ArticleState.KEYWORD_PLANNING} AND job_id = $1 AND created_by = $2`,
-            values: [jobId, userId],
+            text: `SELECT id, internal_id, TRIM(title) AS title , TRIM(translated_title) AS translated_title, category, created_by, created_at, wp_id, wp_link, sys_state, job_id, site_id FROM public.articles WHERE sys_state = ${ArticleState.KEYWORD_PLANNING} AND job_id = $1 AND created_by = $2 AND site_id = $3`,
+            values: [jobId, userId, siteId],
         }
 
         try {
@@ -292,6 +294,7 @@ export class articleService implements IArticleService {
                 createdBy: result.rows[0].created_by,
                 createdAt: result.rows[0].created_at,
                 wpLink: result.rows[0].wp_link,
+                siteId: result.rows[0].site_id,
             }
 
             return article;
@@ -300,17 +303,17 @@ export class articleService implements IArticleService {
         }
     }
 
-    async getArticles(page: number, size: number, userId: number): Promise<Array<INewArticle> | false> {
+    async getArticles(page: number, size: number, userId: number, siteId: number): Promise<Array<INewArticle> | false> {
         const getQuery = {
             name: 'get-articles-by-id',
             text: `
                     SELECT  id,
                         TRIM(title) as title, 
                         TRIM(translated_title) as translated_title, 
-                        category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id
-                    FROM public.articles WHERE created_by = $3 AND deleted IS NOT true AND sys_state = '${ArticleState.CONTENT_RESEARCH}' ORDER BY created_at DESC LIMIT $2 OFFSET $1;
+                        category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id, site_id
+                    FROM public.articles WHERE site_id = $4 AND created_by = $3 AND deleted IS NOT true AND sys_state = '${ArticleState.CONTENT_RESEARCH}' ORDER BY created_at DESC LIMIT $2 OFFSET $1;
                 `,
-            values: [page, size, userId],
+            values: [page, size, userId, siteId],
         }
 
         try {
@@ -320,16 +323,16 @@ export class articleService implements IArticleService {
         }
     }
 
-    async getArticlesByCategory(category: string): Promise<Array<INewArticle> | false> {
+    async getArticlesByCategory(category: string, siteId: number): Promise<Array<INewArticle> | false> {
         const getQuery = {
             name: 'get-planning-articles',
             text: `SELECT  id,
                         TRIM(title) as title, 
                         TRIM(translated_title) as translated_title, 
-                        category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id
-                    FROM public.articles WHERE deleted IS NOT true AND category = $1;
+                        category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id, site_id
+                    FROM public.articles WHERE site_id = $2 AND deleted IS NOT true AND category = $1;
                 `,
-            values: [category],
+            values: [category, siteId],
         }
 
         try {
@@ -345,7 +348,7 @@ export class articleService implements IArticleService {
             text: `SELECT  id,
                         TRIM(title) as title, 
                         TRIM(translated_title) as translated_title, 
-                        category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id
+                        category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id, site_id
                     FROM public.articles WHERE created_by = $2 AND deleted IS NOT true AND sys_state = '${ArticleState.KEYWORD_PLANNING}' AND job_id = $1;
                 `,
             values: [jobId, userId],
@@ -364,7 +367,7 @@ export class articleService implements IArticleService {
             text: `SELECT  id,
                         TRIM(title) as title, 
                         TRIM(translated_title) as translated_title, 
-                        category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id
+                        category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id, site_id
                     FROM public.articles WHERE created_by = $1 AND deleted IS NOT true AND sys_state = '${ArticleState.AI_CONTENT_RESEARCH}';
                 `,
             values: [userId],
@@ -383,7 +386,7 @@ export class articleService implements IArticleService {
             text: `SELECT  id,
                         TRIM(title) as title, 
                         TRIM(translated_title) as translated_title, 
-                        category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id
+                        category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id, site_id
                     FROM public.articles WHERE created_by = $1 AND deleted IS NOT true AND sys_state = '${ArticleState.CREATED_IN_WP}';
                 `,
             values: [userId],
@@ -421,6 +424,7 @@ export class articleService implements IArticleService {
                     deleted: row.deleted,
                     deletedBy: row.deleted_by,
                     deletedAt: row.deleted_at,
+                    siteId: row.site_id,
                 })
             });
 
