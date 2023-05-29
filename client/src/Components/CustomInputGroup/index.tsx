@@ -6,10 +6,10 @@ import './CustomInputGroup.css'
 
 const CustomInputGroup: React.FC<ICustomInputGroup> = ({ label, defaultValue, disabled, type, onChange }) => {
     return <Row>
-        <Col span={4} className="label">
+        <Col span={6} className="label">
             <label>{label}</label>
         </Col>
-        <Col span={20}>
+        <Col span={18}>
             <Input type={type} placeholder={"Type your " + label} {...{onChange, defaultValue, disabled}}/>
         </Col>
     </Row>

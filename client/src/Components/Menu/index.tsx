@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Col, MenuProps } from 'antd';
+import { Col, MenuProps, Row } from 'antd';
 import { Menu as AntDMenu } from 'antd';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { logoutAsync } from '../../features/userSession/asyncThunks';
@@ -13,9 +13,15 @@ import { ISelectOptions } from '../CustomSelect/ICustomSelect';
 import ISite from '../../interfaces/models/ISite';
 import CustomButton from '../CustomButton';
 import CustomSelect from '../CustomSelect';
+import CustomModal from '../CustomModal';
+import CustomInputGroup from '../CustomInputGroup';
+import { createSite } from '../../features/configurations/configurationsSlice';
 
 const Menu: React.FC = () => {
   const [current, setCurrent] = useState('keywords');
+  const [name, setName] = useState('');
+  const [domain, setDomain] = useState('');
+  const [createSiteModal, setCreateSiteModal] = useState(false);
 
   const [defaultSite, setDefaultSite] = useState<ISite>()
 
@@ -36,8 +42,10 @@ const Menu: React.FC = () => {
   }
 
   const siteList: Array<ISelectOptions> = useMemo(() => {
-    return config.sites.map(site => ({id: site.id ? site.id.toString() : '0', name: site.domain }))
-}, [config.sites])
+    return [ {id: '0', name: <b onClick={() => setCreateSiteModal(true)}>Create New</b>},
+      ...config.sites.map(site => ({id: site.id ? site.id.toString() : '0', name: site.domain }))
+    ]
+  }, [config.sites])
 
   const items: MenuProps['items'] = useMemo(() => [
     {
@@ -79,11 +87,31 @@ const Menu: React.FC = () => {
 
   const onClick: MenuProps['onClick'] = useCallback((e: any) => {
     setCurrent(e.key);
-  }, [])
+  }, []);
+
+
+  const createNewSite = useCallback(() => {
+    dispatch(createSite({
+      name,
+      domain,
+      selected: false,
+    }))
+    setCreateSiteModal(false)
+  }, [name, domain]);
 
   return <>
     <AntDMenu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
     <AntDMenu selectedKeys={[current]} mode="horizontal" items={items2} style={{position: 'absolute', top: 0, right: 20}} />
+    <CustomModal width={600} open={createSiteModal} setOpen={setCreateSiteModal} title='Create Site' onOk={() => createNewSite()}>
+      <Row gutter={16}>
+        <Col className="gutter-row" span={12}>
+        <CustomInputGroup value={name} defaultValue={name} onChange={(e) => setName(e.target.value)} label="Name"></CustomInputGroup>
+        </Col>
+        <Col className="gutter-row" span={12}>
+          <CustomInputGroup value={domain} defaultValue={domain} onChange={(e) => setDomain(e.target.value)} label="Domain"></CustomInputGroup>
+        </Col>
+      </Row>
+    </CustomModal>
   </>
 };
 
