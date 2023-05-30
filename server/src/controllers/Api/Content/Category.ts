@@ -102,8 +102,16 @@ class Category {
                 }).send(res);
             }
 
+            const siteId = req.query.siteId;
+
+            if(siteId === undefined){
+                return new BadRequestResponse('Error', {
+                    error: 'You must provide the siteId in query string params'
+                }).send(res);
+            }
+
             let _categoryService: ICategoryService = new categoryService();
-            const categories = await _categoryService.getList();
+            const categories = await _categoryService.getList(parseInt(siteId.toString()));
 
             return new SuccessResponse('Success', {
                 success: true,

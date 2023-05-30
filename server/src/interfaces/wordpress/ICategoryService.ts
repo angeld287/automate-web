@@ -1,7 +1,7 @@
 import Category from "../models/Category";
 
 export interface ICategoryService {
-    getList(): Promise<Array<Category> | false>;
+    getList(siteId: number): Promise<Array<Category> | false>;
 
     getListWp(): Promise<Array<Category>>;
 

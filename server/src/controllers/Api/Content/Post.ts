@@ -58,7 +58,7 @@ class Post {
                 article = articleExist
             }
 
-            const categories = await categoryService.getList();
+            const categories = await categoryService.getList(article.siteId);
             
             if(categories === false){
                 return new BadRequestResponse('Error', {

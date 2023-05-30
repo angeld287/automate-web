@@ -118,7 +118,7 @@ class Content {
             }
 
             let wpCategory: ICategoryService = new categoryService();
-            const categories = await wpCategory.getList();
+            const categories = await wpCategory.getList(article.siteId);
             if(categories !== false && !categories.find(category => category.slug === article.category.trim())){
                 return new BadRequestResponse('Error', {
                     error: "This category does not exist on the wordpress site cateogies."
@@ -448,7 +448,7 @@ class Content {
                 }).send(res);
             }
 
-            const { text, keywordId, jobId, category } = req.body;
+            const { text, keywordId, jobId, category, siteId } = req.body;
 
             let openService: IOpenaiServices = new openaiServices();
             let translate: ITranslateService = new translateService();
@@ -473,7 +473,8 @@ class Content {
                     translatedTitle: enTitle,
                     createdBy: parseInt(userId),
                     createdAt: (new Date()).toString(),
-                    jobId
+                    jobId,
+                    siteId
                 }
                 
                 article = await _articleService.createArticle(article);

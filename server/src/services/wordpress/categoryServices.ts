@@ -21,7 +21,7 @@ export default class categoryService implements ICategoryService {
         return resultList;
     }
 
-    async getList(): Promise<Array<Category> | false> {
+    async getList(siteId: number): Promise<Array<Category> | false> {
 
         const getQuery = {
             name: 'get-categories',
@@ -40,7 +40,7 @@ export default class categoryService implements ICategoryService {
 
             await Promise.all(result.rows.map(async (row, index) => {
                 let _articleService: IArticleService = new articleService();
-                const articles: false | Array<INewArticle> = await _articleService.getArticlesByCategory(row.name.trim());
+                const articles: false | Array<INewArticle> = await _articleService.getArticlesByCategory(row.name.trim(), siteId);
                 
                 categories.push({
                     id: row.id,

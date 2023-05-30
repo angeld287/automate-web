@@ -450,6 +450,7 @@ router.post(
     body('keywordId', 'field keywordId cannot be blank.').notEmpty(),
     body('jobId', 'field jobId cannot be blank.').notEmpty(),
     body('category', 'field category cannot be blank.').notEmpty(),
+    body('siteId', 'field siteId cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     ContentController.createArticleWithOpenAI
 );
