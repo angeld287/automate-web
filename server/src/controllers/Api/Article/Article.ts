@@ -145,12 +145,9 @@ class Article {
 
             let _articleService: IArticleService = new articleService();
             
-            const title = req.body.title;
-            const category = req.body.category;
-            const translatedTitle = req.body.translatedTitle;  
+            const {title, category, translatedTitle, sysState, jobId, siteId } = req.body;
+            
             const userId = req.session.passport.user.id;
-            const sysState = req.body.sysState;
-            const jobId = req.body.jobId;
 
             let article: INewArticle = {
                 title,
@@ -160,7 +157,8 @@ class Article {
                 translatedTitle,
                 createdBy: parseInt(userId),
                 createdAt: (new Date()).toString(),
-                jobId
+                jobId,
+                siteId
             }
             
             article = await _articleService.createArticle(article);
@@ -216,12 +214,18 @@ class Article {
                     error: "Param category are required."
                 }).send(res);
             }
+
+            if(!req.query.siteId){
+                return new BadRequestResponse('Error', {
+                    error: "Param siteId are required."
+                }).send(res);
+            }
             
             let _articleService: IArticleService = new articleService();
 
-            const category = req.query.category;
+            const { category, siteId} = req.query;
 
-            const articles: Array<INewArticle> | false = await _articleService.getArticlesByCategory(category.toString());
+            const articles: Array<INewArticle> | false = await _articleService.getArticlesByCategory(category.toString(), parseInt(siteId.toString()));
 
             return new SuccessResponse('Success', {
                 success: true,
@@ -317,13 +321,18 @@ class Article {
                     error: "Params page and size are required."
                 }).send(res);
             }
+
+            if(!req.query.siteId){
+                return new BadRequestResponse('Error', {
+                    error: "Param siteId are required."
+                }).send(res);
+            }
+            
+            const { category, siteId, size, page} = req.query;
             
             let _articleService: IArticleService = new articleService();
 
-            const size = req.query.size;
-            const page = req.query.page;
-
-            const articles: Array<INewArticle> | boolean = await _articleService.getArticles(parseInt(page.toString()), parseInt(size.toString()), parseInt(req.session.passport.user.id))
+            const articles: Array<INewArticle> | boolean = await _articleService.getArticles(parseInt(page.toString()), parseInt(size.toString()), parseInt(req.session.passport.user.id), parseInt(siteId.toString()))
 
             return new SuccessResponse('Success', {
                 success: true,

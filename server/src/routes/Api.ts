@@ -247,6 +247,7 @@ router.post(
     body('translatedTitle', 'field translatedTitle cannot be blank.').notEmpty(),
     body('sysState', 'field sysState cannot be blank.').notEmpty(),
     body('jobId', 'field jobId cannot be blank.').notEmpty(),
+    body('siteId', 'field siteId cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     ArticleController.createArticle
 );
@@ -257,6 +258,7 @@ router.post(
     body('sysState', 'field sysState cannot be blank.').notEmpty(),
     body('jobId', 'field jobId cannot be blank.').notEmpty(),
     body('title', 'field title cannot be blank.').notEmpty(),
+    body('siteId', 'field siteId cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     ArticleController.createArticle
 );
