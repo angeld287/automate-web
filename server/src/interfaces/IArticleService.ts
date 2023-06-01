@@ -22,11 +22,11 @@ export interface IArticleService {
 
     getArticlesByCategory(category: string, siteId: number): Promise<Array<INewArticle> | false>
 
-    getPlanningArticles(jobId: number, userId: number): Promise<Array<INewArticle> | false>
+    getPlanningArticles(jobId: number, userId: number, siteId: number): Promise<Array<INewArticle> | false>
 
-    getAIResearchedArticles(userId: number): Promise<Array<INewArticle> | false>
+    getAIResearchedArticles(userId: number, siteId: number): Promise<Array<INewArticle> | false>
 
-    getCreatedArticles(userId: number): Promise<Array<INewArticle> | false>
+    getCreatedArticles(userId: number, siteId: number): Promise<Array<INewArticle> | false>
 
     getSubtitleById(subtitleId: number): Promise<SubTitleContent | false>
 

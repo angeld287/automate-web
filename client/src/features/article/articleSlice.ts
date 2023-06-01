@@ -30,6 +30,7 @@ const initialState: ArticleState = {
     id: 0,
     internalId: 0,
     title: "",
+    siteId: 0,
     translatedTitle: "",
     subtitles: [],
     category: "",

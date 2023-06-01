@@ -342,16 +342,16 @@ export class articleService implements IArticleService {
         }
     }
 
-    async getPlanningArticles(jobId: number, userId: number): Promise<Array<INewArticle> | false> {
+    async getPlanningArticles(jobId: number, userId: number, siteId: number): Promise<Array<INewArticle> | false> {
         const getQuery = {
             name: 'get-planning-articles',
             text: `SELECT  id,
                         TRIM(title) as title, 
                         TRIM(translated_title) as translated_title, 
                         category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id, site_id
-                    FROM public.articles WHERE created_by = $2 AND deleted IS NOT true AND sys_state = '${ArticleState.KEYWORD_PLANNING}' AND job_id = $1;
+                    FROM public.articles WHERE site_id = $3 AND created_by = $2 AND deleted IS NOT true AND sys_state = '${ArticleState.KEYWORD_PLANNING}' AND job_id = $1;
                 `,
-            values: [jobId, userId],
+            values: [jobId, userId, siteId],
         }
 
         try {
@@ -361,16 +361,16 @@ export class articleService implements IArticleService {
         }
     }
 
-    async getAIResearchedArticles(userId: number): Promise<Array<INewArticle> | false> {
+    async getAIResearchedArticles(userId: number, siteId: number): Promise<Array<INewArticle> | false> {
         const getQuery = {
             name: 'get-researched-articles',
             text: `SELECT  id,
                         TRIM(title) as title, 
                         TRIM(translated_title) as translated_title, 
                         category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id, site_id
-                    FROM public.articles WHERE created_by = $1 AND deleted IS NOT true AND sys_state = '${ArticleState.AI_CONTENT_RESEARCH}';
+                    FROM public.articles WHERE site_id = $2 AND created_by = $1 AND deleted IS NOT true AND sys_state = '${ArticleState.AI_CONTENT_RESEARCH}';
                 `,
-            values: [userId],
+            values: [userId, siteId],
         }
 
         try {
@@ -380,16 +380,16 @@ export class articleService implements IArticleService {
         }
     }
 
-    async getCreatedArticles(userId: number): Promise<Array<INewArticle> | false> {
+    async getCreatedArticles(userId: number, siteId: number): Promise<Array<INewArticle> | false> {
         const getQuery = {
             name: 'get-wp-created-articles',
             text: `SELECT  id,
                         TRIM(title) as title, 
                         TRIM(translated_title) as translated_title, 
                         category, internal_id, created_by, deleted, deleted_by, created_at, deleted_at, sys_state, job_id, site_id
-                    FROM public.articles WHERE created_by = $1 AND deleted IS NOT true AND sys_state = '${ArticleState.CREATED_IN_WP}';
+                    FROM public.articles WHERE site_id = $4 AND created_by = $1 AND deleted IS NOT true AND sys_state = '${ArticleState.CREATED_IN_WP}';
                 `,
-            values: [userId],
+            values: [userId, siteId],
         }
 
         try {

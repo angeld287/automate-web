@@ -3,7 +3,7 @@ import ICategory from "../../interfaces/models/Category";
 
 // A mock function to mimic making an async request for data
 export async function getCategories() {
-  const response = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}categoryList`, {
+  const response = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}categoryList?siteId=${localStorage.getItem('default-site')}`, {
     method: "GET",
     credentials: 'include',
     headers: {

@@ -245,16 +245,23 @@ class Article {
         try {
             if(!req.query.id){
                 return new BadRequestResponse('Error', {
-                    error: "Param id are required."
+                    error: "Param id is required."
+                }).send(res);
+            }
+
+            if(!req.query.siteId){
+                return new BadRequestResponse('Error', {
+                    error: "Param siteId is required."
                 }).send(res);
             }
             
             let _articleService: IArticleService = new articleService();
 
-            const jobId = parseInt(req.query.id.toString());
+            const { id, siteId} = req.query;
+            const jobId = parseInt(id.toString());
             const userId = parseInt(req.session.passport.user.id);
 
-            const articles: Array<INewArticle> | false = await _articleService.getPlanningArticles(jobId, userId)
+            const articles: Array<INewArticle> | false = await _articleService.getPlanningArticles(jobId, userId, parseInt(siteId.toString()))
 
             return new SuccessResponse('Success', {
                 success: true,
@@ -272,11 +279,20 @@ class Article {
 
     public static async getAIResearchedArticles(req: IRequest, res: IResponse): Promise<any> {
         try {
+
+            if(!req.query.siteId){
+                return new BadRequestResponse('Error', {
+                    error: "Param siteId is required."
+                }).send(res);
+            }
+
+            const { siteId } = req.query;
+
             let _articleService: IArticleService = new articleService();
 
             const userId = parseInt(req.session.passport.user.id);
 
-            const articles: Array<INewArticle> | false = await _articleService.getAIResearchedArticles(userId)
+            const articles: Array<INewArticle> | false = await _articleService.getAIResearchedArticles(userId, parseInt(siteId.toString()))
 
             return new SuccessResponse('Success', {
                 success: true,
@@ -294,11 +310,20 @@ class Article {
 
     public static async getWpCreatedArticles(req: IRequest, res: IResponse): Promise<any> {
         try {
+
+            if(!req.query.siteId){
+                return new BadRequestResponse('Error', {
+                    error: "Param siteId is required."
+                }).send(res);
+            }
+
+            const { siteId } = req.query;
+
             let _articleService: IArticleService = new articleService();
 
             const userId = parseInt(req.session.passport.user.id);
 
-            const articles: Array<INewArticle> | false = await _articleService.getCreatedArticles(userId)
+            const articles: Array<INewArticle> | false = await _articleService.getCreatedArticles(userId, parseInt(siteId.toString()))
 
             return new SuccessResponse('Success', {
                 success: true,
