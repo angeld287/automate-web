@@ -46,7 +46,8 @@ export default class categoryService implements ICategoryService {
                     id: row.id,
                     name: row.name.trim(),
                     wpId: row.wp_id,
-                    count: articles !== false ? articles.length : 0
+                    count: articles !== false ? articles.length : 0,
+                    siteId: row.siteId,
                 })
             }));
 
@@ -109,8 +110,8 @@ export default class categoryService implements ICategoryService {
         try {
             const createSubtitle = {
                 name: 'create-new-category',
-                text: 'INSERT INTO public.categories(name, wp_id) VALUES ($1, $2) RETURNING name, wp_id;',
-                values: [category.name, category.wpId],
+                text: 'INSERT INTO public.categories(name, wp_id, site_id) VALUES ($1, $2, $3) RETURNING name, wp_id, site_id;',
+                values: [category.name, category.wpId, category.siteId],
             }
 
             let result = null, client = null;
@@ -128,7 +129,8 @@ export default class categoryService implements ICategoryService {
             let _subtitle: Category = {
                 id: result.rows[0].id,
                 name: result.rows[0].name,
-                wpId: result.rows[0].wp_id
+                wpId: result.rows[0].wp_id,
+                siteId: result.rows[0].site_id
             }
             
             return _subtitle;

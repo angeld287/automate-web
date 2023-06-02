@@ -566,7 +566,6 @@ CREATE INDEX IF NOT EXISTS fki_keywords_article_fkey
     TABLESPACE pg_default;
 
 
-
 -- Table: public.categories
 
 -- DROP TABLE IF EXISTS public.categories;
@@ -576,8 +575,12 @@ CREATE TABLE IF NOT EXISTS public.categories
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
     name character(50) COLLATE pg_catalog."default",
     wp_id integer,
-    
+    site_id integer NOT NULL,
     CONSTRAINT categories_pkey PRIMARY KEY (id),
+    CONSTRAINT categories_sites_fkey FOREIGN KEY (site_id)
+        REFERENCES public.categories (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
 )
 WITH (
     OIDS = FALSE

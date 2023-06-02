@@ -7,5 +7,6 @@ export default interface Category {
     slug: string;
     taxonomy?: string;
     parent?: number;
-    meta?: any
+    meta?: any;
+    siteId: number;
 }

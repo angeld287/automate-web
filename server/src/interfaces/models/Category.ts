@@ -9,4 +9,5 @@ export default interface Category {
     parent?: number;
     meta?: any;
     wpId?: number;
+    siteId: number;
 }
