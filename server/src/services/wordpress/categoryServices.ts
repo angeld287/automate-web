@@ -25,7 +25,7 @@ export default class categoryService implements ICategoryService {
 
         const getQuery = {
             name: 'get-categories',
-            text: `SELECT id, name, wp_id FROM public.categories;`,
+            text: `SELECT id, name, wp_id, site_id FROM public.categories;`,
             values: [],
         }
 
@@ -47,12 +47,44 @@ export default class categoryService implements ICategoryService {
                     name: row.name.trim(),
                     wpId: row.wp_id,
                     count: articles !== false ? articles.length : 0,
-                    siteId: row.siteId,
+                    siteId: row.site_id,
                 })
             }));
 
 
             return categories;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async getCategoryById(id: number, siteId: number): Promise<Category | false> {
+
+        const getQuery = {
+            name: 'get-category-by-id',
+            text: `SELECT id, name, wp_id, site_id FROM public.categories where id = $1;`,
+            values: [id],
+        }
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            if (result.rows.length === 0)
+                return false
+
+            let _articleService: IArticleService = new articleService();
+            const articles: false | Array<INewArticle> = await _articleService.getArticlesByCategory(result.rows[0].name.trim(), siteId);
+            
+            const category: Category = {
+                id: result.rows[0].id,
+                name: result.rows[0].name.trim(),
+                wpId: result.rows[0].wp_id,
+                count: articles !== false ? articles.length : 0,
+                siteId: result.rows[0].siteId,
+            }
+
+            return category;
         } catch (error) {
             throw new Error(error.message);
         }

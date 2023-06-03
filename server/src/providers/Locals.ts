@@ -88,6 +88,12 @@ class Locals {
         //Open AI API Key
         const OPEN_AI_API_KEY = process.env.OPEN_AI_API_KEY || "";
 
+        //Twitter API
+        const TWITTER_API_KEY = process.env.TWITTER_API_KEY || "";
+        const TWITTER_API_SECRET = process.env.TWITTER_API_SECRET || "";
+        const TWITTER_ACCESS_TOKEN = process.env.TWITTER_ACCESS_TOKEN || "";
+        const TWITTER_ACCESS_TOKEN_SECRE = process.env.TWITTER_ACCESS_TOKEN_SECRE || "";
+
         return {
             WP_DOMAIN,
             apiPrefix,
@@ -146,6 +152,12 @@ class Locals {
             AZURE_TEXT_ANALYTICS_KEY,
 
             OPEN_AI_API_KEY,
+
+            TWITTER_API_KEY,
+            TWITTER_API_SECRET,
+            TWITTER_ACCESS_TOKEN,
+            TWITTER_ACCESS_TOKEN_SECRE
+
         }
     }
 

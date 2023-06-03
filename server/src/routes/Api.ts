@@ -200,6 +200,7 @@ router.post(
     body('id', 'field id cannot be blank.').notEmpty(),
     body('name', 'field name cannot be blank.').notEmpty(),
     body('description', 'field description cannot be blank.').notEmpty(),
+    body('siteId', 'field siteId cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     Categoryontroller.update
 );

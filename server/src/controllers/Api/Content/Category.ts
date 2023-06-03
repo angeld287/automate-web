@@ -24,20 +24,22 @@ class Category {
             }
 
             let _categoryService: ICategoryService = new categoryService();
-            const name = req.body.name
+            const { name, siteId } = req.body;
             //const description = req.body.description
             let category: ICategory = {
                 name,
                 //description,
                 slug: name.replace(" ", "_").toLowerCase(),
+                siteId,
             };
 
             category = await _categoryService.createNF(category, req.headers.authorization)
 
             category = await _categoryService.createCategory({
-                name: name,
+                name,
                 wpId: category.id,
-                slug: category.slug
+                slug: category.slug,
+                siteId
             })
             
 
@@ -65,18 +67,19 @@ class Category {
                 }).send(res);
             }
 
+            const { id, name, description, siteId } = req.body;
             let _categoryService: ICategoryService = new categoryService();
-            const id = req.body.id
-            const name = req.body.name
-            const description = req.body.description
-            let category: ICategory = {
-                id,
-                name,
-                description,
-                slug: name.replace(" ", "_").toLowerCase(),
-            };
-
-            category = await _categoryService.update(category, req.headers.authorization)
+            let category = await _categoryService.getCategoryById(id, siteId)
+            
+            if(category !== false){
+                category.name = name;
+                category.description = description;
+                category = await _categoryService.update(category, req.headers.authorization)
+            }else{
+                return new BadRequestResponse('Error', {
+                    error: 'Category not found.'
+                }).send(res);
+            }
 
             return new SuccessResponse('Success', {
                 success: true,

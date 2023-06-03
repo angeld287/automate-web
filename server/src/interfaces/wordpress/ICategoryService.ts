@@ -12,4 +12,6 @@ export interface ICategoryService {
     createCategory(category: Category): Promise<Category>;
 
     update(category: Category, token: string): Promise<Category>;
+
+    getCategoryById(id: number, siteId: number): Promise<Category | false>
 }
