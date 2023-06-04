@@ -67,7 +67,7 @@ const Login: React.FC = () => {
             })
         }
 
-    }, [session.loginStatus, session.error, message]);
+    }, [session.loginStatus, session.error, message, navigate]);
 
     const handleClicLoginButton = useCallback(
         (credentials: ICredentials, message: any) => {

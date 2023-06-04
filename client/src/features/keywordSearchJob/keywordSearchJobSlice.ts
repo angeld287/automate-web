@@ -193,7 +193,7 @@ export const keywordSearchJobSlice = createSlice({
   },
 });
 
-export const { } = keywordSearchJobSlice.actions;
+//export const { } = keywordSearchJobSlice.actions;
 
 export const selectKeywordSearchJob = (state: RootState) => state.keywordSearchJob;
 

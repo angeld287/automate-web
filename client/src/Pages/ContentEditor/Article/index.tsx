@@ -40,11 +40,11 @@ const ContentEditor = () => {
     useEffect(() => {
         if(article.article.id === 0 && id) dispatch(getArticleByInternalId(parseInt(id)))
         return () => {}
-    }, []);
+    }, [article.article.id, id, dispatch]);
 
     useEffect(() => {
         if(id && !open) dispatch(getArticleByInternalId(parseInt(id)))
-    }, [open, id]);
+    }, [open, id, dispatch]);
 
     useEffect(() => {
         if(media.media.subtitleId){
@@ -64,7 +64,7 @@ const ContentEditor = () => {
             dispatch(clearMediaError());
         }
 
-    }, [media]);
+    }, [media, dispatch, article.article.subtitles]);
 
     useEffect(() => {
         if(article.error !== false) toast(article.error);
@@ -75,7 +75,7 @@ const ContentEditor = () => {
             dispatch(updateArticleMedia(article.article));
             navigate('/');
         }
-    }, [article]);
+    }, [article, dispatch, navigate]);
 
     //useEffect(() => {
     //    console.log(article.status)
@@ -91,7 +91,7 @@ const ContentEditor = () => {
     const publishWpPost = useCallback(() => {
         dispatch(setErrorFalse());
         dispatch(createWpPost(article.article));
-    }, [article.article]);
+    }, [article.article, dispatch]);
 
     const deleteImage = useCallback(() => {   
         if(currentImageId !== ""){
@@ -99,7 +99,7 @@ const ContentEditor = () => {
             setCurrentImageId("");
             openDeleteModal(false);
         }
-    }, [currentImageId])
+    }, [currentImageId, dispatch])
 
     if(loading && article.article.subtitles.length === 0) return <CustomLoader/>
 

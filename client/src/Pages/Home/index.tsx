@@ -1,5 +1,5 @@
 import { CopyOutlined, GooglePlusOutlined, MenuUnfoldOutlined, PicRightOutlined, RollbackOutlined } from "@ant-design/icons";
-import { Col, Row, Tabs } from "antd";
+import { Row, Tabs } from "antd";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -41,12 +41,12 @@ const Home = () => {
     const getArticleBack = useCallback((article?: IArticle) => {
         if(article)
             dispatch(updateArticleState({id: article.id, state: ArticleState.KEYWORD_PLANNING}));
-    }, []);
+    }, [dispatch]);
 
     const setArticleCrawled = useCallback((article?: IArticle) => {
         if(article)
             dispatch(updateArticleState({id: article.id, state: ArticleState.GOOGLE_CRAWLED}))
-    }, [])
+    }, [dispatch])
 
     const copyArticleSlut = useCallback((article: IArticle) => {
         const slut = generateArticleLink(article);

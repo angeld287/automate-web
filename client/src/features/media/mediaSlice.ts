@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import Media, { DbMedia, GoogleMedia } from '../../interfaces/models/Media';
+import { DbMedia, GoogleMedia } from '../../interfaces/models/Media';
 import { getBearer } from '../autenticate/authenticateAPI';
 import { addMediaToWordpress, addMediaToWordpressOpenAI, deleteImages, searchImages, updateMediaData } from './mediaAPI';
 

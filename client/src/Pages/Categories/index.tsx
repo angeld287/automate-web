@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Col, List, Row, Space, Tag } from 'antd';
-import moment from 'moment';
-import { DeleteOutlined, LinkOutlined, OrderedListOutlined } from '@ant-design/icons';
+import { LinkOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { getAllJobs, selectKeywordSearchJob } from '../../features/keywordSearchJob/keywordSearchJobSlice';
 import { selectCategoriesUtils, getCategoryList, createCategory } from '../../features/categories/categoriesSlice';
 import Locals from '../../config/Locals';
 import CustomButton from '../../Components/CustomButton';
@@ -28,6 +26,8 @@ const JobsList: React.FC = () => {
     const goToCateoryArticles = (category: string | undefined) => {
         navigate(`/category/${category}/articles`);
     }
+
+    const site = localStorage.getItem('default-site');
 
 
     return (
@@ -62,7 +62,8 @@ const JobsList: React.FC = () => {
             <CustomModal {...{open, setOpen}} title="Create Category" width={800} onOk={() => {
                 dispatch(createCategory({
                     name: name,
-                    slug: replaceSpace(name.trim().toLowerCase())
+                    slug: replaceSpace(name.trim().toLowerCase()),
+                    siteId: site === null ? 0 : parseInt(site)
                 }));
                 setOpen(false)
             }}>

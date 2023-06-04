@@ -38,7 +38,7 @@ const Keywords = () => {
         if(id) dispatch(getArticleByInternalId(parseInt(id)));
         dispatch(getCategoryList())
         return () => {}
-    }, []);
+    }, [id, dispatch]);
 
     useEffect(() => {
         const { subtitles } = article; 
@@ -59,7 +59,7 @@ const Keywords = () => {
         }
 
         setTitle(article.title)
-    }, [article])
+    }, [article, dispatch])
 
     useEffect(() => {
         if(selectedKeywords.keywords.length > 0){
@@ -77,7 +77,7 @@ const Keywords = () => {
                 { label: "Keyword number 1", text: "", id: getHashCode(), orderNumber: 0}
             ])
         }
-    }, [selectedKeywords.keywords]);
+    }, [selectedKeywords.keywords, dispatch]);
 
     const categoryList: Array<ISelectOptions> = useMemo(() => {
         if(statusc === "loading") return []
@@ -86,9 +86,9 @@ const Keywords = () => {
 
     useEffect(() => {
         dispatch(addTitle(title))
-    },[title]);
+    },[title, dispatch]);
 
-    const onChangeKeywords = (id: number, value: string) => {
+    const onChangeKeywords = useCallback((id: number, value: string) => {
         const { subtitles } = article;
         setError(undefined)
         const currentKeyword = keywords.find(keyword => keyword.id === id)
@@ -113,7 +113,7 @@ const Keywords = () => {
                 orderNumber: index,
             })
         )))
-    }
+    }, [article, dispatch, keywords]);
 
     const startSearchProcess = useCallback(() => {
         const { internalId } = article;
@@ -121,7 +121,7 @@ const Keywords = () => {
             return setError("the article must be created in db to start process.")
 
         navigate(`/content-editor/${article.internalId}`);
-    }, [article]);
+    }, [article, navigate]);
 
     const translateKeywordsAction = () => {
         const { subtitles, title, category } = article;
@@ -140,7 +140,7 @@ const Keywords = () => {
 
     const setCategoryToArticle = useCallback((category: string) => {
         dispatch(addCategory(category))
-    }, [])
+    }, [dispatch])
 
 
     if (statusc === 'loading') return <CustomLoader />
