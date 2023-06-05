@@ -16,12 +16,12 @@ const JobsList: React.FC = () => {
 
     const dispatch = useAppDispatch();
     const navigate = useNavigate()
-    const { categories, statusc } = useAppSelector(selectCategoriesUtils);
+    const { categories } = useAppSelector(selectCategoriesUtils);
 
     useEffect(() => {
         if(categories.length === 0) dispatch(getCategoryList());
         return () => {}
-    },[]);
+    },[categories.length, dispatch]);
 
     const goToCateoryArticles = (category: string | undefined) => {
         navigate(`/category/${category}/articles`);

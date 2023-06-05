@@ -21,6 +21,7 @@ import ArticleController from '../controllers/Api/Article/Article';
 import SearchKeywordController from '../controllers/Api/Job/SearchKeyword';
 import KeywordsController from '../controllers/Api/Keywords/Keywords';
 import ConfigurationsController from '../controllers/Api/Configurations/Configurations';
+import SearchSalesOpportunitiesController from '../controllers/Api/Job/SearchSalesOpportunities';
 
 const router = Router();
 
@@ -491,6 +492,16 @@ router.get(
     Passport.isAuthenticated,
     ConfigurationsController.getOwnerSiteList
 );
+
+
+// SALES OPPORTUNITIES API'S
+
+router.post(
+    '/salesOpportunities/twitter/getRecents',
+    body('keywords', 'field keywords cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    SearchSalesOpportunitiesController.startTwitterSeachJob
+)
 
 
 

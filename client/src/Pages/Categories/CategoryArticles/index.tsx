@@ -1,7 +1,7 @@
-import { CopyOutlined, DeleteOutlined, GooglePlusOutlined, MenuUnfoldOutlined, PicRightOutlined, RollbackOutlined } from "@ant-design/icons";
-import { Col, Row, Tabs } from "antd";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { DeleteOutlined, GooglePlusOutlined, MenuUnfoldOutlined, PicRightOutlined } from "@ant-design/icons";
+import { Col, Row } from "antd";
+import { useCallback, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import DraftArticles from "../../../Components/App/DraftArticles";
 import { IArticlesActions } from "../../../Components/App/DraftArticles/IDraftArticles";
@@ -15,7 +15,6 @@ import { updateArticleState } from "../../../features/article/articleSlice";
 
 const CategoryArticles = () => {
 
-    const navigate = useNavigate()
     const [ openModal, setOpenModal ] = useState(false);
     const [ discardModal, setDiscardModal ] = useState(false);
     const [ article, setAricle ] = useState<IArticle>();
@@ -26,30 +25,30 @@ const CategoryArticles = () => {
     useEffect(() => {
         if(category)
             dispatch(getArticlesByCategory(category));
-    }, [])
+    }, [dispatch, category])
 
     const { CategoryArticles } = useAppSelector(selectArticles);
 
-    const onClickEdit = (article: IArticle) => {
+    const onClickEdit = useCallback((article: IArticle) => {
         if(article.sysState?.trim() !== ArticleState.CONTENT_RESEARCH){
             return null
         }
         window.open(`${window.location.href.replace(window.location.pathname, '')}/content-editor/${article.internalId}`, '_blank');
         //navigate(`/content-editor/${article.internalId}`);
-    }
+    }, [])
 
-    const goToPrepareContent = (article: IArticle) => {
+    const goToPrepareContent = useCallback((article: IArticle) => {
         if(article.sysState?.trim() !== ArticleState.AI_CONTENT_RESEARCH) return null
         
         setOpenModal(true);
         setAricle(article);
-    }
+    }, []);
 
-    const setArticleCrawled = (article: IArticle) => {
+    const setArticleCrawled = useCallback((article: IArticle) => {
         if(article.sysState?.trim() !== ArticleState.CREATED_IN_WP) return null
         
         dispatch(updateArticleState({id: article.id, state: ArticleState.GOOGLE_CRAWLED}))
-    }
+    }, [dispatch]);
 
     
     const setDiscardArticle = useCallback((article: IArticle) => {
@@ -67,7 +66,7 @@ const CategoryArticles = () => {
         }
         setAricle(undefined);
         setDiscardModal(false);
-    }, [article]);
+    }, [article, dispatch]);
 
     const articlesActions: IArticlesActions[] = [
         {icon: <><MenuUnfoldOutlined style={{ fontSize: '16px', color: '#f50' }} /> Organize Content</>, _key: "prepare_content_btn", onClick: goToPrepareContent},
