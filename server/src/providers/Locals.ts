@@ -94,6 +94,11 @@ class Locals {
         const TWITTER_ACCESS_TOKEN = process.env.TWITTER_ACCESS_TOKEN || "";
         const TWITTER_ACCESS_TOKEN_SECRET = process.env.TWITTER_ACCESS_TOKEN_SECRET || "";
 
+        // Facebook API
+        const FACEBOOK_CLIENT_ID = process.env.FACEBOOK_CLIENT_ID || "";
+        const FACEBOOK_CLIENT_SECRET = process.env.FACEBOOK_CLIENT_SECRET || "";
+        const FACEBOOK_CLIENT_ACCESS_TOKEN = process.env.FACEBOOK_CLIENT_ACCESS_TOKEN || "";
+
         return {
             WP_DOMAIN,
             apiPrefix,
@@ -156,8 +161,11 @@ class Locals {
             TWITTER_API_KEY,
             TWITTER_API_SECRET,
             TWITTER_ACCESS_TOKEN,
-            TWITTER_ACCESS_TOKEN_SECRET
+            TWITTER_ACCESS_TOKEN_SECRET,
 
+            FACEBOOK_CLIENT_ID,
+            FACEBOOK_CLIENT_SECRET,
+            FACEBOOK_CLIENT_ACCESS_TOKEN
         }
     }
 
