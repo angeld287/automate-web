@@ -503,6 +503,13 @@ router.post(
     SearchSalesOpportunitiesController.startTwitterSeachJob
 )
 
+router.post(
+    '/salesOpportunities/facebook/getPosts',
+    body('keywords', 'field keywords cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    SearchSalesOpportunitiesController.startFBSeachJob
+)
+
 
 
 

@@ -6,7 +6,7 @@ class fbGraphApi {
         return new FBGraphAPI({
             clientID: Locals.config().FACEBOOK_CLIENT_ID,
             clientSecret: Locals.config().FACEBOOK_CLIENT_SECRET,
-            appAccessToken: Locals.config().FACEBOOK_CLIENT_ACCESS_TOKEN
+            //appAccessToken: Locals.config().FACEBOOK_CLIENT_ACCESS_TOKEN
         });
     }
 }
