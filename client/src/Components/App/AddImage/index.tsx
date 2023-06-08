@@ -44,7 +44,7 @@ const AddImage: React.FC<IAddImage> = ({open, setOpen, title, type, relatedId}) 
             if(url === ''){
                 return setError('Please provide an image url.')
             }
-            dispatch(createMedia({imageAddress: url, title: imageTitle, type, relatedId, orderNumber: ""}))
+            dispatch(createMedia({imageAddress: url, title: imageTitle, type, relatedId, orderNumber: '1'}))
         }
     }
     

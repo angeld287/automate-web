@@ -1,7 +1,7 @@
 import Locals from "../../config/Locals";
 
 export async function getArticlesFromDb(page: number, size: number) {
-  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}getArticles?page=${page}&size=${size}`, {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}getArticles?page=${page}&size=${size}&siteId=${localStorage.getItem('default-site')}`, {
     method: "GET",
     credentials: 'include',
     headers: {
@@ -14,7 +14,7 @@ export async function getArticlesFromDb(page: number, size: number) {
 }
 
 export async function getAllArticlesByCategory(category: string) {
-  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}getArticlesByCategory?category=${category}`, {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}getArticlesByCategory?category=${category}&siteId=${localStorage.getItem('default-site')}`, {
     method: "GET",
     credentials: 'include',
     headers: {
@@ -40,7 +40,7 @@ export async function getPlanningArticlesFromDb(jobId: number) {
 }
 
 export async function getAIResearchedArticlesFromDb() {
-  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}getAIResearchedArticles`, {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}getAIResearchedArticles?siteId=${localStorage.getItem('default-site')}}`, {
     method: "GET",
     credentials: 'include',
     headers: {
@@ -53,7 +53,7 @@ export async function getAIResearchedArticlesFromDb() {
 }
 
 export async function getWpCreatedArticlesFromDb() {
-  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}getWpCreatedArticles`, {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}getWpCreatedArticles?siteId=${localStorage.getItem('default-site')}`, {
     method: "GET",
     credentials: 'include',
     headers: {

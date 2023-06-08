@@ -6,10 +6,10 @@ export class fbGraphServices {
             const facebook = new fbGraphApi();
             const fbClient = facebook.createClient();
 
-            const recentSearch = await fbClient.generateAppAccessToken()
+            const recentSearch = await fbClient.generateAppAccessToken();
+            const debug = await fbClient.debugToken(recentSearch);
 
-
-            console.log('resultado: ',recentSearch);
+            console.log('resultado: ',debug);
             
         } catch (error) {
             console.log(error)

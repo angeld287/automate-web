@@ -10,7 +10,7 @@ export async function addMediaToWordpress(imageAddress: string, title: string, t
       'Content-Type': 'application/json',
       'Authorization': token
     },
-    body: JSON.stringify({imageAddress, title, type, relatedId, orderNumber})
+    body: JSON.stringify({imageAddress, title, type, relatedId, orderNumber, notCompress: true})
   })
   return result.json()
 }

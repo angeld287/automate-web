@@ -4,7 +4,7 @@ import { IMediaServiceResponse } from "../response/IServiceResponse";
 export interface IMediaService {
     getList(): Promise<Array<Media>>
 
-    create(title: string, imageAddress: string, token: string): Promise<IMediaServiceResponse>;
+    create(title: string, imageAddress: string, token: string, notCompress?: boolean): Promise<IMediaServiceResponse>;
     
     update(id: number, fieldsToUpdate: any, token: string): Promise<IMediaServiceResponse>;
     

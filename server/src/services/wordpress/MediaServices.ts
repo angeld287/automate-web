@@ -29,7 +29,7 @@ export default class mediaService implements IMediaService {
         }
     }
 
-    async create(title: string, imageAddress: string, token: string): Promise<IMediaServiceResponse> {
+    async create(title: string, imageAddress: string, token: string, notCompress?: boolean): Promise<IMediaServiceResponse> {
         const fileName = `${title.replace(new RegExp(" ", 'g'), '-').toLowerCase()}.webp`;
 
         this.deleteImagesInsidePath(Locals.config().DOWNLOADED_IMAGES_PATH)
@@ -45,25 +45,19 @@ export default class mediaService implements IMediaService {
             return { success: false, message: "Error in download image process" };
         }
 
-        const compressImage: IImageSharp = await sharp(filePath, compressedImagePath);
+        let dataFile = null;
 
-        if (!compressImage.success) {
-            return { success: false, message: "Error in compress image process" };
+        if(!notCompress || notCompress !== true){
+            const compressImage: IImageSharp = await sharp(filePath, compressedImagePath);
+
+            if (!compressImage.success) {
+                return { success: false, message: "Error in compress image process" };
+            }
+
+            dataFile = await readFileSync(compressedImagePath)
+        }else{
+            dataFile = await readFileSync(filePath)
         }
-
-        const dataFile = await readFileSync(compressedImagePath)
-
-        //const result = await axios({
-        //    url: `${Locals.config().wordpressUrl}media`,
-        //    method: 'POST',
-        //    headers: {
-        //        'Content-Type': 'image/webp',
-        //        'Authorization': token,
-        //        'cache-control': 'no-cache',
-        //        'content-disposition': `attachment; filename=${fileName}`
-        //    },
-        //    data: dataFile.response
-        //});
 
         const result = await fetch(`${Locals.config().wordpressUrl}media`, {
             method: 'POST',

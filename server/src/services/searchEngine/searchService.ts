@@ -43,6 +43,15 @@ export class searchService implements ISearchService {
         }
     }
 
+    async searchRecents(index: string, keyword: string): Promise<Array<any>> {
+        try {
+            const response = await axios({ url: `${Locals.config().SEARCH_ENGINE_URL}&num=${Locals.config().GOOGLE_RESULTS_QUANTITY}&start=${index}&q=${encodeURIComponent(keyword)}` })
+            return response.body.items;
+        } catch (error) {
+            throw new Error("Error in search service: " + JSON.stringify(error));
+        }
+    }
+
     async searchImages(index: string, keyword: string): Promise<Array<GoogleMedia>> {
         try {
 

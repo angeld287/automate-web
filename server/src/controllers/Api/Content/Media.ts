@@ -32,7 +32,7 @@ class Media {
 
             let _mediaService: IMediaService = new mediaService();
             const articleServices: IArticleService = new articleService();
-            const {imageAddress, title, type, relatedId, orderNumber} = req.body;
+            const {imageAddress, title, type, relatedId, orderNumber, notCompress} = req.body;
 
             //const imageIsFine = await _mediaService.imageHaveCorrectSize(imageAddress);
             //
@@ -44,7 +44,7 @@ class Media {
             //    }).send(res);
             //}
 
-            const media: IMedia = (await _mediaService.create(title, imageAddress, req.headers.authorization)).media
+            const media: IMedia = (await _mediaService.create(title, imageAddress, req.headers.authorization, notCompress)).media
             
             let dbMedia: DbMedia = null;
             if(type === 'subtitle') {
