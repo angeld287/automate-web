@@ -21,7 +21,7 @@ const SearchKeywordsStepper: React.FC<ISearchKeywordsStepper> = ({title, subtitl
 
     const saveContentKeyword = useCallback(() => {
       dispatch(crateSubtitleContent(finalParagraphs));
-    }, [finalParagraphs]);
+    }, [finalParagraphs, dispatch]);
 
     const footerOptions = useMemo(() => [
       <CustomButton key="back_btn-1" loading={createUpdateStatus === 'loading'} onClick={saveContentKeyword}>Save</CustomButton>,

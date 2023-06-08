@@ -23,7 +23,7 @@ const ArticlesPlanner = () => {
     useEffect(() => {
         if(id) dispatch(getSearchJobDetails(parseInt(id)));
         return () => {}
-    },[]);
+    },[dispatch, id]);
 
     useEffect(() => {
         if(keywordSearchJob && keywordSearchJob.keywords) setKeywords(keywordSearchJob.keywords)
@@ -33,7 +33,7 @@ const ArticlesPlanner = () => {
         if(keywordSearchJob.id)
             dispatch(createKeywordManually({name: keyword, jobId: keywordSearchJob.id.toString()}));
             setNewKeyModal(false);
-    }, [keyword, keywordSearchJob])
+    }, [keyword, keywordSearchJob, dispatch])
 
     const { Panel } = Collapse;
 

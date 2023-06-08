@@ -34,12 +34,12 @@ const Menu: React.FC = () => {
     }else{
       setDefaultSite(config.sites.find(site => site.selected))
     }
-  }, [config.sites])
+  }, [config.sites, dispatch])
 
-  const logOut = () => {
-      dispatch(resetArticlesList())
-      dispatch(logoutAsync())
-  }
+  const logOut = useCallback(() => {
+    dispatch(resetArticlesList())
+    dispatch(logoutAsync())
+}, [dispatch]);
 
   const siteList: Array<ISelectOptions> = useMemo(() => {
     return [ {id: '0', name: <b onClick={() => setCreateSiteModal(true)}>Create New</b>},
@@ -65,7 +65,7 @@ const Menu: React.FC = () => {
 
   const setSelectedSite = useCallback((e: any) => {
     dispatch(setDefeaultSite(parseInt(e)))
-  }, []);
+  }, [dispatch]);
 
   const items2: MenuProps['items'] = useMemo(() => {
     if(defaultSite && defaultSite.id)
@@ -83,7 +83,7 @@ const Menu: React.FC = () => {
           key: 'lgout',
         },
       ]
-  }, [siteList, defaultSite]);
+  }, [siteList, defaultSite, logOut, setSelectedSite]);
 
   const onClick: MenuProps['onClick'] = useCallback((e: any) => {
     setCurrent(e.key);
@@ -97,7 +97,7 @@ const Menu: React.FC = () => {
       selected: false,
     }))
     setCreateSiteModal(false)
-  }, [name, domain]);
+  }, [name, domain, dispatch]);
 
   return <>
     <AntDMenu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />

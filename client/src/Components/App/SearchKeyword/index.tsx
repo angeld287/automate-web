@@ -25,7 +25,7 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
         return () => {
             dispatch(setInitialState());
         }
-    }, [])
+    }, [dispatch])
 
     useEffect(() => {
         const blocks = convertToRaw(editorState.getCurrentContent()).blocks;
@@ -44,11 +44,11 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
         }).filter(block => block.content !== "");
 
         dispatch(setFinalParagraphs(finalContents));
-    }, [editorState, subtitle, _subtitle.subtitle.content]);
+    }, [editorState, subtitle, _subtitle.subtitle.content, dispatch]);
 
     useEffect(() => {
         if(subtitle) dispatch(getSubtitleById(subtitle));
-    }, [subtitle])
+    }, [subtitle, dispatch])
 
     useEffect(() => {
         setHasSearchedContent(() => {
@@ -77,9 +77,8 @@ const SearchKeyword: React.FC<ISearchKeyword> = ({subtitle}) => {
     }, [_subtitle.subtitle]);
 
     const searchContent = useCallback(() => {
-        console.log(_subtitle.subtitle.content)
         if(_subtitle.subtitle.content && _subtitle.subtitle.content.filter(content => !content.selected).length === 0) dispatch(getKeywordContent(_subtitle.subtitle));
-    }, [_subtitle.subtitle]);
+    }, [_subtitle.subtitle, dispatch]);
 
     const actionsList = useCallback((item: IContent): Array<ReactNode> => {
         return [

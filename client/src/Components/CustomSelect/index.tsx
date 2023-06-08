@@ -24,8 +24,12 @@ const CustomSelect: React.FC<ICustomSelect> = ({ id, dataTestId, items, onChange
 
     const onSearch: ((value: string) => void) = async (e) => {
         var filteredItems = items.filter(_ => {
-            if(typeof(_.name) === 'string')
+            if(typeof(_.name) === 'string'){
                 return _.name.toLowerCase().indexOf(e.toLowerCase()) !== -1
+            }else{
+                return false
+            }
+                
         }).length
         if (!loading && getItemsNextToken !== undefined && filteredItems < 4) {
             setLoading(true);
