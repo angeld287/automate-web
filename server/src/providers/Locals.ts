@@ -42,11 +42,11 @@ class Locals {
 
         //wordpress site configuration
         const WP_DOMAIN = "elaceite.de"
-        const WP_JSON_URL = `https://${WP_DOMAIN}/wp-json`
+        const WP_JSON_URL = (domain: string) => `https://${domain}/wp-json`
         const wordpressUrl = `${WP_JSON_URL}/wp/v2/`
         const WORDPRESS_USER = process.env.WORDPRESS_USER || "admin"
         const WORDPRESS_USER_PASSWORD = process.env.WORDPRESS_USER_PASSWORD || "admin"
-        const TOCKEN_URL = `${WP_JSON_URL}/jwt-auth/v1/token`
+        const TOCKEN_URL = (domain: string) => `${WP_JSON_URL(domain)}/jwt-auth/v1/token`
 
         //paragraph extraction configurations
         const NUMBER_OF_PARAGRAPHS_ALLOWED = 3

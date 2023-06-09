@@ -16,6 +16,8 @@ import { AuthFailureResponse, BadRequestResponse, SuccessResponse } from '../../
 import ExpressValidator from '../../../providers/ExpressValidation';
 import ILogin from '../../../interfaces/wordpress/ILogin';
 import WpLogin from '../../../services/wordpress/login';
+import ISitesService from '../../../interfaces/ISitesService';
+import { sitesService } from '../../../services/sitesServices/sitesServices';
 
 
 class Login {
@@ -71,7 +73,11 @@ class Login {
 
             const userRoles: Array<UserRole> = await user.getUserRoles(_user.id)
             //const wpToken: any = await login.getTokenWithCredentials(_username, _password);
-            const wpToken: any = await login.getToken();
+            const _siteService: ISitesService = new sitesService();
+
+            const defaultSite = (await _siteService.getSiteListByOwner(_user.id)).find(site => site.selected);
+
+            const wpToken: any = await login.getToken(defaultSite.id);
 
             let userObject: IUser = {
                 id: _user.id,

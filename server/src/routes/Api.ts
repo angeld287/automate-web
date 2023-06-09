@@ -467,6 +467,8 @@ router.post(
     body('name', 'field name cannot be blank.').notEmpty(),
     body('domain', 'field domain cannot be blank.').notEmpty(),
     body('selected', 'field selected cannot be blank.').notEmpty(),
+    body('wpUser', 'field wpUser cannot be blank.').notEmpty(),
+    body('wpUserPass', 'field wpUserPass cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     ConfigurationsController.createSite
 );

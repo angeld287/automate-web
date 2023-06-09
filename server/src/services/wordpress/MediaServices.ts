@@ -3,7 +3,7 @@ import { IMediaServiceResponse } from "../../interfaces/response/IServiceRespons
 import { IImageSharp, IPromiseBase } from "../../interfaces/Utils";
 import { IMediaService } from "../../interfaces/wordpress/IMediaService";
 import Locals from "../../providers/Locals";
-import { axios, createWriteStream, sharp, downloadImage, imagesize, readFileSync, addMedia, fetch } from "../../utils";
+import { axios, createWriteStream, sharp, downloadImage, imagesize, readFileSync, fetch } from "../../utils";
 import * as fs from 'fs'
 import * as path from 'path'
 import Log from "../../middlewares/Log";

@@ -11,6 +11,8 @@ import ILogin from '../../interfaces/wordpress/ILogin';
 import Locals from '../../providers/Locals';
 import userService from '../userService';
 import WpLogin from '../wordpress/login';
+import ISitesService from '../../interfaces/ISitesService';
+import { sitesService } from '../sitesServices/sitesServices';
 
 class Google {
 	public static init(_passport: any): any {
@@ -27,9 +29,15 @@ class Google {
 
 				let googleUserExist: IUser | false = await user.getUserByGoogle(profile.id)
 				let login: ILogin = new WpLogin();
-				const wpToken: any = await login.getToken();
+				let wpToken: any = null
+				
 
 				if (googleUserExist !== false) {
+
+					const _siteService: ISitesService = new sitesService();
+					const defaultSite = (await _siteService.getSiteListByOwner(parseInt(googleUserExist.id))).find(site => site.selected);
+
+					wpToken = await login.getToken(defaultSite.id);
 					googleUserExist.wpToken = wpToken;
 					return done(null, googleUserExist);
 				}

@@ -47,6 +47,7 @@ class Login {
 
             const _username = req.body.username.toLowerCase();
             const _password = Encryptions.hash(req.body.password);
+            const siteId = req.body.siteId;
             req.body.password = _password;
 
             const userVerifications: Array<any> = await Promise.all(
@@ -71,7 +72,7 @@ class Login {
             Log.info(`New user logged ` + _username);
 
             const userRoles: Array<UserRole> = await user.getUserRoles(_user.id)
-            const wpToken: any = await login.getToken();
+            const wpToken: any = await login.getToken(siteId);
 
             let userObject: IUser = {
                 id: _user.id,

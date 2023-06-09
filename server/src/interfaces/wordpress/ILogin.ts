@@ -1,7 +1,7 @@
 export default interface ILogin {
-    getToken(): Promise<any>;
+    getToken(siteId: number): Promise<any>;
 
-    getTokenWithCredentials(username: string, password: string): Promise<any>;
+    getTokenWithCredentials(username: string, password: string, siteId: number): Promise<any>;
 }
 
 export interface IAuthenticate {

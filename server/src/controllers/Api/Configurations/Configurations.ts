@@ -23,7 +23,7 @@ class Configurations {
                 }).send(res);
             }
 
-            const { name, domain, selected } = req.body;
+            const { name, domain, selected, wpUser, wpUserPass } = req.body;
             const userId = req.session.passport.user.id;
             
             const siteService: ISitesService = new sitesService();
@@ -33,6 +33,8 @@ class Configurations {
                 domain,
                 createdBy: parseInt(userId),
                 selected,
+                wpUser,
+                wpUserPass
             });
 
             return new SuccessResponse('Success', {

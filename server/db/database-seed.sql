@@ -606,6 +606,8 @@ CREATE TABLE IF NOT EXISTS public.sites
     deleted_by integer,
     deleted_at timestamp with time zone,
     selected boolean,
+    wp_user character(50) COLLATE pg_catalog."default",
+    wp_user_pass character(50) COLLATE pg_catalog."default",
     CONSTRAINT sites_pkey PRIMARY KEY (id),
     CONSTRAINT sites_created_by_fkey FOREIGN KEY (created_by)
         REFERENCES public.users (id) MATCH SIMPLE

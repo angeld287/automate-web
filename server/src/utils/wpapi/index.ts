@@ -1,9 +1,10 @@
+import ISitesService from "../../interfaces/ISitesService";
 import Media from "../../interfaces/models/Media";
 import Locals from "../../providers/Locals";
+import { sitesService } from "../../services/sitesServices/sitesServices";
 var WPAPI = require('wpapi');
 
 export const addMedia = async (filePath: any, media: Media, associatedPostId: number, token: string ): Promise<any> => {
-
     try {
         const wp = login(token);
 
@@ -26,11 +27,7 @@ export const addMedia = async (filePath: any, media: Media, associatedPostId: nu
 }
 
 const login = (token: string) => {
-    const wp = new WPAPI({
-        endpoint: Locals.config().WP_JSON_URL,
-        username: Locals.config().WORDPRESS_USER,
-        password: Locals.config().WORDPRESS_USER_PASSWORD
-    });
+    const wp = new WPAPI({});
 
     wp.setHeaders('Content-Type', 'application/json');
     wp.setHeaders('cache-control', 'no-cache');
