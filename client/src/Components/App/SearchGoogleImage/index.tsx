@@ -27,7 +27,7 @@ const SearchGoogleImage: React.FC<ISearchGoogleImage> = ({open, setOpen, title, 
     useEffect(() => {
         setTitle(title);
         dispatch(clearGoogleResults())
-    }, [open])
+    }, [open, dispatch, title])
 
     useEffect(() => {
         if(url !== '' && (!isValidUrl(url) || !isValidImageUrl(url))) {

@@ -225,7 +225,7 @@ class Article {
 
             const { category, siteId} = req.query;
 
-            const articles: Array<INewArticle> | false = await _articleService.getArticlesByCategory(category.toString(), parseInt(siteId.toString()));
+            const articles: Array<INewArticle> | false = await _articleService.getArticlesByCategory(category.toString().toLocaleLowerCase(), parseInt(siteId.toString()));
 
             return new SuccessResponse('Success', {
                 success: true,

@@ -8,8 +8,8 @@ export class keywordService implements IKeywordService {
         try {
             const createKeywordSearchJobTmpl = {
                 name: 'create-new-keyword_search_job',
-                text: 'INSERT INTO public.keyword_search_job(created_by, long_tail_keyword, main_keywords) VALUES ($1, $2, $3) RETURNING id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status, long_tail_keyword, main_keywords',
-                values: [job.createdBy, job.longTailKeyword, job.mainKeywords],
+                text: 'INSERT INTO public.keyword_search_job(created_by, long_tail_keyword, main_keywords, site_id) VALUES ($1, $2, $3, $4) RETURNING id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status, long_tail_keyword, main_keywords, site_id',
+                values: [job.createdBy, job.longTailKeyword, job.mainKeywords, job.siteId],
             }
 
             let result = null, client = null;
@@ -30,6 +30,7 @@ export class keywordService implements IKeywordService {
                 longTailKeyword: result.rows[0].long_tail_keyword,
                 deleted: result.rows[0].deleted,
                 mainKeywords: result.rows[0].main_keywords,
+                siteId: result.rows[0].site_id,
             }
             
             return _job;
@@ -43,7 +44,7 @@ export class keywordService implements IKeywordService {
         try {
             const updateKeywordSearchJobTmpl = {
                 name: 'update-new-keyword_search_job',
-                text: 'UPDATE public.keyword_search_job SET deleted=$1, deleted_by=$2, status=$3 WHERE id = $4 RETURNING id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status, long_tail_keyword, main_keywords',
+                text: 'UPDATE public.keyword_search_job SET deleted=$1, deleted_by=$2, status=$3, site_id=$4 WHERE id = $4 RETURNING id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status, long_tail_keyword, main_keywords, site_id',
                 values: [job.deleted, job.deletedBy, job.status, job.id],
             }
 
@@ -65,6 +66,7 @@ export class keywordService implements IKeywordService {
                 longTailKeyword: result.rows[0].long_tail_keyword,
                 deleted: result.rows[0].deleted,
                 mainKeywords: result.rows[0].main_keywords,
+                siteId: result.rows[0].site_id,
             }
             
             return _job;
@@ -214,6 +216,7 @@ export class keywordService implements IKeywordService {
                 keywords,
                 deleted: result.rows[0].deleted,
                 mainKeywords: result.rows[0].main_keywords,
+                siteId: result.rows[0].site_id,
             }
 
             return job;
@@ -319,11 +322,11 @@ export class keywordService implements IKeywordService {
         }
     }
 
-    async getAllKeywordSearchJobs(userId: number): Promise<Array<IKeywordSearchJob>> {
+    async getAllKeywordSearchJobs(userId: number, siteId: number): Promise<Array<IKeywordSearchJob>> {
         const getQuery = {
             name: 'get-all-keywords-search-jobs',
-            text: `SELECT id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status, long_tail_keyword, main_keywords FROM public.keyword_search_job WHERE created_by = $1`,
-            values: [userId],
+            text: `SELECT id, created_by, deleted, deleted_by, created_at, deleted_at, unique_name, status, long_tail_keyword, main_keywords, site_id FROM public.keyword_search_job WHERE created_by = $1 and site_id = $2`,
+            values: [userId, siteId],
         }
 
         let result = null;
@@ -341,6 +344,7 @@ export class keywordService implements IKeywordService {
                     longTailKeyword: row.long_tail_keyword,
                     deleted: row.deleted,
                     mainKeywords: row.main_keywords,
+                    siteId: row.site_id,
                 })
             });
 

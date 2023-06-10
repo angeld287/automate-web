@@ -25,8 +25,8 @@ export default class categoryService implements ICategoryService {
 
         const getQuery = {
             name: 'get-categories',
-            text: `SELECT id, name, wp_id, site_id FROM public.categories;`,
-            values: [],
+            text: `SELECT id, name, wp_id, site_id FROM public.categories where site_id = $1;`,
+            values: [siteId],
         }
 
         let result = null;
@@ -103,7 +103,6 @@ export default class categoryService implements ICategoryService {
             },
             body: JSON.stringify(category)
         });
-        console.log(result);
 
         return result;
     }

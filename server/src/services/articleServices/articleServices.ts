@@ -325,7 +325,7 @@ export class articleService implements IArticleService {
 
     async getArticlesByCategory(category: string, siteId: number): Promise<Array<INewArticle> | false> {
         const getQuery = {
-            name: 'get-planning-articles',
+            name: 'get-articles-by-category',
             text: `SELECT  id,
                         TRIM(title) as title, 
                         TRIM(translated_title) as translated_title, 

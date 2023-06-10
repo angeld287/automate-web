@@ -35,6 +35,7 @@ class SearchKeyword {
             }
 
             const longTailKeyword = req.body.longTailKeyword;
+            const siteId = req.body.siteId;
             const mainKeywords: Array<string> = req.body.mainKeywords;
 
             //google adsense used to get keywords statistic info.
@@ -62,6 +63,7 @@ class SearchKeyword {
                 status: `RUNNING`,
                 longTailKeyword,
                 mainKeywords: mainKeywords.join(","),
+                siteId
             } as IKeywordSearchJob)
 
             const searchJobNode: NodeJob = new NodeJob();

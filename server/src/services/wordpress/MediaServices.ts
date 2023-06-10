@@ -7,6 +7,8 @@ import { axios, createWriteStream, sharp, downloadImage, imagesize, readFileSync
 import * as fs from 'fs'
 import * as path from 'path'
 import Log from "../../middlewares/Log";
+import ISitesService from "../../interfaces/ISitesService";
+import { sitesService } from "../sitesServices/sitesServices";
 
 
 export default class mediaService implements IMediaService {
@@ -29,8 +31,11 @@ export default class mediaService implements IMediaService {
         }
     }
 
-    async create(title: string, imageAddress: string, token: string, notCompress?: boolean): Promise<IMediaServiceResponse> {
+    async create(title: string, imageAddress: string, token: string, siteId: number, notCompress?: boolean): Promise<IMediaServiceResponse> {
         const fileName = `${title.replace(new RegExp(" ", 'g'), '-').toLowerCase()}.webp`;
+
+        const _siteService: ISitesService = new sitesService();
+        const site = await _siteService.getSiteById(siteId);
 
         this.deleteImagesInsidePath(Locals.config().DOWNLOADED_IMAGES_PATH)
         this.deleteImagesInsidePath(Locals.config().DOWNLOADED_IMAGES_COMPRESSED_PATH)
@@ -40,6 +45,10 @@ export default class mediaService implements IMediaService {
 
         const imageNewFile = (await createWriteStream(filePath)).response;
         const downloadedImage: IPromiseBase = await downloadImage(imageNewFile, imageAddress);
+
+        if (site === false) {
+            return { success: false, message: "Error trying to find site data." };
+        }
 
         if (!downloadedImage.success) {
             return { success: false, message: "Error in download image process" };
@@ -59,7 +68,7 @@ export default class mediaService implements IMediaService {
             dataFile = await readFileSync(filePath)
         }
 
-        const result = await fetch(`${Locals.config().wordpressUrl}media`, {
+        const result = await fetch(`${Locals.config().wordpressUrl(site.domain)}media`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'image/webp',
@@ -69,6 +78,8 @@ export default class mediaService implements IMediaService {
             },
             body: dataFile.response
         });
+
+        console.log(result)
         
 
         if (!result.success) {

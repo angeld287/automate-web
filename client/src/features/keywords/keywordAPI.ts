@@ -85,7 +85,7 @@ export async function createArticleFromKeyword(text: string, keywordId: number, 
       'Content-Type': 'application/json',
       'Authorization': token
     },
-    body: JSON.stringify({text, keywordId, jobId, category})
+    body: JSON.stringify({text, keywordId, jobId, category, siteId: localStorage.getItem('default-site')})
   })
   return result.json()
 }

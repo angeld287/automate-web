@@ -11,7 +11,7 @@ export interface IKeywordService {
 
     getKeywordSearchJob(jobId: number): Promise<IKeywordSearchJob | false>
 
-    getAllKeywordSearchJobs(userId: number): Promise<Array<IKeywordSearchJob>>
+    getAllKeywordSearchJobs(userId: number, siteId: number): Promise<Array<IKeywordSearchJob>>
 
     getKeywordsById(id: number): Promise<IKeyword>
 

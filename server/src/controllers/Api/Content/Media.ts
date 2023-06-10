@@ -32,7 +32,7 @@ class Media {
 
             let _mediaService: IMediaService = new mediaService();
             const articleServices: IArticleService = new articleService();
-            const {imageAddress, title, type, relatedId, orderNumber, notCompress} = req.body;
+            const {imageAddress, title, type, relatedId, orderNumber, siteId, notCompress} = req.body;
 
             //const imageIsFine = await _mediaService.imageHaveCorrectSize(imageAddress);
             //
@@ -44,7 +44,7 @@ class Media {
             //    }).send(res);
             //}
 
-            const media: IMedia = (await _mediaService.create(title, imageAddress, req.headers.authorization, notCompress)).media
+            const media: IMedia = (await _mediaService.create(title, imageAddress, req.headers.authorization, siteId, notCompress)).media
             
             let dbMedia: DbMedia = null;
             if(type === 'subtitle') {
@@ -165,11 +165,11 @@ class Media {
             let _mediaService: IMediaService = new mediaService();
             const articleServices: IArticleService = new articleService();
             
-            const {text, type, relatedId} = req.body;
+            const {text, type, relatedId, siteId} = req.body;
 
             const imageFromOpenAI: ImagesResponse = await _openaiService.createNewImage(text);
 
-            const media: IMedia = (await _mediaService.create(text, imageFromOpenAI.data[0].url, req.headers.authorization)).media
+            const media: IMedia = (await _mediaService.create(text, imageFromOpenAI.data[0].url, req.headers.authorization, siteId)).media
             
             if(media.source_url === undefined){
                 Log.error(`Internal Server Error, WP Authentication error` + media);

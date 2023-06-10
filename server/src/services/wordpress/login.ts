@@ -18,6 +18,7 @@ export default class WpLogin implements ILogin {
           username: site.wpUser,
           password: site.wpUserPass,
         }
+
         const result = await fetch(Locals.config().TOCKEN_URL(site.domain), {
           method: "POST",
           headers: {
@@ -25,6 +26,9 @@ export default class WpLogin implements ILogin {
           },
           body: JSON.stringify(authenticate)
         });
+
+        console.log(result)
+        
         return result
       }else{
         return null

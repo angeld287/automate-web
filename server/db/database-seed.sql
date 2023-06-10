@@ -470,18 +470,23 @@ CREATE TRIGGER set_timestamp_to_deleted_at
 CREATE TABLE IF NOT EXISTS public.keyword_search_job
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
-    unique_name character(10) COLLATE pg_catalog."default",
-    status character(7) COLLATE pg_catalog."default",
     created_by integer NOT NULL,
     deleted boolean,
     deleted_by integer,
     created_at timestamp with time zone NOT NULL,
     deleted_at timestamp with time zone,
+    unique_name character(10) COLLATE pg_catalog."default",
+    status character(7) COLLATE pg_catalog."default",
     long_tail_keyword character(100) COLLATE pg_catalog."default",
     main_keywords character(50) COLLATE pg_catalog."default",
+    site_id integer NOT NULL,
     CONSTRAINT keyword_search_job_pkey PRIMARY KEY (id),
     CONSTRAINT keyword_search_job_created_by_fkey FOREIGN KEY (created_by)
         REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT keyword_search_job_site_id_fkey FOREIGN KEY (site_id)
+        REFERENCES public.sites (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
@@ -510,6 +515,8 @@ CREATE TRIGGER set_timestamp_to_created_at
     ON public.keyword_search_job
     FOR EACH ROW
     EXECUTE PROCEDURE public.trigger_set_timestamp();
+
+
 
 
 

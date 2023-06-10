@@ -163,6 +163,7 @@ router.post(
     body('type', 'field type cannot be blank.').notEmpty(),
     body('relatedId', 'field relatedId cannot be blank.').notEmpty(),
     body('orderNumber', 'field orderNumber cannot be blank.').notEmpty(),
+    body('siteId', 'field siteId cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     MediaController.create
 );
@@ -349,6 +350,7 @@ router.post(
     '/keywordsSearchJob/start',
     body('longTailKeyword', 'field longTailKeyword cannot be blank.').notEmpty(),
     body('mainKeywords', 'field mainKeywords cannot be blank.').notEmpty(),
+    body('siteId', 'field siteId cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     SearchKeywordController.startJob
 );
@@ -444,6 +446,7 @@ router.post(
     body('text', 'field text cannot be blank.').notEmpty(),
     body('type', 'field type cannot be blank.').notEmpty(),
     body('relatedId', 'field relatedId cannot be blank.').notEmpty(),
+    body('siteId', 'field siteId cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     MediaController.openaiCreateImage
 );

@@ -29,4 +29,5 @@ export interface IKeywordSearchJob {
     deletedBy?: string;
     deleted?: boolean;
     mainKeywords?: string;
+    siteId: number;
 }

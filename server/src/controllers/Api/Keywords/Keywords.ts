@@ -124,10 +124,17 @@ class Keywords {
     public static async getAllSearchJobs(req: IRequest, res: IResponse): Promise<any> {
         try {
            
+            if(!req.query.siteId){
+                return new BadRequestResponse('Error', {
+                    error: "Param siteId are required."
+                }).send(res);
+            }
+
             const _keywordService: IKeywordService = new keywordService()
+            const siteId = parseInt(req.query.siteId.toString())
             const userId: number = parseInt(req.session.passport.user.id);
 
-            const jobs = await _keywordService.getAllKeywordSearchJobs(userId);
+            const jobs = await _keywordService.getAllKeywordSearchJobs(userId, siteId);
 
             return new SuccessResponse('Success', {
                 success: true,

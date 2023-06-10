@@ -43,7 +43,7 @@ class Locals {
         //wordpress site configuration
         const WP_DOMAIN = "elaceite.de"
         const WP_JSON_URL = (domain: string) => `https://${domain}/wp-json`
-        const wordpressUrl = `${WP_JSON_URL}/wp/v2/`
+        const wordpressUrl = (domain: string) => `${WP_JSON_URL(domain)}/wp/v2/`
         const WORDPRESS_USER = process.env.WORDPRESS_USER || "admin"
         const WORDPRESS_USER_PASSWORD = process.env.WORDPRESS_USER_PASSWORD || "admin"
         const TOCKEN_URL = (domain: string) => `${WP_JSON_URL(domain)}/jwt-auth/v1/token`

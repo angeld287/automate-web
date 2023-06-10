@@ -8,14 +8,14 @@ export async function startNewJob(longTailKeyword: string, mainKeywords: Array<s
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({longTailKeyword, mainKeywords})
+    body: JSON.stringify({longTailKeyword, mainKeywords, siteId: localStorage.getItem('default-site')})
   })
 
   return await fetchData.json();
 }
 
 export async function getAllSearchJobs() {
-  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}keywords/getAllSearchJobs`, {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}keywords/getAllSearchJobs?siteId=${localStorage.getItem('default-site')}`, {
     method: "GET",
     credentials: 'include',
     headers: {
