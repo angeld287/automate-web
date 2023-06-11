@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {DndContext, DragEndEvent, DragStartEvent, UniqueIdentifier} from '@dnd-kit/core';
 import Draggable from './Draggable';
-import Droppable from './Droppable';
-import { Card, Col, List, Row } from 'antd';
+import { Col, Row } from 'antd';
 import IKeywordsDragAndDrop, { IDragKeyword } from './IKeywordsDragAndDrop';
 import { removeDuplicate, replaceSpace } from '../../../utils/functions';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
@@ -24,7 +23,7 @@ const KeywordsDragAndDrop: React.FC<IKeywordsDragAndDrop> = (props) => {
 
   useEffect(() => {
     if(props.jobId) dispatch(getPlanningArticles(parseInt(props.jobId)))
-  }, []);
+  }, [dispatch, props.jobId]);
 
   useEffect(() => {
     if(articleKeyword.errorMessage !== "") toast(articleKeyword.errorMessage)
@@ -59,7 +58,7 @@ const KeywordsDragAndDrop: React.FC<IKeywordsDragAndDrop> = (props) => {
     const keyword = keywords.find(_keyword => `${replaceSpace(_keyword.name)}-${_keyword.id}` === draggedKeyword.toString())
     if(keyword){
       keyword.parent = over ? over.id : null;
-      setKeywords([...keywords.filter(_keyword => _keyword.id != draggedKeyword), keyword])
+      setKeywords([...keywords.filter(_keyword => _keyword.id !== draggedKeyword), keyword])
       if(keyword.id) dispatch(addRemoveKeywordFromArticle({id: keyword.id.toString(), articleId: over ? over.id.toString() : null, orderNumber: over ? (articleKeyword.keywords.length + 1).toString() : null}))
     }else{
       const aKeyword = articleKeyword.keywords.find(_keyword => `${replaceSpace(_keyword.name)}-${_keyword.id}` === draggedKeyword.toString())

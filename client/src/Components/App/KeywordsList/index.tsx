@@ -23,9 +23,9 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
 
     useEffect(() => {
         dispatch(getCategoryList())
-    },[])
+    },[dispatch])
 
-    const onChecked = (item: IKeyword, e: CheckboxChangeEvent) => {
+    const onChecked = useCallback((item: IKeyword, e: CheckboxChangeEvent) => {
         if(item.id){
             setKwloading(item.id)
             if(e.target.checked){
@@ -34,19 +34,19 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
                 dispatch(selectKeyword({id: item.id, selected: false}));
             }
         }
-    }
+    }, [dispatch])
 
     const updateCategory = useCallback((value: string, keyword: IKeyword) => {
         if(keyword.id)
             dispatch(setKeywordCategory({id: keyword.id.toString(), category: value}))
-    }, []);
+    }, [dispatch]);
 
     const createArticle = useCallback((item: IKeyword) => {
         if(item.id && item.keywordSearchJobId && item.category){
             setKwloading(item.id)
             dispatch(openAICreateArticle({text: item.name, keywordId: item.id, jobId: item.keywordSearchJobId, category: item.category}))
         }
-    }, [])
+    }, [dispatch])
 
     const categoryList: Array<ISelectOptions> = useMemo(() => {
         if(statusc === "loading") return []
@@ -71,7 +71,7 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
                             {kwLoading === item.id && <Spin size="small" style={{marginLeft: 10}} />}
                         </>,
                         similarity: item.similarity,
-                        keyword: <a target={"_blank"} href={getGoogleSearchUrl(item.name)}>{item.name}</a>,
+                        keyword: <a target={"_blank"} rel="noreferrer" href={getGoogleSearchUrl(item.name)}>{item.name}</a>,
                         actions: item.selected ? [
                             { type: "select", component: { _key: `category-select-${item.id}`, name: `category-select-${item.id}`, items: categoryList, disabled: item.articleId !== null, onChange: (value: string) => updateCategory(value, item), defaultValue: item.category} },
                             { type: "button", component: { _key: `create-article-ai-${item.id}`,id: `create-article-ai-${item.id}`, color: 'blue', icon: <FileTextOutlined />, onClick: () => createArticle(item), text: "", disabled: item.articleId !== null, loading: (kwLoading === item.id && AICreateStatus === 'loading') } },
@@ -86,7 +86,7 @@ const KeywordsList: React.FC<IKeywordsList> = ({items}) => {
         } catch (error) {
             throw new Error('KeywordsList - setKeywords')
         }
-    }, [items, categoryList]);
+    }, [items, categoryList, AICreateStatus, createArticle, kwLoading, onChecked, updateCategory]);
     
     const _headers = useMemo((): Array<ITableHeader> => {
         

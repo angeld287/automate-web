@@ -9,6 +9,7 @@ import * as path from 'path'
 import Log from "../../middlewares/Log";
 import ISitesService from "../../interfaces/ISitesService";
 import { sitesService } from "../sitesServices/sitesServices";
+import { _sharpCompress } from "../../utils/sharp";
 
 
 export default class mediaService implements IMediaService {
@@ -54,19 +55,20 @@ export default class mediaService implements IMediaService {
             return { success: false, message: "Error in download image process" };
         }
 
-        let dataFile = null;
+
+        let compressImage: IImageSharp = null;
 
         if(!notCompress || notCompress !== true){
-            const compressImage: IImageSharp = await sharp(filePath, compressedImagePath);
-
-            if (!compressImage.success) {
-                return { success: false, message: "Error in compress image process" };
-            }
-
-            dataFile = await readFileSync(compressedImagePath)
+            compressImage = await _sharpCompress(filePath, compressedImagePath);
         }else{
-            dataFile = await readFileSync(filePath)
+            compressImage = await sharp(filePath, compressedImagePath);
         }
+
+        if (!compressImage.success) {
+            return { success: false, message: "Error in compress image process" };
+        }
+
+        const dataFile = await readFileSync(compressedImagePath)
 
         const result = await fetch(`${Locals.config().wordpressUrl(site.domain)}media`, {
             method: 'POST',
@@ -78,9 +80,6 @@ export default class mediaService implements IMediaService {
             },
             body: dataFile.response
         });
-
-        console.log(result)
-        
 
         if (!result.success) {
             return { success: false, message: "Error uploading media. ", media: result };

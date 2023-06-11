@@ -49,12 +49,12 @@ const SearchGoogleImage: React.FC<ISearchGoogleImage> = ({open, setOpen, title, 
         dispatch(createMedia({imageAddress: link, title: imageTitle, type, relatedId, orderNumber}))
         setOpen(false);
         setOrderNumber("");
-    }, [relatedId, imageTitle, orderNumber]);
+    }, [relatedId, imageTitle, orderNumber, dispatch, setOpen, type]);
 
     const searchImages = useCallback(() => {
         dispatch(clearGoogleResults())
         dispatch(searchGoogleImages({keyword: imageTitle, index: undefined}))
-    }, [media, imageTitle])
+    }, [imageTitle, dispatch])
     
     return (
         <CustomModal width={'80%'} title="Choose the preferred image" {...{open, setOpen}} confirmLoading={media.gstatus === 'loading'}>
@@ -93,7 +93,7 @@ const SearchGoogleImage: React.FC<ISearchGoogleImage> = ({open, setOpen, title, 
                                             //actions={[<SelectOutlined />]}
                                             key={image.link}
                                             //style={{ marginTop: 10 }}
-                                            cover={<img src={image.link}/>}
+                                            cover={<img alt="" src={image.link}/>}
                                         />
                                     </List.Item>
                                 )}
@@ -111,7 +111,7 @@ const SearchGoogleImage: React.FC<ISearchGoogleImage> = ({open, setOpen, title, 
                                             onDoubleClick={() => uploadImage(item.link)}
                                             key={item.link}
                                             style={{width: 220}} 
-                                            cover={<img src={item.thumbnailLink}/>}
+                                            cover={<img alt="" src={item.thumbnailLink}/>}
                                             actions={[<CustomInputGroup key="order" label="" defaultValue={orderNumber} value={orderNumber} onChange={(e) => setOrderNumber(e.target.value)} />]}
                                         >
                                         </Card>
