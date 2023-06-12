@@ -19,20 +19,20 @@ const ContentOrganizationStepper: React.FC<IContentOrganizationStepper> = ({open
     useEffect(() => {
         if(article)
             dispatch(getArticleByInternalId(article.internalId));
-    }, [article]);
+    }, [article, dispatch]);
 
     const finishContentOrganization = useCallback(() => {
         if(article)
             dispatch(updateArticleState({id: article.id, state: ArticleState.CONTENT_RESEARCH}))
         
         setOpen(false)
-    }, [article]);
+    }, [article, dispatch, setOpen]);
 
     const footerOptions = useMemo(() => [
       <CustomButton key="finish_btn-1" disabled={db.article.subtitles.length < 2} onClick={() => finishContentOrganization() }>Finish Process</CustomButton>,
       //<CustomButton key="back_btn-2" disabled={current === 0} type="primary" danger>Back</CustomButton>,
       //<CustomButton key="next_btn-3" type="primary">Next</CustomButton>,
-    ], [db.article])
+    ], [db.article, finishContentOrganization])
 
     const stepsItems: Array<CustomStepProps> = useMemo((): Array<CustomStepProps> =>  [
         { 

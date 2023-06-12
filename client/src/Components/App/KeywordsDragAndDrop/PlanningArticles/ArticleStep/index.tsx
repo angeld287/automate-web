@@ -24,7 +24,7 @@ const ArticleStep: React.FC<IArticleStep> = ({article}) => {
 
     useEffect(() => {
         dispatch(getAllKeywords(article.id))
-    }, [article]);
+    }, [article, dispatch]);
 
     const addNewKeyword = useCallback(() => {
         if(newKeyword === ""){
@@ -33,7 +33,7 @@ const ArticleStep: React.FC<IArticleStep> = ({article}) => {
         dispatch(createForArticle({articleId:  article.id, name: newKeyword, orderNumber: _keywords.keywords.length+1}))
         setNewKeyword('');
         setAddModal(false);
-    }, [newKeyword, article, _keywords.keywords]);
+    }, [newKeyword, article, _keywords.keywords, dispatch]);
 
     useEffect(() => {
         setKeywords(_keywords.keywords.map(keyword => ({
@@ -50,13 +50,13 @@ const ArticleStep: React.FC<IArticleStep> = ({article}) => {
             dispatch(setKeywordAsMain({id: keyword.id.toString(), isMain: event.target.checked}));
             if(keyword.articleId) dispatch(updateArticleTitle({id: keyword.articleId, title: event.target.checked ? keyword.name: "Titulo no definido"}));
         }
-    }, []);
+    }, [dispatch]);
 
     const sendToKeywordTranslate = useCallback(() => {
         if(keywords.length < 4) return toast("Please add 4 or more keywords.")
         dispatch(updateArticleState({id: article.id, state: ArticleState.CONTENT_RESEARCH}))
         toast("Completed!")
-    }, [keywords]);
+    }, [keywords, article.id, dispatch]);
 
     return (
         <>

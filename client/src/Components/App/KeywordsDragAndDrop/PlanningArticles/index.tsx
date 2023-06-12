@@ -22,7 +22,7 @@ const PlanningArticles: React.FC<IPlanningArticles> = ({jobId, articles, keyword
 
     useEffect(() => {
         dispatch(getCategoryList())
-    },[])
+    },[dispatch])
 
     useEffect(() => {
         setArticleSteps(articles.map(
@@ -62,7 +62,7 @@ const PlanningArticles: React.FC<IPlanningArticles> = ({jobId, articles, keyword
         };
         dispatch(createNewArticle(article))
         return toast('Created!')
-    }, [category, jobId]);
+    }, [category, jobId, dispatch]);
 
     return <>
         <Row>

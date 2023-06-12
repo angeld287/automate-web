@@ -1,12 +1,11 @@
-import { Avatar, Divider, List, Row, Skeleton, Space, Tag, Typography } from "antd";
+import { Divider, List, Row, Skeleton, Space, Tag, Typography } from "antd";
 import React, { useEffect } from "react";
 import { useAppDispatch } from "../../../app/hooks";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import IDraftArticles from "./IDraftArticles";
 import moment from 'moment'
 import CustomButton from "../../CustomButton";
-import { generateArticleLink, replaceSpace } from "../../../utils/functions";
-import Locals from "../../../config/Locals";
+import { generateArticleLink } from "../../../utils/functions";
 import { categoryColors } from "../../../utils/constants";
 import { ArticleState } from "../../../interfaces/Enums/States";
 
@@ -17,7 +16,7 @@ const DraftArticles: React.FC<IDraftArticles> = ({actions, hasMore, status, arti
     useEffect(() => {
         if(articles.length === 0) dispatch(getArticles);
         return () => {}
-    },[]);
+    },[dispatch, articles.length, getArticles]);
 
     return (
         <div>
