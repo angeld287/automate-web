@@ -61,7 +61,7 @@ class Configurations {
                 }).send(res);
             }
 
-            const { id, name, domain } = req.body;
+            const { id, name, domain, wpUser, wpUserPass } = req.body;
             const userId = req.session.passport.user.id;
             
             const siteService: ISitesService = new sitesService();
@@ -82,6 +82,8 @@ class Configurations {
 
             site.domain = domain;
             site.name = name;
+            site.wpUser = wpUser;
+            site.wpUserPass = wpUserPass;
             site = await siteService.updateSite(site);
 
             return new SuccessResponse('Success', {

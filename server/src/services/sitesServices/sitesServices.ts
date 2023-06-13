@@ -44,8 +44,8 @@ export class sitesService implements ISitesService {
         try {
             const updateSite = {
                 name: 'update-site',
-                text: 'UPDATE public.sites SET name=$1, domain=$2, selected=$3 WHERE id = $4 RETURNING name, domain, created_by, selected, id, wp_user, wp_user_pass',
-                values: [site.name, site.domain, site.selected, site.id],
+                text: 'UPDATE public.sites SET name=$1, domain=$2, selected=$3, wp_user=$4, wp_user_pass=$5 WHERE id = $6 RETURNING name, domain, created_by, selected, id, wp_user, wp_user_pass',
+                values: [site.name, site.domain, site.selected, site.wpUser, site.wpUserPass, site.id],
             }
 
             let result = null, client = null;
