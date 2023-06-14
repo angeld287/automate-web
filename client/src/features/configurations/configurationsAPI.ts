@@ -28,6 +28,20 @@ export async function addSite(site: ISite, token: string) {
   return result;
 }
 
+export async function updateSite(site: ISite) {
+  const response = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}site/update`, {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(site)
+  })
+  const result = await response.json();
+  return result;
+}
+
+
 export async function setSelectedSite(id: number, token: string) {
   const response = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}site/setSelectedSite`, {
     method: "POST",

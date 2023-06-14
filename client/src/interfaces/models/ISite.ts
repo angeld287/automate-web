@@ -4,4 +4,6 @@ export default interface ISite {
     domain: string;
     createdBy?: number;
     selected: boolean;
+    wpUser: string;
+    wpUserPass: string;
 }

@@ -21,6 +21,8 @@ const Menu: React.FC = () => {
   const [current, setCurrent] = useState('keywords');
   const [name, setName] = useState('');
   const [domain, setDomain] = useState('');
+  const [wpUser, setWpUser] = useState('');
+  const [wpUserPass, setWpUserPass] = useState('');
   const [createSiteModal, setCreateSiteModal] = useState(false);
 
   const [defaultSite, setDefaultSite] = useState<ISite>()
@@ -95,6 +97,8 @@ const Menu: React.FC = () => {
       name,
       domain,
       selected: false,
+      wpUser,
+      wpUserPass
     }))
     setCreateSiteModal(false)
   }, [name, domain, dispatch]);
@@ -102,13 +106,21 @@ const Menu: React.FC = () => {
   return <>
     <AntDMenu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
     <AntDMenu selectedKeys={[current]} mode="horizontal" items={items2} style={{position: 'absolute', top: 0, right: 20}} />
-    <CustomModal width={600} open={createSiteModal} setOpen={setCreateSiteModal} title='Create Site' onOk={() => createNewSite()}>
-      <Row gutter={16}>
+    <CustomModal width={900} open={createSiteModal} setOpen={setCreateSiteModal} title='Create Site' onOk={() => createNewSite()}>
+      <Row gutter={16} style={{marginBottom:10}}>
         <Col className="gutter-row" span={12}>
         <CustomInputGroup value={name} defaultValue={name} onChange={(e) => setName(e.target.value)} label="Name"></CustomInputGroup>
         </Col>
         <Col className="gutter-row" span={12}>
           <CustomInputGroup value={domain} defaultValue={domain} onChange={(e) => setDomain(e.target.value)} label="Domain"></CustomInputGroup>
+        </Col>
+      </Row>
+      <Row gutter={16}>
+        <Col className="gutter-row" span={12}>
+        <CustomInputGroup value={wpUser} defaultValue={wpUser} onChange={(e) => setWpUser(e.target.value)} label="Wp Username"></CustomInputGroup>
+        </Col>
+        <Col className="gutter-row" span={12}>
+          <CustomInputGroup value={wpUserPass} defaultValue={wpUserPass} onChange={(e) => setWpUserPass(e.target.value)} label="Wp Password"></CustomInputGroup>
         </Col>
       </Row>
     </CustomModal>
