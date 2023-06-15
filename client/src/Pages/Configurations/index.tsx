@@ -4,15 +4,23 @@ import {
   Divider,
   Row,
 } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomInput from '../../Components/CustomInput';
 import CustomButton from '../../Components/CustomButton';
 import { useAppDispatch } from '../../app/hooks';
+import { getSite } from '../../features/configurations/configurationsSlice';
 
 const Configurations: React.FC = () => {
   const [componentDisabled, setComponentDisabled] = useState<boolean>(true);
 
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if(localStorage.getItem('default-site') !== null){
+      //dispatch(getSite(parseInt()))
+    }
+      
+  }, [dispatch]);
 
   const saveConfig = () => {
     //dispatch();

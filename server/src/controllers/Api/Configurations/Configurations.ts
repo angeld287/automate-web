@@ -177,6 +177,33 @@ class Configurations {
             }).send(res);
         }
     }
+
+    public static async getSiteById(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            if(!req.query.id){
+                return new BadRequestResponse('Error', {
+                    error: "Param id are required."
+                }).send(res);
+            }
+
+            const siteService: ISitesService = new sitesService();
+            const id = req.query.id;
+
+            let site = await siteService.getSiteById(parseInt(id.toString()))
+            
+            return new SuccessResponse('Success', {
+                success: true,
+                response: site,
+                error: null
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('Configurations Controller Error - getOwnerSiteList', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
 }
 
 export default Configurations;

@@ -14,6 +14,18 @@ export async function getSites() {
   return result;
 }
 
+export async function getSiteById(id: number) {
+  const response = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}site/getById?id=${id}`, {
+    method: "GET",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })
+  const result = await response.json();
+  return result;
+}
+
 export async function addSite(site: ISite, token: string) {
   const response = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}site/create`, {
     method: "POST",

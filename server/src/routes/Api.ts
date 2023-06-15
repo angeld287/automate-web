@@ -500,6 +500,12 @@ router.get(
     ConfigurationsController.getOwnerSiteList
 );
 
+router.get(
+    '/site/getById',
+    Passport.isAuthenticated,
+    ConfigurationsController.getSiteById
+);
+
 
 // SALES OPPORTUNITIES API'S
 
