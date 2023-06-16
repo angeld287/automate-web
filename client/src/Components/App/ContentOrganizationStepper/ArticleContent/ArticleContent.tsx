@@ -10,7 +10,7 @@ import CustomSelect from "../../../CustomSelect";
 import { ISelectOptions } from "../../../CustomSelect/ICustomSelect";
 import IArticleContent from "./IArticleContent";
 import { Editor } from "react-draft-wysiwyg";
-import { ContentState, convertFromHTML, convertToRaw, EditorState, RawDraftContentBlock } from "draft-js";
+import { convertToRaw, EditorState, RawDraftContentBlock } from "draft-js";
 import { toast } from "react-toastify";
 import { Languages } from "../../../../interfaces/Enums/Languages";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
@@ -89,18 +89,6 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
             })
         }
     }, []);
-
-    const actionsList = useCallback((item: IContent): Array<ReactNode> => {
-        return [
-            <Col style={{margin: 10}}><Checkbox checked={selectedContent.find(text => item.content === text) !== undefined} onChange={(e) => setSelectedParagraph(e.target.checked, item)}></Checkbox></Col>,
-            <p>Words Count: {item.content.split(" ").length}</p>,
-            <CustomButton disabled={addedSubtitle(item, article?.subtitles)} onClick={() => copyContent(item.content)}><CopyOutlined /></CustomButton>,
-            <CustomButton loading={statusSubEn === "loading"} disabled={addedSubtitle(item, article?.subtitles)} onDoubleClick={() => {setSubtitle(item.content); setOpenSubModal(true)}} onClick={() => addSubtitle(item.content) }><PlusOutlined /></CustomButton>,
-            <CustomButton hidden={!addedSubtitle(item, article?.subtitles)} disabled={subtitleWithContent(item, article?.subtitles)} onClick={() => addSubtitleContent(item, article?.subtitles)}><UnorderedListOutlined /></CustomButton>,
-            <CustomButton hidden={!addedSubtitle(item, article?.subtitles)} disabled={subtitleWithContent(item, article?.subtitles)} onClick={() => deleteSubtitle(item, article?.subtitles)}><DeleteOutlined /></CustomButton>,
-            //<TranslationOutlined />,
-        ]
-    }, [article?.subtitles, selectedContent]);
 
     const addSubtitleContent = useCallback(async (item: IContent, subtitles?: Array<SubTitleContent>) => {
         const texts = await navigator.clipboard.readText();
@@ -187,7 +175,19 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
         {id: 'conclusion', name: "Conclusion"},
     ], []);
 
-    const subtitlesOptions: ISelectOptions[] = useMemo(() => article ? article.subtitles.map(subtitle => ({id: subtitle.id.toString(), name: subtitle.name})) : [], [article?.subtitles]);
+    const subtitlesOptions: ISelectOptions[] = useMemo(() => article ? article.subtitles.map(subtitle => ({id: subtitle.id.toString(), name: subtitle.name})) : [], [article]);
+
+    const actionsList = useCallback((item: IContent): Array<ReactNode> => {
+        return [
+            <Col style={{margin: 10}}><Checkbox checked={selectedContent.find(text => item.content === text) !== undefined} onChange={(e) => setSelectedParagraph(e.target.checked, item)}></Checkbox></Col>,
+            <p>Words Count: {item.content.split(" ").length}</p>,
+            <CustomButton disabled={addedSubtitle(item, article?.subtitles)} onClick={() => copyContent(item.content)}><CopyOutlined /></CustomButton>,
+            <CustomButton loading={statusSubEn === "loading"} disabled={addedSubtitle(item, article?.subtitles)} onDoubleClick={() => {setSubtitle(item.content); setOpenSubModal(true)}} onClick={() => addSubtitle(item.content) }><PlusOutlined /></CustomButton>,
+            <CustomButton hidden={!addedSubtitle(item, article?.subtitles)} disabled={subtitleWithContent(item, article?.subtitles)} onClick={() => addSubtitleContent(item, article?.subtitles)}><UnorderedListOutlined /></CustomButton>,
+            <CustomButton hidden={!addedSubtitle(item, article?.subtitles)} disabled={subtitleWithContent(item, article?.subtitles)} onClick={() => deleteSubtitle(item, article?.subtitles)}><DeleteOutlined /></CustomButton>,
+            //<TranslationOutlined />,
+        ]
+    }, [article?.subtitles, selectedContent, addedSubtitle, addSubtitleContent, addSubtitle, deleteSubtitle, setSelectedParagraph, statusSubEn, subtitleWithContent]);
 
     return (<>
         <Row>

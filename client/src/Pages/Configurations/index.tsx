@@ -7,23 +7,46 @@ import {
 import React, { useEffect, useState } from 'react';
 import CustomInput from '../../Components/CustomInput';
 import CustomButton from '../../Components/CustomButton';
-import { useAppDispatch } from '../../app/hooks';
-import { getSite } from '../../features/configurations/configurationsSlice';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { getSite, selectSitesUtils, updateSiteData } from '../../features/configurations/configurationsSlice';
+import { toast } from 'react-toastify';
+import CustomInputGroup from '../../Components/CustomInputGroup';
 
 const Configurations: React.FC = () => {
   const [componentDisabled, setComponentDisabled] = useState<boolean>(true);
+  const [name, setName] = useState<string>('');
+  const [domain, setDomain] = useState<string>('');
+  const [wpUser, setWpUser] = useState<string>('');
+  const [wpUserPass, setWpUserPass] = useState<string>('');
+
+  const { currentSite } = useAppSelector(selectSitesUtils);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if(localStorage.getItem('default-site') !== null){
-      //dispatch(getSite(parseInt()))
+    setName(currentSite.name);
+    setDomain(currentSite.domain);
+    setWpUser(currentSite.wpUser);
+    setWpUserPass(currentSite.wpUserPass);
+  }, [currentSite])
+
+  useEffect(() => {
+    const sietId = localStorage.getItem('default-site');
+    if(sietId){
+      dispatch(getSite(parseInt(sietId)))
     }
       
   }, [dispatch]);
 
   const saveConfig = () => {
-    //dispatch();
+    if(name === '' || domain === '' || wpUser === '' || wpUserPass === '') return toast('Some of the fields are empty.')
+    dispatch(updateSiteData({
+      name,
+      domain,
+      wpUser,
+      wpUserPass,
+      selected: true
+    }));
   }
 
   return (
@@ -32,11 +55,11 @@ const Configurations: React.FC = () => {
       <Button style={{margin: 10}} disabled={!componentDisabled} onClick={() => {setComponentDisabled(false)}}>Edit</Button>
       <Divider orientation="left"></Divider>
         <Col style={{width: '70%', margin: 50}}>
-          <CustomInput style={{marginBottom: 10}} disabled={componentDisabled} dataTestId='site-name' label='Site Name'></CustomInput>
-          <CustomInput style={{marginBottom: 10}} disabled={componentDisabled} dataTestId='domain' label='Domain'></CustomInput>
-          <CustomInput style={{marginBottom: 10}} disabled={componentDisabled} dataTestId='wordpress-username' label='Wordpress Username'></CustomInput>
-          <CustomInput style={{marginBottom: 10}} disabled={componentDisabled} dataTestId='wordpress-password' label='Wordpress password'></CustomInput>
-          <CustomButton onClick={saveConfig}>Save</CustomButton>
+          <CustomInputGroup value={name} onChange={(e) => setName(e.target.value)} style={{marginBottom: 10}} disabled={componentDisabled} label='Site Name'></CustomInputGroup>
+          <CustomInputGroup value={domain} onChange={(e) => setDomain(e.target.value)} style={{marginBottom: 10}} disabled={componentDisabled} label='Domain'></CustomInputGroup>
+          <CustomInputGroup value={wpUser} onChange={(e) => setWpUser(e.target.value)} style={{marginBottom: 10}} disabled={componentDisabled} label='Wordpress Username'></CustomInputGroup>
+          <CustomInputGroup value={wpUserPass} type='password' onChange={(e) => setWpUserPass(e.target.value)} style={{marginBottom: 10}} disabled={componentDisabled} label='Wordpress password'></CustomInputGroup>
+          <CustomButton disabled={componentDisabled} onClick={saveConfig}>Save</CustomButton>
         </Col>
       </Row>
     </>
@@ -44,4 +67,4 @@ const Configurations: React.FC = () => {
   );
 };
 
-export default () => <Configurations />;
+export default Configurations;

@@ -101,7 +101,7 @@ const Menu: React.FC = () => {
       wpUserPass
     }))
     setCreateSiteModal(false)
-  }, [name, domain, dispatch]);
+  }, [name, domain, dispatch, wpUser, wpUserPass]);
 
   return <>
     <AntDMenu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />

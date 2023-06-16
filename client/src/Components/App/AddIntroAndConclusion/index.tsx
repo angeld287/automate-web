@@ -15,7 +15,6 @@ import { createArticleIntroAndConclusion } from "../../../features/article/artic
 import CustomButton from "../../CustomButton";
 
 const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({article, setSelectedItem, setImageType, openImageSearch, open, setOpen, type}) => {
-    //const [url, setUrl] = useState('');
     const [error, setError] = useState<undefined | string>(undefined);
     const [paragraph, setParagraph] = useState<Array<IContent>>([])
     const [editorState, setEditorState] = useState(
@@ -77,7 +76,7 @@ const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({article, setSe
 
         setError(undefined)
         dispatch(createMedia({imageAddress: url, title: title ? title : "", type: 'article', relatedId, orderNumber: ""}))
-    } , [title, relatedId])
+    } , [title, relatedId, dispatch])
 
     const addContent = useCallback(() => {
         if(paragraph.length === 0){
@@ -85,7 +84,7 @@ const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({article, setSe
         }
         dispatch(createArticleIntroAndConclusion(paragraph))
         setOpen(false);
-    },[paragraph])
+    },[paragraph, dispatch])
 
     const openAICreateImage = useCallback(() => {
         if(title){
@@ -93,7 +92,7 @@ const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({article, setSe
         }else{
             return setError('Please add a Title.')
         }
-    }, []);
+    }, [dispatch, title, relatedId]);
     
     return (
         <CustomModal title={`Complete the article ${type} for Article: ${title}`} {...{open, setOpen}} onOk={addContent} width="90%" >

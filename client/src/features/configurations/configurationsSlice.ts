@@ -1,16 +1,24 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { addSite, getSiteById, getSites, setSelectedSite } from './configurationsAPI';
+import { addSite, getSiteById, getSites, setSelectedSite, updateSite } from './configurationsAPI';
 import { getBearer } from '../autenticate/authenticateAPI';
 import ISite from '../../interfaces/models/ISite';
 
 export interface ConfigurationsState {
   sites: Array<ISite>;
+  currentSite: ISite;
   status: 'idle' | 'loading' | 'failed';
 }
 
 const initialState: ConfigurationsState = {
   sites: [],
+  currentSite: {
+    domain: '',
+    name: '',
+    selected: false,
+    wpUser: '',
+    wpUserPass: '',
+  },
   status: 'idle',
 };
 
@@ -44,6 +52,18 @@ export const createSite = createAsyncThunk(
     try {
       const token = await getBearer();
       const response = await addSite(site, token);
+      return response.data.response;
+    } catch (error) {
+      return new Error('Error in ConfigurationsState at createSite.')
+    }
+  }
+);
+
+export const updateSiteData = createAsyncThunk(
+  'configurations/updateSite',
+  async (site: ISite) => {
+    try {
+      const response = await updateSite(site);
       return response.data.response;
     } catch (error) {
       return new Error('Error in ConfigurationsState at createSite.')
@@ -85,6 +105,9 @@ export const configurationsSlice = createSlice({
       })
       .addCase(createSite.fulfilled, (state, action) => {
         state.sites = [...state.sites, action.payload].sort((a: ISite, b: ISite) => b.name > a.name ? -1 : 1);
+      })
+      .addCase(getSite.fulfilled, (state, action) => {
+        state.currentSite = action.payload;
       });
   },
 });
