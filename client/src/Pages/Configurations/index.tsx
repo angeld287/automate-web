@@ -5,7 +5,6 @@ import {
   Row,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
-import CustomInput from '../../Components/CustomInput';
 import CustomButton from '../../Components/CustomButton';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { getSite, selectSitesUtils, updateSiteData } from '../../features/configurations/configurationsSlice';
@@ -14,6 +13,7 @@ import CustomInputGroup from '../../Components/CustomInputGroup';
 
 const Configurations: React.FC = () => {
   const [componentDisabled, setComponentDisabled] = useState<boolean>(true);
+  const [id, setId] = useState(0);
   const [name, setName] = useState<string>('');
   const [domain, setDomain] = useState<string>('');
   const [wpUser, setWpUser] = useState<string>('');
@@ -24,6 +24,7 @@ const Configurations: React.FC = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    if(currentSite.id) setId(currentSite.id)
     setName(currentSite.name);
     setDomain(currentSite.domain);
     setWpUser(currentSite.wpUser);
@@ -41,12 +42,14 @@ const Configurations: React.FC = () => {
   const saveConfig = () => {
     if(name === '' || domain === '' || wpUser === '' || wpUserPass === '') return toast('Some of the fields are empty.')
     dispatch(updateSiteData({
+      id,
       name,
       domain,
       wpUser,
       wpUserPass,
       selected: true
     }));
+    setComponentDisabled(true)
   }
 
   return (

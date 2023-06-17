@@ -55,7 +55,7 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
             return content
         }).filter(block => block.content !== "");
         setParagraphs(finalContents);
-    }, [editorState, article?.id, type]);
+    }, [editorState, article?.id, type, article?.internalId, subtitle]);
 
     const addedSubtitle = useCallback((item: IContent, subtitles?: Array<SubTitleContent>) => {
         return subtitles ? subtitles.find(sub => sub.translatedName === item.content) ? true : false : false
@@ -112,7 +112,7 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
             }
         }
             
-    }, [article?.contents]);
+    }, [article?.contents, dispatch]);
 
 
     const deleteSubtitle = useCallback((item: IContent, subtitles?: Array<SubTitleContent>) => {
@@ -121,7 +121,7 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
             if(subTitle)
                 dispatch(deleteArticleSubtitle(subTitle.id));
         }
-    }, []);
+    }, [dispatch]);
 
     const addIntroConclusion = useCallback(async (type: "introduction" | "conclusion" ) => {
         const texts = await navigator.clipboard.readText();
@@ -142,7 +142,7 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
             dispatch(createArticleContent(contents));
         }
             
-    }, [article]);
+    }, [article, dispatch]);
 
     const addSubtitle = useCallback((text: string) => {
         if(text.length > 99) return toast('This title exceeds the size limit!')
@@ -153,7 +153,7 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
             }));
 
         setOpenSubModal(false);
-    }, [article])
+    }, [article, dispatch])
 
     const createParagraph = useCallback(() => {
         if(type === 'subtitle') {
@@ -162,7 +162,7 @@ const ArticleContent: React.FC<IArticleContent> = ({article}) => {
             dispatch(createArticleContent(paragraphs));
         }
         setOpen(false);
-    }, [paragraphs, type]);
+    }, [paragraphs, type, dispatch]);
 
     const copySelectedContent = useCallback(() => {
         navigator.clipboard.writeText(selectedContent.join("\r\n"))

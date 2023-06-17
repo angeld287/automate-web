@@ -49,10 +49,6 @@ const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({article, setSe
         setParagraph(finalContents);
     }, [editorState, articleId, type, contents]);
 
-    useEffect(() => {
-        populateContent()
-    }, [type]);
-
     const populateContent = useCallback(() => {
         const selectedContent = contents ? contents.filter(cont => cont.type && cont.type.trim() === type).sort((cA, cB) => (cA.orderNumber && cB.orderNumber ? cA.orderNumber < cB.orderNumber ? -1 : 1 : -1)) : [];
         const stringContent: string = `<p>${selectedContent.map(content => content.content).join("</p><p>")}</p>`
@@ -64,6 +60,10 @@ const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({article, setSe
             )
         )
     }, [contents, type]);
+
+    useEffect(() => {
+        populateContent()
+    }, [populateContent]);
 
     const searchImage = useCallback((url: string) => {
         if(url === ''){
@@ -84,7 +84,7 @@ const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({article, setSe
         }
         dispatch(createArticleIntroAndConclusion(paragraph))
         setOpen(false);
-    },[paragraph, dispatch])
+    },[paragraph, dispatch, setOpen])
 
     const openAICreateImage = useCallback(() => {
         if(title){
@@ -100,6 +100,7 @@ const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({article, setSe
                 {(type === 'introduction') && <Col sm={9}>
                     <Row>
                         <img
+                            alt=""
                             width="100%"
                             src={image ? image : Locals.config().DEFAULT_IMAGE}
                         />
