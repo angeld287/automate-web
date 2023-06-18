@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, List, Row, Space, Tag } from 'antd';
+import { Card, Col, Divider, List, Row, Space, Tag } from 'antd';
 import { LinkOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -35,6 +35,7 @@ const JobsList: React.FC = () => {
             <Row>
                 <Col style={{margin: 10}}><CustomButton onClick={() => { setOpen(true)}}>Create Category</CustomButton></Col>
             </Row>
+            <Divider orientation="left"></Divider>
             <Row>
                 <List
                     grid={{

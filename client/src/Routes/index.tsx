@@ -17,6 +17,7 @@ import Login from "../Pages/Login";
 import Posts from "../Pages/Posts";
 import ResultReview from "../Pages/ResultReview";
 import Configurations from "../Pages/Configurations";
+import ImagesManagement from "../Pages/ImangesManagement";
 
 const Routes = ({activeSession}: IRoutes) => {
   return (
@@ -27,6 +28,7 @@ const Routes = ({activeSession}: IRoutes) => {
           <Route path="/category/:category/articles" element={<Protected {...{activeSession}}><CategoryArticles/></Protected>}/>
           <Route path="/category" element={<Protected {...{activeSession}}><Categories/></Protected>}/>
           <Route path="/config" element={<Protected {...{activeSession}}><Configurations/></Protected>}/>
+          <Route path="/images" element={<Protected {...{activeSession}}><ImagesManagement/></Protected>}/>
           <Route path="/posts" element={<Protected {...{activeSession}}><Posts/></Protected>}/>
           <Route path="/result-review" element={<Protected {...{activeSession}}><ResultReview/></Protected>}/>
           <Route path="/content-editor/:id" element={<Protected {...{activeSession}}><ContentEditor/></Protected>}/>

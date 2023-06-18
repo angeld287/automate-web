@@ -1,4 +1,4 @@
-import { Col, Row } from "antd";
+import { Col, Divider, Row } from "antd";
 import { useState } from "react";
 import { useAppDispatch } from "../../app/hooks";
 import JobsList from "../../Components/App/JobsList";
@@ -19,6 +19,7 @@ const Jobs = () => {
             <Row>
                 <Col style={{margin: 10}}><CustomButton onClick={() => { setOpen(true)}}>Create New Job</CustomButton></Col>
             </Row>
+            <Divider orientation="left"></Divider>
             <Row className="rows">
                 <Col span={24} className="job-list">
                     <JobsList/>
