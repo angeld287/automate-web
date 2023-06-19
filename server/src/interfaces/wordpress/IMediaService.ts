@@ -2,7 +2,7 @@ import Media from "../models/Media";
 import { IMediaServiceResponse } from "../response/IServiceResponse";
 
 export interface IMediaService {
-    getList(): Promise<Array<Media>>
+    getList(siteId: number): Promise<Array<Media>>
 
     create(title: string, imageAddress: string, token: string, siteId: number, notCompress?: boolean): Promise<IMediaServiceResponse>;
     

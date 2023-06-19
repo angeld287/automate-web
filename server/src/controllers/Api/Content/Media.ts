@@ -224,6 +224,32 @@ class Media {
         }
     }
 
+    public static async getAllSiteImages(req: IRequest, res: IResponse): Promise<any> {
+        try {
+            if(!req.query.siteId){
+                return new BadRequestResponse('Error', {
+                    error: "Param siteId are required."
+                }).send(res);
+            }
+            const { siteId } = req.query
+
+            const _mediaService: IMediaService = new mediaService();
+            const mediaList = await _mediaService.getList(parseInt(siteId.toString()))
+
+            return new SuccessResponse('Success', {
+                success: true,
+                response: mediaList,
+                error: null
+            }).send(res);
+
+        } catch (error) {
+            Log.error(`Internal Server Error ` + error);
+            return new InternalErrorResponse('get All Media List Controller Error', {
+                error: 'Internal Server Error',
+            }).send(res);
+        }
+    }
+
     public static async getArticleMedia(req: IRequest, res: IResponse): Promise<any> {
         try {
             const errors = new ExpressValidator().validator(req);

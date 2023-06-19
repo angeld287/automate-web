@@ -183,6 +183,12 @@ router.delete(
     MediaController.deleteMedia
 );
 
+router.get(
+    '/image/getList',
+    Passport.isAuthenticated,
+    MediaController.getAllSiteImages
+);
+
 
 router.get(
     '/categoryList',

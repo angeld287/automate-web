@@ -14,8 +14,18 @@ import { _sharpCompress } from "../../utils/sharp";
 
 export default class mediaService implements IMediaService {
 
-    async getList(): Promise<Array<Media>> {
-        const response = await axios({ url: `${Locals.config().wordpressUrl}media` });
+    async getList(siteId: number): Promise<Array<Media>> {
+
+
+        const _siteService: ISitesService = new sitesService();
+        const site = await _siteService.getSiteById(siteId);
+
+        if(site === false){
+            return []
+        }
+
+        const response = await axios({ url: `${Locals.config().wordpressUrl(site.domain)}media` });
+        
         return response.body
     }
 
