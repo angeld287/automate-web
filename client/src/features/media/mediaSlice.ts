@@ -2,10 +2,11 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { DbMedia, GoogleMedia } from '../../interfaces/models/Media';
 import { getBearer } from '../autenticate/authenticateAPI';
-import { addMediaToWordpress, addMediaToWordpressOpenAI, deleteImages, searchImages, updateMediaData } from './mediaAPI';
+import { addMediaToWordpress, addMediaToWordpressOpenAI, deleteImages, getImages, searchImages, updateMediaData } from './mediaAPI';
 
 export interface MediaState {
   media: DbMedia;
+  imagesList: Array<DbMedia>;
   googleResults: Array<GoogleMedia>;
   status: 'idle' | 'loading' | 'failed';
   gstatus: 'idle' | 'loading' | 'failed';
@@ -19,6 +20,7 @@ const initialState: MediaState = {
   media: {
     wpId: '0'
   },
+  imagesList: [],
   googleResults: [],
   status: 'idle',
   gstatus: 'idle',
@@ -95,6 +97,15 @@ export const deleteWpImage = createAsyncThunk(
   async (id: string) => {
     const result = await deleteImages(id);
     return result.data;
+  }
+);
+
+export const getImagesList = createAsyncThunk(
+  'media/getImages',
+  async (siteId: number) => {
+    const result = await getImages(siteId);
+    console.log(result)
+    return result;
   }
 );
 

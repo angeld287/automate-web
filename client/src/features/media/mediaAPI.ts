@@ -64,3 +64,14 @@ export async function deleteImages(id: string) {
   })
   return result.json()
 }
+
+export async function getImages(siteId: number) {
+  const result = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}image/getList?siteId=${siteId}`, {
+    method: "GET",
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })
+  return result.json()
+}
