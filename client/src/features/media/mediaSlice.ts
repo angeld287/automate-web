@@ -179,6 +179,9 @@ export const mediaSlice = createSlice({
       })
       .addCase(searchGoogleImages.rejected, (state) => {
         state.gstatus = 'failed';
+      })
+      .addCase(getImagesList.fulfilled, (state, action) => {
+        state.imagesList = action.payload.message === 'Success' ? action.payload.data.response : []
       });
   },
 });
