@@ -853,6 +853,16 @@ export class articleService implements IArticleService {
         }
     }
 
+    async createFreeMedia(media: DbMedia): Promise<DbMedia> {
+        const createArticleImage = {
+            name: 'create-article-image',
+            text: 'INSERT INTO public.media(source_url, wp_id, title, order_number) VALUES ($1, $2, $3, $4) RETURNING id, TRIM(source_url) AS source_url, wp_id, article_id, title, order_number;',
+            values: [media.source_url, media.wpId, media.title, media.orderNumber],
+        }
+
+        return await this.createMedia(createArticleImage);
+    }
+
     async createMediaForArticle(media: DbMedia): Promise<DbMedia> {
         const createArticleImage = {
             name: 'create-article-image',

@@ -50,6 +50,8 @@ export interface IArticleService {
 
     saveKeywordNewSelectedContent(contents: Array<IContent>): Promise<Array<IContent>>;
 
+    createFreeMedia(media: DbMedia): Promise<DbMedia>;
+
     createMediaForArticle(media: DbMedia): Promise<DbMedia>;
 
     createMediaForSubtitle(media: DbMedia): Promise<DbMedia>;

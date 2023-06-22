@@ -208,6 +208,12 @@ class Media {
                     wpId: media.id,
                     articleId: relatedId,
                 });
+            }else if(type === undefined){
+                dbMedia = await articleServices.createFreeMedia({
+                    source_url: media.source_url,
+                    title: text,
+                    wpId: media.id,
+                });
             }
 
             return new SuccessResponse('Success', {

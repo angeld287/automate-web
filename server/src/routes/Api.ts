@@ -450,7 +450,6 @@ router.post(
 router.post(
     '/openai/createImage',
     body('text', 'field text cannot be blank.').notEmpty(),
-    body('type', 'field type cannot be blank.').notEmpty(),
     body('relatedId', 'field relatedId cannot be blank.').notEmpty(),
     body('siteId', 'field siteId cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
