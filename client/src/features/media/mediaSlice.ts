@@ -51,9 +51,9 @@ export const createMedia = createAsyncThunk(
 
 export const createMediaOpenAI = createAsyncThunk(
   'media/createOpenAI',
-  async ({title, type, relatedId}: {title: string, type: string, relatedId: number}) => {
+  async ({title, type, relatedId}: {title: string, relatedId: number, type?: string}) => {
     const token = getBearer()
-    const response = await addMediaToWordpressOpenAI(title, type, relatedId, token);
+    const response = await addMediaToWordpressOpenAI(title, relatedId, token, type);
 
     if(response.data.response){
       await updateMediaData({

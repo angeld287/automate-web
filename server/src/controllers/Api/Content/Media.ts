@@ -47,8 +47,7 @@ class Media {
             const media: IMedia = (await _mediaService.create(title, imageAddress, req.headers.authorization, siteId, notCompress)).media
             
             let dbMedia: DbMedia = null;
-            if(type === 'subtitle') {
-                
+            if(type === 'subtitle') {    
                 dbMedia = await articleServices.createMediaForSubtitle({
                     source_url: media.source_url,
                     title,
@@ -63,12 +62,17 @@ class Media {
                     await articleServices.deleteMedia(parseInt(image.id), parseInt(req.session.passport.user.id));
                     await _mediaService.delete(parseInt(image.wpId), req.headers.authorization)
                 }))
-                
                 dbMedia = await articleServices.createMediaForArticle({
                     source_url: media.source_url,
                     title,
                     wpId: media.id,
                     articleId: relatedId,
+                });
+            }else if(type === undefined){
+                dbMedia = await articleServices.createFreeMedia({
+                    source_url: media.source_url,
+                    title,
+                    wpId: media.id,
                 });
             }
 

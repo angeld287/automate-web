@@ -39,7 +39,7 @@ const AddImage: React.FC<IAddImage> = ({open, setOpen, title, type, relatedId}) 
 
     const uploadImage = () => {
         if(openAI){
-            dispatch(createMediaOpenAI({title: imageTitle, type, relatedId}))
+            dispatch(createMediaOpenAI({title: imageTitle, relatedId, type}))
         }else{
             if(url === ''){
                 return setError('Please provide an image url.')

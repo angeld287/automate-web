@@ -88,7 +88,7 @@ const AddIntroAndConclusion: React.FC<IAddIntroAndConclusion> = ({article, setSe
 
     const openAICreateImage = useCallback(() => {
         if(title){
-            dispatch(createMediaOpenAI({title, type: 'article', relatedId}))
+            dispatch(createMediaOpenAI({title, relatedId, type: 'article'}))
         }else{
             return setError('Please add a Title.')
         }

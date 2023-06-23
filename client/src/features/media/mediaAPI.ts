@@ -28,7 +28,7 @@ export async function updateMediaData(media: Media, token: string) {
   return result.json()
 }
 
-export async function addMediaToWordpressOpenAI(text: string, type: string, relatedId: number, token: string) {
+export async function addMediaToWordpressOpenAI(text: string, relatedId: number, token: string, type?: string) {
   const result = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}openai/createImage`, {
     method: "POST",
     credentials: 'include',
