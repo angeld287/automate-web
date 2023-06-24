@@ -31,9 +31,9 @@ const initialState: MediaState = {
 
 export const createMedia = createAsyncThunk(
   'media/create',
-  async ({title, imageAddress, type, relatedId, orderNumber}: {title: string, imageAddress: string, type: string, relatedId: number, orderNumber: string}) => {
+  async ({title, imageAddress, relatedId, orderNumber, type}: {title: string, imageAddress: string, relatedId: number, orderNumber: string, type?: string}) => {
     const token = getBearer()
-    const response = await addMediaToWordpress(imageAddress, title, type, relatedId, orderNumber, token);
+    const response = await addMediaToWordpress(imageAddress, title, relatedId, orderNumber, token, type);
 
     if(response.data.response){
       await updateMediaData({
@@ -51,7 +51,7 @@ export const createMedia = createAsyncThunk(
 
 export const createMediaOpenAI = createAsyncThunk(
   'media/createOpenAI',
-  async ({title, type, relatedId}: {title: string, relatedId: number, type?: string}) => {
+  async ({title, relatedId, type}: {title: string, relatedId: number, type?: string}) => {
     const token = getBearer()
     const response = await addMediaToWordpressOpenAI(title, relatedId, token, type);
 
@@ -104,7 +104,6 @@ export const getImagesList = createAsyncThunk(
   'media/getImages',
   async (siteId: number) => {
     const result = await getImages(siteId);
-    console.log(result)
     return result;
   }
 );

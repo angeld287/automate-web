@@ -14,13 +14,12 @@ import AddImage from '../../Components/App/AddImage';
     const dispatch = useAppDispatch();
     const media = useAppSelector(selectMedia);
     const [ addImageModal, openAddImageModal ] = useState(false);
-    const [ imageType, setImageType ] = useState('')
 
     useEffect(() => {
       const siteId = localStorage.getItem('default-site');
       if(siteId)
         dispatch(getImagesList(parseInt(siteId)))
-    })
+    }, [dispatch])
 
     const createNewImage = useCallback(() => {
 
@@ -29,18 +28,17 @@ import AddImage from '../../Components/App/AddImage';
     return (
       <>
         <Row>
-            <Button style={{margin: 10}} onClick={() => {}}>Add Image By Url</Button>
-            <Button style={{margin: 10}} onClick={() => {}}>Add Image By AI</Button>
+            <Button style={{margin: 10}} onClick={() => {}}>Add Image</Button>
             <Button style={{margin: 10}} onClick={() => {}}>Add Image By Google Search</Button>
             <Divider orientation="left"></Divider>
             <ImageGallery list={media.imagesList}/>
-            {/* <AddImage 
+            <AddImage 
                 open={addImageModal} 
                 setOpen={openAddImageModal} 
-                title={selectedItem? selectedItem.name: ""} 
-                type={imageType} 
-                relatedId={selectedItem ? selectedItem.id: 0}
-            /> */}
+                title={''} 
+                type={undefined} 
+                relatedId={0}
+            /> 
         </Row>
       </>
       
