@@ -66,6 +66,10 @@ const Menu: React.FC = () => {
       label: (<Link to="/images">Images</Link>),
       key: 'images',
     },
+    {
+      label: (<Link to="/backlinks">Backlinks</Link>),
+      key: 'backlinks',
+    },
     
   ], []);
 
