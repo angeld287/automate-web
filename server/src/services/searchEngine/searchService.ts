@@ -42,7 +42,7 @@ export class searchService implements ISearchService {
             throw new Error("Error in search service: " + JSON.stringify(error));
         }
     }
-
+    
     async searchRecents(index: string, keyword: string): Promise<Array<any>> {
         try {
             const response = await axios({ url: `${Locals.config().SEARCH_ENGINE_URL}&num=${Locals.config().GOOGLE_RESULTS_QUANTITY}&start=${index}&q=${encodeURIComponent(keyword)}` })
@@ -50,6 +50,12 @@ export class searchService implements ISearchService {
         } catch (error) {
             throw new Error("Error in search service: " + JSON.stringify(error));
         }
+    }
+
+    async searchResults(index: string, keyword: string): Promise<Array<any>>{
+        const response = await axios({ url: `${Locals.config().SEARCH_ENGINE_URL}&num=${Locals.config().GOOGLE_RESULTS_QUANTITY}&start=${index}&q=${encodeURIComponent(keyword)}` })
+
+        return response.body.items;
     }
 
     async searchImages(index: string, keyword: string): Promise<Array<GoogleMedia>> {
@@ -87,6 +93,7 @@ export class searchService implements ISearchService {
             throw new Error("Error in getResultsAndSuggestions service.");
         }
     }
+
 
     async checkKeywordPotential(): Promise<IKeywordPotential>{
         try {

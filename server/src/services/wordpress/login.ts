@@ -26,8 +26,6 @@ export default class WpLogin implements ILogin {
           },
           body: JSON.stringify(authenticate)
         });
-
-        console.log(result)
         
         return result
       }else{

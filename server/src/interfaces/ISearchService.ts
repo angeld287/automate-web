@@ -8,6 +8,8 @@ export interface ISearchService {
 
     searchImages(index: string, keyword: string): Promise<Array<any>>;
 
-    searchRecents(index: string, keyword: string): Promise<Array<any>>
+    searchRecents(index: string, keyword: string): Promise<Array<any>>;
+
+    searchResults(index: string, keyword: string): Promise<Array<any>>;
 
 }

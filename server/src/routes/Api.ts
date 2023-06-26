@@ -22,6 +22,7 @@ import SearchKeywordController from '../controllers/Api/Job/SearchKeyword';
 import KeywordsController from '../controllers/Api/Keywords/Keywords';
 import ConfigurationsController from '../controllers/Api/Configurations/Configurations';
 import SearchSalesOpportunitiesController from '../controllers/Api/Job/SearchSalesOpportunities';
+import SearchDoFollowLinksController from '../controllers/Api/Job/SearchDoFollowLinks';
 
 const router = Router();
 
@@ -527,6 +528,12 @@ router.post(
     SearchSalesOpportunitiesController.startFBSeachJob
 )
 
+// DoFollow Search
+router.get(
+    '/dofollowSearchJob',
+    Passport.isAuthenticated,
+    SearchDoFollowLinksController.startDofollowSearchJob
+);
 
 
 
