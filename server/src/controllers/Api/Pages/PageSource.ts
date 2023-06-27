@@ -5,9 +5,11 @@
  */
 
 import { InternalErrorResponse, SuccessResponse } from '../../../core/ApiResponse';
+import { IPageSourceService } from '../../../interfaces/IPageSourceService';
 import { IRequest, IResponse } from '../../../interfaces/vendors';
 import Log from '../../../middlewares/Log';
 import ExpressValidator from '../../../providers/ExpressValidation';
+import { PageSourceService } from '../../../services/pageSource/pageSourceService';
 var request = require('request');
 
 class PageSource {
@@ -21,22 +23,16 @@ class PageSource {
                 }).send(res);
             }
 
-            request(req.body.url, function (error, response, body) {
-                if (error !== null) {
-                    return new SuccessResponse('Success', {
-                        success: false,
-                        url: req.body.url,
-                        response: null,
-                        error: error
-                    }).send(res);
-                }
-                return new SuccessResponse('Success', {
-                    success: true,
-                    url: req.body.url,
-                    response: response,
-                    error: null
-                }).send(res);
-            });
+            const pageSource: IPageSourceService = new PageSourceService()
+
+            const pageResult = await pageSource.getPageSource(req.body.url);
+
+            return new SuccessResponse('Success', {
+                success: true,
+                url: req.body.url,
+                response: pageResult,
+                error: null
+            }).send(res);
         } catch (error) {
             Log.error(`Internal Server Error ` + error);
             return new InternalErrorResponse('Page Source Error', {

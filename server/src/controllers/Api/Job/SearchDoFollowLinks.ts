@@ -13,14 +13,18 @@ class SearchDoFollowLinks {
                 errors: errors.array()
             }).send(res);
         }
-        let search: ISearchService = new searchService();
+        let search: ISearchService = new searchService();  
         
-        const result = await search.searchResults('1', '"messi"')
+        const resultsList = await search.searchResults('1', '"messi"')
+
+        resultsList.forEach(result => {
+            
+        });
 
         return new SuccessResponse('Success', {
             success: true,
             error: null,
-            response: result
+            response: []
         }).send(res);
     }
 }
