@@ -10,6 +10,6 @@ export interface ISearchService {
 
     searchRecents(index: string, keyword: string): Promise<Array<any>>;
 
-    searchResults(index: string, keyword: string): Promise<Array<any>>;
+    searchResults(num: string, index: string, keyword: string): Promise<Array<any>>;
 
 }

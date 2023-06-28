@@ -1,7 +1,9 @@
 import { BadRequestResponse, SuccessResponse } from "../../../core/ApiResponse";
+import { IPageSourceService } from "../../../interfaces/IPageSourceService";
 import { ISearchService } from "../../../interfaces/ISearchService";
 import { IRequest, IResponse } from "../../../interfaces/vendors";
 import ExpressValidator from "../../../providers/ExpressValidation";
+import { PageSourceService } from "../../../services/pageSource/pageSourceService";
 import { searchService } from "../../../services/searchEngine/searchService";
 
 class SearchDoFollowLinks {
@@ -13,18 +15,26 @@ class SearchDoFollowLinks {
                 errors: errors.array()
             }).send(res);
         }
-        let search: ISearchService = new searchService();  
+        let search: ISearchService = new searchService();
+        let _pageSourceService : IPageSourceService = new PageSourceService();
         
-        const resultsList = await search.searchResults('1', '"messi"')
+        const resultsList = await search.searchResults('5', '1', '"messi"')
+        const doFollowList = [];
 
-        resultsList.forEach(result => {
-            
-        });
+        await Promise.all(resultsList.map(async (result) => {
+            const sourceCode = await _pageSourceService.getPageSource(result.link)
+            doFollowList.push(sourceCode)
+        }))
+
+       //resultsList.forEach(async (result) => {
+       //    const sourceCode = await _pageSourceService.getPageSource(result.link)
+       //    doFollowList.push(sourceCode)
+       //});
 
         return new SuccessResponse('Success', {
             success: true,
             error: null,
-            response: []
+            response: true
         }).send(res);
     }
 }

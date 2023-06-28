@@ -52,8 +52,8 @@ export class searchService implements ISearchService {
         }
     }
 
-    async searchResults(index: string, keyword: string): Promise<Array<any>>{
-        const response = await axios({ url: `${Locals.config().SEARCH_ENGINE_URL}&num=${Locals.config().GOOGLE_RESULTS_QUANTITY}&start=${index}&q=${encodeURIComponent(keyword)}` })
+    async searchResults(num: string, index: string, keyword: string): Promise<Array<any>>{
+        const response = await axios({ url: `${Locals.config().SEARCH_ENGINE_URL}&num=${num}&start=${index}&q=${encodeURIComponent(keyword)}` })
 
         return response.body.items;
     }
