@@ -28,7 +28,7 @@ import AddImage from '../../Components/App/AddImage';
     return (
       <>
         <Row>
-            <Button style={{margin: 10}} onClick={() => {}}>Add Image</Button>
+            <Button style={{margin: 10}} onClick={() => {createNewImage()}}>Add Image</Button>
             <Button style={{margin: 10}} onClick={() => {}}>Add Image By Google Search</Button>
             <Divider orientation="left"></Divider>
             <ImageGallery list={media.imagesList}/>

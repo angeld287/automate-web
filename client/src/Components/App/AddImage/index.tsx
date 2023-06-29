@@ -27,7 +27,7 @@ const AddImage: React.FC<IAddImage> = ({open, setOpen, title, type, relatedId}) 
 
     useEffect(() => {
         setTitle(title)
-    }, [open])
+    }, [open, title])
 
     useEffect(() => {
         if(url !== '' && (!isValidUrl(url) || !isValidImageUrl(url))) {
