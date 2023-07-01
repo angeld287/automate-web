@@ -1,4 +1,5 @@
 import { BadRequestResponse, SuccessResponse } from "../../../core/ApiResponse";
+import { RelType } from "../../../interfaces/Enums/RelType";
 import { IPageSourceService } from "../../../interfaces/IPageSourceService";
 import { ISearchService } from "../../../interfaces/ISearchService";
 import { IRequest, IResponse } from "../../../interfaces/vendors";
@@ -23,18 +24,14 @@ class SearchDoFollowLinks {
 
         await Promise.all(resultsList.map(async (result) => {
             const sourceCode = await _pageSourceService.getPageSource(result.link)
+            let regex = new RegExp(`\\b(${RelType.SPONSORED})\\b`);
             doFollowList.push(sourceCode)
         }))
-
-       //resultsList.forEach(async (result) => {
-       //    const sourceCode = await _pageSourceService.getPageSource(result.link)
-       //    doFollowList.push(sourceCode)
-       //});
 
         return new SuccessResponse('Success', {
             success: true,
             error: null,
-            response: true
+            response: doFollowList
         }).send(res);
     }
 }
