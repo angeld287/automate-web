@@ -642,3 +642,50 @@ CREATE TRIGGER set_timestamp_to_created_at
     ON public.sites
     FOR EACH ROW
     EXECUTE PROCEDURE public.trigger_set_timestamp();
+
+
+
+-- Table: public.possible_backlinks
+
+-- DROP TABLE IF EXISTS public.possible_backlinks;
+
+CREATE TABLE IF NOT EXISTS public.possible_backlinks
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    link character(20) COLLATE pg_catalog."default",
+    state character(30) COLLATE pg_catalog."default",
+    rel character(30) COLLATE pg_catalog."default",
+    created_by integer,
+    created_at timestamp with time zone,
+    deleted boolean,
+    deleted_by integer,
+    deleted_at timestamp with time zone,
+    account_user character(50) COLLATE pg_catalog."default",
+    account_user_pass character(50) COLLATE pg_catalog."default",
+    CONSTRAINT possible_backlinks_pkey PRIMARY KEY (id),
+    CONSTRAINT possible_backlinks_created_by_fkey FOREIGN KEY (created_by)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT possible_backlinks_deleted_by_fkey FOREIGN KEY (deleted_by)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.possible_backlinks
+    OWNER to admin;
+
+-- Trigger: set_timestamp_to_created_at
+
+-- DROP TRIGGER IF EXISTS set_timestamp_to_created_at ON public.possible_backlinks;
+
+CREATE TRIGGER set_timestamp_to_created_at
+    AFTER INSERT
+    ON public.possible_backlinks
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.trigger_set_timestamp();
