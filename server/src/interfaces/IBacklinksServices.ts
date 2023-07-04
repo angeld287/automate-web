@@ -1,9 +1,9 @@
 import IBacklink from "./models/IBacklink";
 
 export default interface IBacklinksServices {
-    createSite(backlink: IBacklink): Promise<IBacklink>;
+    createBacklink(backlink: IBacklink): Promise<IBacklink>;
 
-    updateSite(site: IBacklink): Promise<IBacklink | false>;
+    updateBacklink(site: IBacklink): Promise<IBacklink | false>;
 
     getBacklinksByOwner(userId: number): Promise<Array<IBacklink>>;
 

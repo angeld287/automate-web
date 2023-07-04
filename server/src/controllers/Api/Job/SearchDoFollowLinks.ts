@@ -6,6 +6,7 @@ import { IRequest, IResponse } from "../../../interfaces/vendors";
 import ExpressValidator from "../../../providers/ExpressValidation";
 import { PageSourceService } from "../../../services/pageSource/pageSourceService";
 import { searchService } from "../../../services/searchEngine/searchService";
+import { relRegrexs } from "../../../utils";
 
 class SearchDoFollowLinks {
     public static async startDofollowSearchJob(req: IRequest, res: IResponse): Promise<any> {
@@ -19,19 +20,19 @@ class SearchDoFollowLinks {
         let search: ISearchService = new searchService();
         let _pageSourceService : IPageSourceService = new PageSourceService();
         
-        const resultsList = await search.searchResults('5', '1', '"messi"')
-        const doFollowList = [];
+        const resultsList = await search.searchResults('1', '1', '"messi"');
 
-        await Promise.all(resultsList.map(async (result) => {
-            const sourceCode = await _pageSourceService.getPageSource(result.link)
-            let regex = new RegExp(`\\b(${RelType.SPONSORED})\\b`);
-            doFollowList.push(sourceCode)
-        }))
+        const sourceCode: string = await _pageSourceService.getPageSource(resultsList[0].link);
+        const rels = ""
+        relRegrexs.forEach(rel => {
+            let regrexResult = sourceCode.match(rel.regrex);
+            console.log(regrexResult)
+        });
 
         return new SuccessResponse('Success', {
             success: true,
             error: null,
-            response: doFollowList
+            response: 'The process has been started!'
         }).send(res);
     }
 }

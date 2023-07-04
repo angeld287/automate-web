@@ -3,12 +3,12 @@ import IBacklink from "../../interfaces/models/IBacklink";
 import Database from "../../providers/Database";
 
 export class BacklinksServices implements IBacklinksServices {
-    async createSite(backlink: IBacklink): Promise<IBacklink> {
+    async createBacklink(backlink: IBacklink): Promise<IBacklink> {
         try {
             const createbacklink = {
                 name: 'create-new-backlink',
-                text: 'INSERT INTO public.possible_backlinks(name, domain, created_by, selected) VALUES ($1, $2, $3, $4) RETURNING name, domain, created_by, selected, wp_user, wp_user_pass;',
-                values: [],
+                text: 'INSERT INTO public.possible_backlinks(link, rel, state, created_by) VALUES ($1, $2, $3, $4) RETURNING link, rel, state, created_by, account_user, account_user_pass, id;',
+                values: [backlink.link, backlink.rel, backlink.state, backlink.createdBy],
             }
 
             let result = null, client = null;
@@ -40,12 +40,12 @@ export class BacklinksServices implements IBacklinksServices {
         }
     }
 
-    async updateSite(site: IBacklink): Promise<IBacklink | false> {
+    async updateBacklink(backlink: IBacklink): Promise<IBacklink | false> {
         try {
-            const updateSite = {
+            const updateBacklink = {
                 name: 'update-backlink',
-                text: 'UPDATE public.possible_backlinks SET name=$1, domain=$2, selected=$3, wp_user=$4, wp_user_pass=$5 WHERE id = $6 RETURNING name, domain, created_by, selected, id, wp_user, wp_user_pass',
-                values: [],
+                text: 'UPDATE public.possible_backlinks SET state=$2, account_user=$3, account_user_pass=$4 WHERE id = $1 RETURNING link, rel, state, created_by, account_user, account_user_pass, id',
+                values: [backlink.id, backlink.state, backlink.accountUser, backlink.accountUserPass],
             }
 
             let result = null, client = null;
@@ -53,7 +53,7 @@ export class BacklinksServices implements IBacklinksServices {
             client = await Database.getTransaction();
 
             try {
-                result = await Database.sqlExecSingleRow(client, updateSite);
+                result = await Database.sqlExecSingleRow(client, updateBacklink);
                 await Database.commit(client);
             } catch (error) {
                 await Database.rollback(client);
@@ -80,7 +80,7 @@ export class BacklinksServices implements IBacklinksServices {
     async getBacklinksByOwner(userId: number): Promise<Array<IBacklink>> {
         const getQuery = {
             name: 'get-backlinks-by-owner',
-            text:  `SELECT id, name, domain, created_by, selected, wp_user, wp_user_pass FROM public.possible_backlinks where created_by = $1;`,
+            text:  `SELECT link, rel, state, created_by, account_user, account_user_pass, id FROM public.possible_backlinks where created_by = $1;`,
             values: [userId]
         };
 
@@ -113,7 +113,7 @@ export class BacklinksServices implements IBacklinksServices {
     async getBacklinkById(id: number): Promise<IBacklink | false> {
         const getQuery = {
             name: 'get-backlink-by-id',
-            text:  `SELECT id, name, domain, created_by, selected, wp_user, wp_user_pass FROM public.possible_backlinks where id = $1;`,
+            text:  `SELECT link, rel, state, created_by, account_user, account_user_pass, id FROM public.possible_backlinks where id = $1;`,
             values: [id]
         };
 
