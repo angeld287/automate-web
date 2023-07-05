@@ -20,12 +20,15 @@ class SearchDoFollowLinks {
         let search: ISearchService = new searchService();
         let _pageSourceService : IPageSourceService = new PageSourceService();
         
-        const resultsList = await search.searchResults('1', '1', '"messi"');
+        const resultsList = await search.searchResults('1', '1', 'inurl:litypitbulls.com "muerto"');
 
-        const sourceCode: string = await _pageSourceService.getPageSource(resultsList[0].link);
+        console.log(resultsList[0].link)
+
+        const sourceCode = await _pageSourceService.getPageSource(resultsList[0].link);
+        
         const rels = ""
         relRegrexs.forEach(rel => {
-            let regrexResult = sourceCode.match(rel.regrex);
+            let regrexResult = sourceCode.sourceHtml.body.match(rel.regrex);
             console.log(regrexResult)
         });
 

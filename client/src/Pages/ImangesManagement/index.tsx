@@ -3,7 +3,7 @@ import {
     Divider,
     Row,
   } from 'antd';
-  import React, { useCallback, useEffect, useState } from 'react';
+  import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { getImagesList, selectMedia } from '../../features/media/mediaSlice';
 import ImageGallery from '../../Components/App/ImageGallery';
