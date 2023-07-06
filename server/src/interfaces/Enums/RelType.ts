@@ -1,6 +1,6 @@
 export enum RelType {
-    NOREFERRER = 'NOREFERRER',
-    NOOPENER = 'NOOPENER',
-    SPONSORED = 'SPONSORED',
-    NOFOLLOW = 'NOFOLLOW',
+    NOREFERRER = 'noreferrer',
+    NOOPENER = 'noopener',
+    SPONSORED = 'sponsored',
+    NOFOLLOW = 'nofollow',
 }

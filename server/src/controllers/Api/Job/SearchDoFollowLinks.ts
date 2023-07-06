@@ -1,5 +1,4 @@
 import { BadRequestResponse, SuccessResponse } from "../../../core/ApiResponse";
-import { RelType } from "../../../interfaces/Enums/RelType";
 import { IPageSourceService } from "../../../interfaces/IPageSourceService";
 import { ISearchService } from "../../../interfaces/ISearchService";
 import { IRequest, IResponse } from "../../../interfaces/vendors";
@@ -22,20 +21,22 @@ class SearchDoFollowLinks {
         
         const resultsList = await search.searchResults('1', '1', 'inurl:litypitbulls.com "muerto"');
 
-        console.log(resultsList[0].link)
-
         const sourceCode = await _pageSourceService.getPageSource(resultsList[0].link);
         
-        const rels = ""
+        let rels = ""
+
         relRegrexs.forEach(rel => {
             let regrexResult = sourceCode.sourceHtml.body.match(rel.regrex);
-            console.log(regrexResult)
+            if(regrexResult !== null){
+                rels = rels === "" ? rel.type : `${rels},${rel.type}`
+            }
         });
 
         return new SuccessResponse('Success', {
             success: true,
             error: null,
-            response: 'The process has been started!'
+            response: 'The process has been started!',
+            rels: rels
         }).send(res);
     }
 }

@@ -60,10 +60,10 @@ export const generateArticleLink = (article: INewArticle) => {
 }
 
 export const relRegrexs = [
-  {type: 'SP', regrex: new RegExp(`\\b(${RelType.SPONSORED})\\b`)},
-  {type: 'NF', regrex: new RegExp(`\\b(${RelType.NOFOLLOW})\\b`)},
-  {type: 'NO', regrex: new RegExp(`\\b(${RelType.NOOPENER})\\b`)},
-  {type: 'NR', regrex: new RegExp(`\\b(${RelType.NOREFERRER})\\b`)},
+  {type: RelType.SPONSORED, regrex: new RegExp(`\\b(${RelType.SPONSORED})\\b`)},
+  {type: RelType.NOFOLLOW, regrex: new RegExp(`\\b(${RelType.NOFOLLOW})\\b`)},
+  {type: RelType.NOOPENER, regrex: new RegExp(`\\b(${RelType.NOOPENER})\\b`)},
+  {type: RelType.NOREFERRER, regrex: new RegExp(`\\b(${RelType.NOREFERRER})\\b`)},
 ]
 
 export { removeDuplicate, _fetch as fetch, _axios as axios, delay, readFileSync, createWriteStream, downloadImage, _sharp as sharp, _imagesize as imagesize, addMedia };
