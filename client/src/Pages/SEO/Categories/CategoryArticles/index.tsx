@@ -2,16 +2,16 @@ import { DeleteOutlined, GooglePlusOutlined, MenuUnfoldOutlined, PicRightOutline
 import { Col, Row } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import DraftArticles from "../../../Components/App/DraftArticles";
-import { IArticlesActions } from "../../../Components/App/DraftArticles/IDraftArticles";
-import { getArticlesByCategory, selectArticles, updateCategoryArticle } from "../../../features/articles/articlesSlice";
-import { IArticle } from "../../../interfaces/models/Article";
-import CustomLoader from "../../../Components/CustomLoader";
-import ContentOrganizationStepper from "../../../Components/App/ContentOrganizationStepper";
-import { ArticleState } from "../../../interfaces/Enums/States";
-import CustomModal from "../../../Components/CustomModal";
-import { updateArticleState } from "../../../features/article/articleSlice";
+import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
+import DraftArticles from "../../../../Components/App/DraftArticles";
+import { IArticlesActions } from "../../../../Components/App/DraftArticles/IDraftArticles";
+import { getArticlesByCategory, selectArticles, updateCategoryArticle } from "../../../../features/articles/articlesSlice";
+import { IArticle } from "../../../../interfaces/models/Article";
+import CustomLoader from "../../../../Components/CustomLoader";
+import ContentOrganizationStepper from "../../../../Components/App/ContentOrganizationStepper";
+import { ArticleState } from "../../../../interfaces/Enums/States";
+import CustomModal from "../../../../Components/CustomModal";
+import { updateArticleState } from "../../../../features/article/articleSlice";
 
 const CategoryArticles = () => {
 
@@ -33,7 +33,7 @@ const CategoryArticles = () => {
         if(article.sysState?.trim() !== ArticleState.CONTENT_RESEARCH){
             return null
         }
-        window.open(`${window.location.href.replace(window.location.pathname, '')}/content-editor/${article.internalId}`, '_blank');
+        window.open(`${window.location.href.replace(window.location.pathname, '')}/site/content-editor/${article.internalId}`, '_blank');
         //navigate(`/content-editor/${article.internalId}`);
     }, [])
 

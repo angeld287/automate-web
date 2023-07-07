@@ -4,11 +4,11 @@ import {
     Row,
   } from 'antd';
   import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { getImagesList, selectMedia } from '../../features/media/mediaSlice';
-import ImageGallery from '../../Components/App/ImageGallery';
-import AddImage from '../../Components/App/AddImage';
-import SearchGoogleImage from '../../Components/App/SearchGoogleImage';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { getImagesList, selectMedia } from '../../../features/media/mediaSlice';
+import ImageGallery from '../../../Components/App/ImageGallery';
+import AddImage from '../../../Components/App/AddImage';
+import SearchGoogleImage from '../../../Components/App/SearchGoogleImage';
 
   
   const ImagesManagement: React.FC = () => {  

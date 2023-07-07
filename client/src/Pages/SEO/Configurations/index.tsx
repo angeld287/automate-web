@@ -5,11 +5,11 @@ import {
   Row,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
-import CustomButton from '../../Components/CustomButton';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { getSite, selectSitesUtils, updateSiteData } from '../../features/configurations/configurationsSlice';
+import CustomButton from '../../../Components/CustomButton';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { getSite, selectSitesUtils, updateSiteData } from '../../../features/configurations/configurationsSlice';
 import { toast } from 'react-toastify';
-import CustomInputGroup from '../../Components/CustomInputGroup';
+import CustomInputGroup from '../../../Components/CustomInputGroup';
 
 const Configurations: React.FC = () => {
   const [componentDisabled, setComponentDisabled] = useState<boolean>(true);

@@ -1,13 +1,13 @@
 import { Col, Divider, Row } from "antd";
 import { useState } from "react";
-import { useAppDispatch } from "../../app/hooks";
-import JobsList from "../../Components/App/JobsList";
-import CustomButton from "../../Components/CustomButton";
-import CustomInputGroup from "../../Components/CustomInputGroup";
-import CustomModal from "../../Components/CustomModal";
-import MultipleCreatableSelect from "../../Components/MultipleCreatableSelect";
-import { startKeywordsSearchJob } from "../../features/keywordSearchJob/keywordSearchJobSlice";
-import { IOption } from "../../interfaces/models/Utils";
+import { useAppDispatch } from "../../../app/hooks";
+import JobsList from "../../../Components/App/JobsList";
+import CustomButton from "../../../Components/CustomButton";
+import CustomInputGroup from "../../../Components/CustomInputGroup";
+import CustomModal from "../../../Components/CustomModal";
+import MultipleCreatableSelect from "../../../Components/MultipleCreatableSelect";
+import { startKeywordsSearchJob } from "../../../features/keywordSearchJob/keywordSearchJobSlice";
+import { IOption } from "../../../interfaces/models/Utils";
 
 const Jobs = () => {
     const [open, setOpen] = useState(false);

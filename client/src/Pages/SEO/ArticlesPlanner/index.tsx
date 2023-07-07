@@ -2,14 +2,14 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Collapse, Row } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import KeywordsDragAndDrop from "../../Components/App/KeywordsDragAndDrop";
-import KeywordsList from "../../Components/App/KeywordsList";
-import CustomButton from "../../Components/CustomButton";
-import CustomInputGroup from "../../Components/CustomInputGroup";
-import CustomModal from "../../Components/CustomModal";
-import { createKeywordManually, getSearchJobDetails, selectKeywordSearchJob } from "../../features/keywordSearchJob/keywordSearchJobSlice";
-import IKeyword from "../../interfaces/models/Keyword";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import KeywordsDragAndDrop from "../../../Components/App/KeywordsDragAndDrop";
+import KeywordsList from "../../../Components/App/KeywordsList";
+import CustomButton from "../../../Components/CustomButton";
+import CustomInputGroup from "../../../Components/CustomInputGroup";
+import CustomModal from "../../../Components/CustomModal";
+import { createKeywordManually, getSearchJobDetails, selectKeywordSearchJob } from "../../../features/keywordSearchJob/keywordSearchJobSlice";
+import IKeyword from "../../../interfaces/models/Keyword";
 
 const ArticlesPlanner = () => { 
     let { id } = useParams();

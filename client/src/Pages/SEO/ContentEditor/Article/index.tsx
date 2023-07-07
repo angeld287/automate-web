@@ -1,23 +1,23 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Avatar, Col, List, Row, Skeleton } from "antd";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { createWpPost, getArticleByInternalId, selectArticle, setErrorFalse, updateArticleImage, updateArticleMedia } from "../../../features/article/articleSlice"
+import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
+import { createWpPost, getArticleByInternalId, selectArticle, setErrorFalse, updateArticleImage, updateArticleMedia } from "../../../../features/article/articleSlice"
 import { useNavigate, useParams } from "react-router-dom";
-import SearchKeywordsStepper from "../../../Components/App/SearchKeywordsStepper";
-import CustomLoader from "../../../Components/CustomLoader";
-import CustomButton from "../../../Components/CustomButton";
+import SearchKeywordsStepper from "../../../../Components/App/SearchKeywordsStepper";
+import CustomLoader from "../../../../Components/CustomLoader";
+import CustomButton from "../../../../Components/CustomButton";
 import { ContainerOutlined, EditOutlined, FileAddOutlined, FileImageOutlined, FileTextOutlined, GoogleOutlined } from "@ant-design/icons";
-import AddImage from "../../../Components/App/AddImage";
+import AddImage from "../../../../Components/App/AddImage";
 import './article.css'
-import Locals from "../../../config/Locals";
-import { clearMedia, clearMediaError, deleteWpImage, selectMedia } from "../../../features/media/mediaSlice";
-import { updateSubtitle } from "../../../features/article/articleSlice";
-import AddIntroAndConclusion from "../../../Components/App/AddIntroAndConclusion";
+import Locals from "../../../../config/Locals";
+import { clearMedia, clearMediaError, deleteWpImage, selectMedia } from "../../../../features/media/mediaSlice";
+import { updateSubtitle } from "../../../../features/article/articleSlice";
+import AddIntroAndConclusion from "../../../../Components/App/AddIntroAndConclusion";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { ArticleState } from "../../../interfaces/Enums/States";
-import SearchGoogleImage from "../../../Components/App/SearchGoogleImage";
-import CustomModal from "../../../Components/CustomModal";
+import { ArticleState } from "../../../../interfaces/Enums/States";
+import SearchGoogleImage from "../../../../Components/App/SearchGoogleImage";
+import CustomModal from "../../../../Components/CustomModal";
 
 const ContentEditor = () => {
 

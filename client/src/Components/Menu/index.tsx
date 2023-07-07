@@ -16,6 +16,7 @@ import CustomSelect from '../CustomSelect';
 import CustomModal from '../CustomModal';
 import CustomInputGroup from '../CustomInputGroup';
 import { createSite } from '../../features/configurations/configurationsSlice';
+import { selectUserSession } from '../../features/userSession/userSessionSlice';
 
 const Menu: React.FC = () => {
   const [current, setCurrent] = useState('keywords');
@@ -24,6 +25,8 @@ const Menu: React.FC = () => {
   const [wpUser, setWpUser] = useState('');
   const [wpUserPass, setWpUserPass] = useState('');
   const [createSiteModal, setCreateSiteModal] = useState(false);
+
+  const { activeSession } = useAppSelector(selectUserSession);
 
   const [defaultSite, setDefaultSite] = useState<ISite>()
 
@@ -55,19 +58,19 @@ const Menu: React.FC = () => {
       key: 'home',
     },
     {
-      label: (<Link to="/jobs">Jobs</Link>),
+      label: (<Link to="/site/jobs">Jobs</Link>),
       key: 'jobs',
     },
     {
-      label: (<Link to="/category">Categories</Link>),
+      label: (<Link to="/site/category">Categories</Link>),
       key: 'category',
     },
     {
-      label: (<Link to="/images">Images</Link>),
+      label: (<Link to="/site/images">Images</Link>),
       key: 'images',
     },
     {
-      label: (<Link to="/backlinks">Backlinks</Link>),
+      label: (<Link to="/site/backlinks">Backlinks</Link>),
       key: 'backlinks',
     },
     
@@ -112,7 +115,7 @@ const Menu: React.FC = () => {
   }, [name, domain, dispatch, wpUser, wpUserPass]);
 
   return <>
-    <AntDMenu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
+    <AntDMenu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={activeSession ? items : []} />
     <AntDMenu selectedKeys={[current]} mode="horizontal" items={items2} style={{position: 'absolute', top: 0, right: 20}} />
     <CustomModal width={900} open={createSiteModal} setOpen={setCreateSiteModal} title='Create Site' onOk={() => createNewSite()}>
       <Row gutter={16} style={{marginBottom:10}}>

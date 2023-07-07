@@ -2,17 +2,17 @@ import { CopyOutlined, GooglePlusOutlined, MenuUnfoldOutlined, PicRightOutlined,
 import { Row, Tabs } from "antd";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import ContentOrganizationStepper from "../../Components/App/ContentOrganizationStepper";
-import DraftArticles from "../../Components/App/DraftArticles";
-import { IArticlesActions } from "../../Components/App/DraftArticles/IDraftArticles";
-import { getAIResearchedArticles, getArticles, getWpCreatedArticles, selectArticles } from "../../features/articles/articlesSlice";
-import { updateArticleState } from "../../features/article/articleSlice";
-import { IArticle } from "../../interfaces/models/Article";
-import "./home.css"
-import { ArticleState } from "../../interfaces/Enums/States";
-import CustomModal from "../../Components/CustomModal";
-import { generateArticleLink } from "../../utils/functions";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import ContentOrganizationStepper from "../../../Components/App/ContentOrganizationStepper";
+import DraftArticles from "../../../Components/App/DraftArticles";
+import { IArticlesActions } from "../../../Components/App/DraftArticles/IDraftArticles";
+import { getAIResearchedArticles, getArticles, getWpCreatedArticles, selectArticles } from "../../../features/articles/articlesSlice";
+import { updateArticleState } from "../../../features/article/articleSlice";
+import { IArticle } from "../../../interfaces/models/Article";
+import "./AllArticles.css"
+import { ArticleState } from "../../../interfaces/Enums/States";
+import CustomModal from "../../../Components/CustomModal";
+import { generateArticleLink } from "../../../utils/functions";
 
 const Home = () => {
 
@@ -25,7 +25,7 @@ const Home = () => {
     const {articles, AIArticles, statusAI, page, size, status, WPArticles} = useAppSelector(selectArticles);
 
     const onClickEdit = (article: IArticle) => {
-        navigate(`/content-editor/${article.internalId}`);
+        navigate(`/site/content-editor/${article.internalId}`);
     }
 
     const goToPrepareContent = (article: IArticle) => {

@@ -1,21 +1,21 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { getHashCode } from '../../utils/functions';
-import IKeyword from "../../interfaces/IKeyword"
-import CustomTextArea from "../../Components/CustomTextArea";
+import { getHashCode } from '../../../utils/functions';
+import IKeyword from "../../../interfaces/IKeyword"
+import CustomTextArea from "../../../Components/CustomTextArea";
 import { Col, Row, Alert } from 'antd';
 import "./keyword.css"
-import { addCategory, addSubtitles, addTitle, getArticleByInternalId, selectArticle, setKewordsTranslated, translateKeywords } from "../../features/article/articleSlice";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { SubTitleContent } from "../../interfaces/models/Article";
+import { addCategory, addSubtitles, addTitle, getArticleByInternalId, selectArticle, setKewordsTranslated, translateKeywords } from "../../../features/article/articleSlice";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { SubTitleContent } from "../../../interfaces/models/Article";
 import { useNavigate, useParams } from 'react-router-dom';
-import CustomInput from "../../Components/CustomInput";
-import CustomButton from "../../Components/CustomButton"
-import CustomInputGroup from "../../Components/CustomInputGroup";
-import CustomSelectGroup from "../../Components/CustomSelectGroup";
-import { getCategoryList, selectCategoriesUtils } from "../../features/categories/categoriesSlice";
-import { ISelectOptions } from "../../Components/CustomSelect/ICustomSelect";
-import CustomLoader from "../../Components/CustomLoader";
-import { getAllKeywords, selectKeywords } from "../../features/keywords/keywordSlice";
+import CustomInput from "../../../Components/CustomInput";
+import CustomButton from "../../../Components/CustomButton"
+import CustomInputGroup from "../../../Components/CustomInputGroup";
+import CustomSelectGroup from "../../../Components/CustomSelectGroup";
+import { getCategoryList, selectCategoriesUtils } from "../../../features/categories/categoriesSlice";
+import { ISelectOptions } from "../../../Components/CustomSelect/ICustomSelect";
+import CustomLoader from "../../../Components/CustomLoader";
+import { getAllKeywords, selectKeywords } from "../../../features/keywords/keywordSlice";
 
 
 const Keywords = () => {
@@ -120,7 +120,7 @@ const Keywords = () => {
         if(!internalId || internalId === 0)
             return setError("the article must be created in db to start process.")
 
-        navigate(`/content-editor/${article.internalId}`);
+        navigate(`/site/content-editor/${article.internalId}`);
     }, [article, navigate]);
 
     const translateKeywordsAction = () => {

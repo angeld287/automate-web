@@ -17,7 +17,7 @@ const JobsList: React.FC = () => {
     },[AllJobs.length, dispatch]);
 
     const onClickEdit = (jobId: number | undefined) => {
-        navigate(`/jobs/${jobId}`);
+        navigate(`/site/jobs/${jobId}`);
     }
 
     return (

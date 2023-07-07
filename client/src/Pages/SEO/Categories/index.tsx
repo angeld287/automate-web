@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Card, Col, Divider, List, Row, Space, Tag } from 'antd';
 import { LinkOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { selectCategoriesUtils, getCategoryList, createCategory } from '../../features/categories/categoriesSlice';
-import Locals from '../../config/Locals';
-import CustomButton from '../../Components/CustomButton';
-import CustomModal from '../../Components/CustomModal';
-import CustomInputGroup from '../../Components/CustomInputGroup';
-import { replaceSpace } from '../../utils/functions';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
+import { selectCategoriesUtils, getCategoryList, createCategory } from '../../../features/categories/categoriesSlice';
+import Locals from '../../../config/Locals';
+import CustomButton from '../../../Components/CustomButton';
+import CustomModal from '../../../Components/CustomModal';
+import CustomInputGroup from '../../../Components/CustomInputGroup';
+import { replaceSpace } from '../../../utils/functions';
 
 const JobsList: React.FC = () => {
     const [open, setOpen] = useState(false);
@@ -24,7 +24,7 @@ const JobsList: React.FC = () => {
     },[categories.length, dispatch]);
 
     const goToCateoryArticles = (category: string | undefined) => {
-        navigate(`/category/${category}/articles`);
+        navigate(`/site/category/${category}/articles`);
     }
 
     const site = localStorage.getItem('default-site');

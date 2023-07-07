@@ -3,7 +3,7 @@ import { Avatar, Card, Skeleton } from "antd";
 import Meta from "antd/es/card/Meta";
 
 import React, { useEffect, useMemo, useState } from "react";
-import CustomButton from "../../../Components/CustomButton";
+import CustomButton from "../../../../Components/CustomButton";
 //import { searchKeywordContent } from "../../../features/keyword/keywordAPI";
 import { IParagraph } from "./IParagraph";
 
