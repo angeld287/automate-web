@@ -1,5 +1,5 @@
 import { Col, Divider, Row } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch } from "../../../app/hooks";
 import JobsList from "../../../Components/App/JobsList";
 import CustomButton from "../../../Components/CustomButton";
@@ -8,12 +8,18 @@ import CustomModal from "../../../Components/CustomModal";
 import MultipleCreatableSelect from "../../../Components/MultipleCreatableSelect";
 import { startKeywordsSearchJob } from "../../../features/keywordSearchJob/keywordSearchJobSlice";
 import { IOption } from "../../../interfaces/models/Utils";
+import { setModule } from "../../../features/userSession/userSessionSlice";
 
 const Jobs = () => {
     const [open, setOpen] = useState(false);
     const [longTailKeyword, setLongTailKeyword] = useState("");
     const [mainKeywords, setMainKeywords] = useState<Array<IOption>>([]);
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(setModule("seo"))
+    }, []);
+
     return (
         <>
             <Row>

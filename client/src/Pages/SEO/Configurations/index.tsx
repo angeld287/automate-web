@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { getSite, selectSitesUtils, updateSiteData } from '../../../features/configurations/configurationsSlice';
 import { toast } from 'react-toastify';
 import CustomInputGroup from '../../../Components/CustomInputGroup';
+import { setModule } from '../../../features/userSession/userSessionSlice';
 
 const Configurations: React.FC = () => {
   const [componentDisabled, setComponentDisabled] = useState<boolean>(true);
@@ -22,6 +23,10 @@ const Configurations: React.FC = () => {
   const { currentSite } = useAppSelector(selectSitesUtils);
 
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(setModule("seo"))
+}, [])
 
   useEffect(() => {
     if(currentSite.id) setId(currentSite.id)

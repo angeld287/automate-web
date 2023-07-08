@@ -9,6 +9,7 @@ import CustomButton from '../../../Components/CustomButton';
 import CustomModal from '../../../Components/CustomModal';
 import CustomInputGroup from '../../../Components/CustomInputGroup';
 import { replaceSpace } from '../../../utils/functions';
+import { setModule } from '../../../features/userSession/userSessionSlice';
 
 const JobsList: React.FC = () => {
     const [open, setOpen] = useState(false);
@@ -17,6 +18,10 @@ const JobsList: React.FC = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate()
     const { categories } = useAppSelector(selectCategoriesUtils);
+
+    useEffect(() => {
+        dispatch(setModule("seo"))
+    }, [])
 
     useEffect(() => {
         if(categories.length === 0) dispatch(getCategoryList());

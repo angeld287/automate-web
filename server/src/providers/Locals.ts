@@ -99,6 +99,10 @@ class Locals {
         const FACEBOOK_CLIENT_SECRET = process.env.FACEBOOK_CLIENT_SECRET || "";
         const FACEBOOK_CLIENT_ACCESS_TOKEN = process.env.FACEBOOK_CLIENT_ACCESS_TOKEN || "";
 
+
+        //Telegram Channel Configuration
+        const TELEGRAM_CHANNEL_JSON = "/Users/aangeles/Desktop/projects/automate-web/server/data/result.json"
+
         return {
             WP_DOMAIN,
             apiPrefix,
@@ -165,7 +169,9 @@ class Locals {
 
             FACEBOOK_CLIENT_ID,
             FACEBOOK_CLIENT_SECRET,
-            FACEBOOK_CLIENT_ACCESS_TOKEN
+            FACEBOOK_CLIENT_ACCESS_TOKEN,
+
+            TELEGRAM_CHANNEL_JSON,
         }
     }
 

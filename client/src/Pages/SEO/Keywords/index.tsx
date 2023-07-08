@@ -16,6 +16,7 @@ import { getCategoryList, selectCategoriesUtils } from "../../../features/catego
 import { ISelectOptions } from "../../../Components/CustomSelect/ICustomSelect";
 import CustomLoader from "../../../Components/CustomLoader";
 import { getAllKeywords, selectKeywords } from "../../../features/keywords/keywordSlice";
+import { setModule } from "../../../features/userSession/userSessionSlice";
 
 
 const Keywords = () => {
@@ -33,6 +34,10 @@ const Keywords = () => {
     const selectedKeywords = useAppSelector(selectKeywords);
 
     let { id } = useParams();
+
+    useEffect(() => {
+        dispatch(setModule("seo"))
+    }, []);
 
     useEffect(() => {
         if(id) dispatch(getArticleByInternalId(parseInt(id)));

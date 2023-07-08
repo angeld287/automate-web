@@ -9,7 +9,7 @@ import { IPageSourceService } from '../../../interfaces/IPageSourceService';
 import { IRequest, IResponse } from '../../../interfaces/vendors';
 import Log from '../../../middlewares/Log';
 import ExpressValidator from '../../../providers/ExpressValidation';
-import { PageSourceService } from '../../../services/pageSource/pageSourceService';
+import { PageSourceService } from '../../../services/source/pageSourceService';
 var request = require('request');
 
 class PageSource {

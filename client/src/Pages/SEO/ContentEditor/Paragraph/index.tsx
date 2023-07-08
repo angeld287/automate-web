@@ -6,9 +6,17 @@ import React, { useEffect, useMemo, useState } from "react";
 import CustomButton from "../../../../Components/CustomButton";
 //import { searchKeywordContent } from "../../../features/keyword/keywordAPI";
 import { IParagraph } from "./IParagraph";
+import { setModule } from "../../../../features/userSession/userSessionSlice";
+import { useAppDispatch } from "../../../../app/hooks";
 
 const Paragraph: React.FC<IParagraph> = ({ content, index }) => {
     const [ loading, setLoading ] = useState(true);
+
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(setModule("seo"))
+    }, []);
 
     useEffect(() => {
         let didCancel = false;

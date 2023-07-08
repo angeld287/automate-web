@@ -3,7 +3,7 @@ import { IPageSourceService } from "../../../interfaces/IPageSourceService";
 import { ISearchService } from "../../../interfaces/ISearchService";
 import { IRequest, IResponse } from "../../../interfaces/vendors";
 import ExpressValidator from "../../../providers/ExpressValidation";
-import { PageSourceService } from "../../../services/pageSource/pageSourceService";
+import { PageSourceService } from "../../../services/source/pageSourceService";
 import { searchService } from "../../../services/searchEngine/searchService";
 import { relRegrexs } from "../../../utils";
 

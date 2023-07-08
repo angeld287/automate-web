@@ -2,4 +2,5 @@
 /.logs
 /media
 /media/compressed
+/data
 .env

@@ -9,6 +9,7 @@ import { getImagesList, selectMedia } from '../../../features/media/mediaSlice';
 import ImageGallery from '../../../Components/App/ImageGallery';
 import AddImage from '../../../Components/App/AddImage';
 import SearchGoogleImage from '../../../Components/App/SearchGoogleImage';
+import { setModule } from '../../../features/userSession/userSessionSlice';
 
   
   const ImagesManagement: React.FC = () => {  
@@ -16,6 +17,10 @@ import SearchGoogleImage from '../../../Components/App/SearchGoogleImage';
     const media = useAppSelector(selectMedia);
     const [ addImageModal, openAddImageModal ] = useState(false);
     const [ searchImageModal, openSearchImageModal ] = useState(false);
+
+    useEffect(() => {
+        dispatch(setModule("seo"))
+    }, []);
 
     useEffect(() => {
       const siteId = localStorage.getItem('default-site');

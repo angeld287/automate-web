@@ -9,7 +9,7 @@ import { Router } from 'express';
 import LoginController from '../controllers/Api/Auth/Login'
 import RegisterController from '../controllers/Api/Auth/Register'
 import LogoutController from '../controllers/Api/Auth/Logout';
-import PageSource from '../controllers/Api/Pages/PageSource';
+import PageSource from '../controllers/Api/Source/PageSource';
 import Passport from '../providers/Passport';
 import Session from '../controllers/Api/Auth/Session';
 import ContentController from '../controllers/Api/Content/Content';
@@ -23,6 +23,7 @@ import KeywordsController from '../controllers/Api/Keywords/Keywords';
 import ConfigurationsController from '../controllers/Api/Configurations/Configurations';
 import SearchSalesOpportunitiesController from '../controllers/Api/Job/SearchSalesOpportunities';
 import SearchDoFollowLinksController from '../controllers/Api/Job/SearchDoFollowLinks';
+import TelegramChannelController from '../controllers/Api/Job/TelegramChannel';
 
 const router = Router();
 
@@ -528,13 +529,20 @@ router.post(
     SearchSalesOpportunitiesController.startFBSeachJob
 )
 
-// DoFollow Search
+//DoFollow Search
 router.get(
     '/dofollowSearchJob',
     Passport.isAuthenticated,
     SearchDoFollowLinksController.startDofollowSearchJob
 );
 
+
+//CRYTO channel messages
+router.post(
+    '/refreshChannel',
+    Passport.isAuthenticated,
+    TelegramChannelController.refreshMessages
+);
 
 
 export default router;

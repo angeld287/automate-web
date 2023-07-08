@@ -1,6 +1,6 @@
 import { CopyOutlined, GooglePlusOutlined, MenuUnfoldOutlined, PicRightOutlined, RollbackOutlined } from "@ant-design/icons";
 import { Row, Tabs } from "antd";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import ContentOrganizationStepper from "../../../Components/App/ContentOrganizationStepper";
@@ -13,6 +13,7 @@ import "./AllArticles.css"
 import { ArticleState } from "../../../interfaces/Enums/States";
 import CustomModal from "../../../Components/CustomModal";
 import { generateArticleLink } from "../../../utils/functions";
+import { setModule } from "../../../features/userSession/userSessionSlice";
 
 const Home = () => {
 
@@ -21,6 +22,10 @@ const Home = () => {
     const [ confirmGoBack, setConfirmGoBack ] = useState(false);
     const [ article, setAricle ] = useState<IArticle>();
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(setModule("seo"))
+    }, [])
 
     const {articles, AIArticles, statusAI, page, size, status, WPArticles} = useAppSelector(selectArticles);
 

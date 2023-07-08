@@ -18,6 +18,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ArticleState } from "../../../../interfaces/Enums/States";
 import SearchGoogleImage from "../../../../Components/App/SearchGoogleImage";
 import CustomModal from "../../../../Components/CustomModal";
+import { setModule } from "../../../../features/userSession/userSessionSlice";
 
 const ContentEditor = () => {
 
@@ -36,6 +37,10 @@ const ContentEditor = () => {
     const article = useAppSelector(selectArticle);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        dispatch(setModule("seo"))
+    }, [])
     
     useEffect(() => {
         if(article.article.id === 0 && id) dispatch(getArticleByInternalId(parseInt(id)))

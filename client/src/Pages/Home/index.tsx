@@ -10,7 +10,7 @@ const Home = () => {
     const navigate = useNavigate()
 
     const options = useMemo(() => [
-        {title: "SEO", onClick: () => {navigate('')}},
+        {title: "SEO", onClick: () => {navigate('/site/home')}},
         {title: "CRYPTO", onClick: () => {navigate('')}}
     ], [])
 

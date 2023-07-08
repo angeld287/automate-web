@@ -10,6 +10,7 @@ import CustomInputGroup from "../../../Components/CustomInputGroup";
 import CustomModal from "../../../Components/CustomModal";
 import { createKeywordManually, getSearchJobDetails, selectKeywordSearchJob } from "../../../features/keywordSearchJob/keywordSearchJobSlice";
 import IKeyword from "../../../interfaces/models/Keyword";
+import { setModule } from "../../../features/userSession/userSessionSlice";
 
 const ArticlesPlanner = () => { 
     let { id } = useParams();
@@ -19,6 +20,10 @@ const ArticlesPlanner = () => {
 
     const dispatch = useAppDispatch();
     const { keywordSearchJob } = useAppSelector(selectKeywordSearchJob);
+
+    useEffect(() => {
+        dispatch(setModule("seo"))
+    }, [])
 
     useEffect(() => {
         if(id) dispatch(getSearchJobDetails(parseInt(id)));

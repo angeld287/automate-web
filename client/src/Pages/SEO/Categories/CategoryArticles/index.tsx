@@ -12,6 +12,7 @@ import ContentOrganizationStepper from "../../../../Components/App/ContentOrgani
 import { ArticleState } from "../../../../interfaces/Enums/States";
 import CustomModal from "../../../../Components/CustomModal";
 import { updateArticleState } from "../../../../features/article/articleSlice";
+import { setModule } from "../../../../features/userSession/userSessionSlice";
 
 const CategoryArticles = () => {
 
@@ -19,6 +20,10 @@ const CategoryArticles = () => {
     const [ discardModal, setDiscardModal ] = useState(false);
     const [ article, setAricle ] = useState<IArticle>();
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(setModule("seo"))
+    }, [])
 
     let { category } = useParams();
 

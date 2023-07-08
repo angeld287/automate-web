@@ -59,6 +59,10 @@ const Menu: React.FC = () => {
       key: 'home',
     },
     {
+      label: (<Link to="/site/home">All Articles</Link>),
+      key: 'site-home',
+    },
+    {
       label: (<Link to="/site/jobs">Jobs</Link>),
       key: 'jobs',
     },
@@ -82,7 +86,7 @@ const Menu: React.FC = () => {
 
   const currentMenu: MenuProps['items'] = useMemo(() => activeSession ? (
     module === "seo" ? siteMenuitems : (module === "crypto" ? CryptoMenuitems : [{
-      label: (<Link to="/">Home |</Link>),
+      label: (<Link to="/">Home</Link>),
       key: 'home',
     }])
   ) : [], [CryptoMenuitems, siteMenuitems, module, activeSession]);
