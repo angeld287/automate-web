@@ -21,7 +21,8 @@ export const initialState: IUserSlice = {
   logoutStatus: 'idle',
   error: undefined,
   message: "",
-  activeSession: false
+  activeSession: false,
+  module: 'seo'
 };
 
 export const userSessionSlice = createSlice({
@@ -32,6 +33,9 @@ export const userSessionSlice = createSlice({
   reducers: {
     setSession: (state, action: PayloadAction<boolean>) => {
       state.activeSession = action.payload;
+    },
+    setModule: (state, action: PayloadAction<'seo' | 'crypto' | null>) => {
+      state.module = action.payload;
     },
   },
 
@@ -85,7 +89,7 @@ export const userSessionSlice = createSlice({
 });
 
 //Actions
-export const { setSession } = userSessionSlice.actions;
+export const { setSession, setModule } = userSessionSlice.actions;
 
 export const selectUserSession = (state: RootState) => state.userSession;
 

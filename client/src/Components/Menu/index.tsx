@@ -17,6 +17,7 @@ import CustomModal from '../CustomModal';
 import CustomInputGroup from '../CustomInputGroup';
 import { createSite } from '../../features/configurations/configurationsSlice';
 import { selectUserSession } from '../../features/userSession/userSessionSlice';
+import { IMenuItems } from './IMenu';
 
 const Menu: React.FC = () => {
   const [current, setCurrent] = useState('keywords');
@@ -26,7 +27,7 @@ const Menu: React.FC = () => {
   const [wpUserPass, setWpUserPass] = useState('');
   const [createSiteModal, setCreateSiteModal] = useState(false);
 
-  const { activeSession } = useAppSelector(selectUserSession);
+  const { activeSession, module } = useAppSelector(selectUserSession);
 
   const [defaultSite, setDefaultSite] = useState<ISite>()
 
@@ -42,9 +43,9 @@ const Menu: React.FC = () => {
   }, [config.sites, dispatch])
 
   const logOut = useCallback(() => {
-    dispatch(resetArticlesList())
-    dispatch(logoutAsync())
-}, [dispatch]);
+      dispatch(resetArticlesList())
+      dispatch(logoutAsync())
+  }, [dispatch]);
 
   const siteList: Array<ISelectOptions> = useMemo(() => {
     return [ {id: '0', name: <b onClick={() => setCreateSiteModal(true)}>Create New</b>},
@@ -52,7 +53,7 @@ const Menu: React.FC = () => {
     ]
   }, [config.sites])
 
-  const items: MenuProps['items'] = useMemo(() => [
+  const siteMenuitems: MenuProps['items'] = useMemo(() => [
     {
       label: (<Link to="/">Home</Link>),
       key: 'home',
@@ -76,27 +77,46 @@ const Menu: React.FC = () => {
     
   ], []);
 
+  const CryptoMenuitems: MenuProps['items'] = useMemo(() => [], []);
+
+
+  const currentMenu: MenuProps['items'] = useMemo(() => activeSession ? (
+    module === "seo" ? siteMenuitems : (module === "crypto" ? CryptoMenuitems : [{
+      label: (<Link to="/">Home |</Link>),
+      key: 'home',
+    }])
+  ) : [], [CryptoMenuitems, siteMenuitems, module, activeSession]);
+
+
+
   const setSelectedSite = useCallback((e: any) => {
     dispatch(setDefeaultSite(parseInt(e)))
   }, [dispatch]);
 
-  const items2: MenuProps['items'] = useMemo(() => {
+  const rightMenuItems: IMenuItems['items'] = useMemo(() => {
     if(defaultSite && defaultSite.id)
       return [
         {
           label:<Col><CustomSelect name="site" defaultValue={defaultSite?.id?.toString()} items={siteList} onChange={(e) => setSelectedSite(e)} placeholder="Choose One Site"></CustomSelect></Col>,
           key: 'site',
+          module: 'seo'
         },
         {
-          label: <Link to="/config"><CustomButton onClick={() => {}}><ToolOutlined /> Config</CustomButton></Link>,
-          key: 'config',
+          label: <Link to="/site/config"><CustomButton onClick={() => {}}><ToolOutlined /> Config</CustomButton></Link>,
+          key: 'site-config',
+          module: 'seo'
         },
         {
           label: <CustomButton onClick={logOut}><LogoutOutlined /> LogOut</CustomButton>,
           key: 'lgout',
+          module: null,
         },
       ]
   }, [siteList, defaultSite, logOut, setSelectedSite]);
+
+  const currentRightMenu: IMenuItems['items'] = useMemo(() => activeSession ? (
+      rightMenuItems?.filter(item => item?.module === module)
+  ) : [], [rightMenuItems, module, activeSession]);
 
   const onClick: MenuProps['onClick'] = useCallback((e: any) => {
     setCurrent(e.key);
@@ -115,8 +135,8 @@ const Menu: React.FC = () => {
   }, [name, domain, dispatch, wpUser, wpUserPass]);
 
   return <>
-    <AntDMenu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={activeSession ? items : []} />
-    <AntDMenu selectedKeys={[current]} mode="horizontal" items={items2} style={{position: 'absolute', top: 0, right: 20}} />
+    <AntDMenu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={currentMenu} />
+    <AntDMenu selectedKeys={[current]} mode="horizontal" items={currentRightMenu} style={{position: 'absolute', top: 0, right: 20}} />
     <CustomModal width={900} open={createSiteModal} setOpen={setCreateSiteModal} title='Create Site' onOk={() => createNewSite()}>
       <Row gutter={16} style={{marginBottom:10}}>
         <Col className="gutter-row" span={12}>

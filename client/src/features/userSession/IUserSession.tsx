@@ -12,4 +12,5 @@ export interface IUserSlice extends IBase {
     getSessionStatus: 'idle' | 'pending' | 'succeeded' | 'failed';
     user: IUser;
     activeSession: boolean;
+    module: 'seo' | 'crypto' | null;
 }

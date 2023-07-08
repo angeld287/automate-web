@@ -10,7 +10,8 @@ import ArticlesPlanner from "../Pages/SEO/ArticlesPlanner";
 import Categories from "../Pages/SEO/Categories";
 import CategoryArticles from "../Pages/SEO/Categories/CategoryArticles";
 import ContentEditor from "../Pages/SEO/ContentEditor/Article";
-import Home from "../Pages/SEO/AllArticles";
+import SiteHome from "../Pages/SEO/AllArticles";
+import Home from "../Pages/Home";
 import Jobs from "../Pages/SEO/Jobs";
 import Keywords from "../Pages/SEO/Keywords";
 import Login from "../Pages/Login";
@@ -40,9 +41,10 @@ const Routes = ({activeSession}: IRoutes) => {
           <Route path="/site/keywords/:id" element={<Protected {...{activeSession}}><Keywords/></Protected>}/>
           <Route path="/site/jobs" element={<Protected {...{activeSession}}><Jobs/></Protected>}/>
           <Route path="/site/jobs/:id" element={<Protected {...{activeSession}}><ArticlesPlanner/></Protected>}/>
-
+          <Route path="/site/home" element={<Protected {...{activeSession}}><SiteHome/></Protected>}/>
 
           <Route path="/" element={<Protected {...{activeSession}}><Home/></Protected>}/>
+
           <Route path="/login" element={<UnProtected {...{activeSession}}><Login /></UnProtected>} />
         </Switch>
       </div>
