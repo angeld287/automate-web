@@ -391,6 +391,7 @@ CREATE INDEX IF NOT EXISTS fki_contents_deleted_by_user_fkey
     ON public.contents USING btree
     (deleted_by ASC NULLS LAST)
     TABLESPACE pg_default;
+    
 -- Index: fki_contents_subtitles_fkey
 
 -- DROP INDEX IF EXISTS public.fki_contents_subtitles_fkey;
@@ -689,3 +690,89 @@ CREATE TRIGGER set_timestamp_to_created_at
     ON public.possible_backlinks
     FOR EACH ROW
     EXECUTE PROCEDURE public.trigger_set_timestamp();
+
+
+
+-- Table: public.telegram_channel
+
+-- DROP TABLE IF EXISTS public.telegram_channel;
+
+CREATE TABLE IF NOT EXISTS public.telegram_channel
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    external_id integer,
+    name character(50) COLLATE pg_catalog."default",
+    type character(20) COLLATE pg_catalog."default",
+    created_by integer,
+    created_at timestamp with time zone,
+    deleted boolean,
+    deleted_by integer,
+    deleted_at timestamp with time zone,
+    CONSTRAINT telegram_channel_pkey PRIMARY KEY (id),
+    CONSTRAINT telegram_channel_created_by_fkey FOREIGN KEY (created_by)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT telegram_channel_deleted_by_fkey FOREIGN KEY (deleted_by)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.telegram_channel
+    OWNER to admin;
+
+-- Trigger: set_timestamp_to_created_at
+
+-- DROP TRIGGER IF EXISTS set_timestamp_to_created_at ON public.telegram_channel;
+
+CREATE TRIGGER set_timestamp_to_created_at
+    AFTER INSERT
+    ON public.telegram_channel
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.trigger_set_timestamp();
+
+
+-- Table: public.messages
+
+-- DROP TABLE IF EXISTS public.messages;
+
+CREATE TABLE IF NOT EXISTS public.messages
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    external_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    type character(15) COLLATE pg_catalog."default",
+    date character(20) COLLATE pg_catalog."default", 
+    date_unixtime integer,
+    actor character(50) COLLATE pg_catalog."default",
+    actor_id character(20) COLLATE pg_catalog."default",
+    from character(50) COLLATE pg_catalog."default",
+    from_id character(20) COLLATE pg_catalog."default",
+    title character(50) COLLATE pg_catalog."default",
+    telegram_channel_id integer,
+    CONSTRAINT messages_pkey PRIMARY KEY (id),
+    CONSTRAINT messages_telegram_channel_fkey FOREIGN KEY (telegram_channel_id)
+        REFERENCES public.telegram_channel (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.messages
+    OWNER to admin;
+
+-- Index: fki_messages_telegram_channel_fkey
+
+-- DROP INDEX IF EXISTS public.fki_messages_telegram_channel_fkey;
+
+CREATE INDEX IF NOT EXISTS fki_messages_telegram_channel_fkey
+    ON public.messages USING btree
+    (telegram_channel_id ASC NULLS LAST)
+    TABLESPACE pg_default;
