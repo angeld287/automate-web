@@ -1,5 +1,5 @@
 import { Channel as IChannel } from "./models/Crypto/Channel";
-import { Message as IMessage } from "./models/Crypto/Message";
+import { Message as IMessage, IMessageText } from "./models/Crypto/Message";
 
 export default interface IChannelMessagesService {
     
@@ -14,4 +14,6 @@ export default interface IChannelMessagesService {
     getChannelByExternalId(externalId: number): Promise<IChannel | false>;
 
     getMessageByExternalId(externalId: number): Promise<IMessage | false>;
+
+    addMessagePair(textEntities: Array<IMessageText>, message: IMessage)
 }

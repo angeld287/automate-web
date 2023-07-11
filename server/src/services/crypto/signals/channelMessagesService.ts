@@ -1,6 +1,6 @@
 import IChannelMessagesService from "../../../interfaces/IChannelMessagesService";
 import { Channel as IChannel } from "../../../interfaces/models/Crypto/Channel";
-import { Message as IMessage } from "../../../interfaces/models/Crypto/Message";
+import { Message as IMessage, IMessageText } from "../../../interfaces/models/Crypto/Message";
 import Database from "../../../providers/Database";
 
 export class channelMessagesService implements IChannelMessagesService {
@@ -146,8 +146,8 @@ export class channelMessagesService implements IChannelMessagesService {
         try {
             const updateMessage = {
                 name: 'update-message',
-                text: 'UPDATE public.messages SET type=$2, date=$3, date_unixtime=$4, actor=$5, actor_id=$6, _from=$7, from_id=$8, title=$9 WHERE id = $1 RETURNING id, external_id, type, date, date_unixtime, actor, actor_id, _from, from_id, title, telegram_channel_id;',
-                values: [message.id, message.type, message.date, message.dateUnixtime, message.actor, message.actorId, message._from, message.fromId, message.title],
+                text: 'UPDATE public.messages SET type=$2, date=$3, date_unixtime=$4, actor=$5, actor_id=$6, _from=$7, from_id=$8, title=$9, telegram_channel_id=$10 WHERE id = $1 RETURNING id, external_id, type, date, date_unixtime, actor, actor_id, _from, from_id, title, telegram_channel_id;',
+                values: [message.id, message.type, message.date, message.dateUnixtime, message.actor, message.actorId, message._from, message.fromId, message.title, message.telegramChannelId],
             }
 
             let result = null, client = null;
@@ -215,5 +215,27 @@ export class channelMessagesService implements IChannelMessagesService {
         } catch (error) {
             throw new Error(error.message);
         }
+    }
+
+    async addMessagePair(textEntities: Array<IMessageText>, message: IMessage){
+        const hashtag = textEntities.find(text => text.type === 'hashtag')
+        if(hashtag){
+            message.pair = hashtag.text;
+            if(textEntities.find(text => text.text.includes('Fully close your previous'))){
+                message.type = "close_position";
+                
+            }else if(textEntities.find(text => text.text.includes('Profit:'))){
+                message.type = "take_profit";
+            }
+        }else {
+            const openSignal = textEntities.find(text => text.text.includes('Pair:'));
+            if(textEntities.find(text => text.text.includes('Pair:'))){
+                message.type = "open_signal";
+                var regex = new RegExp(`Pair: (.*?)\\n`)
+                message.pair = openSignal.text.match(regex)[1];
+            }
+        }
+
+        await this.updateMessage(message);
     }
 }
