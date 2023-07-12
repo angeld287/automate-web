@@ -21,6 +21,9 @@ export interface Message {
     width?: number;
     height?: number;
     pair?: string;
+    profit?: number;
+    entry?: number;
+    target?: number;
 }
 
 export interface IMessageText {

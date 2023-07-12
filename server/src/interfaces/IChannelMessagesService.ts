@@ -15,5 +15,5 @@ export default interface IChannelMessagesService {
 
     getMessageByExternalId(externalId: number): Promise<IMessage | false>;
 
-    addMessagePair(textEntities: Array<IMessageText>, message: IMessage)
+    addMessageProps(textEntities: Array<IMessageText>, message: IMessage)
 }
