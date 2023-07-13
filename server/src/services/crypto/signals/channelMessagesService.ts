@@ -103,8 +103,8 @@ export class channelMessagesService implements IChannelMessagesService {
         try {
             const createChannel = {
                 name: 'create-new-meesage',
-                text: 'INSERT INTO public.messages(external_id, type, date, date_unixtime, actor, actor_id, _from, from_id, title, telegram_channel_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id, external_id, type, date, date_unixtime, actor, actor_id, _from, from_id, title, telegram_channel_id, profit, entry, pair, target;',
-                values: [message.externalId, message.type, message.date, message.dateUnixtime, message.actor, message.actorId, message._from, message.fromId, message.title, message.telegramChannelId],
+                text: 'INSERT INTO public.messages(external_id, type, date, date_unixtime, actor, actor_id, _from, from_id, title, telegram_channel_id, reply_to_message_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id, external_id, type, date, date_unixtime, actor, actor_id, _from, from_id, title, telegram_channel_id, profit, entry, pair, target;',
+                values: [message.externalId, message.type, message.date, message.dateUnixtime, message.actor, message.actorId, message._from, message.fromId, message.title, message.telegramChannelId, message.replyToMessageId],
             }
 
             let result = null, client = null;
@@ -135,6 +135,7 @@ export class channelMessagesService implements IChannelMessagesService {
                 profit: result.rows[0].profit,
                 entry: result.rows[0].entry,
                 target: result.rows[0].target,
+                replyToMessageId: result.rows[0].reply_to_message_id,
             }
             
             return _message;
@@ -148,7 +149,7 @@ export class channelMessagesService implements IChannelMessagesService {
         try {
             const updateMessage = {
                 name: 'update-message',
-                text: 'UPDATE public.messages SET type=$2, date=$3, date_unixtime=$4, actor=$5, actor_id=$6, _from=$7, from_id=$8, title=$9, telegram_channel_id=$10, profit=$11, entry=$12, pair=$13, target=$14 WHERE id = $1 RETURNING id, external_id, type, date, date_unixtime, actor, actor_id, _from, from_id, title, telegram_channel_id, profit, entry, pair, target;',
+                text: 'UPDATE public.messages SET type=$2, date=$3, date_unixtime=$4, actor=$5, actor_id=$6, _from=$7, from_id=$8, title=$9, telegram_channel_id=$10, profit=$11, entry=$12, pair=$13, target=$14 WHERE id = $1 RETURNING id, external_id, type, date, date_unixtime, actor, actor_id, _from, from_id, title, telegram_channel_id, profit, entry, pair, target, reply_to_message_id;',
                 values: [message.id, message.type, message.date, message.dateUnixtime, message.actor, message.actorId, message._from, message.fromId, message.title, message.telegramChannelId, message.profit, message.entry, message.pair, message.target],
             }
 
@@ -180,6 +181,7 @@ export class channelMessagesService implements IChannelMessagesService {
                 profit: result.rows[0].profit,
                 entry: result.rows[0].entry,
                 target: result.rows[0].target,
+                replyToMessageId: result.rows[0].reply_to_message_id,
             }
             
             return _message;
@@ -192,7 +194,7 @@ export class channelMessagesService implements IChannelMessagesService {
     async getMessageByExternalId(externalId: number): Promise<IMessage | false> {
         const getQuery = {
             name: 'get-message-by-external-id',
-            text:  `SELECT id, external_id, type, date, date_unixtime, actor, actor_id, _from, from_id, title, telegram_channel_id, profit, entry, pair, target FROM public.messages where external_id = $1;`,
+            text:  `SELECT id, external_id, type, date, date_unixtime, actor, actor_id, _from, from_id, title, telegram_channel_id, profit, entry, pair, target, reply_to_message_id FROM public.messages where external_id = $1;`,
             values: [externalId]
         };
 
@@ -219,6 +221,7 @@ export class channelMessagesService implements IChannelMessagesService {
                 profit: result.rows[0].profit,
                 entry: result.rows[0].entry,
                 target: result.rows[0].target,
+                replyToMessageId: result.rows[0].reply_to_message_id,
             }
 
             return contents;
@@ -228,34 +231,59 @@ export class channelMessagesService implements IChannelMessagesService {
     }
 
     async addMessageProps(textEntities: Array<IMessageText>, message: IMessage){
-        const hashtag = textEntities.find(text => text.type === 'hashtag')
-        if(hashtag){
-            const profitLine = textEntities.find(text => text.text.includes('Profit:'))
-            message.pair = hashtag.text;
-            if(textEntities.find(text => text.text.includes('Fully close your previous'))){
-                message.type = "close_position";
-                message.entry = 0;
-                
-            }else if(profitLine){
-                message.type = "take_profit";
-                var profitRegex = new RegExp(`Profit: (.*?) Target`);
-                var targetRegex = new RegExp(`Target (.*?)\\n`);
-
-                message.profit = parseInt(profitLine.text.match(profitRegex)[1]);
-                message.target = parseInt(profitLine.text.match(targetRegex)[1]);
+        try {
+            const hashtag = textEntities.find(text => text.type === 'hashtag')
+            if(hashtag){
+                const profitLine = textEntities.find(text => text.text.includes('Profit:'))
+                message.pair = hashtag.text.replace("#", '');
+                if(textEntities.find(text => text.text.includes('Fully close your previous')) || textEntities.find(text => text.text.includes('Closed due to opposite direction signal '))){
+                    message.type = "close_position";
+                    message.entry = '0';
+    
+                    //console.log('---------------------------------------------')
+                    //console.log('1: ', message.externalId, message._from)
+                    ////console.log('2: ', message.externalId, entryMatch2)
+                    //console.log('3: ', message.externalId, message.entry)
+                    //console.log('---------------------------------------------')
+                    
+                }else if(profitLine){
+                    message.type = "take_profit";
+                    var profitRegex = new RegExp(`(Profit: (.*?) Target)|(\\nProfit: (.*?)%)`);
+                    var targetRegex = new RegExp(`(Target (.*?)\\n)|(target (.*?) ✅\\n)`);
+    
+                    const profitMatch = profitLine.text.match(profitRegex);
+                    const targetMatch = profitLine.text.match(targetRegex);
+    
+                    message.profit = profitMatch[2] ? parseInt(profitMatch[2].slice(-1) === '%' ? profitMatch[2].replace('%', '') : profitMatch[2]) : parseInt(profitMatch[4]);
+                    message.target = targetMatch[2] ? parseInt(targetMatch[2]) : parseInt(targetMatch[4]);
+                }
+            }else {
+                const openSignal = textEntities.find(text => text.text.includes('Pair:'));
+                if(openSignal){
+                    var pairRegex = new RegExp(`Pair: (.*?)\\n`)
+                    var entryRegex = new RegExp(`(Entry: (.*?)\\n)`)
+    
+                    const entryMatch = openSignal.text.match(entryRegex);
+    
+                    message.type = "open_signal";
+                    message.pair = openSignal.text.match(pairRegex)[1];
+    
+                    if(entryMatch){
+                        message.entry = entryMatch[2];
+                    }else{
+                        const entryMatch2 = openSignal.text.match(new RegExp(`Entry: (.*)`));
+    
+                        const entryFirstPart = entryMatch2[1];
+                        const entryNextIndex = textEntities.findIndex(text => text.text === openSignal.text) + 1;
+                        message.entry = `${entryFirstPart}${textEntities[entryNextIndex].text}`;
+                    }
+                }
             }
-        }else {
-            const openSignal = textEntities.find(text => text.text.includes('Pair:'));
-            if(openSignal){
-                var pairRegex = new RegExp(`Pair: (.*?)\\n`)
-                var entryRegex = new RegExp(`Entry: (.*?)\\n`)
-
-                message.type = "open_signal";
-                message.pair = openSignal.text.match(pairRegex)[1];
-                message.entry = parseInt(openSignal.text.match(entryRegex)[1]);
-            }
+    
+           await this.updateMessage(message);    
+        } catch (error) {
+            console.log(error, message)
         }
-
-        await this.updateMessage(message);
+        
     }
 }

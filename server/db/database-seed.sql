@@ -758,13 +758,14 @@ CREATE TABLE IF NOT EXISTS public.messages
     text character(15) COLLATE pg_catalog."default",
     text_entities character(15) COLLATE pg_catalog."default",
     pair character(15) COLLATE pg_catalog."default",
-    entry integer,
+    entry character(20) COLLATE pg_catalog."default",
     profit integer,
     message_id integer,
     photo character(15) COLLATE pg_catalog."default",
     width integer,
     height integer,
     target integer,
+    reply_to_message_id integer,
     CONSTRAINT messages_pkey PRIMARY KEY (id),
     CONSTRAINT messages_telegram_channel_fkey FOREIGN KEY (telegram_channel_id)
         REFERENCES public.telegram_channel (id) MATCH SIMPLE

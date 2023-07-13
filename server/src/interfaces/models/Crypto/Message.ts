@@ -22,7 +22,7 @@ export interface Message {
     height?: number;
     pair?: string;
     profit?: number;
-    entry?: number;
+    entry?: string;
     target?: number;
 }
 

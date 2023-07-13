@@ -30,7 +30,7 @@ class TelegramChannel {
             const channelService: IChannelMessagesService = new channelMessagesService();
 
             //const dbMessage = await channelService.getMessageByExternalId(16423);
-//
+            //
             //if(dbMessage)
             //    await channelService.addMessageProps([
             //        {
@@ -50,10 +50,11 @@ class TelegramChannel {
             const job: NodeJob = new NodeJob();
             job.startJob(`JOB-REFRESH-MESSAGES`, async () => {
                 console.log('The job to update messages has STARTED!')
+
                 const fileResult = await fileSource.getFileSource(Locals.config().TELEGRAM_CHANNEL_JSON);
                 await Promise.all(fileResult.chats.list.map(async (channel) => {
                     const dbChannel = await channelService.getChannelByExternalId(channel.id);
-
+    
                     
                     if(dbChannel !== false){
                         await Promise.all(channel.messages.map(async (message) => {
@@ -70,6 +71,7 @@ class TelegramChannel {
                                     fromId: message.from_id,
                                     title: message.title,
                                     telegramChannelId: dbChannel.id,
+                                    replyToMessageId: message.reply_to_message_id,
                                 });
                             }else{
                                 await channelService.addMessageProps(message.text_entities, dbMessage)
@@ -77,9 +79,11 @@ class TelegramChannel {
                         }));
                     }
                 }));
-
+    
                 console.log('The job to update messages has ENDED!')
             })
+
+
 
             return new SuccessResponse('Success', {
                 success: true,
