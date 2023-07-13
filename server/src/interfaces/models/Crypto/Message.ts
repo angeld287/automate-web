@@ -1,7 +1,7 @@
 export interface Message {
     id?: number;
     externalId: number;
-    type: 'open_signal' | 'take_profit' | 'close_position' | null;
+    type: 'open_signal' | 'take_profit' | 'close_position' | 'open_position' | 'canceled' | null;
     date: string;
     dateUnixtime: number;
     actor: string;
@@ -12,7 +12,7 @@ export interface Message {
     telegramChannelId: number;
     action?: string;
     text?: string;
-    textEntities?: string;
+    textEntities?: Array<any>;
     edited?: boolean;
     editedUnixtime?: string;
     replyToMessageId?: string;

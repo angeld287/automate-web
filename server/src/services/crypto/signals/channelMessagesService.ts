@@ -72,6 +72,37 @@ export class channelMessagesService implements IChannelMessagesService {
         }
     }
 
+    async getAllChannels(): Promise<Array<IChannel>> {
+        const getQuery = {
+            name: 'get-all-channels',
+            text:  `SELECT id, external_id, name, type, created_by, created_at, deleted, deleted_by, deleted_at FROM public.telegram_channel;`,
+            values: []
+        };
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            if (result.rows.length === 0)
+                return []
+            
+            const contents: Array<IChannel> = [];
+
+            result.rows.forEach(row => {
+                contents.push({
+                    id: row.id,
+                    externalId: row.external_id,
+                    name: row.name,
+                    type: row.type,
+                })
+            });
+
+            return contents;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
     async getChannelByExternalId(externalId: number): Promise<IChannel | false> {
         const getQuery = {
             name: 'get-channel-by-external-id',
@@ -230,22 +261,103 @@ export class channelMessagesService implements IChannelMessagesService {
         }
     }
 
+    async getMessageByExternalIdAndChannelID(externalId: number, channelId: string): Promise<IMessage | false> {
+        const getQuery = {
+            name: 'get-message-by-external-id-and-channel-id',
+            text:  `SELECT id, external_id, type, date, date_unixtime, actor, actor_id, _from, from_id, title, telegram_channel_id, profit, entry, pair, target, reply_to_message_id FROM public.messages where external_id = $1 and from_id = $2;`,
+            values: [externalId, channelId]
+        };
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            if (result.rows.length === 0)
+                return false
+            
+            const contents: IMessage = {
+                id: result.rows[0].id,
+                externalId: result.rows[0].external_id,
+                type: result.rows[0].type,
+                date: result.rows[0].date,
+                dateUnixtime: result.rows[0].date_unixtime,
+                actor: result.rows[0].actor,
+                actorId: result.rows[0].actor_id,
+                _from: result.rows[0]._from,
+                fromId: result.rows[0].from_id,
+                title: result.rows[0].title,
+                telegramChannelId: result.rows[0].telegram_channel_id,
+                pair: result.rows[0].pair,
+                profit: result.rows[0].profit,
+                entry: result.rows[0].entry,
+                target: result.rows[0].target,
+                replyToMessageId: result.rows[0].reply_to_message_id,
+            }
+
+            return contents;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    async getAllMessagesByChannelID(channelId: string): Promise<Array<IMessage>> {
+        const getQuery = {
+            name: 'get-all-messages-by-channel-id',
+            text:  `SELECT id, external_id, type, date, date_unixtime, actor, actor_id, _from, from_id, title, telegram_channel_id, profit, entry, pair, target, reply_to_message_id FROM public.messages where from_id = $1;`,
+            values: [channelId]
+        };
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            if (result.rows.length === 0)
+                return []
+            
+            const contents: Array<IMessage> = [];
+
+            result.rows.forEach(row => {
+                contents.push({
+                    id: row.id,
+                    externalId: row.external_id,
+                    type: row.type,
+                    date: row.date,
+                    dateUnixtime: row.date_unixtime,
+                    actor: row.actor,
+                    actorId: row.actor_id,
+                    _from: row._from,
+                    fromId: row.from_id,
+                    title: row.title,
+                    telegramChannelId: row.telegram_channel_id,
+                    pair: row.pair,
+                    profit: row.profit,
+                    entry: row.entry,
+                    target: row.target,
+                    replyToMessageId: row.reply_to_message_id,
+                })
+            });
+
+            return contents;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
     async addMessageProps(textEntities: Array<IMessageText>, message: IMessage){
         try {
             const hashtag = textEntities.find(text => text.type === 'hashtag')
+            const openSignal = textEntities.find(text => text.text.includes('Pair:'));
+           
             if(hashtag){
                 const profitLine = textEntities.find(text => text.text.includes('Profit:'))
+                const allEntry = textEntities.find(text => text.text.includes('All entry targets'))
+                const canceled = textEntities.find(text => text.text.includes('Cancelled ❌'))
+
                 message.pair = hashtag.text.replace("#", '');
                 if(textEntities.find(text => text.text.includes('Fully close your previous')) || textEntities.find(text => text.text.includes('Closed due to opposite direction signal '))){
                     message.type = "close_position";
                     message.entry = '0';
-    
-                    //console.log('---------------------------------------------')
-                    //console.log('1: ', message.externalId, message._from)
-                    ////console.log('2: ', message.externalId, entryMatch2)
-                    //console.log('3: ', message.externalId, message.entry)
-                    //console.log('---------------------------------------------')
-                    
+
                 }else if(profitLine){
                     message.type = "take_profit";
                     var profitRegex = new RegExp(`(Profit: (.*?) Target)|(\\nProfit: (.*?)%)`);
@@ -255,34 +367,45 @@ export class channelMessagesService implements IChannelMessagesService {
                     const targetMatch = profitLine.text.match(targetRegex);
     
                     message.profit = profitMatch[2] ? parseInt(profitMatch[2].slice(-1) === '%' ? profitMatch[2].replace('%', '') : profitMatch[2]) : parseInt(profitMatch[4]);
-                    message.target = targetMatch[2] ? parseInt(targetMatch[2]) : parseInt(targetMatch[4]);
-                }
-            }else {
-                const openSignal = textEntities.find(text => text.text.includes('Pair:'));
-                if(openSignal){
-                    var pairRegex = new RegExp(`Pair: (.*?)\\n`)
-                    var entryRegex = new RegExp(`(Entry: (.*?)\\n)`)
+                    message.target = targetMatch ? targetMatch[2] ? parseInt(targetMatch[2]) : parseInt(targetMatch[4]) : 0;
+
+                    
+                }else if(allEntry){
+                    message.type = "open_position";
+                    message.target = 0
+
+                }else if(canceled){
+                    message.type = "canceled";
+                    
+                }else{}
+
+            }else if(openSignal) {    
+                var pairRegex = new RegExp(`Pair: (.*?)\\n`)
+                var entryRegex = new RegExp(`(Entry: (.*?)\\n)`)
     
-                    const entryMatch = openSignal.text.match(entryRegex);
+                const entryMatch = openSignal.text.match(entryRegex);
     
-                    message.type = "open_signal";
-                    message.pair = openSignal.text.match(pairRegex)[1];
+                message.type = "open_signal";
+                message.pair = openSignal.text.match(pairRegex)[1];
     
-                    if(entryMatch){
-                        message.entry = entryMatch[2];
-                    }else{
-                        const entryMatch2 = openSignal.text.match(new RegExp(`Entry: (.*)`));
+                if(entryMatch){
+                    message.entry = entryMatch[2];
+                }else{
+                    const entryMatch2 = openSignal.text.match(new RegExp(`Entry: (.*)`));
     
-                        const entryFirstPart = entryMatch2[1];
-                        const entryNextIndex = textEntities.findIndex(text => text.text === openSignal.text) + 1;
-                        message.entry = `${entryFirstPart}${textEntities[entryNextIndex].text}`;
-                    }
-                }
+                    const entryFirstPart = entryMatch2[1];
+                    const entryNextIndex = textEntities.findIndex(text => text.text === openSignal.text) + 1;
+                    message.entry = `${entryFirstPart}${textEntities[entryNextIndex].text}`;
+                } 
+            }else{
+                message.textEntities = textEntities;
+                //console.log(message)
             }
     
            await this.updateMessage(message);    
         } catch (error) {
-            console.log(error, message)
+            message.textEntities = textEntities;
+            //console.log(error, message)
         }
         
     }

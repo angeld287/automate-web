@@ -7,6 +7,8 @@ export default interface IChannelMessagesService {
 
     updateChannel(channel: IChannel): Promise<IChannel | false>;
 
+    getAllChannels(): Promise<Array<IChannel>>;
+
     createMessage(message: IMessage): Promise<IMessage>;
 
     updateMessage(message: IMessage): Promise<IMessage | false>;
@@ -14,6 +16,10 @@ export default interface IChannelMessagesService {
     getChannelByExternalId(externalId: number): Promise<IChannel | false>;
 
     getMessageByExternalId(externalId: number): Promise<IMessage | false>;
+
+    getMessageByExternalIdAndChannelID(externalId: number, channelId: string): Promise<IMessage | false>;
+
+    getAllMessagesByChannelID(channelId: string): Promise<Array<IMessage>>;
 
     addMessageProps(textEntities: Array<IMessageText>, message: IMessage)
 }

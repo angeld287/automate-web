@@ -29,26 +29,9 @@ class TelegramChannel {
             const fileSource: IFileSourceService = new FileSourceService();
             const channelService: IChannelMessagesService = new channelMessagesService();
 
-            //const dbMessage = await channelService.getMessageByExternalId(16423);
-            //
-            //if(dbMessage)
-            //    await channelService.addMessageProps([
-            //        {
-            //         "type": "plain",
-            //         "text": "📩 Coin: "
-            //        },
-            //        {
-            //         "type": "hashtag",
-            //         "text": "#MATICUSDT"
-            //        },
-            //        {
-            //         "type": "plain",
-            //         "text": "\n✅ Profit: 60% Target 2\n⌛Time: 17 hours, 40 minutes"
-            //        }
-            //       ], dbMessage)
-
             const job: NodeJob = new NodeJob();
             job.startJob(`JOB-REFRESH-MESSAGES`, async () => {
+                
                 console.log('The job to update messages has STARTED!')
 
                 const fileResult = await fileSource.getFileSource(Locals.config().TELEGRAM_CHANNEL_JSON);
@@ -58,7 +41,7 @@ class TelegramChannel {
                     
                     if(dbChannel !== false){
                         await Promise.all(channel.messages.map(async (message) => {
-                            const dbMessage = await channelService.getMessageByExternalId(message.id);
+                            const dbMessage = await channelService.getMessageByExternalIdAndChannelID(message.id, message.from_id);
                             if(dbMessage === false){
                                 await channelService.createMessage({
                                     externalId: message.id,
@@ -79,11 +62,9 @@ class TelegramChannel {
                         }));
                     }
                 }));
-    
+
                 console.log('The job to update messages has ENDED!')
             })
-
-
 
             return new SuccessResponse('Success', {
                 success: true,

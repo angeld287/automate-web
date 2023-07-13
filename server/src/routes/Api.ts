@@ -24,6 +24,7 @@ import ConfigurationsController from '../controllers/Api/Configurations/Configur
 import SearchSalesOpportunitiesController from '../controllers/Api/Job/SearchSalesOpportunities';
 import SearchDoFollowLinksController from '../controllers/Api/Job/SearchDoFollowLinks';
 import TelegramChannelController from '../controllers/Api/Job/TelegramChannel';
+import ChannelsController from '../controllers/Api/Channels/Channels';
 
 const router = Router();
 
@@ -539,10 +540,22 @@ router.get(
 
 //CRYTO channel messages
 router.post(
-    '/refreshChannel',
+    '/crypto/refreshChannel',
     Passport.isAuthenticated,
     TelegramChannelController.refreshMessages
 );
+
+router.get(
+    '/crypto/getAllChannelMessages',
+    Passport.isAuthenticated,
+    ChannelsController.getAllChannelMessages
+)
+
+router.get(
+    '/crypto/getAllChannels',
+    Passport.isAuthenticated,
+    ChannelsController.getAllChannels
+)
 
 
 export default router;
