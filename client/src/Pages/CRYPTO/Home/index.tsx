@@ -1,22 +1,16 @@
-import { useEffect, useMemo } from "react";
-import { useAppDispatch } from "../../app/hooks";
-import { setModule } from "../../features/userSession/userSessionSlice";
+import { useMemo } from "react";
 import { Card, List } from "antd";
 import Meta from "antd/es/card/Meta";
 import { useNavigate } from "react-router-dom";
 
-const Home = () => {
-    const dispatch = useAppDispatch()
+const CryptoHome = () => {
     const navigate = useNavigate()
 
     const options = useMemo(() => [
-        {title: "SEO", onClick: () => {navigate('/site/home')}},
-        {title: "CRYPTO", onClick: () => {navigate('/crypto/home')}}
+        {title: "Infinity Signals Long Term", onClick: () => {navigate('/crypto/channel/channel1617718235/coins')}},
+        {title: "Infinity Signals High Leverage", onClick: () => {navigate('/crypto/channel/channel1622365719/coins')}}
     ], [])
 
-    useEffect(() => {
-        dispatch(setModule(null))
-    }, [])
     return <>
             <List
                 grid={{ gutter: 0, column: 4 }}
@@ -25,7 +19,7 @@ const Home = () => {
                 <List.Item>
                     <Card
                         hoverable
-                        style={{ width: 240 }}
+                        style={{ width: 300 }}
                         onClick={item.onClick}
                         //cover={<img alt="example" src={item.source_url} />}
                     >
@@ -37,4 +31,4 @@ const Home = () => {
     </>;
 }
 
-export default Home;
+export default CryptoHome;

@@ -320,18 +320,18 @@ export class channelMessagesService implements IChannelMessagesService {
                 contents.push({
                     id: row.id,
                     externalId: row.external_id,
-                    type: row.type,
+                    type: row.type?.trim(),
                     date: row.date,
                     dateUnixtime: row.date_unixtime,
                     actor: row.actor,
                     actorId: row.actor_id,
-                    _from: row._from,
-                    fromId: row.from_id,
+                    _from: row._from?.trim(),
+                    fromId: row.from_id?.trim(),
                     title: row.title,
                     telegramChannelId: row.telegram_channel_id,
-                    pair: row.pair,
+                    pair: row.pair?.trim(),
                     profit: row.profit,
-                    entry: row.entry,
+                    entry: row.entry?.trim(),
                     target: row.target,
                     replyToMessageId: row.reply_to_message_id,
                 })
@@ -353,7 +353,7 @@ export class channelMessagesService implements IChannelMessagesService {
                 const allEntry = textEntities.find(text => text.text.includes('All entry targets'))
                 const canceled = textEntities.find(text => text.text.includes('Cancelled ❌'))
 
-                message.pair = hashtag.text.replace("#", '');
+                message.pair = hashtag.text.slice(-4) !== "USDT" ? `${hashtag.text.replace("#", '')}USDT` : hashtag.text.replace("#", '');
                 if(textEntities.find(text => text.text.includes('Fully close your previous')) || textEntities.find(text => text.text.includes('Closed due to opposite direction signal '))){
                     message.type = "close_position";
                     message.entry = '0';
@@ -386,7 +386,7 @@ export class channelMessagesService implements IChannelMessagesService {
                 const entryMatch = openSignal.text.match(entryRegex);
     
                 message.type = "open_signal";
-                message.pair = openSignal.text.match(pairRegex)[1];
+                message.pair = openSignal.text.match(pairRegex)[1].slice(-4) !== "USDT" ? `${openSignal.text.match(pairRegex)[1]}USDT` : openSignal.text.match(pairRegex)[1];
     
                 if(entryMatch){
                     message.entry = entryMatch[2];

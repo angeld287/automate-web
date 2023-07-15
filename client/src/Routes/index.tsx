@@ -20,6 +20,8 @@ import ResultReview from "../Pages/SEO/ResultReview";
 import Configurations from "../Pages/SEO/Configurations";
 import ImagesManagement from "../Pages/SEO/ImangesManagement";
 import Backlinks from "../Pages/SEO/Backlinks";
+import CryptoHome from "../Pages/CRYPTO/Home";
+import Coins from "../Pages/CRYPTO/Coins";
 
 const Routes = ({activeSession}: IRoutes) => {
   return (
@@ -42,6 +44,12 @@ const Routes = ({activeSession}: IRoutes) => {
           <Route path="/site/jobs" element={<Protected {...{activeSession}}><Jobs/></Protected>}/>
           <Route path="/site/jobs/:id" element={<Protected {...{activeSession}}><ArticlesPlanner/></Protected>}/>
           <Route path="/site/home" element={<Protected {...{activeSession}}><SiteHome/></Protected>}/>
+
+
+          {/* CRYPTO Routes */}
+          <Route path="/crypto/home" element={<Protected {...{activeSession}}><CryptoHome/></Protected>}/>
+          <Route path="/crypto/channel/:channelId/coins" element={<Protected {...{activeSession}}><Coins/></Protected>}/>
+
 
           <Route path="/" element={<Protected {...{activeSession}}><Home/></Protected>}/>
 

@@ -2,14 +2,16 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { removeDuplicate } from '../../utils/functions';
 import { Channel as IChannel } from '../../interfaces/models/Crypto/Channel';
-import { Message as IMessage } from '../../interfaces/models/Crypto/Message';
+import { ICoinReport, Message as IMessage } from '../../interfaces/models/Crypto/Message';
 import { getAllChannels, getAllMessagesByChannelId } from './channelsAPI';
+import { CRYPTOS_COINS } from '../../utils/constants';
 
 export interface ChannelState {
   channels: Array<IChannel>;
   messages: Array<IMessage>;
   selectedChannel: IChannel;
   getAllMessagesState: 'idle' | 'loading' | 'failed';
+  coinsReport: Array<ICoinReport>;
 }
 
 const initialState: ChannelState = {
@@ -20,7 +22,8 @@ const initialState: ChannelState = {
     name: "",
     type: "",
   },
-  getAllMessagesState: 'idle'
+  getAllMessagesState: 'idle',
+  coinsReport: []
 };
 
 export const getChannelList = createAsyncThunk(
@@ -50,7 +53,25 @@ export const getAllChannelMessages = createAsyncThunk(
 export const channelSlice = createSlice({
   name: 'channel',
   initialState,
-  reducers: {},
+  reducers: {
+    generateCoinsReport: (state) => {
+      const coins: Array<ICoinReport> = [];
+      CRYPTOS_COINS.forEach(coin => {
+        const coinReport: ICoinReport = {
+          name: coin,
+          canceledQuantity: state.messages.filter(message => message.type === "canceled" && message.pair === coin).length,
+          closePositionQuantity: state.messages.filter(message => message.type === 'close_position' && message.pair === coin).length,
+          nullQuantityQuantity: state.messages.filter(message => message.type === null && message.pair === coin).length,
+          openPositionQuantity: state.messages.filter(message => message.type === 'open_position' && message.pair === coin).length,
+          openSignalQuantity: state.messages.filter(message => message.type === 'open_signal' && message.pair === coin).length,
+          takeProfitQuantity: state.messages.filter(message => message.type === 'take_profit' && message.pair === coin).length,
+          messagesQuantity: state.messages.filter(message => message.pair === coin).length,
+        }
+        coins.push(coinReport)
+      });
+      state.coinsReport = coins
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getAllChannelMessages.pending, (state) => {
@@ -68,8 +89,8 @@ export const channelSlice = createSlice({
   },
 });
 
-export const { } = channelSlice.actions;
+export const { generateCoinsReport } = channelSlice.actions;
 
-export const selectArticles = (state: RootState) => state.articles;
+export const selectChannel = (state: RootState) => state.channels;
 
 export default channelSlice.reducer;

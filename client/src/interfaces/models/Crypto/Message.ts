@@ -30,3 +30,14 @@ export interface IMessageText {
     type: 'hashtag' | 'plain' | 'phone';
     text: string;
 }
+
+export interface ICoinReport {
+    name: string;
+    messagesQuantity?: number;
+    openSignalQuantity?: number;
+    takeProfitQuantity?: number;
+    closePositionQuantity?: number;
+    openPositionQuantity?: number;
+    canceledQuantity?: number;
+    nullQuantityQuantity?: number;
+}
