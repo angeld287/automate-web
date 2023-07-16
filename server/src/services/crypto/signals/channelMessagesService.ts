@@ -354,7 +354,8 @@ export class channelMessagesService implements IChannelMessagesService {
                 const canceled = textEntities.find(text => text.text.includes('Cancelled ❌'))
 
                 message.pair = hashtag.text.slice(-4) !== "USDT" ? `${hashtag.text.replace("#", '')}USDT` : hashtag.text.replace("#", '');
-                if(textEntities.find(text => text.text.includes('Fully close your previous')) || textEntities.find(text => text.text.includes('Closed due to opposite direction signal '))){
+                if(textEntities.find(text => text.text.includes('Closed due to opposite direction signal '))){
+                    //textEntities.find(text => text.text.includes('Fully close your previous')) || 
                     message.type = "close_position";
                     message.entry = '0';
 

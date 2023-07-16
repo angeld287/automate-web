@@ -7,6 +7,7 @@ import { generateCoinsReport, getAllChannelMessages, selectChannel } from "../..
 import CustomLoader from "../../../Components/CustomLoader";
 import { ICoinReport } from "../../../interfaces/models/Crypto/Message";
 import CustomButton from "../../../Components/CustomButton";
+import CoinsPieReport from "../../../Components/Reports/CoinsPieReport";
 
 const Coins = () => {
     const navigate = useNavigate()
@@ -34,23 +35,19 @@ const Coins = () => {
             </Row>
             <Row style={{marginTop: 10}}>
                 <List
-                    grid={{ gutter: 0, column: 4 }}
+                    grid={{ gutter: 0, column: 3 }}
                     dataSource={channels.coinsReport}
                     renderItem={(item: ICoinReport) => (
                     <List.Item>
                         <Card
-                            hoverable
-                            style={{ width: 300 }}
+                            //hoverable
+                            style={{ width: 400 }}
                             //onClick={item.onClick}
                             //cover={<img alt="example" src={item.source_url} />}
                         >
                             <Meta title={item.name} description="" />
-                            <Row>
-                                <Space size={[0, 8]} wrap>
-                                    Profits: <Tag color="#87d068">{item.takeProfitQuantity}</Tag>
-                                    Profits: <Tag color="#87d068">{item.takeProfitQuantity}</Tag>
-                                </Space>
-                            </Row>
+                            <CoinsPieReport {...item}/>
+                            <Row>Total: {item.openSignalQuantity}</Row>
                         </Card>
                     </List.Item>
                     )}

@@ -49,6 +49,7 @@ const Routes = ({activeSession}: IRoutes) => {
           {/* CRYPTO Routes */}
           <Route path="/crypto/home" element={<Protected {...{activeSession}}><CryptoHome/></Protected>}/>
           <Route path="/crypto/channel/:channelId/coins" element={<Protected {...{activeSession}}><Coins/></Protected>}/>
+          <Route path="/crypto/channel/:channelId/coins/:coin/profitsLineReport" element={<Protected {...{activeSession}}><Coins/></Protected>}/>
 
 
           <Route path="/" element={<Protected {...{activeSession}}><Home/></Protected>}/>

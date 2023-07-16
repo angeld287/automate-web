@@ -35,6 +35,7 @@ export interface ICoinReport {
     name: string;
     messagesQuantity?: number;
     openSignalQuantity?: number;
+    openSignalFrecuency?: number;
     takeProfitQuantity?: number;
     closePositionQuantity?: number;
     openPositionQuantity?: number;
