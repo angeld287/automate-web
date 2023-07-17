@@ -6,6 +6,9 @@ import ExpressValidator from "../../../providers/ExpressValidation";
 import { PageSourceService } from "../../../services/source/pageSourceService";
 import { searchService } from "../../../services/searchEngine/searchService";
 import { relRegrexs } from "../../../utils";
+import { BacklinksServices } from "../../../services/backlinksServices/backlinksServices";
+import IBacklinksServices from "../../../interfaces/IBacklinksServices";
+import { BackklinksState } from "../../../interfaces/Enums/States";
 
 class SearchDoFollowLinks {
     public static async startDofollowSearchJob(req: IRequest, res: IResponse): Promise<any> {
@@ -17,6 +20,7 @@ class SearchDoFollowLinks {
             }).send(res);
         }
         let search: ISearchService = new searchService();
+        let backlinksService: IBacklinksServices = new BacklinksServices();
         let _pageSourceService : IPageSourceService = new PageSourceService();
         
         const resultsList = await search.searchResults('1', '1', 'inurl:litypitbulls.com "muerto"');
@@ -31,6 +35,13 @@ class SearchDoFollowLinks {
                 rels = rels === "" ? rel.type : `${rels},${rel.type}`
             }
         });
+
+        await backlinksService.createBacklink({
+            link: resultsList[0].link,
+            createdBy: parseInt(req.session.passport.user.id),
+            state: BackklinksState.NEW,
+            rel: rels,
+        })
 
         return new SuccessResponse('Success', {
             success: true,

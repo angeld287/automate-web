@@ -533,6 +533,7 @@ router.post(
 //DoFollow Search
 router.get(
     '/dofollowSearchJob',
+    body('query', 'field query cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     SearchDoFollowLinksController.startDofollowSearchJob
 );

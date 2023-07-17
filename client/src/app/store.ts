@@ -11,6 +11,7 @@ import keywordSearchJobReducer from '../features/keywordSearchJob/keywordSearchJ
 import keywordsReducer from '../features/keywords/keywordSlice';
 import configurationsReducer from '../features/configurations/configurationsSlice';
 import channelsReducer from '../features/channels/channelsSlice';
+import backlinksReducer from '../features/backlinks/backlinksSlice';
 
 const authMiddleware = (store: any) => (next: any) => (action: any) => {
   if(action.type === "userSession/login/fulfilled"){
@@ -35,6 +36,7 @@ export const store = configureStore({
     keywords: keywordsReducer,
     configurations: configurationsReducer,
     channels: channelsReducer,
+    backlinks: backlinksReducer,
   },
   middleware: (getDefaultMiddleware) =>
   getDefaultMiddleware({

@@ -8,3 +8,9 @@ export enum ArticleState {
     GOOGLE_CRAWLED = "G_CRAWLED",
     DISCARDED = "DISCARDED",
 }
+
+export enum BackklinksState {
+    NEW = 'NEW',
+    LINKED = 'LINKED',
+    DISCARDED = 'DISCARDED',
+}
