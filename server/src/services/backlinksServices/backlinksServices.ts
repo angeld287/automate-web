@@ -110,6 +110,39 @@ export class BacklinksServices implements IBacklinksServices {
         }
     }
 
+    async getBacklinksByState(userId: number, state: string): Promise<Array<IBacklink>> {
+        const getQuery = {
+            name: 'get-backlinks-by-state',
+            text:  `SELECT link, rel, state, created_by, account_user, account_user_pass, id FROM public.possible_backlinks where created_by = $1 and state = $2;`,
+            values: [userId, state]
+        };
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            if (result.rows.length === 0)
+                return []
+            
+            const contents: Array<IBacklink> = []
+
+            result.rows.forEach(row => {
+                contents.push({
+                    id: row.id,
+                    link: row.link.trim(),
+                    rel: row.rel.trim(),
+                    state: row.state.trim(),
+                    accountUser: row.account_user.trim(),
+                    accountUserPass: row.account_user_pass.trim(),
+                    createdBy: row.created_by,
+                })
+            });
+            return contents;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
     async getBacklinkById(id: number): Promise<IBacklink | false> {
         const getQuery = {
             name: 'get-backlink-by-id',

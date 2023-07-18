@@ -8,5 +8,7 @@ export default interface IBacklinksServices {
     getBacklinksByOwner(userId: number): Promise<Array<IBacklink>>;
 
     getBacklinkById(id: number): Promise<IBacklink | false>;
+
+    getBacklinksByState(userId: number, state: string): Promise<Array<IBacklink>>
     
 }
