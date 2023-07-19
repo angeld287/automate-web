@@ -514,6 +514,7 @@ router.get(
 );
 
 
+
 // SALES OPPORTUNITIES API'S
 
 router.post(
@@ -530,13 +531,22 @@ router.post(
     SearchSalesOpportunitiesController.startFBSeachJob
 )
 
-//DoFollow Search
+// DoFollow Search  ==>  BACKLINKS
+
 router.get(
-    '/dofollowSearchJob',
+    '/site/dofollowSearchJob',
     body('query', 'field query cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
     SearchDoFollowLinksController.startDofollowSearchJob
 );
+
+router.get(
+    '/site/getBacklinksByState',
+    Passport.isAuthenticated,
+    SearchDoFollowLinksController.getBacklinksByState
+)
+
+
 
 
 //CRYTO channel messages

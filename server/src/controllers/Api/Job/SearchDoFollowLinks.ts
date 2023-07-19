@@ -50,6 +50,24 @@ class SearchDoFollowLinks {
             rels: rels
         }).send(res);
     }
+
+    public static async getBacklinksByState(req: IRequest, res: IResponse): Promise<any> {
+
+        if(!req.query.state){
+            return new BadRequestResponse('Error', {
+                error: "Param state is required."
+            }).send(res);
+        }
+        let backlinksService: IBacklinksServices = new BacklinksServices();
+        
+        const list = await backlinksService.getBacklinksByState(1, req.query.state.toString())
+
+        return new SuccessResponse('Success', {
+            success: true,
+            error: null,
+            response: list,
+        }).send(res);
+    }
 }
 
 export default SearchDoFollowLinks
