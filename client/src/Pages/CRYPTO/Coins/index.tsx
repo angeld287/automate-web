@@ -47,7 +47,9 @@ const Coins = () => {
                         >
                             <Meta title={item.name} description="" />
                             <CoinsPieReport {...item}/>
-                            <Row>Total: {item.openSignalQuantity}</Row>
+                            <Row>Total: {item.openSignalQuantity} |
+                                {parseFloat((item.takeProfitQuantity && item.openSignalQuantity ? item.takeProfitQuantity/item.openSignalQuantity : '0').toString(), ).toFixed(1)} target(s) per operations
+                            </Row>
                         </Card>
                     </List.Item>
                     )}

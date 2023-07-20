@@ -533,7 +533,7 @@ router.post(
 
 // DoFollow Search  ==>  BACKLINKS
 
-router.get(
+router.post(
     '/site/dofollowSearchJob',
     body('query', 'field query cannot be blank.').notEmpty(),
     Passport.isAuthenticated,
