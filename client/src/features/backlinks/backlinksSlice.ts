@@ -59,6 +59,17 @@ export const backlinkSlice = createSlice({
       })
       .addCase(getBacklinks.fulfilled, (state, action) => {
         state.getBKLBySState = 'idle';
+        if(state.backlinks.length === 0){
+          state.backlinks = action.payload
+        }else{
+          const currentBacklinks = state.backlinks;
+          action.payload.forEach((backlink: any) => {
+            if(!(currentBacklinks.find(backL => backL.id === backlink.id))){
+              currentBacklinks.push(backlink);
+            }
+          });
+          state.backlinks = currentBacklinks
+        }
       })
       .addCase(getBacklinks.rejected, (state) => {
         state.getBKLBySState = 'failed';
@@ -68,6 +79,6 @@ export const backlinkSlice = createSlice({
 
 export const { } = backlinkSlice.actions;
 
-export const selectChannel = (state: RootState) => state.channels;
+export const selectBacklinks = (state: RootState) => state.backlinks;
 
 export default backlinkSlice.reducer;

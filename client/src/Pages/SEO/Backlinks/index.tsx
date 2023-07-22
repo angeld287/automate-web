@@ -1,20 +1,24 @@
 import { Content } from 'antd/lib/layout/layout';
 import React, { useCallback, useEffect } from 'react';
 import { setModule } from '../../../features/userSession/userSessionSlice';
-import { useAppDispatch } from '../../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { Row, Tabs } from 'antd';
 
 import type { TabsProps } from 'antd';
 
 import CustomSearch from '../../../Components/CustomSearch';
 import styles from './styles';
-import { startBacklinksSearch } from '../../../features/backlinks/backlinksSlice';
+import { getBacklinks, selectBacklinks, startBacklinksSearch } from '../../../features/backlinks/backlinksSlice';
+import BacklinksList from '../../../Components/App/BacklinksList';
+import { BackklinksState } from '../../../interfaces/Enums/States';
 
 const Backlinks: React.FC = () => {
     const dispatch = useAppDispatch();
+    const { backlinks } = useAppSelector(selectBacklinks);
 
     useEffect(() => {
-        dispatch(setModule("seo"))
+        dispatch(setModule("seo"));
+        dispatch(getBacklinks(BackklinksState.NEW));
     }, [])
 
     const searchBacklinks = useCallback((text: string) => {
@@ -22,26 +26,30 @@ const Backlinks: React.FC = () => {
     }, []);
 
     const onChange = useCallback((key: string) => {
-        //console.log(key);
+        dispatch(getBacklinks(key));
     }, [])
 
     const items: TabsProps['items'] = [
       {
-        key: '1',
-        label: `NEW`,
+        key: BackklinksState.NEW,
+        label: BackklinksState.NEW,
         children: <Content><Row>
-                <h1>G🅾️🅾️🇬le 🔙 Links 🔗 👉 SEARCH 🔍 📙</h1>
+                <BacklinksList data={backlinks.filter(backlink => backlink.state === BackklinksState.NEW)}/>
             </Row></Content>,
       },
       {
-        key: '2',
-        label: `LINKED`,
-        children: <h2>daniel</h2>,
+        key: BackklinksState.NEW,
+        label: BackklinksState.LINKED,
+        children: <Content><Row>
+            <BacklinksList data={backlinks.filter(backlink => backlink.state === BackklinksState.LINKED)}/>
+        </Row></Content>,
       },
       {
-        key: '3',
-        label: `DISCARDED`,
-        children: ``,
+        key: BackklinksState.NEW,
+        label: BackklinksState.DISCARDED,
+        children: <Content><Row>
+            <BacklinksList data={backlinks.filter(backlink => backlink.state === BackklinksState.DISCARDED)}/>
+        </Row></Content>,
       },
     ];
 
