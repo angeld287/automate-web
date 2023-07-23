@@ -653,9 +653,9 @@ CREATE TRIGGER set_timestamp_to_created_at
 CREATE TABLE IF NOT EXISTS public.possible_backlinks
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
-    link character(50) COLLATE pg_catalog."default",
+    link character(100) COLLATE pg_catalog."default",
     state character(20) COLLATE pg_catalog."default",
-    rel character(30) COLLATE pg_catalog."default",
+    rel character(50) COLLATE pg_catalog."default",
     created_by integer,
     created_at timestamp with time zone,
     deleted boolean,

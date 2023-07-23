@@ -28,8 +28,8 @@ export class BacklinksServices implements IBacklinksServices {
                 link: result.rows[0].link.trim(),
                 rel: result.rows[0].rel.trim(),
                 state: result.rows[0].state.trim(),
-                accountUser: result.rows[0].account_user.trim(),
-                accountUserPass: result.rows[0].account_user_pass.trim(),
+                accountUser: result.rows[0].account_user,
+                accountUserPass: result.rows[0].account_user_pass,
                 createdBy: result.rows[0].created_by,
             }
             
@@ -132,8 +132,8 @@ export class BacklinksServices implements IBacklinksServices {
                     link: row.link.trim(),
                     rel: row.rel.trim(),
                     state: row.state.trim(),
-                    accountUser: row.account_user.trim(),
-                    accountUserPass: row.account_user_pass.trim(),
+                    accountUser: row.account_user,
+                    accountUserPass: row.account_user_pass,
                     createdBy: row.created_by,
                 })
             });

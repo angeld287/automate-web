@@ -59,8 +59,9 @@ class SearchDoFollowLinks {
             }).send(res);
         }
         let backlinksService: IBacklinksServices = new BacklinksServices();
+        const userId = req.session.passport.user.id;
         
-        const list = await backlinksService.getBacklinksByState(1, req.query.state.toString())
+        const list = await backlinksService.getBacklinksByState(parseInt(userId), req.query.state.toString())
 
         return new SuccessResponse('Success', {
             success: true,

@@ -26,7 +26,7 @@ const Backlinks: React.FC = () => {
     }, []);
 
     const onChange = useCallback((key: string) => {
-        dispatch(getBacklinks(key));
+        //dispatch(getBacklinks(key));
     }, [])
 
     const items: TabsProps['items'] = [
@@ -38,14 +38,14 @@ const Backlinks: React.FC = () => {
             </Row></Content>,
       },
       {
-        key: BackklinksState.NEW,
+        key: BackklinksState.LINKED,
         label: BackklinksState.LINKED,
         children: <Content><Row>
             <BacklinksList data={backlinks.filter(backlink => backlink.state === BackklinksState.LINKED)}/>
         </Row></Content>,
       },
       {
-        key: BackklinksState.NEW,
+        key: BackklinksState.DISCARDED,
         label: BackklinksState.DISCARDED,
         children: <Content><Row>
             <BacklinksList data={backlinks.filter(backlink => backlink.state === BackklinksState.DISCARDED)}/>
