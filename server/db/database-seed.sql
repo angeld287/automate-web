@@ -663,6 +663,8 @@ CREATE TABLE IF NOT EXISTS public.possible_backlinks
     deleted_at timestamp with time zone,
     account_user character(50) COLLATE pg_catalog."default",
     account_user_pass character(50) COLLATE pg_catalog."default",
+    title character(200) COLLATE pg_catalog."default",
+    snippet character(500) COLLATE pg_catalog."default",
     CONSTRAINT possible_backlinks_pkey PRIMARY KEY (id),
     CONSTRAINT possible_backlinks_created_by_fkey FOREIGN KEY (created_by)
         REFERENCES public.users (id) MATCH SIMPLE

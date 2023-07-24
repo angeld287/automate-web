@@ -23,7 +23,7 @@ class SearchDoFollowLinks {
         let backlinksService: IBacklinksServices = new BacklinksServices();
         let _pageSourceService : IPageSourceService = new PageSourceService();
         
-        const resultsList = await search.searchResults('1', '1', 'inurl:litypitbulls.com "muerto"');
+        const resultsList = await search.searchResults('1', '1', req.body.query);
 
         const sourceCode = await _pageSourceService.getPageSource(resultsList[0].link);
         
@@ -38,6 +38,8 @@ class SearchDoFollowLinks {
 
         await backlinksService.createBacklink({
             link: resultsList[0].link,
+            title: resultsList[0].title,
+            snippet: resultsList[0].snippet,
             createdBy: parseInt(req.session.passport.user.id),
             state: BackklinksState.NEW,
             rel: rels,

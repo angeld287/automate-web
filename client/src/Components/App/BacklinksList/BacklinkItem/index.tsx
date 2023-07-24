@@ -1,12 +1,10 @@
-import { LoadingOutlined, MoreOutlined } from '@ant-design/icons';
+import { MoreOutlined } from '@ant-design/icons';
 import { Avatar, List, Row, Tag } from 'antd';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import CustomButton from '../../../CustomButton';
-import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import IBacklink from '../../../../interfaces/models/IBacklink';
 
 const BacklinkItem: React.FC<IBacklink> = ({ id, rel, link, state }) => {
-    const dispatch = useAppDispatch()
 
     const goToLink = useCallback((link: string) => {
         window.location.href = link;

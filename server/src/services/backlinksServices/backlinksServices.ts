@@ -7,8 +7,8 @@ export class BacklinksServices implements IBacklinksServices {
         try {
             const createbacklink = {
                 name: 'create-new-backlink',
-                text: 'INSERT INTO public.possible_backlinks(link, rel, state, created_by) VALUES ($1, $2, $3, $4) RETURNING link, rel, state, created_by, account_user, account_user_pass, id;',
-                values: [backlink.link, backlink.rel, backlink.state, backlink.createdBy],
+                text: 'INSERT INTO public.possible_backlinks(link, rel, state, created_by, title, snippet) VALUES ($1, $2, $3, $4, $5, $6) RETURNING link, rel, state, created_by, account_user, account_user_pass, id, title, snippet;',
+                values: [backlink.link, backlink.rel, backlink.state, backlink.createdBy, backlink.title, backlink.snippet],
             }
 
             let result = null, client = null;
@@ -31,6 +31,8 @@ export class BacklinksServices implements IBacklinksServices {
                 accountUser: result.rows[0].account_user,
                 accountUserPass: result.rows[0].account_user_pass,
                 createdBy: result.rows[0].created_by,
+                title: result.rows[0].title.trim(),
+                snippet: result.rows[0].snippet.trim()
             }
             
             return _backlink;
@@ -44,7 +46,7 @@ export class BacklinksServices implements IBacklinksServices {
         try {
             const updateBacklink = {
                 name: 'update-backlink',
-                text: 'UPDATE public.possible_backlinks SET state=$2, account_user=$3, account_user_pass=$4 WHERE id = $1 RETURNING link, rel, state, created_by, account_user, account_user_pass, id',
+                text: 'UPDATE public.possible_backlinks SET state=$2, account_user=$3, account_user_pass=$4 WHERE id = $1 RETURNING link, rel, state, created_by, account_user, account_user_pass, id, title, snippet',
                 values: [backlink.id, backlink.state, backlink.accountUser, backlink.accountUserPass],
             }
 
@@ -68,6 +70,8 @@ export class BacklinksServices implements IBacklinksServices {
                 accountUser: result.rows[0].account_user.trim(),
                 accountUserPass: result.rows[0].account_user_pass.trim(),
                 createdBy: result.rows[0].created_by,
+                title: result.rows[0].title.trim(),
+                snippet: result.rows[0].snippet.trim()
             }
             
             return _backlink;
@@ -80,7 +84,7 @@ export class BacklinksServices implements IBacklinksServices {
     async getBacklinksByOwner(userId: number): Promise<Array<IBacklink>> {
         const getQuery = {
             name: 'get-backlinks-by-owner',
-            text:  `SELECT link, rel, state, created_by, account_user, account_user_pass, id FROM public.possible_backlinks where created_by = $1;`,
+            text:  `SELECT link, rel, state, created_by, account_user, account_user_pass, id, title, snippet FROM public.possible_backlinks where created_by = $1;`,
             values: [userId]
         };
 
@@ -102,6 +106,8 @@ export class BacklinksServices implements IBacklinksServices {
                     accountUser: row.account_user.trim(),
                     accountUserPass: row.account_user_pass.trim(),
                     createdBy: row.created_by,
+                    title: result.rows[0].title.trim(),
+                    snippet: result.rows[0].snippet.trim()
                 })
             });
             return contents;
@@ -113,7 +119,7 @@ export class BacklinksServices implements IBacklinksServices {
     async getBacklinksByState(userId: number, state: string): Promise<Array<IBacklink>> {
         const getQuery = {
             name: 'get-backlinks-by-state',
-            text:  `SELECT link, rel, state, created_by, account_user, account_user_pass, id FROM public.possible_backlinks where created_by = $1 and state = $2;`,
+            text:  `SELECT link, rel, state, created_by, account_user, account_user_pass, id, title, snippet FROM public.possible_backlinks where created_by = $1 and state = $2;`,
             values: [userId, state]
         };
 
@@ -135,6 +141,8 @@ export class BacklinksServices implements IBacklinksServices {
                     accountUser: row.account_user,
                     accountUserPass: row.account_user_pass,
                     createdBy: row.created_by,
+                    title: result.rows[0].title.trim(),
+                    snippet: result.rows[0].snippet.trim()
                 })
             });
             return contents;
@@ -146,7 +154,7 @@ export class BacklinksServices implements IBacklinksServices {
     async getBacklinkById(id: number): Promise<IBacklink | false> {
         const getQuery = {
             name: 'get-backlink-by-id',
-            text:  `SELECT link, rel, state, created_by, account_user, account_user_pass, id FROM public.possible_backlinks where id = $1;`,
+            text:  `SELECT link, rel, state, created_by, account_user, account_user_pass, id, title, snippet FROM public.possible_backlinks where id = $1;`,
             values: [id]
         };
 
@@ -165,6 +173,8 @@ export class BacklinksServices implements IBacklinksServices {
                 accountUser: result.rows[0].account_user.trim(),
                 accountUserPass: result.rows[0].account_user_pass.trim(),
                 createdBy: result.rows[0].created_by,
+                title: result.rows[0].title.trim(),
+                snippet: result.rows[0].snippet.trim()
             }
             
             return _backlink;
