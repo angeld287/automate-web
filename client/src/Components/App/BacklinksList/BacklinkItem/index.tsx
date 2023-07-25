@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import CustomButton from '../../../CustomButton';
 import IBacklink from '../../../../interfaces/models/IBacklink';
 
-const BacklinkItem: React.FC<IBacklink> = ({ id, rel, link, state }) => {
+const BacklinkItem: React.FC<IBacklink> = ({ id, rel, link, state, title, snippet }) => {
 
     const goToLink = useCallback((link: string) => {
         window.location.href = link;
@@ -18,9 +18,15 @@ const BacklinkItem: React.FC<IBacklink> = ({ id, rel, link, state }) => {
             ]}
         >
             <List.Item.Meta
+                style={{width: 700}}
                 avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-                title={<Row><p>Title: </p><a target="_blank" rel="noreferrer" href={link}>{state}</a></Row>}
-                description={<>{rel.split(',').map(tag => <Tag color="#f50">{tag}</Tag>)}</>}
+                title={<Row><a target="_blank" rel="noreferrer" href={link}>{title}</a></Row>}
+                description={<>
+                    <div style={{textAlign: "left"}}>
+                        <p>{snippet}</p>
+                        {rel.split(',').map(tag => <Tag color="#f50">{tag}</Tag>)}
+                    </div>
+                </>}
             />
         </List.Item>
     )

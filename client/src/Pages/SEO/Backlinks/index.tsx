@@ -11,6 +11,8 @@ import styles from './styles';
 import { getBacklinks, selectBacklinks, startBacklinksSearch } from '../../../features/backlinks/backlinksSlice';
 import BacklinksList from '../../../Components/App/BacklinksList';
 import { BackklinksState } from '../../../interfaces/Enums/States';
+import { CopyOutlined } from '@ant-design/icons';
+import CustomButton from '../../../Components/CustomButton';
 
 const Backlinks: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -28,6 +30,10 @@ const Backlinks: React.FC = () => {
     const onChange = useCallback((key: string) => {
         //dispatch(getBacklinks(key));
     }, [])
+
+    const copyFoodPrint = useCallback(() => {
+        navigator.clipboard.writeText('inurl:litypitbulls.com "muerto"')
+    }, []);
 
     const items: TabsProps['items'] = [
       {
@@ -55,7 +61,10 @@ const Backlinks: React.FC = () => {
 
     return (
         <Content style={styles.container}>
-            <h1>G🅾️🅾️🇬le 🔙 Links 🔗 👉 SEARCH 🔍 📙</h1>
+            <Row>
+                <h1>G🅾️🅾️🇬le 🔙 Links 🔗 👉 SEARCH 🔍 📙</h1> 
+                <div style={styles.button}><CustomButton onClick={() => {copyFoodPrint()}}><CopyOutlined /></CustomButton></div>
+            </Row>
             <CustomSearch placeholder='Type the long keyword' loading={false} onSearch={searchBacklinks}/>
             <Row>
                 <Tabs defaultActiveKey="1" items={items} onChange={onChange} />

@@ -8,4 +8,6 @@ export default interface IBacklink {
     createdBy: number;
     accountUser?: string;
     accountUserPass?: string;
+    title: string;
+    snippet: string;
 }

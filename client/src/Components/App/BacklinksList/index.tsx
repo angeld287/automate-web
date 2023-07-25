@@ -7,13 +7,7 @@ const BacklinksList: React.FC<IBacklinksResultList> = ({ data }) => (
     <List
         itemLayout="horizontal"
         dataSource={data}
-        renderItem={(item) => <BacklinkItem 
-                                    createdBy={item.createdBy} 
-                                    link={item.link} 
-                                    rel={item.rel}
-                                    state={item.state}
-                                    id={item.id}
-                                    />}
+        renderItem={(item) => <BacklinkItem {...item}/>}
     />
 );
 

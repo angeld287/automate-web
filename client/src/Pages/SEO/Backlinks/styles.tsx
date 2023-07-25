@@ -11,7 +11,8 @@ const styles = {
         textAlign: 'right'
     } as React.CSSProperties,
     button: {
-        marginRight: 5
+        marginRight: 5,
+        marginLeft: 30
     } as React.CSSProperties,
 };
 
