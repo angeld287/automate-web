@@ -183,4 +183,37 @@ export class BacklinksServices implements IBacklinksServices {
             throw new Error(error.message);
         }
     }
+
+    async getBacklinkByLink(link: string): Promise<IBacklink | false> {
+        const getQuery = {
+            name: 'get-backlink-by-link',
+            text:  `SELECT link, rel, state, created_by, account_user, account_user_pass, id, title, snippet FROM public.possible_backlinks where link = $1;`,
+            values: [link]
+        };
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            if (result.rows.length === 0)
+                return false
+            
+            let _backlink: IBacklink = {
+                id: result.rows[0].id,
+                link: result.rows[0].link.trim(),
+                rel: result.rows[0].rel.trim(),
+                state: result.rows[0].state.trim(),
+                accountUser: result.rows[0].account_user.trim(),
+                accountUserPass: result.rows[0].account_user_pass.trim(),
+                createdBy: result.rows[0].created_by,
+                title: result.rows[0].title.trim(),
+                snippet: result.rows[0].snippet.trim()
+            }
+            
+            return _backlink;
+            
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
 }

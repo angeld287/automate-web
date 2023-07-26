@@ -9,6 +9,7 @@ import { relRegrexs } from "../../../utils";
 import { BacklinksServices } from "../../../services/backlinksServices/backlinksServices";
 import IBacklinksServices from "../../../interfaces/IBacklinksServices";
 import { BackklinksState } from "../../../interfaces/Enums/States";
+import IBacklink from "../../../interfaces/models/IBacklink";
 
 class SearchDoFollowLinks {
     public static async startDofollowSearchJob(req: IRequest, res: IResponse): Promise<any> {
@@ -36,14 +37,19 @@ class SearchDoFollowLinks {
             }
         });
 
-        await backlinksService.createBacklink({
-            link: resultsList[0].link,
-            title: resultsList[0].title,
-            snippet: resultsList[0].snippet,
-            createdBy: parseInt(req.session.passport.user.id),
-            state: BackklinksState.NEW,
-            rel: rels,
-        })
+        const backlink: IBacklink | false = await backlinksService.getBacklinkByLink(resultsList[0].link)
+
+        if(!backlink){
+            await backlinksService.createBacklink({
+                link: resultsList[0].link,
+                title: resultsList[0].title,
+                snippet: resultsList[0].snippet,
+                createdBy: parseInt(req.session.passport.user.id),
+                state: BackklinksState.NEW,
+                rel: rels,
+            })
+        }
+        
 
         return new SuccessResponse('Success', {
             success: true,

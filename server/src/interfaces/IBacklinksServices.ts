@@ -9,6 +9,8 @@ export default interface IBacklinksServices {
 
     getBacklinkById(id: number): Promise<IBacklink | false>;
 
-    getBacklinksByState(userId: number, state: string): Promise<Array<IBacklink>>
+    getBacklinksByState(userId: number, state: string): Promise<Array<IBacklink>>;
+
+    getBacklinkByLink(link: string): Promise<IBacklink | false>;
     
 }
