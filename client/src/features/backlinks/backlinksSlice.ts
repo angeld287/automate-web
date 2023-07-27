@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { StartDofollowSearchJob, getBacklinksByState } from './backlinksAPI';
+import { StartDofollowSearchJob, getBacklinksByState, setBacklinkState } from './backlinksAPI';
 import IBacklink from '../../interfaces/models/IBacklink';
 
 export interface BacklinksState {
@@ -32,6 +32,18 @@ export const getBacklinks = createAsyncThunk(
   async (state: string) => {
     try {    
       const result = await getBacklinksByState(state);
+      return result.data.response;
+    } catch (error) {
+      console.log(error)
+    }
+  }
+);
+
+export const updateBacklinkState = createAsyncThunk(
+  'backlinks/updateBacklinkState',
+  async ({id, state} : {id: number, state: string}) => {
+    try {    
+      const result = await setBacklinkState(id, state);
       return result.data.response;
     } catch (error) {
       console.log(error)

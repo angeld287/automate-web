@@ -50,7 +50,6 @@ class SearchDoFollowLinks {
             })
         }
         
-
         return new SuccessResponse('Success', {
             success: true,
             error: null,
@@ -75,6 +74,37 @@ class SearchDoFollowLinks {
             success: true,
             error: null,
             response: list,
+        }).send(res);
+    }
+
+    public static async changeBacklinksState(req: IRequest, res: IResponse): Promise<any> {
+
+        const errors = new ExpressValidator().validator(req);
+
+        if (!errors.isEmpty()) {
+            return new BadRequestResponse('Error', {
+                errors: errors.array()
+            }).send(res);
+        }
+
+        let backlinksService: IBacklinksServices = new BacklinksServices();
+
+        const backlink: IBacklink | false = await backlinksService.getBacklinkById(parseInt(req.body.id))
+
+        if(backlink === false){
+            return new BadRequestResponse('Error', {
+                error: "The backlink does not exist."
+            }).send(res);
+        }
+
+        backlink.state = req.body.state
+        
+        const result = await backlinksService.updateBacklink(backlink)
+
+        return new SuccessResponse('Success', {
+            success: true,
+            error: null,
+            response: result,
         }).send(res);
     }
 }

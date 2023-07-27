@@ -532,7 +532,6 @@ router.post(
 )
 
 // DoFollow Search  ==>  BACKLINKS
-
 router.post(
     '/site/dofollowSearchJob',
     body('query', 'field query cannot be blank.').notEmpty(),
@@ -544,6 +543,14 @@ router.get(
     '/site/getBacklinksByState',
     Passport.isAuthenticated,
     SearchDoFollowLinksController.getBacklinksByState
+)
+
+router.post(
+    '/site/updateBacklinksState',
+    body('id', 'field id cannot be blank.').notEmpty(),
+    body('state', 'field state cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    SearchDoFollowLinksController.changeBacklinksState
 )
 
 
