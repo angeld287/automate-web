@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import SearchKeywordsStepper from "../../../../Components/App/SearchKeywordsStepper";
 import CustomLoader from "../../../../Components/CustomLoader";
 import CustomButton from "../../../../Components/CustomButton";
-import { ContainerOutlined, EditOutlined, FileAddOutlined, FileImageOutlined, FileTextOutlined, GoogleOutlined } from "@ant-design/icons";
+import { ContainerOutlined, CopyOutlined, EditOutlined, FileAddOutlined, FileImageOutlined, FileTextOutlined, GoogleOutlined } from "@ant-design/icons";
 import AddImage from "../../../../Components/App/AddImage";
 import './article.css'
 import Locals from "../../../../config/Locals";
@@ -19,6 +19,7 @@ import { ArticleState } from "../../../../interfaces/Enums/States";
 import SearchGoogleImage from "../../../../Components/App/SearchGoogleImage";
 import CustomModal from "../../../../Components/CustomModal";
 import { setModule } from "../../../../features/userSession/userSessionSlice";
+import { IArticle } from "../../../../interfaces/models/Article";
 
 const ContentEditor = () => {
 
@@ -106,6 +107,14 @@ const ContentEditor = () => {
         }
     }, [currentImageId, dispatch])
 
+    const copyTheArticle = useCallback((article: IArticle) => {
+        navigator.clipboard.writeText(
+            `
+                ${article.title}\n
+            `
+        )
+    }, [])
+
     if(loading && article.article.subtitles.length === 0) return <CustomLoader/>
 
     return <>
@@ -113,6 +122,7 @@ const ContentEditor = () => {
             <h2>{article.article.title}</h2>
         </Row>
         <Row>
+            <Col style={{margin: 10}}><CustomButton onClick={() => { copyTheArticle(article.article)}}>Copy Content<CopyOutlined /></CustomButton></Col>
             <Col style={{margin: 10}}><CustomButton disabled={article.article.wpId !== null} onClick={() => { setOpen(true)}}>Edit Content<EditOutlined /></CustomButton></Col>
             <Col style={{margin: 10}}><CustomButton disabled={article.article.wpId !== null || !allSubtitlesCompleted} onClick={() => { openAddContentModal(true); setContentType('introduction');}}>Add Introduction<FileTextOutlined /></CustomButton></Col>
             <Col style={{margin: 10}}><CustomButton disabled={article.article.wpId !== null || !allSubtitlesCompleted} onClick={() => { openAddContentModal(true); setContentType('conclusion');}}>Add Conclusion<ContainerOutlined /></CustomButton></Col>

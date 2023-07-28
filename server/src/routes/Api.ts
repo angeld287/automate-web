@@ -553,6 +553,13 @@ router.post(
     SearchDoFollowLinksController.changeBacklinksState
 )
 
+router.post(
+    '/site/setBacklinkCredentials',
+    body('id', 'field id cannot be blank.').notEmpty(),
+    body('state', 'field state cannot be blank.').notEmpty(),
+    Passport.isAuthenticated,
+    SearchDoFollowLinksController.setBacklinkCredentials
+)
 
 
 

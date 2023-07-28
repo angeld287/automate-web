@@ -1,19 +1,28 @@
-import { MoreOutlined } from '@ant-design/icons';
+import { DeleteOutlined, MoreOutlined } from '@ant-design/icons';
 import { Avatar, List, Row, Tag } from 'antd';
 import React, { useCallback } from 'react';
 import CustomButton from '../../../CustomButton';
 import IBacklink from '../../../../interfaces/models/IBacklink';
+import { useAppDispatch } from '../../../../app/hooks';
+import { updateBacklinkState } from '../../../../features/backlinks/backlinksSlice';
+import { BackklinksState } from '../../../../interfaces/Enums/States';
 
-const BacklinkItem: React.FC<IBacklink> = ({ id, rel, link, state, title, snippet }) => {
+const BacklinkItem: React.FC<IBacklink> = ({ id, rel, link, state, title, snippet, accountUser, accountUserPass }) => {
+    const dispatch = useAppDispatch();
 
     const goToLink = useCallback((link: string) => {
         window.location.href = link;
+    }, [])
+
+    const discardBacklink = useCallback((id: number) => {
+        dispatch(updateBacklinkState({id: id, state: BackklinksState.DISCARDED}));
     }, [])
 
     return (
         <List.Item
             key={"item-position-" + id}
             actions={[
+                <CustomButton onClick={e => { e.preventDefault(); if(id) discardBacklink(id) }} color='blue' icon={<DeleteOutlined />}></CustomButton>,
                 <CustomButton onClick={e => { e.preventDefault(); goToLink(link) }} color='blue' icon={<MoreOutlined />}></CustomButton>
             ]}
         >
