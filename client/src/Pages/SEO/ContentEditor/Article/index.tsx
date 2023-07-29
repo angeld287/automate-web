@@ -108,9 +108,25 @@ const ContentEditor = () => {
     }, [currentImageId, dispatch])
 
     const copyTheArticle = useCallback((article: IArticle) => {
+        const introContent = article.contents ? article.contents.filter(cont => cont.type && cont.type.trim() === 'introduction').sort((cA, cB) => (cA.orderNumber && cB.orderNumber ? cA.orderNumber < cB.orderNumber ? -1 : 1 : -1)) : [];
+        const concluContent = article.contents ? article.contents.filter(cont => cont.type && cont.type.trim() === 'introduction').sort((cA, cB) => (cA.orderNumber && cB.orderNumber ? cA.orderNumber < cB.orderNumber ? -1 : 1 : -1)) : [];
+
+        const introduction: string = `${introContent.map(content => content.content).join("\n")}`
+        const conclusion: string = `${concluContent.map(content => content.content).join("\n")}`
+
         navigator.clipboard.writeText(
             `
                 ${article.title}\n
+                    ${introduction}\n
+                        ${article.subtitles.map(item => {
+                            const contentText = item.content?.filter(paragraph => paragraph.selected).sort((a, b) => (!a.orderNumber || !b.orderNumber) ? 1 : a.orderNumber < b.orderNumber ? -1 : 1).map(paragraph => `${paragraph.content}\n`)
+
+                            return `
+                                ${item.name}\n
+                                ${contentText}
+                            `
+                        })}
+                    ${conclusion}
             `
         )
     }, [])
