@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo } from "react";
-import { Card, Col, List, Row, Space, Tag } from "antd";
+import { useCallback, useEffect } from "react";
+import { Card, Col, List, Row } from "antd";
 import Meta from "antd/es/card/Meta";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
@@ -8,6 +8,7 @@ import CustomLoader from "../../../Components/CustomLoader";
 import { ICoinReport } from "../../../interfaces/models/Crypto/Message";
 import CustomButton from "../../../Components/CustomButton";
 import CoinsPieReport from "../../../Components/Reports/CoinsPieReport";
+import { BarChartOutlined, DotChartOutlined, LineChartOutlined, RadarChartOutlined } from "@ant-design/icons";
 
 const Coins = () => {
     const navigate = useNavigate()
@@ -49,6 +50,12 @@ const Coins = () => {
                             <CoinsPieReport {...item}/>
                             <Row>Total: {item.openSignalQuantity} |
                                 {parseFloat((item.takeProfitQuantity && item.openSignalQuantity ? item.takeProfitQuantity/item.openSignalQuantity : '0').toString(), ).toFixed(1)} target(s) per operations
+                            </Row>
+                            <Row>
+                                <CustomButton icon={<BarChartOutlined />} style={{marginRight: 5}}/>
+                                <CustomButton icon={<LineChartOutlined />} style={{marginRight: 5}}/>
+                                <CustomButton icon={<RadarChartOutlined />} style={{marginRight: 5}}/>
+                                <CustomButton icon={<DotChartOutlined />} style={{marginRight: 5}}/>
                             </Row>
                         </Card>
                     </List.Item>
