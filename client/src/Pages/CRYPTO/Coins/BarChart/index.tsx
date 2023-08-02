@@ -1,40 +1,78 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { Bar } from '@ant-design/plots';
+import { Column } from '@ant-design/plots';
+import { Datum, MappingDatum } from '../ICharts';
 
 const BarChart = () => {
   const data = [
     {
-      year: '1951 年',
-      value: 38,
+      type: '1-3秒',
+      value: 0.16,
     },
     {
-      year: '1952 年',
-      value: 52,
+      type: '4-10秒',
+      value: 0.125,
     },
     {
-      year: '1956 年',
-      value: 61,
+      type: '11-30秒',
+      value: 0.24,
     },
     {
-      year: '1957 年',
-      value: 145,
+      type: '31-60秒',
+      value: 0.19,
     },
     {
-      year: '1958 年',
-      value: 48,
+      type: '1-3分',
+      value: 0.22,
+    },
+    {
+      type: '3-10分',
+      value: 0.05,
+    },
+    {
+      type: '10-30分',
+      value: 0.01,
+    },
+    {
+      type: '30+分',
+      value: 0.015,
     },
   ];
+  const paletteSemanticRed = '#F4664A';
+  const brandColor = '#5B8FF9';
   const config = {
     data,
-    xField: 'value',
-    yField: 'year',
-    seriesField: 'year',
-    legend: {
-      //position: 'top-left',
+    xField: 'type',
+    yField: 'value',
+    seriesField: '',
+    color: (datum: Datum, defaultColor?: string) => {
+      if (datum.type === '10-30分' || datum.type === '30+分') {
+        return paletteSemanticRed;
+      }
+
+      return brandColor;
+    },
+    label: {
+      content: (data: Datum, mappingData: MappingDatum, index: number) => {
+        const val = parseFloat(data.value);
+
+        if (val < 0.05) {
+          return (val * 100).toFixed(1) + '%';
+        }else{
+            return ""
+        }
+      },
+      offset: 10,
+    },
+    //legend: false,
+    xAxis: {
+      label: {
+        autoHide: true,
+        autoRotate: false,
+      },
     },
   };
-  return <Bar {...config} />;
+  return <Column {...config} />;
 };
 
 export default BarChart;
