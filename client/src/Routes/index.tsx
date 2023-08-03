@@ -23,6 +23,7 @@ import Backlinks from "../Pages/SEO/Backlinks";
 import CryptoHome from "../Pages/CRYPTO/Home";
 import Coins from "../Pages/CRYPTO/Coins";
 import BarChart from "../Pages/CRYPTO/Coins/BarChart";
+import SliderBarChart from "../Pages/CRYPTO/Coins/BarChart/SliderBarChart";
 import LineChart from "../Pages/CRYPTO/Coins/LineChart";
 import RadarChart from "../Pages/CRYPTO/Coins/RadarChart";
 import DotChart from "../Pages/CRYPTO/Coins/DotChart";
@@ -54,6 +55,7 @@ const Routes = ({activeSession}: IRoutes) => {
           <Route path="/crypto/home" element={<Protected {...{activeSession}}><CryptoHome/></Protected>}/>
           <Route path="/crypto/channel/:channelId/coins" element={<Protected {...{activeSession}}><Coins/></Protected>}/>
           <Route path="/crypto/channel/:channelId/coins/:coin/barChart" element={<Protected {...{activeSession}}><BarChart/></Protected>}/>
+          <Route path="/crypto/channel/:channelId/coins/:coin/sliderBarChart" element={<Protected {...{activeSession}}><SliderBarChart/></Protected>}/>
           <Route path="/crypto/channel/:channelId/coins/:coin/lineChart" element={<Protected {...{activeSession}}><LineChart/></Protected>}/>
           <Route path="/crypto/channel/:channelId/coins/:coin/radarChart" element={<Protected {...{activeSession}}><RadarChart/></Protected>}/>
           <Route path="/crypto/channel/:channelId/coins/:coin/dotChart" element={<Protected {...{activeSession}}><DotChart/></Protected>}/>

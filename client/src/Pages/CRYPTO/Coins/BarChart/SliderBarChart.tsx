@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Column } from '@ant-design/plots';
+import { Datum } from '../ICharts';
 
 const SliderBarChart = () => {
   const [data, setData] = useState([]);
@@ -17,10 +18,19 @@ const SliderBarChart = () => {
         console.log('fetch data failed', error);
       });
   };
+  const paletteSemanticRed = '#F4664A';
+  const brandColor = '#5B8FF9';
   const config = {
     data,
     xField: '城市',
     yField: '销售额',
+    color: (datum: Datum, defaultColor?: string) => {
+      if (datum.type === '10-30分' || datum.type === '30+分') {
+        return paletteSemanticRed;
+      }
+
+      return brandColor;
+    },
     xAxis: {
       label: {
         autoRotate: false,
