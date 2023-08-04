@@ -42,3 +42,10 @@ export interface ICoinReport {
     canceledQuantity?: number;
     nullQuantityQuantity?: number;
 }
+
+export interface ICharReport {
+    month: string;
+    coin: string;
+    type: string;
+    amount: number
+}

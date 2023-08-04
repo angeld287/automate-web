@@ -18,19 +18,16 @@ const SliderBarChart = () => {
         console.log('fetch data failed', error);
       });
   };
-  const paletteSemanticRed = '#F4664A';
-  const brandColor = '#5B8FF9';
+
+  //const paletteSemanticRed = '#F4664A';
+  //const brandColor = '#5B8FF9';
+  const cryptographyGreen = '#009637'
+
   const config = {
     data,
     xField: '城市',
     yField: '销售额',
-    color: (datum: Datum, defaultColor?: string) => {
-      if (datum.type === '10-30分' || datum.type === '30+分') {
-        return paletteSemanticRed;
-      }
-
-      return brandColor;
-    },
+    color: cryptographyGreen,
     xAxis: {
       label: {
         autoRotate: false,

@@ -38,8 +38,10 @@ const BarChart = () => {
       value: 0.015,
     },
   ];
+  
   const paletteSemanticRed = '#F4664A';
   const brandColor = '#5B8FF9';
+
   const config = {
     data,
     xField: 'type',

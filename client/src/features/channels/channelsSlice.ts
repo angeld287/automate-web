@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { removeDuplicate } from '../../utils/functions';
 import { Channel as IChannel } from '../../interfaces/models/Crypto/Channel';
-import { ICoinReport, Message as IMessage } from '../../interfaces/models/Crypto/Message';
+import { ICharReport, ICoinReport, Message as IMessage } from '../../interfaces/models/Crypto/Message';
 import { getAllChannels, getAllMessagesByChannelId } from './channelsAPI';
 import { CRYPTOS_COINS } from '../../utils/constants';
 
@@ -12,6 +12,7 @@ export interface ChannelState {
   selectedChannel: IChannel;
   getAllMessagesState: 'idle' | 'loading' | 'failed';
   coinsReport: Array<ICoinReport>;
+  coinCharReport: Array<ICharReport>;
 }
 
 const initialState: ChannelState = {
@@ -23,7 +24,8 @@ const initialState: ChannelState = {
     type: "",
   },
   getAllMessagesState: 'idle',
-  coinsReport: []
+  coinsReport: [],
+  coinCharReport: [],
 };
 
 export const getChannelList = createAsyncThunk(
@@ -71,6 +73,9 @@ export const channelSlice = createSlice({
         if(coinReport.messagesQuantity && coinReport.messagesQuantity > 0) coins.push(coinReport)
       });
       state.coinsReport = coins.sort((coinA, coinB) => coinA.openSignalQuantity && coinB.openSignalQuantity ? coinB.openSignalQuantity - coinA.openSignalQuantity : 0)
+    },
+    generateCharReport: () => {
+
     }
   },
   extraReducers: (builder) => {
