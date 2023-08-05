@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { removeDuplicate } from '../../utils/functions';
 import { Channel as IChannel } from '../../interfaces/models/Crypto/Channel';
-import { ICharReport, ICoinReport, Message as IMessage } from '../../interfaces/models/Crypto/Message';
+import { ICoinReport, ICoinTrade, Message as IMessage } from '../../interfaces/models/Crypto/Message';
 import { getAllChannels, getAllMessagesByChannelId } from './channelsAPI';
 import { CRYPTOS_COINS } from '../../utils/constants';
 
@@ -12,7 +12,7 @@ export interface ChannelState {
   selectedChannel: IChannel;
   getAllMessagesState: 'idle' | 'loading' | 'failed';
   coinsReport: Array<ICoinReport>;
-  coinCharReport: Array<ICharReport>;
+  coinTrades: Array<ICoinTrade>;
 }
 
 const initialState: ChannelState = {
@@ -25,7 +25,7 @@ const initialState: ChannelState = {
   },
   getAllMessagesState: 'idle',
   coinsReport: [],
-  coinCharReport: [],
+  coinTrades: [],
 };
 
 export const getChannelList = createAsyncThunk(
@@ -74,8 +74,21 @@ export const channelSlice = createSlice({
       });
       state.coinsReport = coins.sort((coinA, coinB) => coinA.openSignalQuantity && coinB.openSignalQuantity ? coinB.openSignalQuantity - coinA.openSignalQuantity : 0)
     },
-    generateCharReport: () => {
+    generateCoinTradesResults: (state, action: PayloadAction<string>) => {
+      const coinMessages = state.messages.filter(message => message.pair === action.payload);
 
+      const coinTrades: Array<ICoinTrade> = coinMessages.map(
+        (message) => {
+          return {
+            month: 'string',
+            coin: 'string',
+            type: 'string',
+            amount: 0,
+          }
+        }
+      );
+
+      state.coinTrades = coinTrades;
     }
   },
   extraReducers: (builder) => {
@@ -95,7 +108,7 @@ export const channelSlice = createSlice({
   },
 });
 
-export const { generateCoinsReport } = channelSlice.actions;
+export const { generateCoinsReport, generateCoinTradesResults } = channelSlice.actions;
 
 export const selectChannel = (state: RootState) => state.channels;
 

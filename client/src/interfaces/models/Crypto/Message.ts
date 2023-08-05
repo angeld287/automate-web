@@ -43,7 +43,7 @@ export interface ICoinReport {
     nullQuantityQuantity?: number;
 }
 
-export interface ICharReport {
+export interface ICoinTrade {
     month: string;
     coin: string;
     type: string;
