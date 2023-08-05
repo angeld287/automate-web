@@ -45,7 +45,7 @@ export interface ICoinReport {
 
 export interface ICoinTrade {
     month: string;
-    coin: string;
-    type: string;
+    coin?: string;
+    type: "open_signal" | "take_profit" | "close_position" | "open_position" | "canceled" | null;
     amount: number
 }

@@ -1,32 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import React, { useEffect } from 'react';
 import { Column } from '@ant-design/plots';
-import { Datum } from '../ICharts';
+import { useParams } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
+import { generateCoinTradesResults, selectChannel } from '../../../../features/channels/channelsSlice';
 
 const SliderBarChart = () => {
-  const [data, setData] = useState([]);
+
+  let { coin } = useParams();
+  const { coinTrades } = useAppSelector(selectChannel);
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
-    asyncFetch();
-  }, []);
-
-  const asyncFetch = () => {
-    fetch('https://gw.alipayobjects.com/os/bmw-prod/be63e0a2-d2be-4c45-97fd-c00f752a66d4.json')
-      .then((response) => response.json())
-      .then((json) => setData(json))
-      .catch((error) => {
-        console.log('fetch data failed', error);
-      });
-  };
+    if(coin)
+      dispatch(generateCoinTradesResults(coin));
+  }, [coin]);
 
   //const paletteSemanticRed = '#F4664A';
   //const brandColor = '#5B8FF9';
   const cryptographyGreen = '#009637'
 
   const config = {
-    data,
-    xField: '城市',
-    yField: '销售额',
+    data: coinTrades,
+    xField: 'month',
+    yField: 'amount',
     color: cryptographyGreen,
     xAxis: {
       label: {

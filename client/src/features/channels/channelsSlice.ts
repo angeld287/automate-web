@@ -76,14 +76,17 @@ export const channelSlice = createSlice({
     },
     generateCoinTradesResults: (state, action: PayloadAction<string>) => {
       const coinMessages = state.messages.filter(message => message.pair === action.payload);
-
+      var profit = 0;
       const coinTrades: Array<ICoinTrade> = coinMessages.map(
         (message) => {
+          
+          if(message.type === 'canceled' || message.type === 'open_position' || message.type === 'open_signal'){ profit = 0 }else if(message.type === 'close_position'){ profit = -1 }else{ profit +=1; }
+
           return {
-            month: 'string',
-            coin: 'string',
-            type: 'string',
-            amount: 0,
+            month: (new Date(message.dateUnixtime)).getMonth().toString(),
+            coin: message.pair?.replace('USDT', ''),
+            type: message.type,
+            amount: profit,
           }
         }
       );

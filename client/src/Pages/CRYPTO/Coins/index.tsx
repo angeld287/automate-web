@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { Card, Col, List, Row } from "antd";
 import Meta from "antd/es/card/Meta";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { generateCoinsReport, getAllChannelMessages, selectChannel } from "../../../features/channels/channelsSlice";
 import CustomLoader from "../../../Components/CustomLoader";
@@ -11,7 +11,6 @@ import CoinsPieReport from "../../../Components/Reports/CoinsPieReport";
 import { BarChartOutlined, DotChartOutlined, LineChartOutlined, RadarChartOutlined } from "@ant-design/icons";
 
 const Coins = () => {
-    const navigate = useNavigate()
     const dispatch = useAppDispatch()
 
     let { channelId } = useParams();
