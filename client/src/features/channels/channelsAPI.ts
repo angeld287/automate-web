@@ -25,3 +25,16 @@ export async function getAllMessagesByChannelId(channelId: string) {
 
   return await fetchData.json();
 }
+
+export async function getAllMessagesByChannelIdAndCoin(channelId: string, coin: string) {
+  const fetchData = await fetch(`${Locals.config().WS_BACKEND_BASE_URL}crypto/getAllCoinChannelMessages?channelId=${channelId}&coin=${coin}`, {
+    method: "GET",
+    credentials: 'include',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  })
+
+  return await fetchData.json();
+}

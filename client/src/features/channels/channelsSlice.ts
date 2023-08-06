@@ -3,7 +3,7 @@ import { RootState } from '../../app/store';
 import { removeDuplicate } from '../../utils/functions';
 import { Channel as IChannel } from '../../interfaces/models/Crypto/Channel';
 import { ICoinReport, ICoinTrade, Message as IMessage } from '../../interfaces/models/Crypto/Message';
-import { getAllChannels, getAllMessagesByChannelId } from './channelsAPI';
+import { getAllChannels, getAllMessagesByChannelId, getAllMessagesByChannelIdAndCoin } from './channelsAPI';
 import { CRYPTOS_COINS } from '../../utils/constants';
 
 export interface ChannelState {
@@ -11,6 +11,7 @@ export interface ChannelState {
   messages: Array<IMessage>;
   selectedChannel: IChannel;
   getAllMessagesState: 'idle' | 'loading' | 'failed';
+  getCoinMessagesState: 'idle' | 'loading' | 'failed';
   coinsReport: Array<ICoinReport>;
   coinTrades: Array<ICoinTrade>;
 }
@@ -24,6 +25,7 @@ const initialState: ChannelState = {
     type: "",
   },
   getAllMessagesState: 'idle',
+  getCoinMessagesState: 'idle',
   coinsReport: [],
   coinTrades: [],
 };
@@ -45,6 +47,18 @@ export const getAllChannelMessages = createAsyncThunk(
   async (channelId: string) => {
     try {    
       const result = await getAllMessagesByChannelId(channelId);
+      return result.data.response;
+    } catch (error) {
+      console.log(error) 
+    }
+  }
+);
+
+export const getAllCoinChannelMessages = createAsyncThunk(
+  'channel/getCoinMessages',
+  async ({channelId, coin}:{channelId: string, coin: string}) => {
+    try {    
+      const result = await getAllMessagesByChannelIdAndCoin(channelId, coin);
       return result.data.response;
     } catch (error) {
       console.log(error) 
@@ -108,6 +122,36 @@ export const channelSlice = createSlice({
       .addCase(getAllChannelMessages.rejected, (state) => {
         state.getAllMessagesState = 'failed';
       })
+      .addCase(getAllCoinChannelMessages.pending, (state) => {
+        state.getCoinMessagesState = 'loading';
+      })
+      .addCase(getAllCoinChannelMessages.fulfilled, (state, action) => {
+        if(action.payload.length > 0){
+          var profit = 0;
+          const coinMessages = action.payload;
+          const coinTrades: Array<ICoinTrade> = coinMessages.map(
+            (message: IMessage) => {
+              if(message.type === 'canceled' || message.type === 'open_position' || message.type === 'open_signal'){ profit = 0 }else if(message.type === 'close_position'){ profit = -1 }else{ profit +=1; }
+
+              //console.log(message.externalId,  new Date(message.dateUnixtime*1000).toLocaleDateString('en-us', { year:"2-digit", month:"short", day:"numeric", hour: 'numeric', minute: 'numeric', second: 'numeric', fractionalSecondDigits: 3}) )
+              
+              return {
+                month: new Date(message.dateUnixtime*1000).toLocaleDateString('en-us', { year:"2-digit", month:"short", day:"numeric"}),
+                coin: message.pair?.replace('USDT', ''),
+                type: message.type,
+                amount: profit,
+              }
+            }
+          );
+
+          state.coinTrades = coinTrades;
+          state.messages = action.payload;
+          state.getCoinMessagesState = 'idle';
+        }
+      })
+      .addCase(getAllCoinChannelMessages.rejected, (state) => {
+        state.getCoinMessagesState = 'failed';
+      });
   },
 });
 

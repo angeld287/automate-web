@@ -21,5 +21,7 @@ export default interface IChannelMessagesService {
 
     getAllMessagesByChannelID(channelId: string): Promise<Array<IMessage>>;
 
+    getAllMessagesByChannelIDAndCoin(channelId: string, coin: string): Promise<Array<IMessage>>
+
     addMessageProps(textEntities: Array<IMessageText>, message: IMessage)
 }

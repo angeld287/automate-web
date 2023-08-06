@@ -577,6 +577,12 @@ router.get(
 )
 
 router.get(
+    '/crypto/getAllCoinChannelMessages',
+    Passport.isAuthenticated,
+    ChannelsController.getAllCoinChannelMessages
+)
+
+router.get(
     '/crypto/getAllChannels',
     Passport.isAuthenticated,
     ChannelsController.getAllChannels

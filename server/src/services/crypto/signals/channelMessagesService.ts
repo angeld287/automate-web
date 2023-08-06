@@ -343,6 +343,49 @@ export class channelMessagesService implements IChannelMessagesService {
         }
     }
 
+    async getAllMessagesByChannelIDAndCoin(channelId: string, coin: string): Promise<Array<IMessage>> {
+        const getQuery = {
+            name: 'get-all-messages-by-channel-id-and-coin',
+            text:  `SELECT id, external_id, type, date, date_unixtime, actor, actor_id, _from, from_id, title, telegram_channel_id, profit, entry, pair, target, reply_to_message_id FROM public.messages where from_id = $1 and pair = $2;`,
+            values: [channelId, coin]
+        };
+
+        let result = null;
+        try {
+            result = await Database.sqlToDB(getQuery);
+            
+            if (result.rows.length === 0)
+                return []
+            
+            const contents: Array<IMessage> = [];
+
+            result.rows.forEach(row => {
+                contents.push({
+                    id: row.id,
+                    externalId: row.external_id,
+                    type: row.type?.trim(),
+                    date: row.date,
+                    dateUnixtime: row.date_unixtime,
+                    actor: row.actor,
+                    actorId: row.actor_id,
+                    _from: row._from?.trim(),
+                    fromId: row.from_id?.trim(),
+                    title: row.title,
+                    telegramChannelId: row.telegram_channel_id,
+                    pair: row.pair?.trim(),
+                    profit: row.profit,
+                    entry: row.entry?.trim(),
+                    target: row.target,
+                    replyToMessageId: row.reply_to_message_id,
+                })
+            });
+
+            return contents;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
     async addMessageProps(textEntities: Array<IMessageText>, message: IMessage){
         try {
             const hashtag = textEntities.find(text => text.type === 'hashtag')
