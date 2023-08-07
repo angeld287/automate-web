@@ -1,30 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Line } from '@ant-design/plots';
+import { useParams } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
+import { getAllCoinChannelMessages, selectChannel } from '../../../../features/channels/channelsSlice';
 
 const LineChart = () => {
-  const [data, setData] = useState([]);
+  let { coin, channelId } = useParams();
+  const { coinTrades } = useAppSelector(selectChannel);
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
-    asyncFetch();
-  }, []);
+    if(coin && channelId)
+      dispatch(getAllCoinChannelMessages({channelId, coin}));
+  }, [coin, channelId]);
 
-  const asyncFetch = () => {
-    fetch('https://gw.alipayobjects.com/os/bmw-prod/1d565782-dde4-4bb6-8946-ea6a38ccf184.json')
-      .then((response) => response.json())
-      .then((json) => setData(json))
-      .catch((error) => {
-        console.log('fetch data failed', error);
-      });
-  };
   const config = {
-    data,
+    data: coinTrades,
     //padding: 'auto',
-    xField: 'Date',
-    yField: 'scales',
+    xField: 'month',
+    yField: 'amount',
     xAxis: {
       // type: 'timeCat',
       tickCount: 5,
+    },
+    slider: {
+      start: 0.1,
+      end: 0.5,
     },
   };
 

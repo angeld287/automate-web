@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { removeDuplicate } from '../../utils/functions';
 import { Channel as IChannel } from '../../interfaces/models/Crypto/Channel';
 import { ICoinReport, ICoinTrade, Message as IMessage } from '../../interfaces/models/Crypto/Message';
 import { getAllChannels, getAllMessagesByChannelId, getAllMessagesByChannelIdAndCoin } from './channelsAPI';
