@@ -15,7 +15,7 @@ const SliderBarChart = () => {
   useEffect(() => {
     if(coin && channelId)
       dispatch(getAllCoinChannelMessages({channelId, coin}));
-  }, [coin, channelId]);
+  }, [coin, channelId, dispatch]);
 
   //const paletteSemanticRed = '#F4664A';
   const brandColor = '#5B8FF9';

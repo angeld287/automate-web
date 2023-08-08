@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import React, { useEffect } from 'react';
 import { Line } from '@ant-design/plots';
 import { useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
