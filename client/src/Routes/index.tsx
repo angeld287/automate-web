@@ -27,6 +27,7 @@ import SliderBarChart from "../Pages/CRYPTO/Coins/BarChart/SliderBarChart";
 import LineChart from "../Pages/CRYPTO/Coins/LineChart";
 import RadarChart from "../Pages/CRYPTO/Coins/RadarChart";
 import DotChart from "../Pages/CRYPTO/Coins/DotChart";
+import PieChart from "../Pages/CRYPTO/Coins/PieChart";
 
 const Routes = ({activeSession}: IRoutes) => {
   return (
@@ -59,6 +60,7 @@ const Routes = ({activeSession}: IRoutes) => {
           <Route path="/crypto/channel/:channelId/coins/:coin/lineChart" element={<Protected {...{activeSession}}><LineChart/></Protected>}/>
           <Route path="/crypto/channel/:channelId/coins/:coin/radarChart" element={<Protected {...{activeSession}}><RadarChart/></Protected>}/>
           <Route path="/crypto/channel/:channelId/coins/:coin/dotChart" element={<Protected {...{activeSession}}><DotChart/></Protected>}/>
+          <Route path="/crypto/channel/:channelId/coins/:coin/pieChart" element={<Protected {...{activeSession}}><PieChart/></Protected>}/>
 
 
           <Route path="/" element={<Protected {...{activeSession}}><Home/></Protected>}/>

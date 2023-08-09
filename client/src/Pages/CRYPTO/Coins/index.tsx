@@ -8,7 +8,7 @@ import CustomLoader from "../../../Components/CustomLoader";
 import { ICoinReport } from "../../../interfaces/models/Crypto/Message";
 import CustomButton from "../../../Components/CustomButton";
 import CoinsPieReport from "../../../Components/Reports/CoinsPieReport";
-import { BarChartOutlined, DotChartOutlined, LineChartOutlined, RadarChartOutlined } from "@ant-design/icons";
+import { BarChartOutlined, DotChartOutlined, LineChartOutlined, PieChartOutlined, RadarChartOutlined } from "@ant-design/icons";
 
 const Coins = () => {
     const dispatch = useAppDispatch()
@@ -55,6 +55,7 @@ const Coins = () => {
                                 <a target={"_blank"} href={`/crypto/channel/${channelId}/coins/${item.name}/lineChart`}><CustomButton icon={<LineChartOutlined />} style={{marginRight: 5}}/></a>
                                 <a target={"_blank"} href={`/crypto/channel/${channelId}/coins/${item.name}/radarChart`}><CustomButton icon={<RadarChartOutlined />} style={{marginRight: 5}}/></a>
                                 <a target={"_blank"} href={`/crypto/channel/${channelId}/coins/${item.name}/dotChart`}><CustomButton icon={<DotChartOutlined />} style={{marginRight: 5}}/></a>
+                                <a target={"_blank"} href={`/crypto/channel/${channelId}/coins/${item.name}/pieChart`}><CustomButton icon={<PieChartOutlined />} style={{marginRight: 5}}/></a>
                             </Row>
                         </Card>
                     </List.Item>
