@@ -409,7 +409,7 @@ export class channelMessagesService implements IChannelMessagesService {
                     const targetMatch = profitLine.text.match(targetRegex);
     
                     message.profit = profitMatch[2] ? parseInt(profitMatch[2].slice(-1) === '%' ? profitMatch[2].replace('%', '') : profitMatch[2]) : parseInt(profitMatch[4]);
-                    message.target = targetMatch ? targetMatch[2] ? parseInt(targetMatch[2]) : parseInt(targetMatch[4]) : 0;
+                    message.target = targetMatch ? targetMatch[2] ? parseInt(targetMatch[2]) : parseInt(targetMatch[4]) : null;
 
                     
                 }else if(allEntry){

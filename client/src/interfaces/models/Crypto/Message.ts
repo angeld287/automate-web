@@ -49,3 +49,12 @@ export interface ICoinTrade {
     type: "open_signal" | "take_profit" | "close_position" | "open_position" | "canceled" | null;
     amount: number
 }
+
+export interface ITargets {
+    t1: number;
+    t2: number;
+    t3: number;
+    t4: number;
+    t5: number;
+    t6: number;
+}

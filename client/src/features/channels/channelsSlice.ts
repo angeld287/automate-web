@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { Channel as IChannel } from '../../interfaces/models/Crypto/Channel';
-import { ICoinReport, ICoinTrade, Message as IMessage } from '../../interfaces/models/Crypto/Message';
+import { ICoinReport, ICoinTrade, Message as IMessage, ITargets } from '../../interfaces/models/Crypto/Message';
 import { getAllChannels, getAllMessagesByChannelId, getAllMessagesByChannelIdAndCoin } from './channelsAPI';
 import { CRYPTOS_COINS } from '../../utils/constants';
 
@@ -13,6 +13,7 @@ export interface ChannelState {
   getCoinMessagesState: 'idle' | 'loading' | 'failed';
   coinsReport: Array<ICoinReport>;
   coinTrades: Array<ICoinTrade>;
+  targetsReport?: ITargets;
 }
 
 const initialState: ChannelState = {
@@ -65,6 +66,20 @@ export const getAllCoinChannelMessages = createAsyncThunk(
   }
 );
 
+export const getNumberOfTargets = createAsyncThunk(
+  'channel/getNumberOfTargets',
+  async ({channelId, coin}:{channelId: string, coin: string}) => {
+    try {    
+      const result = await getAllMessagesByChannelIdAndCoin(channelId, coin);
+      return result.data.response;
+    } catch (error) {
+      console.log(error) 
+    }
+  }
+);
+
+
+
 export const channelSlice = createSlice({
   name: 'channel',
   initialState,
@@ -105,7 +120,7 @@ export const channelSlice = createSlice({
       );
 
       state.coinTrades = coinTrades;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -150,6 +165,21 @@ export const channelSlice = createSlice({
       })
       .addCase(getAllCoinChannelMessages.rejected, (state) => {
         state.getCoinMessagesState = 'failed';
+      })
+      .addCase(getNumberOfTargets.fulfilled, (state, action) => {
+        if(action.payload.length > 0){
+          const coinMessages: Array<IMessage> = action.payload;
+          const targets: ITargets = {
+            t1: coinMessages.filter(message => message.target === 1).length,
+            t2: coinMessages.filter(message => message.target === 2).length,
+            t3: coinMessages.filter(message => message.target === 3).length,
+            t4: coinMessages.filter(message => message.target === 4).length,
+            t5: coinMessages.filter(message => message.target === 5).length,
+            t6: coinMessages.filter(message => message.target === 6).length,
+          }
+     
+          state.targetsReport = targets;
+        }
       });
   },
 });
