@@ -346,7 +346,7 @@ export class channelMessagesService implements IChannelMessagesService {
     async getAllMessagesByChannelIDAndCoin(channelId: string, coin: string): Promise<Array<IMessage>> {
         const getQuery = {
             name: 'get-all-messages-by-channel-id-and-coin',
-            text:  `SELECT id, external_id, type, date, date_unixtime, actor, actor_id, _from, from_id, title, telegram_channel_id, profit, entry, pair, target, reply_to_message_id FROM public.messages where from_id = $1 and pair = $2;`,
+            text:  `SELECT id, external_id, type, date, date_unixtime, actor, actor_id, _from, from_id, title, telegram_channel_id, profit, entry, pair, target, reply_to_message_id FROM public.messages where from_id = $1 and pair = $2 order by date asc;`,
             values: [channelId, coin]
         };
 

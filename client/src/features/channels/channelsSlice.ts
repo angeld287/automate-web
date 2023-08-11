@@ -143,22 +143,38 @@ export const channelSlice = createSlice({
         if(action.payload.length > 0){
           var profit = 0;
           const coinMessages = action.payload;
-          const coinTrades: Array<ICoinTrade> = coinMessages.map(
+          const coinTrades: Array<ICoinTrade> = coinMessages
+          //.sort((a:IMessage, b:IMessage) => b.dateUnixtime - a.dateUnixtime ? 1 : -1)
+          .map(
             (message: IMessage) => {
-              if(message.type === 'canceled' || message.type === 'open_position' || message.type === 'open_signal'){ profit = 0 }else if(message.type === 'close_position'){ profit = -1 }else{ profit +=1; }
+              if(!(message.type === 'canceled') && !(message.type === 'open_position')){
 
-              //console.log(message.externalId,  new Date(message.dateUnixtime*1000).toLocaleDateString('en-us', { year:"2-digit", month:"short", day:"numeric", hour: 'numeric', minute: 'numeric', second: 'numeric', fractionalSecondDigits: 3}) )
-              
-              return {
-                month: new Date(message.dateUnixtime*1000).toLocaleDateString('en-us', { year:"2-digit", month:"short", day:"numeric"}),
-                coin: message.pair?.replace('USDT', ''),
-                type: message.type,
-                amount: profit,
+                if(message.type === 'open_signal'){ 
+                  profit = 0 
+                }else if(message.type === 'close_position'){ 
+                  profit = -1 
+                }else if(message.type === 'take_profit'){ 
+                  profit +=1; 
+                }
+
+                return {
+                  month: new Date(message.dateUnixtime*1000).toLocaleDateString('en-us', { year:"2-digit", month:"short", day:"numeric"}),
+                  coin: message.pair?.replace('USDT', ''),
+                  type: message.type,
+                  amount: profit,
+                }
+              }else{
+                return {
+                  month: new Date().toLocaleDateString('en-us', { year:"2-digit", month:"short", day:"numeric"}),
+                  coin: 'BTC',
+                  type: 'take_profit',
+                  amount: 3,
+                }
               }
             }
           );
 
-          state.coinTrades = coinTrades;
+          state.coinTrades = coinTrades
           state.messages = action.payload;
           state.getCoinMessagesState = 'idle';
         }

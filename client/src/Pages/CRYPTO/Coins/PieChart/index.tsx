@@ -46,15 +46,16 @@ const PieChart = () => {
     
     useEffect(() => {
         if(targetsReport){
-            var keys = Object.keys(targetsReport);
+            var values = Object.values(targetsReport);
             const _data: Array<IData> = [];
-            //keys.forEach((target: ITargetNumber)  => {
-            //    console.log(targetsReport[target])
-            //    //_data.push({
-            //    //    type: target,
-            //    //    value: targetsReport[target]
-            //    //})
-            //});
+            values.forEach((value, index)  => {
+                _data.push({
+                    type: `t-${index+1}`,
+                    value: value
+                })
+            });
+
+            setData(_data)
         }
     }, [targetsReport]);
 
