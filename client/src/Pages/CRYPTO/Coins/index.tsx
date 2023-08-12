@@ -19,13 +19,13 @@ const Coins = () => {
     useEffect(()=> {
         if(channelId)
             dispatch(getAllChannelMessages(channelId));
-    }, [])
+    }, [channelId, dispatch])
 
     const getCoins = useCallback(() => {
         if(channels.messages.length > 0 && channels.getAllMessagesState === 'idle'){
             dispatch(generateCoinsReport());
         }
-    }, [channels.getAllMessagesState, channels.messages])
+    }, [channels.getAllMessagesState, channels.messages, dispatch])
 
     if(channels.getAllMessagesState === 'loading') return <CustomLoader />
 
@@ -51,11 +51,11 @@ const Coins = () => {
                                 {parseFloat((item.takeProfitQuantity && item.openSignalQuantity ? item.takeProfitQuantity/item.openSignalQuantity : '0').toString(), ).toFixed(1)} target(s) per operations
                             </Row>
                             <Row>
-                                <a target={"_blank"} href={`/crypto/channel/${channelId}/coins/${item.name}/sliderBarChart`}><CustomButton icon={<BarChartOutlined />} style={{marginRight: 5}}/></a>
-                                <a target={"_blank"} href={`/crypto/channel/${channelId}/coins/${item.name}/lineChart`}><CustomButton icon={<LineChartOutlined />} style={{marginRight: 5}}/></a>
-                                <a target={"_blank"} href={`/crypto/channel/${channelId}/coins/${item.name}/radarChart`}><CustomButton icon={<RadarChartOutlined />} style={{marginRight: 5}}/></a>
-                                <a target={"_blank"} href={`/crypto/channel/${channelId}/coins/${item.name}/dotChart`}><CustomButton icon={<DotChartOutlined />} style={{marginRight: 5}}/></a>
-                                <a target={"_blank"} href={`/crypto/channel/${channelId}/coins/${item.name}/pieChart`}><CustomButton icon={<PieChartOutlined />} style={{marginRight: 5}}/></a>
+                                <a target={"_blank"} href={`/crypto/channel/${channelId}/coins/${item.name}/sliderBarChart`} rel="noreferrer"><CustomButton icon={<BarChartOutlined />} style={{marginRight: 5}}/></a>
+                                <a target={"_blank"} href={`/crypto/channel/${channelId}/coins/${item.name}/lineChart`} rel="noreferrer"><CustomButton icon={<LineChartOutlined />} style={{marginRight: 5}}/></a>
+                                <a target={"_blank"} href={`/crypto/channel/${channelId}/coins/${item.name}/radarChart`} rel="noreferrer"><CustomButton icon={<RadarChartOutlined />} style={{marginRight: 5}}/></a>
+                                <a target={"_blank"} href={`/crypto/channel/${channelId}/coins/${item.name}/dotChart`} rel="noreferrer"><CustomButton icon={<DotChartOutlined />} style={{marginRight: 5}}/></a>
+                                <a target={"_blank"} href={`/crypto/channel/${channelId}/coins/${item.name}/pieChart`} rel="noreferrer"><CustomButton icon={<PieChartOutlined />} style={{marginRight: 5}}/></a>
                             </Row>
                         </Card>
                     </List.Item>

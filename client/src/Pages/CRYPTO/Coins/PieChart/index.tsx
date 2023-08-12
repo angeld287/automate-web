@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import { Pie } from '@ant-design/plots';
 import { useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../../app/hooks';
 import { getNumberOfTargets, selectChannel } from '../../../../features/channels/channelsSlice';
 
 interface IData {type: string, value: number};
-type ITargetNumber = 't1' | 't2' | 't3' | 't4' | 't5';
 
 const PieChart = () => {
     let { coin, channelId } = useParams();

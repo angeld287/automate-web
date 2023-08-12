@@ -12,7 +12,7 @@ const LineChart = () => {
   useEffect(() => {
     if(coin && channelId)
       dispatch(getAllCoinChannelMessages({channelId, coin}));
-  }, [coin, channelId]);
+  }, [coin, channelId, dispatch]);
 
   const config = {
     data: coinTrades,
